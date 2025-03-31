@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.OutpMedrecMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.OutpMedrec" id="OutpMedrecMap">
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="outpId" column="outp_id" jdbcType="INTEGER"/>
+        <result property="visitDate" column="visit_date" jdbcType="TIMESTAMP"/>
+        <result property="symptom" column="symptom" jdbcType="VARCHAR"/>
+        <result property="result" column="result" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OutpMedrecMap">
+        select
+          patient_id, outp_id, visit_date, symptom, result
+        from outp_medrec
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="outpId != null">
+                and outp_id = #{outpId}
+            </if>
+            <if test="visitDate != null">
+                and visit_date = #{visitDate}
+            </if>
+            <if test="symptom != null and symptom != ''">
+                and symptom = #{symptom}
+            </if>
+            <if test="result != null and result != ''">
+                and result = #{result}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from outp_medrec
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="outpId != null">
+                and outp_id = #{outpId}
+            </if>
+            <if test="visitDate != null">
+                and visit_date = #{visitDate}
+            </if>
+            <if test="symptom != null and symptom != ''">
+                and symptom = #{symptom}
+            </if>
+            <if test="result != null and result != ''">
+                and result = #{result}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+        select count(1)
+        from outp_medrec
+        <where>
+            date_format(visit_date,'%Y-%m-%d') = #{params.recordingDate}
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="OutpMedrecMap">
+        select
+        patient_id, outp_id, visit_date, symptom, result
+        from outp_medrec
+        <where>
+            date_format(visit_date,'%Y-%m-%d') = #{outpMedrec.params.recordingDate}
+        </where>
+        order by patient_id asc
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into outp_medrec(patient_id, outp_id, visit_date, symptom, result)
+        values (#{patientId}, #{outpId}, #{visitDate}, #{symptom}, #{result})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into outp_medrec(patient_id, outp_id, visit_date, symptom, result)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.outpId}, #{entity.visitDate}, #{entity.symptom}, #{entity.result})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into outp_medrec(patient_id, outp_id, visit_date, symptom, result)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.outpId}, #{entity.visitDate}, #{entity.symptom}, #{entity.result})
+        </foreach>
+        on duplicate key update
+        patient_id = values(patient_id),
+        outp_id = values(outp_id),
+        visit_date = values(visit_date),
+        symptom = values(symptom),
+        result = values(result)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update outp_medrec
+        <set>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="outpId != null">
+                outp_id = #{outpId},
+            </if>
+            <if test="visitDate != null">
+                visit_date = #{visitDate},
+            </if>
+            <if test="symptom != null and symptom != ''">
+                symptom = #{symptom},
+            </if>
+            <if test="result != null and result != ''">
+                result = #{result},
+            </if>
+        </set>
+        where  patient_id = #{patientId}
+    </update>
+
+
+</mapper>
+

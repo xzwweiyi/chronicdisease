@@ -1,0 +1,56 @@
+eureka:
+  instance:
+    hostname: localhost
+  server:
+    enableSelfPreservation: true
+  client:
+    serviceUrl:
+      defaultZone: http://dchealthcro:dchealthcro@dchealth-eurka:7900/eureka/
+  
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+      location:  D:/usr/local/server/mirco-server/upload_temp
+  redis:
+    host: 60.205.202.222
+    password: ENC(PvrtuyWawLp5QqkhAtQQ/uhKlQ7DxPBXnfoewA5CM6o=)
+    port: 6379
+    database: 2
+  datasource:
+    name: dataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://39.105.140.245:3306/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: Ab123456!
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+ #数据库密码加密盐值
+jasypt:
+  encryptor:
+    password: dchealth 
+# Logging config
+logging:
+  config: classpath:logback-dev.xml
+  level:
+    root: WARN
+    com:
+      cloud:
+        edc: INFO
+  path:
+    ~/projects/logs
+
+
+tdapi:
+  baseUrl: https://test.dchealthclinical.com/tdapi/
+
+

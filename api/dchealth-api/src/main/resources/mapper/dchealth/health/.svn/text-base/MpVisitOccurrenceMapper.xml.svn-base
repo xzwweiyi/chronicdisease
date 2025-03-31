@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpVisitOccurrenceMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpVisitOccurrence" id="MpVisitOccurrenceResult">
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="visitStartDate"    column="visit_start_date"    />
+        <result property="visitEndDate"    column="visit_end_date"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="ward"    column="ward"    />
+        <result property="dischargeDepartment"    column="discharge_department"    />
+        <result property="dischargeType"    column="discharge_type"    />
+        <result property="summaryDate"    column="summary_date"    />
+        <result property="examSummary"    column="exam_summary"    />
+        <result property="healthGuide"    column="health_guide"    />
+    </resultMap>
+
+    <sql id="selectMpVisitOccurrenceVo">
+        select visit_occurrence_id, person_id, summary_date,exam_summary,health_guide,care_site_id, visit_type, visit_start_date, visit_end_date, create_time, update_time, ward, discharge_department, discharge_type from mp_visit_occurrence
+    </sql>
+
+    <select id="selectVisitByPersonIdAndVisitId"  resultMap="MpVisitOccurrenceResult">
+        <include refid="selectMpVisitOccurrenceVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+    <select id="selectPatientHealthList"  resultMap="MpVisitOccurrenceResult" parameterType="com.dchealth.cro.health.form.HealthListSearchForm">
+       select visit_occurrence_id, person_id,  visit_type, visit_start_date from mp_visit_occurrence
+        where person_id = #{personId}  
+        <if test="type != null  and type !='' and type=='1'.toString()"> and visit_type ='住院'  </if>
+         <if test="type != null  and type !='' and type=='2'.toString()"> and visit_type ='体检'  </if>
+        order by visit_start_date desc
+         limit ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+    
+        
+    
+
+</mapper>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdOtolaryngologyMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdOtolaryngology" id="TdOtolaryngologyMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="hearing" column="hearing" jdbcType="VARCHAR"/>
+        <result property="auricle" column="auricle" jdbcType="VARCHAR"/>
+        <result property="externalAuditoryMeatus" column="external_auditory_meatus" jdbcType="VARCHAR"/>
+        <result property="tympanicMembrane" column="tympanic_membrane" jdbcType="VARCHAR"/>
+        <result property="externalNose" column="external_nose" jdbcType="VARCHAR"/>
+        <result property="nasalCavity" column="nasal_cavity" jdbcType="VARCHAR"/>
+        <result property="oralPharynx" column="oral_pharynx" jdbcType="VARCHAR"/>
+        <result property="laryngopharynx" column="laryngopharynx" jdbcType="VARCHAR"/>
+        <result property="tonsil" column="tonsil" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdOtolaryngologyMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, hearing, auricle, external_auditory_meatus, tympanic_membrane, external_nose, nasal_cavity, oral_pharynx, laryngopharynx, tonsil
+        from td_otolaryngology
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdOtolaryngologyMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, hearing, auricle, external_auditory_meatus, tympanic_membrane, external_nose, nasal_cavity, oral_pharynx, laryngopharynx, tonsil
+        from td_otolaryngology
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="hearing != null and hearing != ''">
+                and hearing = #{hearing}
+            </if>
+            <if test="auricle != null and auricle != ''">
+                and auricle = #{auricle}
+            </if>
+            <if test="externalAuditoryMeatus != null and externalAuditoryMeatus != ''">
+                and external_auditory_meatus = #{externalAuditoryMeatus}
+            </if>
+            <if test="tympanicMembrane != null and tympanicMembrane != ''">
+                and tympanic_membrane = #{tympanicMembrane}
+            </if>
+            <if test="externalNose != null and externalNose != ''">
+                and external_nose = #{externalNose}
+            </if>
+            <if test="nasalCavity != null and nasalCavity != ''">
+                and nasal_cavity = #{nasalCavity}
+            </if>
+            <if test="oralPharynx != null and oralPharynx != ''">
+                and oral_pharynx = #{oralPharynx}
+            </if>
+            <if test="laryngopharynx != null and laryngopharynx != ''">
+                and laryngopharynx = #{laryngopharynx}
+            </if>
+            <if test="tonsil != null and tonsil != ''">
+                and tonsil = #{tonsil}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_otolaryngology
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="hearing != null and hearing != ''">
+                and hearing = #{hearing}
+            </if>
+            <if test="auricle != null and auricle != ''">
+                and auricle = #{auricle}
+            </if>
+            <if test="externalAuditoryMeatus != null and externalAuditoryMeatus != ''">
+                and external_auditory_meatus = #{externalAuditoryMeatus}
+            </if>
+            <if test="tympanicMembrane != null and tympanicMembrane != ''">
+                and tympanic_membrane = #{tympanicMembrane}
+            </if>
+            <if test="externalNose != null and externalNose != ''">
+                and external_nose = #{externalNose}
+            </if>
+            <if test="nasalCavity != null and nasalCavity != ''">
+                and nasal_cavity = #{nasalCavity}
+            </if>
+            <if test="oralPharynx != null and oralPharynx != ''">
+                and oral_pharynx = #{oralPharynx}
+            </if>
+            <if test="laryngopharynx != null and laryngopharynx != ''">
+                and laryngopharynx = #{laryngopharynx}
+            </if>
+            <if test="tonsil != null and tonsil != ''">
+                and tonsil = #{tonsil}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_otolaryngology(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, hearing, auricle, external_auditory_meatus, tympanic_membrane, external_nose, nasal_cavity, oral_pharynx, laryngopharynx, tonsil)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{hearing}, #{auricle}, #{externalAuditoryMeatus}, #{tympanicMembrane}, #{externalNose}, #{nasalCavity}, #{oralPharynx}, #{laryngopharynx}, #{tonsil})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_otolaryngology(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, hearing, auricle, external_auditory_meatus, tympanic_membrane, external_nose, nasal_cavity, oral_pharynx, laryngopharynx, tonsil)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.hearing}, #{entity.auricle}, #{entity.externalAuditoryMeatus}, #{entity.tympanicMembrane}, #{entity.externalNose}, #{entity.nasalCavity}, #{entity.oralPharynx}, #{entity.laryngopharynx}, #{entity.tonsil})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_otolaryngology(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, hearing, auricle, external_auditory_meatus, tympanic_membrane, external_nose, nasal_cavity, oral_pharynx, laryngopharynx, tonsil)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.hearing}, #{entity.auricle}, #{entity.externalAuditoryMeatus}, #{entity.tympanicMembrane}, #{entity.externalNose}, #{entity.nasalCavity}, #{entity.oralPharynx}, #{entity.laryngopharynx}, #{entity.tonsil})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_otolaryngology(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, hearing, auricle, external_auditory_meatus, tympanic_membrane, external_nose, nasal_cavity, oral_pharynx, laryngopharynx, tonsil)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.hearing}, #{entity.auricle}, #{entity.externalAuditoryMeatus}, #{entity.tympanicMembrane}, #{entity.externalNose}, #{entity.nasalCavity}, #{entity.oralPharynx}, #{entity.laryngopharynx}, #{entity.tonsil})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        hearing = values(hearing),
+        auricle = values(auricle),
+        external_auditory_meatus = values(external_auditory_meatus),
+        tympanic_membrane = values(tympanic_membrane),
+        external_nose = values(external_nose),
+        nasal_cavity = values(nasal_cavity),
+        oral_pharynx = values(oral_pharynx),
+        laryngopharynx = values(laryngopharynx),
+        tonsil = values(tonsil)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_otolaryngology
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="hearing != null and hearing != ''">
+                hearing = #{hearing},
+            </if>
+            <if test="auricle != null and auricle != ''">
+                auricle = #{auricle},
+            </if>
+            <if test="externalAuditoryMeatus != null and externalAuditoryMeatus != ''">
+                external_auditory_meatus = #{externalAuditoryMeatus},
+            </if>
+            <if test="tympanicMembrane != null and tympanicMembrane != ''">
+                tympanic_membrane = #{tympanicMembrane},
+            </if>
+            <if test="externalNose != null and externalNose != ''">
+                external_nose = #{externalNose},
+            </if>
+            <if test="nasalCavity != null and nasalCavity != ''">
+                nasal_cavity = #{nasalCavity},
+            </if>
+            <if test="oralPharynx != null and oralPharynx != ''">
+                oral_pharynx = #{oralPharynx},
+            </if>
+            <if test="laryngopharynx != null and laryngopharynx != ''">
+                laryngopharynx = #{laryngopharynx},
+            </if>
+            <if test="tonsil != null and tonsil != ''">
+                tonsil = #{tonsil},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_otolaryngology where id = #{id}
+    </delete>
+
+</mapper>
+

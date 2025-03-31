@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/api/dchealth-api/src/main/resources/mapper/dchealth/msgRemind
+svn://xiaoshiguang.top
+
+
+
+2023-11-18T08:37:46.685627Z
+15064
+guanmi
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+MsgReminderTaskMapper.xml
+file
+
+
+
+
+2024-09-03T07:48:16.591000Z
+f02e385088a974789fe67df6f30d4828
+2023-06-07T07:49:47.256092Z
+11906
+cuitao
+
+MsgReminderTaskTemplateMapper.xml
+file
+
+
+
+
+2024-09-03T07:48:16.591000Z
+3990b7aa484c50146cb965c7474c22f7
+2023-06-07T07:49:47.256092Z
+11906
+cuitao
+

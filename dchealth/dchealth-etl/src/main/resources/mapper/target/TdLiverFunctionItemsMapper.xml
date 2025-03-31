@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdLiverFunctionItemsMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdLiverFunctionItems" id="TdLiverFunctionItemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="totalBileAcid" column="total_bile_acid" jdbcType="VARCHAR"/>
+        <result property="whiteBallRatio" column="white_ball_ratio" jdbcType="VARCHAR"/>
+        <result property="astAltRatio" column="ast_alt_ratio" jdbcType="VARCHAR"/>
+        <result property="indirectBilirubin" column="indirect_bilirubin" jdbcType="VARCHAR"/>
+        <result property="alanineAminotransferase" column="alanine_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="aspartateAminotransferase" column="aspartate_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="totalProtein" column="total_protein" jdbcType="VARCHAR"/>
+        <result property="albumin" column="albumin" jdbcType="VARCHAR"/>
+        <result property="globulin" column="globulin" jdbcType="VARCHAR"/>
+        <result property="totalBilirubin" column="total_bilirubin" jdbcType="VARCHAR"/>
+        <result property="directBilirubin" column="direct_bilirubin" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdLiverFunctionItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_bile_acid, white_ball_ratio, ast_alt_ratio, indirect_bilirubin, alanine_aminotransferase, aspartate_aminotransferase, total_protein, albumin, globulin, total_bilirubin, direct_bilirubin
+        from td_liver_function_items
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdLiverFunctionItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_bile_acid, white_ball_ratio, ast_alt_ratio, indirect_bilirubin, alanine_aminotransferase, aspartate_aminotransferase, total_protein, albumin, globulin, total_bilirubin, direct_bilirubin
+        from td_liver_function_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="totalBileAcid != null and totalBileAcid != ''">
+                and total_bile_acid = #{totalBileAcid}
+            </if>
+            <if test="whiteBallRatio != null and whiteBallRatio != ''">
+                and white_ball_ratio = #{whiteBallRatio}
+            </if>
+            <if test="astAltRatio != null and astAltRatio != ''">
+                and ast_alt_ratio = #{astAltRatio}
+            </if>
+            <if test="indirectBilirubin != null and indirectBilirubin != ''">
+                and indirect_bilirubin = #{indirectBilirubin}
+            </if>
+            <if test="alanineAminotransferase != null and alanineAminotransferase != ''">
+                and alanine_aminotransferase = #{alanineAminotransferase}
+            </if>
+            <if test="aspartateAminotransferase != null and aspartateAminotransferase != ''">
+                and aspartate_aminotransferase = #{aspartateAminotransferase}
+            </if>
+            <if test="totalProtein != null and totalProtein != ''">
+                and total_protein = #{totalProtein}
+            </if>
+            <if test="albumin != null and albumin != ''">
+                and albumin = #{albumin}
+            </if>
+            <if test="globulin != null and globulin != ''">
+                and globulin = #{globulin}
+            </if>
+            <if test="totalBilirubin != null and totalBilirubin != ''">
+                and total_bilirubin = #{totalBilirubin}
+            </if>
+            <if test="directBilirubin != null and directBilirubin != ''">
+                and direct_bilirubin = #{directBilirubin}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_liver_function_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="totalBileAcid != null and totalBileAcid != ''">
+                and total_bile_acid = #{totalBileAcid}
+            </if>
+            <if test="whiteBallRatio != null and whiteBallRatio != ''">
+                and white_ball_ratio = #{whiteBallRatio}
+            </if>
+            <if test="astAltRatio != null and astAltRatio != ''">
+                and ast_alt_ratio = #{astAltRatio}
+            </if>
+            <if test="indirectBilirubin != null and indirectBilirubin != ''">
+                and indirect_bilirubin = #{indirectBilirubin}
+            </if>
+            <if test="alanineAminotransferase != null and alanineAminotransferase != ''">
+                and alanine_aminotransferase = #{alanineAminotransferase}
+            </if>
+            <if test="aspartateAminotransferase != null and aspartateAminotransferase != ''">
+                and aspartate_aminotransferase = #{aspartateAminotransferase}
+            </if>
+            <if test="totalProtein != null and totalProtein != ''">
+                and total_protein = #{totalProtein}
+            </if>
+            <if test="albumin != null and albumin != ''">
+                and albumin = #{albumin}
+            </if>
+            <if test="globulin != null and globulin != ''">
+                and globulin = #{globulin}
+            </if>
+            <if test="totalBilirubin != null and totalBilirubin != ''">
+                and total_bilirubin = #{totalBilirubin}
+            </if>
+            <if test="directBilirubin != null and directBilirubin != ''">
+                and direct_bilirubin = #{directBilirubin}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_liver_function_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_bile_acid, white_ball_ratio, ast_alt_ratio, indirect_bilirubin, alanine_aminotransferase, aspartate_aminotransferase, total_protein, albumin, globulin, total_bilirubin, direct_bilirubin)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{totalBileAcid}, #{whiteBallRatio}, #{astAltRatio}, #{indirectBilirubin}, #{alanineAminotransferase}, #{aspartateAminotransferase}, #{totalProtein}, #{albumin}, #{globulin}, #{totalBilirubin}, #{directBilirubin})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_liver_function_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_bile_acid, white_ball_ratio, ast_alt_ratio, indirect_bilirubin, alanine_aminotransferase, aspartate_aminotransferase, total_protein, albumin, globulin, total_bilirubin, direct_bilirubin)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalBileAcid}, #{entity.whiteBallRatio}, #{entity.astAltRatio}, #{entity.indirectBilirubin}, #{entity.alanineAminotransferase}, #{entity.aspartateAminotransferase}, #{entity.totalProtein}, #{entity.albumin}, #{entity.globulin}, #{entity.totalBilirubin}, #{entity.directBilirubin})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_liver_function_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_bile_acid, white_ball_ratio, ast_alt_ratio, indirect_bilirubin, alanine_aminotransferase, aspartate_aminotransferase, total_protein, albumin, globulin, total_bilirubin, direct_bilirubin)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalBileAcid}, #{entity.whiteBallRatio}, #{entity.astAltRatio}, #{entity.indirectBilirubin}, #{entity.alanineAminotransferase}, #{entity.aspartateAminotransferase}, #{entity.totalProtein}, #{entity.albumin}, #{entity.globulin}, #{entity.totalBilirubin}, #{entity.directBilirubin})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_liver_function_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_bile_acid, white_ball_ratio, ast_alt_ratio, indirect_bilirubin, alanine_aminotransferase, aspartate_aminotransferase, total_protein, albumin, globulin, total_bilirubin, direct_bilirubin)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalBileAcid}, #{entity.whiteBallRatio}, #{entity.astAltRatio}, #{entity.indirectBilirubin}, #{entity.alanineAminotransferase}, #{entity.aspartateAminotransferase}, #{entity.totalProtein}, #{entity.albumin}, #{entity.globulin}, #{entity.totalBilirubin}, #{entity.directBilirubin})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        total_bile_acid = values(total_bile_acid),
+        white_ball_ratio = values(white_ball_ratio),
+        ast_alt_ratio = values(ast_alt_ratio),
+        indirect_bilirubin = values(indirect_bilirubin),
+        alanine_aminotransferase = values(alanine_aminotransferase),
+        aspartate_aminotransferase = values(aspartate_aminotransferase),
+        total_protein = values(total_protein),
+        albumin = values(albumin),
+        globulin = values(globulin),
+        total_bilirubin = values(total_bilirubin),
+        direct_bilirubin = values(direct_bilirubin)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_liver_function_items
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="totalBileAcid != null and totalBileAcid != ''">
+                total_bile_acid = #{totalBileAcid},
+            </if>
+            <if test="whiteBallRatio != null and whiteBallRatio != ''">
+                white_ball_ratio = #{whiteBallRatio},
+            </if>
+            <if test="astAltRatio != null and astAltRatio != ''">
+                ast_alt_ratio = #{astAltRatio},
+            </if>
+            <if test="indirectBilirubin != null and indirectBilirubin != ''">
+                indirect_bilirubin = #{indirectBilirubin},
+            </if>
+            <if test="alanineAminotransferase != null and alanineAminotransferase != ''">
+                alanine_aminotransferase = #{alanineAminotransferase},
+            </if>
+            <if test="aspartateAminotransferase != null and aspartateAminotransferase != ''">
+                aspartate_aminotransferase = #{aspartateAminotransferase},
+            </if>
+            <if test="totalProtein != null and totalProtein != ''">
+                total_protein = #{totalProtein},
+            </if>
+            <if test="albumin != null and albumin != ''">
+                albumin = #{albumin},
+            </if>
+            <if test="globulin != null and globulin != ''">
+                globulin = #{globulin},
+            </if>
+            <if test="totalBilirubin != null and totalBilirubin != ''">
+                total_bilirubin = #{totalBilirubin},
+            </if>
+            <if test="directBilirubin != null and directBilirubin != ''">
+                direct_bilirubin = #{directBilirubin},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_liver_function_items where id = #{id}
+    </delete>
+
+</mapper>
+

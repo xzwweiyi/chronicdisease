@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.SysPopNoticeMapper">
+
+    <resultMap type="com.dchealth.cro.research.domain.SysPopNotice"  id="SysPopNoticeResult">
+        <result property="id"    column="id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="researchName"    column="research_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isread"    column="isread"    />
+        <result property="researchDescription"    column="research_description"    />
+    </resultMap>
+
+    <sql id="selectSysPopNoticeVo">
+        select id, research_id, research_name, remark, user_id, create_time, update_time, create_by, update_by, isread,research_description from sys_pop_notice
+    </sql>
+
+    <select id="selectSysPopNoticeList" parameterType="com.dchealth.cro.research.domain.SysPopNotice" resultMap="SysPopNoticeResult">
+        <include refid="selectSysPopNoticeVo"/>
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="researchName != null  and researchName != ''"> and research_name like concat('%', #{researchName}, '%')</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="isread != null "> and isread = #{isread}</if>
+        </where>
+    </select>
+
+    <select id="selectSysPopNoticeById" parameterType="Long" resultMap="SysPopNoticeResult">
+        <include refid="selectSysPopNoticeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysPopNotice" parameterType="com.dchealth.cro.research.domain.SysPopNotice" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_pop_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="researchName != null">research_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isread != null">isread,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="researchName != null">#{researchName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isread != null">#{isread},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysPopNotice" parameterType="com.dchealth.cro.research.domain.SysPopNotice">
+        update sys_pop_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="researchName != null">research_name = #{researchName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isread != null">isread = #{isread},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysPopNoticeById" parameterType="Long">
+        delete from sys_pop_notice where id = #{id}
+    </delete>
+
+    <delete id="deleteSysPopNoticeByIds" parameterType="String">
+        delete from sys_pop_notice where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

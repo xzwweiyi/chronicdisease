@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpBloodBiochemistryMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpBloodBiochemistry" id="MpBloodBiochemistryResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="bloodTp"    column="blood_tp"    />
+        <result property="bloodAlb"    column="blood_alb"    />
+        <result property="bloodGlubolin"    column="blood_glubolin"    />
+        <result property="bloodAToG"    column="blood_a_to_g"    />
+        <result property="bloodAst"    column="blood_ast"    />
+        <result property="bloodAlt"    column="blood_alt"    />
+        <result property="astToAlt"    column="ast_to_alt"    />
+        <result property="bloodTba"    column="blood_tba"    />
+        <result property="bloodTbil"    column="blood_tbil"    />
+        <result property="bloodDbil"    column="blood_dbil"    />
+        <result property="bloodIbil"    column="blood_ibil"    />
+        <result property="bloodAlp"    column="blood_alp"    />
+        <result property="bloodYGt"    column="blood_y_gt"    />
+        <result property="bloodChe"    column="blood_che"    />
+        <result property="bloodLdh"    column="blood_ldh"    />
+        <result property="bloodHbdh"    column="blood_hbdh"    />
+        <result property="bloodCk"    column="blood_ck"    />
+        <result property="bloodCkMb"    column="blood_ck_mb"    />
+        <result property="bloodBun"    column="blood_bun"    />
+        <result property="bloodCr"    column="blood_cr"    />
+        <result property="bloodUa"    column="blood_ua"    />
+        <result property="bloodGlucose"    column="blood_glucose"    />
+        <result property="bloodCpi"    column="blood_cpi"    />
+        <result property="bloodΒ2Mg"    column="blood_B2_mg"    />
+        <result property="bloodK"    column="blood_k"    />
+        <result property="bloodNa"    column="blood_na"    />
+        <result property="bloodCl"    column="blood_cl"    />
+        <result property="bloodCa"    column="blood_ca"    />
+        <result property="bloodIp"    column="blood_ip"    />
+        <result property="bloodMg"    column="blood_mg"    />
+        <result property="bloodTco2"    column="blood_tco2"    />
+        <result property="bloodTg"    column="blood_tg"    />
+        <result property="bloodCho"    column="blood_cho"    />
+        <result property="bloodHdlC"    column="blood_hdl_c"    />
+        <result property="bloodLdlC"    column="blood_ldl_c"    />
+        <result property="bloodApoA1"    column="blood_apo_a1"    />
+        <result property="bloodApoB"    column="blood_apo_b"    />
+        <result property="bloodApoA1ToB"    column="blood_apo_a1_to_b"    />
+        <result property="bloodLpa"    column="blood_lpa"    />
+    </resultMap>
+
+    <sql id="selectMpBloodBiochemistryVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, blood_tp, blood_alb, blood_glubolin, blood_a_to_g, blood_ast, blood_alt, ast_to_alt, blood_tba, blood_tbil, blood_dbil, blood_ibil, blood_alp, blood_y_gt, blood_che, blood_ldh, blood_hbdh, blood_ck, blood_ck_mb, blood_bun, blood_cr, blood_ua, blood_glucose, blood_cpi, blood_B2_mg, blood_k, blood_na, blood_cl, blood_ca, blood_ip, blood_mg, blood_tco2, blood_tg, blood_cho, blood_hdl_c, blood_ldl_c, blood_apo_a1, blood_apo_b, blood_apo_a1_to_b, blood_lpa from mp_blood_biochemistry
+    </sql>
+
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpBloodBiochemistryResult">
+        <include refid="selectMpBloodBiochemistryVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+    <select id="selectByPersonId" resultMap="MpBloodBiochemistryResult">
+        <include refid="selectMpBloodBiochemistryVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+</mapper>

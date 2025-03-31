@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchDiseasesMapper">
+    
+    <resultMap type="com.dchealth.cro.research.domain.ResearchDiseases" id="ResearchDiseasesResult">
+        <result property="diseaseId"    column="disease_id"    />
+        <result property="diseaseName"    column="disease_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="sortNum"    column="sort_num"    />
+    </resultMap>
+
+    <sql id="selectResearchDiseasesVo">
+        select disease_id, disease_name, dept_id, is_deleted, create_time, create_by, update_time, update_by, sort_num from research_diseases
+    </sql>
+
+    <select id="selectResearchDiseasesList" parameterType="com.dchealth.cro.research.domain.ResearchDiseases" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        <where>  
+            <if test="diseaseName != null  and diseaseName != ''"> and disease_name like concat('%', #{diseaseName}, '%')</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="isDeleted != null  and isDeleted != ''"> and is_deleted = #{isDeleted}</if>
+            <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearchDiseasesByDiseaseId" parameterType="Long" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        where disease_id = #{diseaseId}
+    </select>
+
+    <select id="selectResearchDiseasesByDeptId" parameterType="Long" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        where dept_id = #{deptId} and is_deleted = '0'
+    </select>
+
+    <select id="selectResearchDiseasesByAuth" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        where is_deleted='0'
+    </select>
+
+    <select id="selectResearchDiseasesByUserId" parameterType="Long" resultMap="ResearchDiseasesResult">
+        select g.disease_id, g.disease_name, g.dept_id, g.is_deleted, g.create_time, g.create_by, g.update_time, g.update_by, g.sort_num
+        from research_diseases g
+        inner join research_info ri on g.disease_id=ri.disease_type_id
+        inner join sys_dept d on  ri.dept_id=d.dept_id
+        INNER JOIN (
+            select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
+        ) ru on ri.id=ru.research_id
+        where  g.is_deleted='0' and d.del_flag=0 and ri.del_flag=0
+        GROUP BY g.disease_id
+    </select>
+
+    <insert id="insertResearchDiseases" parameterType="com.dchealth.cro.research.domain.ResearchDiseases" useGeneratedKeys="true" keyProperty="diseaseId">
+        insert into research_diseases
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="diseaseName != null">disease_name,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sortNum != null">sort_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="diseaseName != null">#{diseaseName},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchDiseases" parameterType="com.dchealth.cro.research.domain.ResearchDiseases">
+        update research_diseases
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="diseaseName != null">disease_name = #{diseaseName},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+        </trim>
+        where disease_id = #{diseaseId}
+    </update>
+
+    <delete id="deleteResearchDiseasesByDiseaseId" parameterType="Long">
+        delete from research_diseases where disease_id = #{diseaseId}
+    </delete>
+
+    <delete id="deleteResearchDiseasesByDiseaseIds" parameterType="String">
+        delete from research_diseases where disease_id in 
+        <foreach item="diseaseId" collection="array" open="(" separator="," close=")">
+            #{diseaseId}
+        </foreach>
+    </delete>
+</mapper>

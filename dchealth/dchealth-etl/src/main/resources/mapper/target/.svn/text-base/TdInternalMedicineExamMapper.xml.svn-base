@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdInternalMedicineExamMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdInternalMedicineExam" id="TdInternalMedicineExamMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="chestContour" column="chest_contour" jdbcType="VARCHAR"/>
+        <result property="chestPalpation" column="chest_palpation" jdbcType="VARCHAR"/>
+        <result property="chestPercussion" column="chest_percussion" jdbcType="VARCHAR"/>
+        <result property="cardiacBorder" column="cardiac_border" jdbcType="VARCHAR"/>
+        <result property="pulmonaryAuscultation" column="pulmonary_auscultation" jdbcType="VARCHAR"/>
+        <result property="heartSound" column="heart_sound" jdbcType="VARCHAR"/>
+        <result property="cardiacRhythm" column="cardiac_rhythm" jdbcType="VARCHAR"/>
+        <result property="cardiacMurmur" column="cardiac_murmur" jdbcType="VARCHAR"/>
+        <result property="hepaticPalpation" column="hepatic_palpation" jdbcType="VARCHAR"/>
+        <result property="splenicPalpation" column="splenic_palpation" jdbcType="VARCHAR"/>
+        <result property="abdominalContour" column="abdominal_contour" jdbcType="VARCHAR"/>
+        <result property="abdominalTenderness" column="abdominal_tenderness" jdbcType="VARCHAR"/>
+        <result property="abdominalPercussion" column="abdominal_percussion" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdInternalMedicineExamMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, chest_contour, chest_palpation, chest_percussion, cardiac_border, pulmonary_auscultation, heart_sound, cardiac_rhythm, cardiac_murmur, hepatic_palpation, splenic_palpation, abdominal_contour, abdominal_tenderness, abdominal_percussion
+        from td_internal_medicine_exam
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdInternalMedicineExamMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, chest_contour, chest_palpation, chest_percussion, cardiac_border, pulmonary_auscultation, heart_sound, cardiac_rhythm, cardiac_murmur, hepatic_palpation, splenic_palpation, abdominal_contour, abdominal_tenderness, abdominal_percussion
+        from td_internal_medicine_exam
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="chestContour != null and chestContour != ''">
+                and chest_contour = #{chestContour}
+            </if>
+            <if test="chestPalpation != null and chestPalpation != ''">
+                and chest_palpation = #{chestPalpation}
+            </if>
+            <if test="chestPercussion != null and chestPercussion != ''">
+                and chest_percussion = #{chestPercussion}
+            </if>
+            <if test="cardiacBorder != null and cardiacBorder != ''">
+                and cardiac_border = #{cardiacBorder}
+            </if>
+            <if test="pulmonaryAuscultation != null and pulmonaryAuscultation != ''">
+                and pulmonary_auscultation = #{pulmonaryAuscultation}
+            </if>
+            <if test="heartSound != null and heartSound != ''">
+                and heart_sound = #{heartSound}
+            </if>
+            <if test="cardiacRhythm != null and cardiacRhythm != ''">
+                and cardiac_rhythm = #{cardiacRhythm}
+            </if>
+            <if test="cardiacMurmur != null and cardiacMurmur != ''">
+                and cardiac_murmur = #{cardiacMurmur}
+            </if>
+            <if test="hepaticPalpation != null and hepaticPalpation != ''">
+                and hepatic_palpation = #{hepaticPalpation}
+            </if>
+            <if test="splenicPalpation != null and splenicPalpation != ''">
+                and splenic_palpation = #{splenicPalpation}
+            </if>
+            <if test="abdominalContour != null and abdominalContour != ''">
+                and abdominal_contour = #{abdominalContour}
+            </if>
+            <if test="abdominalTenderness != null and abdominalTenderness != ''">
+                and abdominal_tenderness = #{abdominalTenderness}
+            </if>
+            <if test="abdominalPercussion != null and abdominalPercussion != ''">
+                and abdominal_percussion = #{abdominalPercussion}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_internal_medicine_exam
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="chestContour != null and chestContour != ''">
+                and chest_contour = #{chestContour}
+            </if>
+            <if test="chestPalpation != null and chestPalpation != ''">
+                and chest_palpation = #{chestPalpation}
+            </if>
+            <if test="chestPercussion != null and chestPercussion != ''">
+                and chest_percussion = #{chestPercussion}
+            </if>
+            <if test="cardiacBorder != null and cardiacBorder != ''">
+                and cardiac_border = #{cardiacBorder}
+            </if>
+            <if test="pulmonaryAuscultation != null and pulmonaryAuscultation != ''">
+                and pulmonary_auscultation = #{pulmonaryAuscultation}
+            </if>
+            <if test="heartSound != null and heartSound != ''">
+                and heart_sound = #{heartSound}
+            </if>
+            <if test="cardiacRhythm != null and cardiacRhythm != ''">
+                and cardiac_rhythm = #{cardiacRhythm}
+            </if>
+            <if test="cardiacMurmur != null and cardiacMurmur != ''">
+                and cardiac_murmur = #{cardiacMurmur}
+            </if>
+            <if test="hepaticPalpation != null and hepaticPalpation != ''">
+                and hepatic_palpation = #{hepaticPalpation}
+            </if>
+            <if test="splenicPalpation != null and splenicPalpation != ''">
+                and splenic_palpation = #{splenicPalpation}
+            </if>
+            <if test="abdominalContour != null and abdominalContour != ''">
+                and abdominal_contour = #{abdominalContour}
+            </if>
+            <if test="abdominalTenderness != null and abdominalTenderness != ''">
+                and abdominal_tenderness = #{abdominalTenderness}
+            </if>
+            <if test="abdominalPercussion != null and abdominalPercussion != ''">
+                and abdominal_percussion = #{abdominalPercussion}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_internal_medicine_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, chest_contour, chest_palpation, chest_percussion, cardiac_border, pulmonary_auscultation, heart_sound, cardiac_rhythm, cardiac_murmur, hepatic_palpation, splenic_palpation, abdominal_contour, abdominal_tenderness, abdominal_percussion)
+        values (#{studyId}, #{examNo}, #{testNo}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{createTime}, #{updateTime}, #{chestContour}, #{chestPalpation}, #{chestPercussion}, #{cardiacBorder}, #{pulmonaryAuscultation}, #{heartSound}, #{cardiacRhythm}, #{cardiacMurmur}, #{hepaticPalpation}, #{splenicPalpation}, #{abdominalContour}, #{abdominalTenderness}, #{abdominalPercussion})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_internal_medicine_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, chest_contour, chest_palpation, chest_percussion, cardiac_border, pulmonary_auscultation, heart_sound, cardiac_rhythm, cardiac_murmur, hepatic_palpation, splenic_palpation, abdominal_contour, abdominal_tenderness, abdominal_percussion)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.chestContour}, #{entity.chestPalpation}, #{entity.chestPercussion}, #{entity.cardiacBorder}, #{entity.pulmonaryAuscultation}, #{entity.heartSound}, #{entity.cardiacRhythm}, #{entity.cardiacMurmur}, #{entity.hepaticPalpation}, #{entity.splenicPalpation}, #{entity.abdominalContour}, #{entity.abdominalTenderness}, #{entity.abdominalPercussion})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_internal_medicine_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, chest_contour, chest_palpation, chest_percussion, cardiac_border, pulmonary_auscultation, heart_sound, cardiac_rhythm, cardiac_murmur, hepatic_palpation, splenic_palpation, abdominal_contour, abdominal_tenderness, abdominal_percussion)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.chestContour}, #{entity.chestPalpation}, #{entity.chestPercussion}, #{entity.cardiacBorder}, #{entity.pulmonaryAuscultation}, #{entity.heartSound}, #{entity.cardiacRhythm}, #{entity.cardiacMurmur}, #{entity.hepaticPalpation}, #{entity.splenicPalpation}, #{entity.abdominalContour}, #{entity.abdominalTenderness}, #{entity.abdominalPercussion})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_internal_medicine_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, chest_contour, chest_palpation, chest_percussion, cardiac_border, pulmonary_auscultation, heart_sound, cardiac_rhythm, cardiac_murmur, hepatic_palpation, splenic_palpation, abdominal_contour, abdominal_tenderness, abdominal_percussion)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.chestContour}, #{entity.chestPalpation}, #{entity.chestPercussion}, #{entity.cardiacBorder}, #{entity.pulmonaryAuscultation}, #{entity.heartSound}, #{entity.cardiacRhythm}, #{entity.cardiacMurmur}, #{entity.hepaticPalpation}, #{entity.splenicPalpation}, #{entity.abdominalContour}, #{entity.abdominalTenderness}, #{entity.abdominalPercussion})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        chest_contour = values(chest_contour),
+        chest_palpation = values(chest_palpation),
+        chest_percussion = values(chest_percussion),
+        cardiac_border = values(cardiac_border),
+        pulmonary_auscultation = values(pulmonary_auscultation),
+        heart_sound = values(heart_sound),
+        cardiac_rhythm = values(cardiac_rhythm),
+        cardiac_murmur = values(cardiac_murmur),
+        hepatic_palpation = values(hepatic_palpation),
+        splenic_palpation = values(splenic_palpation),
+        abdominal_contour = values(abdominal_contour),
+        abdominal_tenderness = values(abdominal_tenderness),
+        abdominal_percussion = values(abdominal_percussion)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_internal_medicine_exam
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="chestContour != null and chestContour != ''">
+                chest_contour = #{chestContour},
+            </if>
+            <if test="chestPalpation != null and chestPalpation != ''">
+                chest_palpation = #{chestPalpation},
+            </if>
+            <if test="chestPercussion != null and chestPercussion != ''">
+                chest_percussion = #{chestPercussion},
+            </if>
+            <if test="cardiacBorder != null and cardiacBorder != ''">
+                cardiac_border = #{cardiacBorder},
+            </if>
+            <if test="pulmonaryAuscultation != null and pulmonaryAuscultation != ''">
+                pulmonary_auscultation = #{pulmonaryAuscultation},
+            </if>
+            <if test="heartSound != null and heartSound != ''">
+                heart_sound = #{heartSound},
+            </if>
+            <if test="cardiacRhythm != null and cardiacRhythm != ''">
+                cardiac_rhythm = #{cardiacRhythm},
+            </if>
+            <if test="cardiacMurmur != null and cardiacMurmur != ''">
+                cardiac_murmur = #{cardiacMurmur},
+            </if>
+            <if test="hepaticPalpation != null and hepaticPalpation != ''">
+                hepatic_palpation = #{hepaticPalpation},
+            </if>
+            <if test="splenicPalpation != null and splenicPalpation != ''">
+                splenic_palpation = #{splenicPalpation},
+            </if>
+            <if test="abdominalContour != null and abdominalContour != ''">
+                abdominal_contour = #{abdominalContour},
+            </if>
+            <if test="abdominalTenderness != null and abdominalTenderness != ''">
+                abdominal_tenderness = #{abdominalTenderness},
+            </if>
+            <if test="abdominalPercussion != null and abdominalPercussion != ''">
+                abdominal_percussion = #{abdominalPercussion},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_internal_medicine_exam where id = #{id}
+    </delete>
+
+</mapper>
+

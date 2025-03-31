@@ -1,0 +1,46 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-system/src/main/java/com/dchealth/compatibility
+svn://xiaoshiguang.top
+
+
+
+2024-07-19T03:26:14.514483Z
+19736
+liqianfeng
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+constants
+dir
+
+domain
+dir
+
+from
+dir
+
+mapper
+dir
+
+utils
+dir
+
+vo
+dir
+

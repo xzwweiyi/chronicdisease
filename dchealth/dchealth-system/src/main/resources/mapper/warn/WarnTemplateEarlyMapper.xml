@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.warn.mapper.WarnTemplateEarlyMapper">
+    
+    <resultMap type="WarnTemplateEarly" id="WarnTemplateEarlyResult">
+        <result property="id"    column="id"    />
+        <result property="earlyWarnType"    column="early_warn_type"    />
+        <result property="isEffect"    column="is_effect"    />
+        <result property="normalStart"    column="normal_start"    />
+        <result property="normalEnd"    column="normal_end"    />
+        <result property="normalValue"    column="normal_value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="conditionType"    column="condition_type"    />
+        <result property="isCondition"    column="is_condition"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="formId"    column="form_id"    />
+        <result property="earlyWarnLevel"    column="early_warn_level"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="warnPreDesc"    column="warn_pre_desc"    />
+    </resultMap>
+
+    <sql id="selectWarnTemplateEarlyVo">
+        select id, early_warn_type, is_effect, normal_start, normal_end, normal_value, create_time, condition_type, is_condition, property_id, form_id, early_warn_level, template_id, warn_pre_desc from warn_template_early
+    </sql>
+
+    <select id="selectWarnTemplateEarlyList" parameterType="WarnTemplateEarly" resultMap="WarnTemplateEarlyResult">
+        <include refid="selectWarnTemplateEarlyVo"/>
+        <where>  
+            <if test="earlyWarnType != null  and earlyWarnType != ''"> and early_warn_type = #{earlyWarnType}</if>
+            <if test="isEffect != null  and isEffect != ''"> and is_effect = #{isEffect}</if>
+            <if test="normalStart != null  and normalStart != ''"> and normal_start = #{normalStart}</if>
+            <if test="normalEnd != null  and normalEnd != ''"> and normal_end = #{normalEnd}</if>
+            <if test="normalValue != null  and normalValue != ''"> and normal_value = #{normalValue}</if>
+            <if test="conditionType != null  and conditionType != ''"> and condition_type = #{conditionType}</if>
+            <if test="isCondition != null  and isCondition != ''"> and is_condition = #{isCondition}</if>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+            <if test="formId != null "> and form_id = #{formId}</if>
+            <if test="earlyWarnLevel != null  and earlyWarnLevel != ''"> and early_warn_level = #{earlyWarnLevel}</if>
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="warnPreDesc != null "> and warn_pre_desc = #{warnPreDesc}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnTemplateEarlyById" parameterType="Long" resultMap="WarnTemplateEarlyResult">
+        <include refid="selectWarnTemplateEarlyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWarnTemplateEarly" parameterType="WarnTemplateEarly" useGeneratedKeys="true" keyProperty="id">
+        insert into warn_template_early
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="earlyWarnType != null">early_warn_type,</if>
+            <if test="isEffect != null">is_effect,</if>
+            <if test="normalStart != null">normal_start,</if>
+            <if test="normalEnd != null">normal_end,</if>
+            <if test="normalValue != null">normal_value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="conditionType != null">condition_type,</if>
+            <if test="isCondition != null">is_condition,</if>
+            <if test="propertyId != null">property_id,</if>
+            <if test="formId != null">form_id,</if>
+            <if test="earlyWarnLevel != null">early_warn_level,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="warnPreDesc != null">warn_pre_desc,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="earlyWarnType != null">#{earlyWarnType},</if>
+            <if test="isEffect != null">#{isEffect},</if>
+            <if test="normalStart != null">#{normalStart},</if>
+            <if test="normalEnd != null">#{normalEnd},</if>
+            <if test="normalValue != null">#{normalValue},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="conditionType != null">#{conditionType},</if>
+            <if test="isCondition != null">#{isCondition},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="formId != null">#{formId},</if>
+            <if test="earlyWarnLevel != null">#{earlyWarnLevel},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="warnPreDesc != null">#{warnPreDesc},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnTemplateEarly" parameterType="WarnTemplateEarly">
+        update warn_template_early
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="earlyWarnType != null">early_warn_type = #{earlyWarnType},</if>
+            <if test="isEffect != null">is_effect = #{isEffect},</if>
+            <if test="normalStart != null">normal_start = #{normalStart},</if>
+            <if test="normalEnd != null">normal_end = #{normalEnd},</if>
+            <if test="normalValue != null">normal_value = #{normalValue},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="conditionType != null">condition_type = #{conditionType},</if>
+            <if test="isCondition != null">is_condition = #{isCondition},</if>
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="formId != null">form_id = #{formId},</if>
+            <if test="earlyWarnLevel != null">early_warn_level = #{earlyWarnLevel},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="warnPreDesc != null">warn_pre_desc = #{warnPreDesc},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWarnTemplateEarlyById" parameterType="Long">
+        delete from warn_template_early where id = #{id}
+    </delete>
+
+    <delete id="deleteWarnTemplateEarlyByIds" parameterType="String">
+        delete from warn_template_early where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

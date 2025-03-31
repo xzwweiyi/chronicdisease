@@ -1,0 +1,180 @@
+package com.dchealth.cro.form.constant;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * 表单字段属性类型
+ */
+public class PropertyType {
+
+    /**
+     * 单选框
+     */
+    public static final String RADIO = "Radio";
+
+    /**
+     * 多选框
+     */
+    public static final String CHECKBOX = "Checkbox";
+
+    /**
+     * 下拉框
+     */
+    public static final String SELECT = "Select";
+
+    /**
+     * 级联
+     */
+    public static final String CASCADER = "Cascader";
+
+    /**
+     * 单行文本
+     */
+    public static final String INPUT = "Input";
+
+    /**
+     * 多行文本
+     */
+    public static final String TEXTAREA = "textarea";
+
+    /**
+     * 日期
+     */
+    public static final String DATE = "Date";
+
+    /**
+     * 日期范围
+     */
+    public static final String DATERANGE = "daterange";
+
+    /**
+     * 上传图片
+     */
+    public static final String UPLOAD = "Upload";
+
+
+    public static final String FORM = "form";
+
+    /**
+     * 计数器
+     */
+    public static final String INPUTNUMBER = "InputNumber";
+
+    /**
+     * 开关
+     */
+    public static final String SWITCH = "switch";
+
+    /**
+     * 滑块
+     */
+    public static final String SLIDER = "slider";
+
+    /**
+     * 分页
+     */
+    public static final String PAGER = "pager";
+
+    /**
+     * 评分
+     */
+    public static final String RATE = "Rate";
+
+    /**
+     * 颜色选择
+     */
+    public static final String COLORPICKER = "ColorPicker";
+
+    /**
+     * 时间
+     */
+    public static final String TIMEPICKER = "timePicker";
+
+
+    /**
+     * 病种
+     */
+    public static final String DISEASES = "diseases";
+
+    /**
+     * 民族
+     */
+    public static final String NATION = "nation";
+
+    /**
+     * 省市县
+     */
+    public static final String PROVINCE = "province";
+
+    /**
+     * 时间计算
+     */
+    public static final String TIMENUMERAL = "TIMENUMERAL";
+
+    /**
+     * 科室
+     */
+    public static final String DEPARTMENTS = "departments";
+
+
+    /**
+     * 是否包含小文本
+     * @param propertyTypes
+     * @return
+     */
+    public static boolean text(Set<String> propertyTypes){
+        propertyTypes = propertyTypes.stream().map(k->k.toUpperCase()).collect(Collectors.toSet());
+        return propertyTypes.contains(RADIO.toUpperCase()) || propertyTypes.contains(CHECKBOX.toUpperCase())
+                || propertyTypes.contains(SELECT.toUpperCase()) || propertyTypes.contains(INPUT.toUpperCase())
+                || propertyTypes.contains(DATE.toUpperCase()) || propertyTypes.contains(DATERANGE.toUpperCase())
+                || propertyTypes.contains(UPLOAD.toUpperCase()) || propertyTypes.contains(INPUTNUMBER.toUpperCase())
+                || propertyTypes.contains(SWITCH.toUpperCase()) || propertyTypes.contains(SLIDER.toUpperCase())
+                || propertyTypes.contains(PAGER.toUpperCase()) || propertyTypes.contains(RATE.toUpperCase())
+                || propertyTypes.contains(COLORPICKER.toUpperCase()) || propertyTypes.contains(TIMEPICKER.toUpperCase())
+                || propertyTypes.contains(DISEASES.toUpperCase()) || propertyTypes.contains(NATION.toUpperCase())
+                || propertyTypes.contains(PROVINCE.toUpperCase()) || propertyTypes.contains(DEPARTMENTS.toUpperCase())
+                || propertyTypes.contains(TIMENUMERAL.toUpperCase());
+    }
+
+    public static boolean text(String propertyType){
+        propertyType = propertyType.toUpperCase();
+        return propertyType.equals(RADIO.toUpperCase()) || propertyType.equals(CHECKBOX.toUpperCase())
+                || propertyType.equals(SELECT.toUpperCase()) || propertyType.equals(INPUT.toUpperCase())
+                || propertyType.equals(DATE.toUpperCase()) || propertyType.equals(DATERANGE.toUpperCase())
+                || propertyType.equals(UPLOAD.toUpperCase()) || propertyType.equals(INPUTNUMBER.toUpperCase())
+                || propertyType.equals(SWITCH.toUpperCase()) || propertyType.equals(SLIDER.toUpperCase())
+                || propertyType.equals(PAGER.toUpperCase()) || propertyType.equals(RATE.toUpperCase())
+                || propertyType.equals(COLORPICKER.toUpperCase()) || propertyType.equals(TIMEPICKER.toUpperCase())
+                || propertyType.equals(DISEASES.toUpperCase()) || propertyType.equals(NATION.toUpperCase())
+                || propertyType.equals(PROVINCE.toUpperCase()) || propertyType.equals(DEPARTMENTS.toUpperCase())
+                || propertyType.equals(TIMENUMERAL.toUpperCase());
+    }
+
+    /**
+     * 是否包含大文本
+     * @param propertyTypes
+     * @return
+     */
+    public static boolean largeText(Set<String> propertyTypes){
+        propertyTypes = propertyTypes.stream().map(k->k.toUpperCase()).collect(Collectors.toSet());
+        return propertyTypes.contains(CASCADER.toUpperCase()) || propertyTypes.contains(TEXTAREA.toUpperCase());
+    }
+
+    public static boolean largeText(String propertyType){
+        propertyType = propertyType.toUpperCase();
+        return propertyType.equals(CASCADER.toUpperCase()) || propertyType.equals(TEXTAREA.toUpperCase());
+    }
+
+    /**
+     * 判断属性类型是否一样
+     * @param p1
+     * @param p2
+     * @return
+     */
+    public static boolean eq(String p1, String p2){
+        return p1.toUpperCase().equals(p2.toUpperCase());
+    }
+
+
+}

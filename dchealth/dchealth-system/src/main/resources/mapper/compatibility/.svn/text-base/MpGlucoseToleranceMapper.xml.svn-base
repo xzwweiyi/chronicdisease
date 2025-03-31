@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpGlucoseToleranceMapper">
+    
+    <resultMap type="com.dchealth.compatibility.domain.MpGlucoseTolerance" id="MpGlucoseToleranceResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="gestationalWeeks"    column="gestational_weeks"    />
+        <result property="height"    column="height"    />
+        <result property="weight"    column="weight"    />
+        <result property="eatAfter"    column="eat_after"    />
+        <result property="eatAfter30min"    column="eat_after_30min"    />
+        <result property="eatAfter1h"    column="eat_after_1h"    />
+        <result property="eatAfter2h"    column="eat_after_2h"    />
+        <result property="eatAfter3h"    column="eat_after_3h"    />
+        <result property="eatAfter4h"    column="eat_after_4h"    />
+        <result property="eatAfter5h"    column="eat_after_5h"    />
+    </resultMap>
+
+    <sql id="selectMpGlucoseToleranceVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, gestational_weeks, height, weight, eat_after, eat_after_30min, eat_after_1h, eat_after_2h, eat_after_3h, eat_after_4h, eat_after_5h from mp_glucose_tolerance
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpGlucoseToleranceResult">
+        <include refid="selectMpGlucoseToleranceVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpGlucoseToleranceResult">
+        <include refid="selectMpGlucoseToleranceVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+</mapper>

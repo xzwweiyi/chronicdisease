@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchInfoArticleMapper">
+
+    <resultMap type="com.dchealth.cro.research.domain.ResearchInfoArticle" id="ResearchInfoArticleMap">
+        <result property="researchId" column="research_id" jdbcType="INTEGER"/>
+        <result property="articleId" column="article_id" jdbcType="INTEGER"/>
+        <result property="diseaseId" column="disease_id" jdbcType="INTEGER"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ResearchInfoArticleMap">
+        select
+          research_id, article_id, disease_id, category_id
+        from research_info_article
+        where research_id = #{researchId}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryResearchInfoArticle"  parameterType="com.dchealth.cro.research.domain.ResearchInfoArticle"
+            resultMap="ResearchInfoArticleMap">
+        select research_id,
+               article_id,
+               disease_id,
+               category_id
+        from research_info_article
+        where disease_id = #{diseaseId}
+          and research_id = #{researchId}
+          and category_id = #{categoryId}
+          and article_id = #{articleId}
+    </select>
+    <select id="queryByArticleIdAndAccountId"  parameterType="java.util.Map" resultMap="ResearchInfoArticleMap">
+        SELECT
+            DISTINCT a.article_id,
+            a.research_id
+        FROM
+            research_info_article a,
+            research_patient b,
+						patient_info c
+        WHERE
+            a.research_id = b.research_id 
+          AND c.patient_id=b.patient_id and c.research_id=b.research_id
+          AND c.account_id = #{accountId}
+          AND a.article_id = #{articleId}
+
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ResearchInfoArticleMap">
+        select
+          research_id, article_id, disease_id, category_id
+        from research_info_article
+        <where>
+            <if test="researchId != null">
+                and research_id = #{researchId}
+            </if>
+            <if test="articleId != null">
+                and article_id = #{articleId}
+            </if>
+            <if test="diseaseId != null">
+                and disease_id = #{diseaseId}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from research_info_article
+        <where>
+            <if test="researchId != null">
+                and research_id = #{researchId}
+            </if>
+            <if test="articleId != null">
+                and article_id = #{articleId}
+            </if>
+            <if test="diseaseId != null">
+                and disease_id = #{diseaseId}
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="researchId" useGeneratedKeys="true">
+        insert into research_info_article(disease_id, category_id)
+        values (#{diseaseId}, #{categoryId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="researchId" useGeneratedKeys="true">
+        insert into research_info_article(disease_id, category_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.diseaseId}, #{entity.categoryId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="researchId" useGeneratedKeys="true">
+        insert into research_info_article(disease_id, category_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.diseaseId}, #{entity.categoryId})
+        </foreach>
+        on duplicate key update
+        disease_id = values(disease_id),
+        category_id = values(category_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update research_info_article
+        <set>
+            <if test="diseaseId != null">
+                disease_id = #{diseaseId},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+        </set>
+        where research_id = #{researchId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from research_info_article where research_id = #{researchId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdUrineRoutineMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdUrineRoutine" id="TdUrineRoutineMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="specificGravityUrine" column="specific_gravity_urine" jdbcType="VARCHAR"/>
+        <result property="urinePh" column="urine_ph" jdbcType="VARCHAR"/>
+        <result property="urineWhiteCells" column="urine_white_cells" jdbcType="VARCHAR"/>
+        <result property="urineNitrite" column="urine_nitrite" jdbcType="VARCHAR"/>
+        <result property="urineProtein" column="urine_protein" jdbcType="VARCHAR"/>
+        <result property="urineGlucose" column="urine_glucose" jdbcType="VARCHAR"/>
+        <result property="urineKetone" column="urine_ketone" jdbcType="VARCHAR"/>
+        <result property="urineUrobilinogen" column="urine_urobilinogen" jdbcType="VARCHAR"/>
+        <result property="urineBilirubin" column="urine_bilirubin" jdbcType="VARCHAR"/>
+        <result property="urineOccultBlood" column="urine_occult_blood" jdbcType="VARCHAR"/>
+        <result property="urinaryRbc" column="urinary_rbc" jdbcType="VARCHAR"/>
+        <result property="urinaryTubeType" column="urinary_tube_type" jdbcType="VARCHAR"/>
+        <result property="urinaryPathologyType" column="urinary_pathology_type" jdbcType="VARCHAR"/>
+        <result property="urineCrystal" column="urine_crystal" jdbcType="VARCHAR"/>
+        <result property="urinarySperm" column="urinary_sperm" jdbcType="VARCHAR"/>
+        <result property="urineColor" column="urine_color" jdbcType="VARCHAR"/>
+        <result property="urinaryRbcHpf" column="urinary_rbc_hpf" jdbcType="VARCHAR"/>
+        <result property="urinaryWbcHbf" column="urinary_wbc_hbf" jdbcType="VARCHAR"/>
+        <result property="urinaryTubeTypeLbf" column="urinary_tube_type_lbf" jdbcType="VARCHAR"/>
+        <result property="mucilaginousFilament" column="mucilaginous_filament" jdbcType="VARCHAR"/>
+        <result property="turbidity" column="turbidity" jdbcType="VARCHAR"/>
+        <result property="leucocyteMass" column="leucocyte_mass" jdbcType="VARCHAR"/>
+        <result property="albuminCreatinineRatio" column="albumin_creatinine_ratio" jdbcType="VARCHAR"/>
+        <result property="albumin" column="albumin" jdbcType="VARCHAR"/>
+        <result property="urineAmylase" column="urine_amylase" jdbcType="VARCHAR"/>
+        <result property="urothelialCells" column="urothelial_cells" jdbcType="VARCHAR"/>
+        <result property="urothelialCellsHbf" column="urothelial_cells_hbf" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdUrineRoutineMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, specific_gravity_urine, urine_ph, urine_white_cells, urine_nitrite, urine_protein, urine_glucose, urine_ketone, urine_urobilinogen, urine_bilirubin, urine_occult_blood, urinary_rbc, urinary_tube_type, urinary_pathology_type, urine_crystal, urinary_sperm, urine_color, urinary_rbc_hpf, urinary_wbc_hbf, urinary_tube_type_lbf, mucilaginous_filament, turbidity, leucocyte_mass, albumin_creatinine_ratio, albumin, urine_amylase, urothelial_cells, urothelial_cells_hbf
+        from td_urine_routine
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdUrineRoutineMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, specific_gravity_urine, urine_ph, urine_white_cells, urine_nitrite, urine_protein, urine_glucose, urine_ketone, urine_urobilinogen, urine_bilirubin, urine_occult_blood, urinary_rbc, urinary_tube_type, urinary_pathology_type, urine_crystal, urinary_sperm, urine_color, urinary_rbc_hpf, urinary_wbc_hbf, urinary_tube_type_lbf, mucilaginous_filament, turbidity, leucocyte_mass, albumin_creatinine_ratio, albumin, urine_amylase, urothelial_cells, urothelial_cells_hbf
+        from td_urine_routine
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="specificGravityUrine != null and specificGravityUrine != ''">
+                and specific_gravity_urine = #{specificGravityUrine}
+            </if>
+            <if test="urinePh != null and urinePh != ''">
+                and urine_ph = #{urinePh}
+            </if>
+            <if test="urineWhiteCells != null and urineWhiteCells != ''">
+                and urine_white_cells = #{urineWhiteCells}
+            </if>
+            <if test="urineNitrite != null and urineNitrite != ''">
+                and urine_nitrite = #{urineNitrite}
+            </if>
+            <if test="urineProtein != null and urineProtein != ''">
+                and urine_protein = #{urineProtein}
+            </if>
+            <if test="urineGlucose != null and urineGlucose != ''">
+                and urine_glucose = #{urineGlucose}
+            </if>
+            <if test="urineKetone != null and urineKetone != ''">
+                and urine_ketone = #{urineKetone}
+            </if>
+            <if test="urineUrobilinogen != null and urineUrobilinogen != ''">
+                and urine_urobilinogen = #{urineUrobilinogen}
+            </if>
+            <if test="urineBilirubin != null and urineBilirubin != ''">
+                and urine_bilirubin = #{urineBilirubin}
+            </if>
+            <if test="urineOccultBlood != null and urineOccultBlood != ''">
+                and urine_occult_blood = #{urineOccultBlood}
+            </if>
+            <if test="urinaryRbc != null and urinaryRbc != ''">
+                and urinary_rbc = #{urinaryRbc}
+            </if>
+            <if test="urinaryTubeType != null and urinaryTubeType != ''">
+                and urinary_tube_type = #{urinaryTubeType}
+            </if>
+            <if test="urinaryPathologyType != null and urinaryPathologyType != ''">
+                and urinary_pathology_type = #{urinaryPathologyType}
+            </if>
+            <if test="urineCrystal != null and urineCrystal != ''">
+                and urine_crystal = #{urineCrystal}
+            </if>
+            <if test="urinarySperm != null and urinarySperm != ''">
+                and urinary_sperm = #{urinarySperm}
+            </if>
+            <if test="urineColor != null and urineColor != ''">
+                and urine_color = #{urineColor}
+            </if>
+            <if test="urinaryRbcHpf != null and urinaryRbcHpf != ''">
+                and urinary_rbc_hpf = #{urinaryRbcHpf}
+            </if>
+            <if test="urinaryWbcHbf != null and urinaryWbcHbf != ''">
+                and urinary_wbc_hbf = #{urinaryWbcHbf}
+            </if>
+            <if test="urinaryTubeTypeLbf != null and urinaryTubeTypeLbf != ''">
+                and urinary_tube_type_lbf = #{urinaryTubeTypeLbf}
+            </if>
+            <if test="mucilaginousFilament != null and mucilaginousFilament != ''">
+                and mucilaginous_filament = #{mucilaginousFilament}
+            </if>
+            <if test="turbidity != null and turbidity != ''">
+                and turbidity = #{turbidity}
+            </if>
+            <if test="leucocyteMass != null and leucocyteMass != ''">
+                and leucocyte_mass = #{leucocyteMass}
+            </if>
+            <if test="albuminCreatinineRatio != null and albuminCreatinineRatio != ''">
+                and albumin_creatinine_ratio = #{albuminCreatinineRatio}
+            </if>
+            <if test="albumin != null and albumin != ''">
+                and albumin = #{albumin}
+            </if>
+            <if test="urineAmylase != null and urineAmylase != ''">
+                and urine_amylase = #{urineAmylase}
+            </if>
+            <if test="urothelialCells != null and urothelialCells != ''">
+                and urothelial_cells = #{urothelialCells}
+            </if>
+            <if test="urothelialCellsHbf != null and urothelialCellsHbf != ''">
+                and urothelial_cells_hbf = #{urothelialCellsHbf}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_urine_routine
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="specificGravityUrine != null and specificGravityUrine != ''">
+                and specific_gravity_urine = #{specificGravityUrine}
+            </if>
+            <if test="urinePh != null and urinePh != ''">
+                and urine_ph = #{urinePh}
+            </if>
+            <if test="urineWhiteCells != null and urineWhiteCells != ''">
+                and urine_white_cells = #{urineWhiteCells}
+            </if>
+            <if test="urineNitrite != null and urineNitrite != ''">
+                and urine_nitrite = #{urineNitrite}
+            </if>
+            <if test="urineProtein != null and urineProtein != ''">
+                and urine_protein = #{urineProtein}
+            </if>
+            <if test="urineGlucose != null and urineGlucose != ''">
+                and urine_glucose = #{urineGlucose}
+            </if>
+            <if test="urineKetone != null and urineKetone != ''">
+                and urine_ketone = #{urineKetone}
+            </if>
+            <if test="urineUrobilinogen != null and urineUrobilinogen != ''">
+                and urine_urobilinogen = #{urineUrobilinogen}
+            </if>
+            <if test="urineBilirubin != null and urineBilirubin != ''">
+                and urine_bilirubin = #{urineBilirubin}
+            </if>
+            <if test="urineOccultBlood != null and urineOccultBlood != ''">
+                and urine_occult_blood = #{urineOccultBlood}
+            </if>
+            <if test="urinaryRbc != null and urinaryRbc != ''">
+                and urinary_rbc = #{urinaryRbc}
+            </if>
+            <if test="urinaryTubeType != null and urinaryTubeType != ''">
+                and urinary_tube_type = #{urinaryTubeType}
+            </if>
+            <if test="urinaryPathologyType != null and urinaryPathologyType != ''">
+                and urinary_pathology_type = #{urinaryPathologyType}
+            </if>
+            <if test="urineCrystal != null and urineCrystal != ''">
+                and urine_crystal = #{urineCrystal}
+            </if>
+            <if test="urinarySperm != null and urinarySperm != ''">
+                and urinary_sperm = #{urinarySperm}
+            </if>
+            <if test="urineColor != null and urineColor != ''">
+                and urine_color = #{urineColor}
+            </if>
+            <if test="urinaryRbcHpf != null and urinaryRbcHpf != ''">
+                and urinary_rbc_hpf = #{urinaryRbcHpf}
+            </if>
+            <if test="urinaryWbcHbf != null and urinaryWbcHbf != ''">
+                and urinary_wbc_hbf = #{urinaryWbcHbf}
+            </if>
+            <if test="urinaryTubeTypeLbf != null and urinaryTubeTypeLbf != ''">
+                and urinary_tube_type_lbf = #{urinaryTubeTypeLbf}
+            </if>
+            <if test="mucilaginousFilament != null and mucilaginousFilament != ''">
+                and mucilaginous_filament = #{mucilaginousFilament}
+            </if>
+            <if test="turbidity != null and turbidity != ''">
+                and turbidity = #{turbidity}
+            </if>
+            <if test="leucocyteMass != null and leucocyteMass != ''">
+                and leucocyte_mass = #{leucocyteMass}
+            </if>
+            <if test="albuminCreatinineRatio != null and albuminCreatinineRatio != ''">
+                and albumin_creatinine_ratio = #{albuminCreatinineRatio}
+            </if>
+            <if test="albumin != null and albumin != ''">
+                and albumin = #{albumin}
+            </if>
+            <if test="urineAmylase != null and urineAmylase != ''">
+                and urine_amylase = #{urineAmylase}
+            </if>
+            <if test="urothelialCells != null and urothelialCells != ''">
+                and urothelial_cells = #{urothelialCells}
+            </if>
+            <if test="urothelialCellsHbf != null and urothelialCellsHbf != ''">
+                and urothelial_cells_hbf = #{urothelialCellsHbf}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_urine_routine(study_id, patient_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, specific_gravity_urine, urine_ph, urine_white_cells, urine_nitrite, urine_protein, urine_glucose, urine_ketone, urine_urobilinogen, urine_bilirubin, urine_occult_blood, urinary_rbc, urinary_tube_type, urinary_pathology_type, urine_crystal, urinary_sperm, urine_color, urinary_rbc_hpf, urinary_wbc_hbf, urinary_tube_type_lbf, mucilaginous_filament, turbidity, leucocyte_mass, albumin_creatinine_ratio, albumin, urine_amylase, urothelial_cells, urothelial_cells_hbf)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{createTime}, #{updateTime}, #{specificGravityUrine}, #{urinePh}, #{urineWhiteCells}, #{urineNitrite}, #{urineProtein}, #{urineGlucose}, #{urineKetone}, #{urineUrobilinogen}, #{urineBilirubin}, #{urineOccultBlood}, #{urinaryRbc}, #{urinaryTubeType}, #{urinaryPathologyType}, #{urineCrystal}, #{urinarySperm}, #{urineColor}, #{urinaryRbcHpf}, #{urinaryWbcHbf}, #{urinaryTubeTypeLbf}, #{mucilaginousFilament}, #{turbidity}, #{leucocyteMass}, #{albuminCreatinineRatio}, #{albumin}, #{urineAmylase}, #{urothelialCells}, #{urothelialCellsHbf})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_urine_routine(study_id, patient_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, specific_gravity_urine, urine_ph, urine_white_cells, urine_nitrite, urine_protein, urine_glucose, urine_ketone, urine_urobilinogen, urine_bilirubin, urine_occult_blood, urinary_rbc, urinary_tube_type, urinary_pathology_type, urine_crystal, urinary_sperm, urine_color, urinary_rbc_hpf, urinary_wbc_hbf, urinary_tube_type_lbf, mucilaginous_filament, turbidity, leucocyte_mass, albumin_creatinine_ratio, albumin, urine_amylase, urothelial_cells, urothelial_cells_hbf)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.specificGravityUrine}, #{entity.urinePh}, #{entity.urineWhiteCells}, #{entity.urineNitrite}, #{entity.urineProtein}, #{entity.urineGlucose}, #{entity.urineKetone}, #{entity.urineUrobilinogen}, #{entity.urineBilirubin}, #{entity.urineOccultBlood}, #{entity.urinaryRbc}, #{entity.urinaryTubeType}, #{entity.urinaryPathologyType}, #{entity.urineCrystal}, #{entity.urinarySperm}, #{entity.urineColor}, #{entity.urinaryRbcHpf}, #{entity.urinaryWbcHbf}, #{entity.urinaryTubeTypeLbf}, #{entity.mucilaginousFilament}, #{entity.turbidity}, #{entity.leucocyteMass}, #{entity.albuminCreatinineRatio}, #{entity.albumin}, #{entity.urineAmylase}, #{entity.urothelialCells}, #{entity.urothelialCellsHbf})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_urine_routine(study_id, patient_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, specific_gravity_urine, urine_ph, urine_white_cells, urine_nitrite, urine_protein, urine_glucose, urine_ketone, urine_urobilinogen, urine_bilirubin, urine_occult_blood, urinary_rbc, urinary_tube_type, urinary_pathology_type, urine_crystal, urinary_sperm, urine_color, urinary_rbc_hpf, urinary_wbc_hbf, urinary_tube_type_lbf, mucilaginous_filament, turbidity, leucocyte_mass, albumin_creatinine_ratio, albumin, urine_amylase, urothelial_cells, urothelial_cells_hbf)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.specificGravityUrine}, #{entity.urinePh}, #{entity.urineWhiteCells}, #{entity.urineNitrite}, #{entity.urineProtein}, #{entity.urineGlucose}, #{entity.urineKetone}, #{entity.urineUrobilinogen}, #{entity.urineBilirubin}, #{entity.urineOccultBlood}, #{entity.urinaryRbc}, #{entity.urinaryTubeType}, #{entity.urinaryPathologyType}, #{entity.urineCrystal}, #{entity.urinarySperm}, #{entity.urineColor}, #{entity.urinaryRbcHpf}, #{entity.urinaryWbcHbf}, #{entity.urinaryTubeTypeLbf}, #{entity.mucilaginousFilament}, #{entity.turbidity}, #{entity.leucocyteMass}, #{entity.albuminCreatinineRatio}, #{entity.albumin}, #{entity.urineAmylase}, #{entity.urothelialCells}, #{entity.urothelialCellsHbf})
+        </foreach>
+    </insert>
+
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_urine_routine(study_id, patient_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, specific_gravity_urine, urine_ph, urine_white_cells, urine_nitrite, urine_protein, urine_glucose, urine_ketone, urine_urobilinogen, urine_bilirubin, urine_occult_blood, urinary_rbc, urinary_tube_type, urinary_pathology_type, urine_crystal, urinary_sperm, urine_color, urinary_rbc_hpf, urinary_wbc_hbf, urinary_tube_type_lbf, mucilaginous_filament, turbidity, leucocyte_mass, albumin_creatinine_ratio, albumin, urine_amylase, urothelial_cells, urothelial_cells_hbf)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.specificGravityUrine}, #{entity.urinePh}, #{entity.urineWhiteCells}, #{entity.urineNitrite}, #{entity.urineProtein}, #{entity.urineGlucose}, #{entity.urineKetone}, #{entity.urineUrobilinogen}, #{entity.urineBilirubin}, #{entity.urineOccultBlood}, #{entity.urinaryRbc}, #{entity.urinaryTubeType}, #{entity.urinaryPathologyType}, #{entity.urineCrystal}, #{entity.urinarySperm}, #{entity.urineColor}, #{entity.urinaryRbcHpf}, #{entity.urinaryWbcHbf}, #{entity.urinaryTubeTypeLbf}, #{entity.mucilaginousFilament}, #{entity.turbidity}, #{entity.leucocyteMass}, #{entity.albuminCreatinineRatio}, #{entity.albumin}, #{entity.urineAmylase}, #{entity.urothelialCells}, #{entity.urothelialCellsHbf})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        specific_gravity_urine = values(specific_gravity_urine),
+        urine_ph = values(urine_ph),
+        urine_white_cells = values(urine_white_cells),
+        urine_nitrite = values(urine_nitrite),
+        urine_protein = values(urine_protein),
+        urine_glucose = values(urine_glucose),
+        urine_ketone = values(urine_ketone),
+        urine_urobilinogen = values(urine_urobilinogen),
+        urine_bilirubin = values(urine_bilirubin),
+        urine_occult_blood = values(urine_occult_blood),
+        urinary_rbc = values(urinary_rbc),
+        urinary_tube_type = values(urinary_tube_type),
+        urinary_pathology_type = values(urinary_pathology_type),
+        urine_crystal = values(urine_crystal),
+        urinary_sperm = values(urinary_sperm),
+        urine_color = values(urine_color),
+        urinary_rbc_hpf = values(urinary_rbc_hpf),
+        urinary_wbc_hbf = values(urinary_wbc_hbf),
+        urinary_tube_type_lbf = values(urinary_tube_type_lbf),
+        mucilaginous_filament = values(mucilaginous_filament),
+        turbidity = values(turbidity),
+        leucocyte_mass = values(leucocyte_mass),
+        albumin_creatinine_ratio = values(albumin_creatinine_ratio),
+        albumin = values(albumin),
+        urine_amylase = values(urine_amylase),
+        urothelial_cells = values(urothelial_cells),
+        urothelial_cells_hbf = values(urothelial_cells_hbf)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_urine_routine
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="specificGravityUrine != null and specificGravityUrine != ''">
+                specific_gravity_urine = #{specificGravityUrine},
+            </if>
+            <if test="urinePh != null and urinePh != ''">
+                urine_ph = #{urinePh},
+            </if>
+            <if test="urineWhiteCells != null and urineWhiteCells != ''">
+                urine_white_cells = #{urineWhiteCells},
+            </if>
+            <if test="urineNitrite != null and urineNitrite != ''">
+                urine_nitrite = #{urineNitrite},
+            </if>
+            <if test="urineProtein != null and urineProtein != ''">
+                urine_protein = #{urineProtein},
+            </if>
+            <if test="urineGlucose != null and urineGlucose != ''">
+                urine_glucose = #{urineGlucose},
+            </if>
+            <if test="urineKetone != null and urineKetone != ''">
+                urine_ketone = #{urineKetone},
+            </if>
+            <if test="urineUrobilinogen != null and urineUrobilinogen != ''">
+                urine_urobilinogen = #{urineUrobilinogen},
+            </if>
+            <if test="urineBilirubin != null and urineBilirubin != ''">
+                urine_bilirubin = #{urineBilirubin},
+            </if>
+            <if test="urineOccultBlood != null and urineOccultBlood != ''">
+                urine_occult_blood = #{urineOccultBlood},
+            </if>
+            <if test="urinaryRbc != null and urinaryRbc != ''">
+                urinary_rbc = #{urinaryRbc},
+            </if>
+            <if test="urinaryTubeType != null and urinaryTubeType != ''">
+                urinary_tube_type = #{urinaryTubeType},
+            </if>
+            <if test="urinaryPathologyType != null and urinaryPathologyType != ''">
+                urinary_pathology_type = #{urinaryPathologyType},
+            </if>
+            <if test="urineCrystal != null and urineCrystal != ''">
+                urine_crystal = #{urineCrystal},
+            </if>
+            <if test="urinarySperm != null and urinarySperm != ''">
+                urinary_sperm = #{urinarySperm},
+            </if>
+            <if test="urineColor != null and urineColor != ''">
+                urine_color = #{urineColor},
+            </if>
+            <if test="urinaryRbcHpf != null and urinaryRbcHpf != ''">
+                urinary_rbc_hpf = #{urinaryRbcHpf},
+            </if>
+            <if test="urinaryWbcHbf != null and urinaryWbcHbf != ''">
+                urinary_wbc_hbf = #{urinaryWbcHbf},
+            </if>
+            <if test="urinaryTubeTypeLbf != null and urinaryTubeTypeLbf != ''">
+                urinary_tube_type_lbf = #{urinaryTubeTypeLbf},
+            </if>
+            <if test="mucilaginousFilament != null and mucilaginousFilament != ''">
+                mucilaginous_filament = #{mucilaginousFilament},
+            </if>
+            <if test="turbidity != null and turbidity != ''">
+                turbidity = #{turbidity},
+            </if>
+            <if test="leucocyteMass != null and leucocyteMass != ''">
+                leucocyte_mass = #{leucocyteMass},
+            </if>
+            <if test="albuminCreatinineRatio != null and albuminCreatinineRatio != ''">
+                albumin_creatinine_ratio = #{albuminCreatinineRatio},
+            </if>
+            <if test="albumin != null and albumin != ''">
+                albumin = #{albumin},
+            </if>
+            <if test="urineAmylase != null and urineAmylase != ''">
+                urine_amylase = #{urineAmylase},
+            </if>
+            <if test="urothelialCells != null and urothelialCells != ''">
+                urothelial_cells = #{urothelialCells},
+            </if>
+            <if test="urothelialCellsHbf != null and urothelialCellsHbf != ''">
+                urothelial_cells_hbf = #{urothelialCellsHbf},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_urine_routine where id = #{id}
+    </delete>
+
+</mapper>
+

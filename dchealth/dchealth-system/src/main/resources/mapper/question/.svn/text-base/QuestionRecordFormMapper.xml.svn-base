@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.question.mapper.QuestionRecordFormMapper">
+    
+    <resultMap type="QuestionRecordForm" id="QuestionRecordFormResult">
+        <result property="questionId"    column="question_id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="recordId"    column="record_id"    />
+    </resultMap>
+
+    <sql id="selectQuestionRecordFormVo">
+        select question_id, medical_form_id, record_id from question_record_form
+    </sql>
+
+    <select id="selectQuestionRecordFormList" parameterType="QuestionRecordForm" resultMap="QuestionRecordFormResult">
+        <include refid="selectQuestionRecordFormVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuestionRecordFormByQuestionId" parameterType="Long" resultMap="QuestionRecordFormResult">
+        <include refid="selectQuestionRecordFormVo"/>
+        where question_id = #{questionId}
+    </select>
+        
+    <insert id="insertQuestionRecordForm" parameterType="QuestionRecordForm">
+        insert into question_record_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">question_id,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="recordId != null">record_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionId != null">#{questionId},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="recordId != null">#{recordId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuestionRecordForm" parameterType="QuestionRecordForm">
+        update question_record_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="recordId != null">record_id = #{recordId},</if>
+        </trim>
+        where question_id = #{questionId}
+    </update>
+
+    <delete id="deleteQuestionRecordFormByQuestionId" parameterType="Long">
+        delete from question_record_form where question_id = #{questionId}
+    </delete>
+
+    <delete id="deleteQuestionRecordFormByQuestionIds" parameterType="String">
+        delete from question_record_form where question_id in 
+        <foreach item="questionId" collection="array" open="(" separator="," close=")">
+            #{questionId}
+        </foreach>
+    </delete>
+</mapper>

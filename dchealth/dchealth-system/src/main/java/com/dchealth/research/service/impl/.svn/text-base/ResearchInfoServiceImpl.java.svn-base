@@ -1,0 +1,464 @@
+package com.dchealth.research.service.impl;
+
+import com.dchealth.common.core.domain.entity.SysDept;
+import com.dchealth.common.core.domain.entity.SysUser;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.bean.BeanUtils;
+import com.dchealth.dynamic.exception.DynamicException;
+import com.dchealth.dynamic.templete.*;
+import com.dchealth.medical.domain.PatientRecordTemplate;
+import com.dchealth.medical.mapper.PatientRecordTemplateMapper;
+import com.dchealth.research.domain.*;
+import com.dchealth.research.domain.vo.ResearchInfoVo;
+import com.dchealth.research.mapper.*;
+import com.dchealth.research.service.IResearchInfoService;
+import com.dchealth.research.service.IResearchSourceService;
+import com.dchealth.system.mapper.SysDeptMapper;
+import com.dchealth.system.mapper.SysUserMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 队列基础信息Service业务层处理
+ * 
+ * @author lchbu
+ * @date 2022-08-22
+ */
+@Service
+public class ResearchInfoServiceImpl implements IResearchInfoService
+{
+
+    private static final Logger L = LoggerFactory.getLogger(ResearchInfoServiceImpl.class);
+
+    @Autowired
+    private ResearchInfoMapper researchInfoMapper;
+
+    @Autowired
+    private ResearchDetailMapper researchDetailMapper;
+
+    @Autowired
+    ResearchInfoArticleMapper researchInfoArticleMapper;
+
+    @Autowired
+    private PatientRecordTemplateMapper patientRecordTemplateMapper;
+
+/*    @Autowired
+    private FMedicalFormMapper fMedicalFormMapper;
+
+    @Autowired
+    private FMedicalPropertyMapper fMedicalPropertyMapper;*/
+
+    @Autowired
+    private DynamicFroms dynamicFroms;
+    @Autowired
+    private DynamicFromsLog dynamicFromsLog;
+
+    @Autowired
+    private DynamicText dynamicText;
+    @Autowired
+    private DynamicTextLog dynamicTextLog;
+
+    @Autowired
+    private DynamicLargeText dynamicLargeText;
+    @Autowired
+    private DynamicLargeTextLog dynamicLargeTextLog;
+
+    @Autowired
+    private ResearchRoleMapper researchRoleMapper;
+
+    @Autowired
+    private IResearchSourceService iResearchSourceService;
+    
+    @Autowired
+    private SysDeptMapper sysDeptMapper;
+    @Autowired
+    private ResearchDiseasesMapper researchDiseasesMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private ResearchUserRoleMapper researchUserRoleMapper;
+
+
+
+    /**
+     * 查询队列基础信息
+     * 
+     * @param id 队列基础信息主键
+     * @return 队列基础信息
+     */
+    @Override
+    public ResearchInfo selectResearchInfoById(Long id)
+    {
+        return researchInfoMapper.selectResearchInfoById(id);
+    }
+
+    /**
+     * 查询队列基础信息列表
+     * 
+     * @param researchInfo 队列基础信息
+     * @return 队列基础信息
+     */
+    @Override
+    public List<ResearchInfo> selectResearchInfoList(ResearchInfo researchInfo)
+    {
+
+        return researchInfoMapper.selectResearchInfoList(researchInfo);
+    }
+
+    /**
+     * 新增队列基础信息
+     * 
+     * @param vo 队列基础信息
+     * @return 结果
+     */
+    @Override
+    public Long insertResearchInfo(ResearchInfoVo vo)
+    {
+        //保存基础信息
+        ResearchInfo researchInfo = new ResearchInfo();
+        BeanUtils.copyBeanProp(researchInfo,vo);
+        researchInfo.setCreateTime(DateUtils.getNowDate());
+        researchInfoMapper.insertResearchInfo(researchInfo);
+        //保存详细信息
+        ResearchDetail researchDetail = new ResearchDetail();
+        researchDetail.setResearchId(researchInfo.getId());
+        researchDetail.setResearchScheme(vo.getResearchScheme());
+        researchDetail.setResearchStandard(vo.getResearchStandard());
+        researchDetailMapper.insertResearchDetail(researchDetail);
+        //初始化随访周期信息-基线
+        PatientRecordTemplate prt = new PatientRecordTemplate();
+        prt.setFollowNum(0);
+        prt.setFollowName("基线");
+        prt.setResearchId(researchInfo.getId());
+        prt.setCreateBy("admin");
+        prt.setCreateTime(new Date());
+        patientRecordTemplateMapper.insertPatientRecordTemplate(prt);
+
+        if(vo.getUserId()>1){
+            ResearchUserRole researchUserRole = new ResearchUserRole();
+            researchUserRole.setUserId(vo.getUserId());
+            researchUserRole.setResearchId(researchInfo.getId());
+            researchUserRoleMapper.insertResearchUserRole(researchUserRole);
+        }
+
+        //创建队列之后初始化队列-角色-资源
+        //查询资源
+//        List<ResearchSource> sourceList = iResearchSourceService.selectResearchSourceList(new ResearchSource());
+//        Map<String, List<ResearchSource>> sourcemMap = new HashMap<>();
+//        if (sourceList.size()>0){
+//            sourcemMap = sourceList.stream().collect(Collectors.groupingBy(ResearchSource::getSourceName));
+//        }
+        //创建队列管理员
+//        ResearchRole researchRole1 = new ResearchRole();
+//        researchRole1.setResearchId(researchInfo.getId());
+//        researchRole1.setRoleName("队列管理员");
+//        researchRole1.setRoleKey("admin");
+//        researchRole1.setDataScope("1");
+//        researchRole1.setRoleSort(0);
+//        researchRole1.setStatus("0");
+//        researchRoleMapper.insertResearchRole(researchRole1);
+//
+//        //创建队列医生
+//        ResearchRole researchRole2 = new ResearchRole();
+//        researchRole2.setResearchId(researchInfo.getId());
+//        researchRole2.setRoleName("队列医生");
+//        researchRole2.setRoleKey("doctor");
+//        researchRole2.setDataScope("1");
+//        researchRole2.setRoleSort(0);
+//        researchRole2.setStatus("0");
+//        researchRoleMapper.insertResearchRole(researchRole2);
+//
+//        //创建随访处理护士
+//        ResearchRole researchRole3 = new ResearchRole();
+//        researchRole3.setResearchId(researchInfo.getId());
+//        researchRole3.setRoleName("随访处理护士");
+//        researchRole3.setRoleKey("nurse");
+//        researchRole3.setDataScope("1");
+//        researchRole3.setRoleSort(0);
+//        researchRole3.setStatus("0");
+//        researchRoleMapper.insertResearchRole(researchRole3);
+//        //创建超窗处理护士
+//        ResearchRole researchRole4 = new ResearchRole();
+//        researchRole4.setResearchId(researchInfo.getId());
+//        researchRole4.setRoleName("超窗处理护士");
+//        researchRole4.setRoleKey("window");
+//        researchRole4.setDataScope("1");
+//        researchRole4.setRoleSort(0);
+//        researchRole4.setStatus("0");
+//        researchRoleMapper.insertResearchRole(researchRole4);
+//        //创建预警处理护士
+//        ResearchRole researchRole5 = new ResearchRole();
+//        researchRole5.setResearchId(researchInfo.getId());
+//        researchRole5.setRoleName("预警处理护士");
+//        researchRole5.setRoleKey("early ");
+//        researchRole5.setDataScope("1");
+//        researchRole5.setRoleSort(0);
+//        researchRole5.setStatus("0");
+//        researchRoleMapper.insertResearchRole(researchRole5);
+//
+//        if (sourcemMap.size() > 0) {
+//            List<ResearchSource> nurseList = sourcemMap.get("随访处理");
+//            if (nurseList != null && nurseList.size() > 0) {
+//                for (ResearchSource researchSource : nurseList) {
+//                    List<Long> nurseSourceIds = new ArrayList<>();
+//                    Long sourceId = researchSource.getSourceId();
+//                    nurseSourceIds.add(sourceId);
+//                    List<ResearchSource> child = researchSource.getChild();
+//                    nurseSourceIds = this.dealChild(child,nurseSourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole1.getRoleId(), nurseSourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole2.getRoleId(), nurseSourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole3.getRoleId(), nurseSourceIds);
+//                }
+//
+//            }
+//            List<ResearchSource> windowList = sourcemMap.get("超窗处理");
+//            if (windowList != null && windowList.size() > 0) {
+//                for (ResearchSource researchSource : windowList) {
+//                    List<Long> windowSourceIds = new ArrayList<>();
+//                    Long sourceId = researchSource.getSourceId();
+//                    windowSourceIds.add(sourceId);
+//                    List<ResearchSource> child = researchSource.getChild();
+//                    windowSourceIds = this.dealChild(child,windowSourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole1.getRoleId(), windowSourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole2.getRoleId(), windowSourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole4.getRoleId(), windowSourceIds);
+//                }
+//            }
+//            List<ResearchSource> earlyList = sourcemMap.get("预警处理");
+//            if (earlyList != null && earlyList.size() > 0) {
+//                for (ResearchSource researchSource : earlyList) {
+//                    List<Long> earlySourceIds = new ArrayList<>();
+//                    Long sourceId = researchSource.getSourceId();
+//                    earlySourceIds.add(sourceId);
+//                    List<ResearchSource> child = researchSource.getChild();
+//                    earlySourceIds = this.dealChild(child,earlySourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole1.getRoleId(), earlySourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole2.getRoleId(), earlySourceIds);
+//                    iResearchSourceService.batchInsertResearchSource(researchRole5.getRoleId(), earlySourceIds);
+//                }
+//            }
+//        }
+        return researchInfo.getId();
+    }
+
+    private List<Long> dealChild(List<ResearchSource> child, List<Long> longList) {
+        if (child!= null && child.size()>0){
+            for (ResearchSource researchSource : child) {
+                Long sourceId = researchSource.getSourceId();
+                longList.add(sourceId);
+                List<ResearchSource> child1 = researchSource.getChild();
+                if (child1 != null && child1.size()>0 ){
+                    dealChild(child1, longList);
+                }
+            }
+        }
+        return longList;
+    }
+
+    /**
+     * 修改队列基础信息
+     * 
+     * @param vo 队列基础信息
+     * @return 结果
+     */
+    @Override
+    public int updateResearchInfo(ResearchInfoVo vo)
+    {
+        //更新基础信息
+        ResearchInfo researchInfo = new ResearchInfo();
+        BeanUtils.copyBeanProp(researchInfo,vo);
+        researchInfo.setUpdateTime(DateUtils.getNowDate());
+        researchInfoMapper.updateResearchInfo(researchInfo);
+        //更新详细信息
+        ResearchDetail researchDetail = new ResearchDetail();
+        researchDetail.setResearchId(researchInfo.getId());
+        researchDetail.setResearchScheme(vo.getResearchScheme());
+        researchDetail.setResearchStandard(vo.getResearchStandard());
+        return researchDetailMapper.updateResearchDetail(researchDetail);
+    }
+
+    /**
+     * 批量删除队列基础信息
+     * 
+     * @param ids 需要删除的队列基础信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteResearchInfoByIds(Long[] ids)
+    {
+        return researchInfoMapper.deleteResearchInfoByIds(ids);
+    }
+
+    /**
+     * 删除队列基础信息信息
+     * 
+     * @param id 队列基础信息主键
+     * @return 结果
+     */
+    @Override
+    public int deleteResearchInfoById(Long id)
+    {
+        return researchInfoMapper.deleteResearchInfoById(id);
+    }
+
+    /**
+     * 查询队列详情信息
+     * @param vo
+     * @return
+     */
+    @Override
+    public List<ResearchInfoVo> selectResearchInfoDetailList(ResearchInfoVo vo) {
+        return researchInfoMapper.selectResearchInfoDetailList(vo);
+    }
+
+    /**
+     * 根据id查询详细信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ResearchInfoVo selectResearchInfoDetailById(Long id) {
+        ResearchInfoVo researchInfoVo = researchInfoMapper.selectResearchInfoDetailById(id);
+        if (researchInfoVo != null){
+            if (researchInfoVo.getDeptId() != null){
+                SysDept sysDept = sysDeptMapper.selectDeptById(researchInfoVo.getDeptId());
+                if (sysDept != null){
+                    researchInfoVo.setDeptName(sysDept.getDeptName());
+                }
+            }
+            if (researchInfoVo.getDiseaseTypeId() != null){
+                ResearchDiseases researchDiseases = researchDiseasesMapper.selectResearchDiseasesByDiseaseId(researchInfoVo.getDiseaseTypeId());
+                if (researchDiseases != null){
+                    researchInfoVo.setDiseasesName(researchDiseases.getDiseaseName());
+                }
+            }
+
+            if(researchInfoVo.getDoctorId()!=null){
+                SysUser sysUser = sysUserMapper.selectUserById(researchInfoVo.getDoctorId());
+                if(sysUser!=null){
+                    researchInfoVo.setDoctorName(sysUser.getNickName());
+                }
+            }
+        }
+        return researchInfoVo;
+    }
+
+    /**
+     * 更新删除状态
+     * @param id
+     * @return
+     */
+    @Override
+    public int updateInfoDelFlagById(Long id) {
+        int delResearchNum = researchInfoMapper.updateInfoDelFlagById(id);
+        Long[] researchIds = {id};
+        int delResearchArticleNum = researchInfoArticleMapper.deleteResearchInfoArticleByResearchIds(researchIds);
+        if (delResearchNum > 0) {
+            return 1;
+        } else {
+            L.info("队列删除失败： researchId:{} delResearchNum:{} delResearchArticleNum:{} ", id, delResearchNum,
+                    delResearchArticleNum);
+            return -1;
+        }
+    }
+
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
+    @Override
+    public int delete(Long id) {
+        return researchInfoMapper.deleteResearchInfoById(id);
+    }
+
+    /**
+     * 更新队列阶段
+     * @param id
+     * @param stage
+     * @return
+     */
+    @Override
+    public int updateResearchInfoStage(Long id, String stage) {
+        return researchInfoMapper.updateResearchInfoStage(id, stage);
+    }
+
+    /**
+     * 更新队列状态（发布、关闭队列）
+     * @param id
+     * @param status
+     * @return
+     */
+    @Transactional
+    @Override
+    public int updateResearchInfoStatus(Long id, String status) {
+        //发布：创建相应表结构
+        if("1".equals(status)){
+            /*//查询周期配置信息
+            List<PatientRecordTemplate> recordTemplates = patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(id);
+            if(recordTemplates != null && !recordTemplates.isEmpty()){
+                recordTemplates.stream().forEach(recordTemplate -> {
+                    //模板信息
+                    List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByFollowId(recordTemplate.getFollowId());
+                    if(fMedicalForms != null && !fMedicalForms.isEmpty()){
+                        //是否动态生成
+                        List<String> dynamics = fMedicalForms.stream().map(FMedicalForm::getDynamic).collect(Collectors.toList());
+                        try {
+                            if(dynamics != null && dynamics.contains("0")){
+                                //表单IDS
+                                List<Long> fromIds = fMedicalForms.stream().map(FMedicalForm::getMedicalFormId).collect(Collectors.toList());
+                                if(fromIds != null && !fromIds.isEmpty()){
+                                    //表单属性
+                                    List<FMedicalProperty> fMedicalProperties = fMedicalPropertyMapper.selectFMedicalPropertyByMedicalFormIds(fromIds);
+                                    if(fMedicalProperties != null && !fMedicalProperties.isEmpty()){
+                                        //字段类型
+                                        List<String> propertyTypes = fMedicalProperties.stream().map(FMedicalProperty::getPropertyType).collect(Collectors.toList());
+                                        if(propertyTypes != null && (propertyTypes.contains(PropertyType.CASCADER) || propertyTypes.contains(PropertyType.TEXTAREA))){
+                                            //大文本
+                                            dynamicText.init().createTableBySuffix(id.intValue());
+                                            dynamicTextLog.init().createTableBySuffix(id.intValue());
+                                        } else {
+                                            //小文本
+                                            dynamicLargeText.init().createTableBySuffix(id.intValue());
+                                            dynamicLargeTextLog.init().createTableBySuffix(id.intValue());
+                                        }
+                                    }
+                                }
+                            }
+                            if(dynamics != null && dynamics.contains("1")) {
+                                //动态表单
+                                dynamicFroms.init().createTableBySuffix(id.intValue());
+                                dynamicFromsLog.init().createTableBySuffix(id.intValue());
+                            }
+                        } catch (Exception e) {
+                            L.error("ERROR",e);
+                        }
+                    }
+                });
+            }*/
+            //表初始化
+            try {
+                //小文本
+                dynamicLargeText.init().createTableBySuffix(id.intValue());
+                dynamicLargeTextLog.init().createTableBySuffix(id.intValue());
+                //大文本
+                dynamicText.init().createTableBySuffix(id.intValue());
+                dynamicTextLog.init().createTableBySuffix(id.intValue());
+                //动态表单
+                dynamicFroms.init().createTableBySuffix(id.intValue());
+                dynamicFromsLog.init().createTableBySuffix(id.intValue());
+            } catch (DynamicException e) {
+                L.error("ERROR",e);
+            }
+        }
+        //更新队列状态
+        return researchInfoMapper.updateResearchInfoStatus(id, status);
+    }
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.form.mapper.DynamicCommonMapper">
+    <resultMap type="com.dchealth.cro.form.domain.DynamicCommonProperty" id="DynamicCommonPropertyResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="formId"    column="form_id"    />
+        <result property="type"    column="type"    />
+        <result property="propertyCode"    column="property_code"    />
+        <result property="propertyValue"    column="property_value"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="number"    column="number"    />
+        <result property="examRecordId"    column="exam_record_id"    />
+    </resultMap>
+
+
+    <select id="selectBySql" parameterType="com.dchealth.cro.form.domain.form.DynamicForm" resultMap="DynamicCommonPropertyResult">
+        ${sql}
+        <where>
+            <if test="recordId != null "> and record_id= #{recordId}</if>
+            <if test="formId != null "> and form_id= #{formId}</if>
+            <if test="type != null "> and type= #{type}</if>
+            <if test="articleId != null "> and article_id= #{articleId}</if>
+            <if test="patientId != null "> and patient_id= #{patientId}</if>
+            <if test="researchId != null "> and research_id= #{researchId}</if>
+            <if test="followId != null "> and follow_id= #{followId}</if>
+            <if test="examRecordId != null "> and exam_record_id= #{examRecordId}</if>
+        </where>
+    </select>
+    
+    <insert id="executeInsertSql">
+        ${sql}
+    </insert>
+
+    <delete id="executeDeleteSql">
+        ${sql}
+    </delete>
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.dynamic.mapper.DynamicRecordMapper">
+
+    <resultMap type="com.dchealth.dynamic.domain.TbDynamicRecord" id="TbDynamicRecordMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="tbOrder" column="tb_order" jdbcType="INTEGER"/>
+        <result property="tbPre" column="tb_pre" jdbcType="VARCHAR"/>
+        <result property="tbFullName" column="tb_full_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDel" column="is_del" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TbDynamicRecordMap">
+        select
+          id, tb_order, tb_pre, tb_full_name, create_time, is_del
+        from dynamic.tb_dynamic_record
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TbDynamicRecordMap">
+        select
+          id, tb_order, tb_pre, tb_full_name, create_time, is_del
+        from tb_dynamic_record
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TbDynamicRecordMap">
+        select
+          id, tb_order, tb_pre, tb_full_name, create_time, is_del
+        from tb_dynamic_record
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="tbOrder != null">
+                and tb_order = #{tbOrder}
+            </if>
+            <if test="tbPre != null and tbPre != ''">
+                and tb_pre = #{tbPre}
+            </if>
+            <if test="tbFullName != null and tbFullName != ''">
+                and tb_full_name = #{tbFullName}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and is_del = #{isDel}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="save" keyProperty="id" useGeneratedKeys="true" parameterType="com.dchealth.dynamic.domain.TbDynamicRecord">
+        insert into tb_dynamic_record(tb_order, tb_pre, tb_full_name, create_time, is_del)
+        values (#{tbOrder}, #{tbPre}, #{tbFullName}, #{createTime}, #{isDel})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update tb_dynamic_record
+        <set>
+            <if test="tbOrder != null">
+                tb_order = #{tbOrder},
+            </if>
+            <if test="tbPre != null and tbPre != ''">
+                tb_pre = #{tbPre},
+            </if>
+            <if test="tbFullName != null and tbFullName != ''">
+                tb_full_name = #{tbFullName},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="isDel != null and isDel != ''">
+                is_del = #{isDel},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from tb_dynamic_record where id = #{id}
+    </delete>
+
+</mapper>

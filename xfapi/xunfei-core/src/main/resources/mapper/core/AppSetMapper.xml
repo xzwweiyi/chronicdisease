@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.core.mapper.AppSetMapper">
+    
+    <resultMap type="AppSet" id="AppSetResult">
+        <result property="id"    column="id"    />
+        <result property="appId"    column="app_id"    />
+        <result property="configKey"    column="config_key"    />
+        <result property="configValue"    column="config_value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectAppSetVo">
+        select id, app_id, config_key, config_value, create_time, update_time from app_set
+    </sql>
+
+    <select id="selectAppSetList" parameterType="AppSet" resultMap="AppSetResult">
+        <include refid="selectAppSetVo"/>
+        <where>  
+            <if test="appId != null  and appId != ''"> and app_id = #{appId}</if>
+            <if test="configKey != null  and configKey != ''"> and config_key = #{configKey}</if>
+            <if test="configValue != null  and configValue != ''"> and config_value = #{configValue}</if>
+            <if test="appType != null  "> and app_type = #{appType}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppSetById" parameterType="Long" resultMap="AppSetResult">
+        <include refid="selectAppSetVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectAppSetByConfigKeyAndTenantId"  resultMap="AppSetResult">
+        <include refid="selectAppSetVo"/>
+        where config_key = #{configKey} and tenant_id = #{tenantId}
+    </select>
+        
+    <insert id="insertAppSet" parameterType="AppSet" useGeneratedKeys="true" keyProperty="id">
+        insert into app_set
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="configKey != null  and configKey != ''">config_key,</if>
+            <if test="configValue != null  and configValue != ''">config_value,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="configKey != null  and configKey != ''">#{configKey},</if>
+            <if test="configValue != null  and configValue != ''">#{configValue},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppSet" parameterType="AppSet">
+        update app_set
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="configKey != null  and configKey != ''">config_key = #{configKey},</if>
+            <if test="configValue != null  and configValue != ''">config_value = #{configValue},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppSetById" parameterType="Long">
+        delete from app_set where id = #{id}
+    </delete>
+
+    <delete id="deleteAppSetByIds" parameterType="String">
+        delete from app_set where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

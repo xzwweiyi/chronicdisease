@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchUserRoleMapper">
+
+    <resultMap type="ResearchUserRole" id="ResearchUserRoleResult">
+        <result property="userId"     column="user_id"      />
+        <result property="roleId"     column="role_id"      />
+        <result property="researchId"     column="research_id"      />
+    </resultMap>
+
+    <sql id="selectResearchUserRoleVo">
+        select user_id, role_id ,research_id from research_user_role
+    </sql>
+
+    <select id="selectResearchUserRoleList" parameterType="ResearchUserRole" resultMap="ResearchUserRoleResult">
+        <include refid="selectResearchUserRoleVo"/>
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+        </where>
+    </select>
+
+    <select id="selectListGroupByUserIdAndResearchId" parameterType="ResearchUserRole" resultMap="ResearchUserRoleResult">
+        select g.user_id, g.role_id ,g.research_id
+        from research_user_role g
+        INNER JOIN research_info ri on g.research_id=ri.id
+        <where>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+        </where>
+        group by g.user_id,g.research_id
+    </select>
+
+    <delete id="deleteUserAuth" parameterType="Long">
+		delete from research_user_role where user_id=#{userId}
+	</delete>
+
+    <insert id="batchUserRole">
+        insert into research_user_role(user_id, role_id,research_id) values
+        <foreach item="item" index="index" collection="researchUserRoles" separator=",">
+            (#{item.userId},#{item.roleId},#{item.researchId})
+        </foreach>
+    </insert>
+
+    <select id="findUserRoleNumberByRoleId" resultType="Integer">
+	    select count(1) from research_user_role where role_id=#{roleId}
+	</select>
+
+    <select id="findUserRoleByUserId" parameterType="Long" resultMap="ResearchUserRoleResult">
+        <include refid="selectResearchUserRoleVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <delete id="cancelAuthRole" parameterType="Long">
+		delete from research_user_role where user_id=#{userId} and research_id=#{researchId}
+	</delete>
+
+    <delete id="batchCancelAuthRole">
+        delete from research_user_role where research_id=#{researchId} and user_id in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+
+    <select id="findUserRoleByRoleId" parameterType="Long" resultMap="ResearchUserRoleResult">
+        <include refid="selectResearchUserRoleVo"/>
+        where role_id = #{roleId}
+    </select>
+
+    <select id="findUserRoleByResearchId" parameterType="Long" resultMap="ResearchUserRoleResult">
+        <include refid="selectResearchUserRoleVo"/>
+        where research_id = #{researchId} and user_id > 1
+    </select>
+
+    <select id="findUserRoleGroupByUserId" parameterType="Long" resultMap="ResearchUserRoleResult">
+        select g.user_id, g.role_id ,g.research_id
+        from research_user_role g
+        INNER JOIN research_info ri on g.research_id=ri.id
+        where research_id = #{researchId}
+        group by g.user_id
+    </select>
+
+    <insert id="insertResearchUserRole" parameterType="ResearchUserRole">
+        insert into research_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="researchId != null">research_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="researchId != null">#{researchId},</if>
+        </trim>
+    </insert>
+</mapper>

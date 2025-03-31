@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.PatVisitMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.PatVisit" id="PatVisitMap">
+        <result property="patientId" column="PATIENT_ID" jdbcType="VARCHAR"/>
+        <result property="visitId" column="VISIT_ID" jdbcType="INTEGER"/>
+        <result property="deptAdmissionTo" column="DEPT_ADMISSION_TO" jdbcType="VARCHAR"/>
+        <result property="admissionDateTime" column="ADMISSION_DATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="deptDischargeFrom" column="DEPT_DISCHARGE_FROM" jdbcType="VARCHAR"/>
+        <result property="dischargeDateTime" column="DISCHARGE_DATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="occupation" column="OCCUPATION" jdbcType="VARCHAR"/>
+        <result property="maritalStatus" column="MARITAL_STATUS" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PatVisitMap">
+        select
+          PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS
+        from pat_visit
+        where  PATIENT_ID = #{patientId}
+    </select>
+
+    <select id="queryPatVisit" resultMap="PatVisitMap">
+        select
+          PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS
+        from pat_visit
+        where  PATIENT_ID = #{patientId}
+        order by ADMISSION_DATE_TIME desc
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PatVisitMap">
+        select
+          PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS
+        from pat_visit
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="visitId != null">
+                and VISIT_ID = #{visitId}
+            </if>
+            <if test="deptAdmissionTo != null and deptAdmissionTo != ''">
+                and DEPT_ADMISSION_TO = #{deptAdmissionTo}
+            </if>
+            <if test="admissionDateTime != null">
+                and ADMISSION_DATE_TIME = #{admissionDateTime}
+            </if>
+            <if test="deptDischargeFrom != null and deptDischargeFrom != ''">
+                and DEPT_DISCHARGE_FROM = #{deptDischargeFrom}
+            </if>
+            <if test="dischargeDateTime != null">
+                and DISCHARGE_DATE_TIME = #{dischargeDateTime}
+            </if>
+            <if test="occupation != null and occupation != ''">
+                and OCCUPATION = #{occupation}
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                and MARITAL_STATUS = #{maritalStatus}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from pat_visit
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="visitId != null">
+                and VISIT_ID = #{visitId}
+            </if>
+            <if test="deptAdmissionTo != null and deptAdmissionTo != ''">
+                and DEPT_ADMISSION_TO = #{deptAdmissionTo}
+            </if>
+            <if test="admissionDateTime != null">
+                and ADMISSION_DATE_TIME = #{admissionDateTime}
+            </if>
+            <if test="deptDischargeFrom != null and deptDischargeFrom != ''">
+                and DEPT_DISCHARGE_FROM = #{deptDischargeFrom}
+            </if>
+            <if test="dischargeDateTime != null">
+                and DISCHARGE_DATE_TIME = #{dischargeDateTime}
+            </if>
+            <if test="occupation != null and occupation != ''">
+                and OCCUPATION = #{occupation}
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                and MARITAL_STATUS = #{maritalStatus}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+        select count(1)
+        from pat_visit
+        <where>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and date_format(ADMISSION_DATE_TIME,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="PatVisitMap">
+        select
+          PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS
+        from pat_visit
+        <where>
+            <if test="patVisit.params.recordingDate != null and patVisit.params.recordingDate != ''">
+                and date_format(ADMISSION_DATE_TIME,'%Y-%m-%d') = #{patVisit.params.recordingDate}
+            </if>
+        </where>
+        order by ADMISSION_DATE_TIME asc
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into pat_visit(PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS)
+        values (#{patientId}, #{visitId}, #{deptAdmissionTo}, #{admissionDateTime}, #{deptDischargeFrom}, #{dischargeDateTime}, #{occupation}, #{maritalStatus})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into pat_visit(PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.visitId}, #{entity.deptAdmissionTo}, #{entity.admissionDateTime}, #{entity.deptDischargeFrom}, #{entity.dischargeDateTime}, #{entity.occupation}, #{entity.maritalStatus})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into pat_visit(PATIENT_ID, VISIT_ID, DEPT_ADMISSION_TO, ADMISSION_DATE_TIME, DEPT_DISCHARGE_FROM, DISCHARGE_DATE_TIME, OCCUPATION, MARITAL_STATUS)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.visitId}, #{entity.deptAdmissionTo}, #{entity.admissionDateTime}, #{entity.deptDischargeFrom}, #{entity.dischargeDateTime}, #{entity.occupation}, #{entity.maritalStatus})
+        </foreach>
+        on duplicate key update
+        PATIENT_ID = values(PATIENT_ID),
+        VISIT_ID = values(VISIT_ID),
+        DEPT_ADMISSION_TO = values(DEPT_ADMISSION_TO),
+        ADMISSION_DATE_TIME = values(ADMISSION_DATE_TIME),
+        DEPT_DISCHARGE_FROM = values(DEPT_DISCHARGE_FROM),
+        DISCHARGE_DATE_TIME = values(DISCHARGE_DATE_TIME),
+        OCCUPATION = values(OCCUPATION),
+        MARITAL_STATUS = values(MARITAL_STATUS)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update pat_visit
+        <set>
+            <if test="patientId != null and patientId != ''">
+                PATIENT_ID = #{patientId},
+            </if>
+            <if test="visitId != null">
+                VISIT_ID = #{visitId},
+            </if>
+            <if test="deptAdmissionTo != null and deptAdmissionTo != ''">
+                DEPT_ADMISSION_TO = #{deptAdmissionTo},
+            </if>
+            <if test="admissionDateTime != null">
+                ADMISSION_DATE_TIME = #{admissionDateTime},
+            </if>
+            <if test="deptDischargeFrom != null and deptDischargeFrom != ''">
+                DEPT_DISCHARGE_FROM = #{deptDischargeFrom},
+            </if>
+            <if test="dischargeDateTime != null">
+                DISCHARGE_DATE_TIME = #{dischargeDateTime},
+            </if>
+            <if test="occupation != null and occupation != ''">
+                OCCUPATION = #{occupation},
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                MARITAL_STATUS = #{maritalStatus},
+            </if>
+        </set>
+        where PATIENT_ID = #{patientId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from pat_visit where PATIENT_ID = #{patientId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FTemplateExamItemMapper">
+
+    <resultMap type="FTemplateExamItem" id="FTemplateExamItemResult">
+        <result property="id"    column="id"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="itemValue"    column="item_value"    />
+        <result property="itemLabel"    column="item_label"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="itemScores"    column="item_scores"    />
+        <result property="templateFormId"    column="template_form_id"    />
+    </resultMap>
+
+    <sql id="selectFTemplateExamItemVo">
+        select id, property_id, item_value, item_label, order_num, create_time, item_scores, template_form_id from f_template_exam_item
+    </sql>
+
+    <select id="selectFTemplateExamItemList" parameterType="FTemplateExamItem" resultMap="FTemplateExamItemResult">
+        <include refid="selectFTemplateExamItemVo"/>
+        <where>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+            <if test="itemValue != null  and itemValue != ''"> and item_value = #{itemValue}</if>
+            <if test="itemLabel != null  and itemLabel != ''"> and item_label = #{itemLabel}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="itemScores != null "> and item_scores = #{itemScores}</if>
+        </where>
+    </select>
+
+    <select id="selectFTemplateExamItemById" parameterType="Long" resultMap="FTemplateExamItemResult">
+        <include refid="selectFTemplateExamItemVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFTemplateExamItem" parameterType="FTemplateExamItem" useGeneratedKeys="true" keyProperty="id">
+        insert into f_template_exam_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propertyId != null">property_id,</if>
+            <if test="itemValue != null">item_value,</if>
+            <if test="itemLabel != null">item_label,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="itemScores != null">item_scores,</if>
+            <if test="templateFormId != null">template_form_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="itemValue != null">#{itemValue},</if>
+            <if test="itemLabel != null">#{itemLabel},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="itemScores != null">#{itemScores},</if>
+            <if test="templateFormId != null">#{templateFormId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFTemplateExamItem" parameterType="FTemplateExamItem">
+        update f_template_exam_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="itemValue != null">item_value = #{itemValue},</if>
+            <if test="itemLabel != null">item_label = #{itemLabel},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="itemScores != null">item_scores = #{itemScores},</if>
+            <if test="templateFormId != null">template_form_id = #{templateFormId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFTemplateExamItemById" parameterType="Long">
+        delete from f_template_exam_item where id = #{id}
+    </delete>
+
+    <delete id="deleteFTemplateExamItemByIds" parameterType="String">
+        delete from f_template_exam_item where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFTemplateExamItemByTemplateFormId" parameterType="Long">
+        delete from f_template_exam_item where template_form_id = #{templateFormId}
+    </delete>
+
+    <select id="selectExamItemMaxOrderNumByPropertyId" resultType="Integer" parameterType="Long">
+        select max(order_num) from f_template_exam_item where property_id = #{id}
+    </select>
+
+    <select id="selectExamItemByPropertyId" parameterType="Long" resultMap="FTemplateExamItemResult">
+        <include refid="selectFTemplateExamItemVo"/>
+        where property_id = #{id}
+    </select>
+</mapper>

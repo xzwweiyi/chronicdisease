@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FTemplateExamFormMapper">
+    
+    <resultMap type="FTemplateExamForm" id="FTemplateExamFormResult">
+        <result property="templateFormId"    column="template_form_id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="templateCode"    column="template_code"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="openImage"    column="open_image"    />
+        <result property="openProperty"    column="open_property"    />
+        <result property="openMultiple"    column="open_multiple"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="attribute"    column="attribute"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="formType"    column="form_type"    />
+        <result property="dynamic"    column="dynamic"    />
+    </resultMap>
+
+    <sql id="selectFTemplateExamFormVo">
+        select template_form_id, template_id, template_code, template_name, parent_id, open_image, open_property, open_multiple, create_time, update_time, create_by, update_by, attribute, sort_num, form_type, dynamic from f_template_exam_form
+    </sql>
+
+    <select id="selectFTemplateExamFormList" parameterType="FTemplateExamForm" resultMap="FTemplateExamFormResult">
+        <include refid="selectFTemplateExamFormVo"/>
+        <where>  
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="templateCode != null  and templateCode != ''"> and template_code = #{templateCode}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="openImage != null  and openImage != ''"> and open_image = #{openImage}</if>
+            <if test="openProperty != null  and openProperty != ''"> and open_property = #{openProperty}</if>
+            <if test="openMultiple != null  and openMultiple != ''"> and open_multiple = #{openMultiple}</if>
+            <if test="attribute != null  and attribute != ''"> and attribute = #{attribute}</if>
+            <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+            <if test="formType != null  and formType != ''"> and form_type = #{formType}</if>
+            <if test="dynamic != null  and dynamic != ''"> and dynamic = #{dynamic}</if>
+        </where>
+    </select>
+    
+    <select id="selectFTemplateExamFormByTemplateFormId" parameterType="Long" resultMap="FTemplateExamFormResult">
+        <include refid="selectFTemplateExamFormVo"/>
+        where template_form_id = #{templateFormId}
+    </select>
+        
+    <insert id="insertFTemplateExamForm" parameterType="FTemplateExamForm" useGeneratedKeys="true" keyProperty="templateFormId">
+        insert into f_template_exam_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="templateCode != null">template_code,</if>
+            <if test="templateName != null">template_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="openImage != null">open_image,</if>
+            <if test="openProperty != null">open_property,</if>
+            <if test="openMultiple != null">open_multiple,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="attribute != null">attribute,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="formType != null">form_type,</if>
+            <if test="dynamic != null">dynamic,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="templateCode != null">#{templateCode},</if>
+            <if test="templateName != null">#{templateName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="openImage != null">#{openImage},</if>
+            <if test="openProperty != null">#{openProperty},</if>
+            <if test="openMultiple != null">#{openMultiple},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="attribute != null">#{attribute},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="formType != null">#{formType},</if>
+            <if test="dynamic != null">#{dynamic},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFTemplateExamForm" parameterType="FTemplateExamForm">
+        update f_template_exam_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="templateCode != null">template_code = #{templateCode},</if>
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="openImage != null">open_image = #{openImage},</if>
+            <if test="openProperty != null">open_property = #{openProperty},</if>
+            <if test="openMultiple != null">open_multiple = #{openMultiple},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="attribute != null">attribute = #{attribute},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="formType != null">form_type = #{formType},</if>
+            <if test="dynamic != null">dynamic = #{dynamic},</if>
+        </trim>
+        where template_form_id = #{templateFormId}
+    </update>
+
+    <delete id="deleteFTemplateExamFormByTemplateFormId" parameterType="Long">
+        delete from f_template_exam_form where template_form_id = #{templateFormId}
+    </delete>
+
+    <delete id="deleteFTemplateExamFormByTemplateFormIds" parameterType="String">
+        delete from f_template_exam_form where template_form_id in 
+        <foreach item="templateFormId" collection="array" open="(" separator="," close=")">
+            #{templateFormId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.datacheck.mapper.SysDataCheckMapper">
+    
+    <resultMap type="SysDataCheck" id="SysDataCheckResult">
+        <result property="id"    column="id"    />
+        <result property="tableName"    column="table_name"    />
+        <result property="fieldName"    column="field_name"    />
+        <result property="rowId"    column="row_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSysDataCheckVo">
+        select id, table_name, field_name, row_id, create_time from sys_data_check
+    </sql>
+
+    <select id="selectSysDataCheckList" parameterType="SysDataCheck" resultMap="SysDataCheckResult">
+        <include refid="selectSysDataCheckVo"/>
+        <where>  
+            <if test="tableName != null  and tableName != ''"> and table_name like concat('%', #{tableName}, '%')</if>
+            <if test="fieldName != null  and fieldName != ''"> and field_name like concat('%', #{fieldName}, '%')</if>
+            <if test="rowId != null  and rowId != ''"> and row_id = #{rowId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDataCheckById" parameterType="Long" resultMap="SysDataCheckResult">
+        <include refid="selectSysDataCheckVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysDataCheck" parameterType="SysDataCheck" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_data_check
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tableName != null">table_name,</if>
+            <if test="fieldName != null">field_name,</if>
+            <if test="rowId != null">row_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tableName != null">#{tableName},</if>
+            <if test="fieldName != null">#{fieldName},</if>
+            <if test="rowId != null">#{rowId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDataCheck" parameterType="SysDataCheck">
+        update sys_data_check
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tableName != null">table_name = #{tableName},</if>
+            <if test="fieldName != null">field_name = #{fieldName},</if>
+            <if test="rowId != null">row_id = #{rowId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysDataCheckById" parameterType="Long">
+        delete from sys_data_check where id = #{id}
+    </delete>
+
+    <delete id="deleteSysDataCheckByIds" parameterType="String">
+        delete from sys_data_check where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

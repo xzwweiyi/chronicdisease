@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdGeneralInspectionMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdGeneralInspection" id="TdGeneralInspectionMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="recordingDate" column="recording_date" jdbcType="TIMESTAMP"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="studyDate" column="study_date" jdbcType="TIMESTAMP"/>
+        <result property="height" column="height" jdbcType="NUMERIC"/>
+        <result property="weight" column="weight" jdbcType="NUMERIC"/>
+        <result property="waistline" column="waistline" jdbcType="NUMERIC"/>
+        <result property="pulse" column="pulse" jdbcType="NUMERIC"/>
+        <result property="bmi" column="bmi" jdbcType="VARCHAR"/>
+        <result property="respiratoryRate" column="respiratory_rate" jdbcType="VARCHAR"/>
+        <result property="pulseRate" column="pulse_rate" jdbcType="NUMERIC"/>
+        <result property="systolicBloodPressure" column="systolic_blood_pressure" jdbcType="NUMERIC"/>
+        <result property="diastolicBloodPressure" column="diastolic_blood_pressure" jdbcType="NUMERIC"/>
+        <result property="bodyTemperature" column="body_temperature" jdbcType="NUMERIC"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultDate" column="result_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdGeneralInspectionMap">
+        select
+          id, patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time
+        from td_general_inspection
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdGeneralInspectionMap">
+        select
+          id, patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time
+        from td_general_inspection
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="recordingDate != null">
+                and recording_date = #{recordingDate}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="studyDate != null">
+                and study_date = #{studyDate}
+            </if>
+            <if test="height != null">
+                and height = #{height}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="waistline != null">
+                and waistline = #{waistline}
+            </if>
+            <if test="pulse != null">
+                and pulse = #{pulse}
+            </if>
+            <if test="bmi != null and bmi != ''">
+                and bmi = #{bmi}
+            </if>
+            <if test="pulseRate != null">
+                and pulse_rate = #{pulseRate}
+            </if>
+            <if test="systolicBloodPressure != null">
+                and systolic_blood_pressure = #{systolicBloodPressure}
+            </if>
+            <if test="diastolicBloodPressure != null">
+                and diastolic_blood_pressure = #{diastolicBloodPressure}
+            </if>
+            <if test="bodyTemperature != null">
+                and body_temperature = #{bodyTemperature}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_general_inspection
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="recordingDate != null">
+                and recording_date = #{recordingDate}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="studyDate != null">
+                and study_date = #{studyDate}
+            </if>
+            <if test="height != null">
+                and height = #{height}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="waistline != null">
+                and waistline = #{waistline}
+            </if>
+            <if test="pulse != null">
+                and pulse = #{pulse}
+            </if>
+            <if test="bmi != null and bmi != ''">
+                and bmi = #{bmi}
+            </if>
+            <if test="pulseRate != null">
+                and pulse_rate = #{pulseRate}
+            </if>
+            <if test="systolicBloodPressure != null">
+                and systolic_blood_pressure = #{systolicBloodPressure}
+            </if>
+            <if test="diastolicBloodPressure != null">
+                and diastolic_blood_pressure = #{diastolicBloodPressure}
+            </if>
+            <if test="bodyTemperature != null">
+                and body_temperature = #{bodyTemperature}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryInfoList" resultMap="TdGeneralInspectionMap">
+        select
+        id, patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time
+        from td_general_inspection
+        <where>
+            <if test="tdGeneralInspection.id != null">
+                and id = #{tdGeneralInspection.id}
+            </if>
+            <if test="tdGeneralInspection.patientId != null and tdGeneralInspection.patientId != ''">
+                and patient_id = #{tdGeneralInspection.patientId}
+            </if>
+            <if test="tdGeneralInspection.params.recordingDate != null">
+                and recording_date = #{tdGeneralInspection.params.recordingDate}
+            </if>
+            <if test="tdGeneralInspection.studyId != null and tdGeneralInspection.studyId != ''">
+                and study_id = #{tdGeneralInspection.studyId}
+            </if>
+            <if test="tdGeneralInspection.studyDate != null">
+                and study_date = #{tdGeneralInspection.studyDate}
+            </if>
+
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_general_inspection(patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time)
+        values (#{patientId}, #{recordingDate}, #{studyId}, #{studyDate}, #{height}, #{weight}, #{waistline}, #{pulse}, #{bmi}, #{pulseRate}, #{systolicBloodPressure}, #{diastolicBloodPressure}, #{bodyTemperature}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_general_inspection(patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time,respiratory_rate,result_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.recordingDate}, #{entity.studyId}, #{entity.studyDate}, #{entity.height}, #{entity.weight}, #{entity.waistline}, #{entity.pulse}, #{entity.bmi}, #{entity.pulseRate}, #{entity.systolicBloodPressure}, #{entity.diastolicBloodPressure}, #{entity.bodyTemperature}, #{entity.createTime}, #{entity.updateTime},#{entity.respiratoryRate},#{entity.resultDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_general_inspection(patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time,respiratory_rate,result_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.recordingDate}, #{entity.studyId}, #{entity.studyDate}, #{entity.height}, #{entity.weight}, #{entity.waistline}, #{entity.pulse}, #{entity.bmi}, #{entity.pulseRate}, #{entity.systolicBloodPressure}, #{entity.diastolicBloodPressure}, #{entity.bodyTemperature}, #{entity.createTime}, #{entity.updateTime},#{entity.respiratoryRate},#{entity.resultDate})
+        </foreach>
+    </insert>
+
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_general_inspection(patient_id, recording_date, study_id, study_date, height, weight, waistline, pulse, bmi, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, body_temperature, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.recordingDate}, #{entity.studyId}, #{entity.studyDate}, #{entity.height}, #{entity.weight}, #{entity.waistline}, #{entity.pulse}, #{entity.bmi}, #{entity.pulseRate}, #{entity.systolicBloodPressure}, #{entity.diastolicBloodPressure}, #{entity.bodyTemperature}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        patient_id = values(patient_id),
+        recording_date = values(recording_date),
+        study_id = values(study_id),
+        study_date = values(study_date),
+        height = values(height),
+        weight = values(weight),
+        waistline = values(waistline),
+        pulse = values(pulse),
+        bmi = values(bmi),
+        pulse_rate = values(pulse_rate),
+        systolic_blood_pressure = values(systolic_blood_pressure),
+        diastolic_blood_pressure = values(diastolic_blood_pressure),
+        body_temperature = values(body_temperature),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_general_inspection
+        <set>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="recordingDate != null">
+                recording_date = #{recordingDate},
+            </if>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="studyDate != null">
+                study_date = #{studyDate},
+            </if>
+            <if test="height != null">
+                height = #{height},
+            </if>
+            <if test="weight != null">
+                weight = #{weight},
+            </if>
+            <if test="waistline != null">
+                waistline = #{waistline},
+            </if>
+            <if test="pulse != null">
+                pulse = #{pulse},
+            </if>
+            <if test="bmi != null and bmi != ''">
+                bmi = #{bmi},
+            </if>
+            <if test="pulseRate != null">
+                pulse_rate = #{pulseRate},
+            </if>
+            <if test="systolicBloodPressure != null">
+                systolic_blood_pressure = #{systolicBloodPressure},
+            </if>
+            <if test="diastolicBloodPressure != null">
+                diastolic_blood_pressure = #{diastolicBloodPressure},
+            </if>
+            <if test="bodyTemperature != null">
+                body_temperature = #{bodyTemperature},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_general_inspection where id = #{id}
+    </delete>
+
+</mapper>
+

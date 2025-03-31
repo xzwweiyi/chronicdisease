@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.warn.mapper.WarnTemplateEarlyConditionMapper">
+    
+    <resultMap type="WarnTemplateEarlyCondition" id="WarnTemplateEarlyConditionResult">
+        <result property="id"    column="id"    />
+        <result property="templateEarlyWarnId"    column="template_early_warn_id"    />
+        <result property="conditionType"    column="condition_type"    />
+        <result property="earlyWarnValue"    column="early_warn_value"    />
+        <result property="earlyWarnStart"    column="early_warn_start"    />
+        <result property="earlyWarnEnd"    column="early_warn_end"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="templateId"    column="template_id"    />
+
+        <result property="earlyWarnLevel"    column="early_warn_level"    />
+        <result property="sexCondition"    column="sex_condition"    />
+        <result property="ageConditionType"    column="age_condition_type"    />
+        <result property="ageEarlyWarnValue"    column="age_early_warn_value"    />
+        <result property="ageEarlyWarnStart"    column="age_early_warn_start"    />
+        <result property="ageEarlyWarnEnd"    column="age_early_warn_end"    />
+    </resultMap>
+
+    <sql id="selectWarnTemplateEarlyConditionVo">
+        select id, template_early_warn_id, condition_type, early_warn_value, early_warn_start, early_warn_end, create_time, property_id, template_id,
+        early_warn_level, sex_condition, age_condition_type, age_early_warn_value, age_early_warn_start, age_early_warn_end
+        from warn_template_early_condition
+    </sql>
+
+    <select id="selectWarnTemplateEarlyConditionList" parameterType="WarnTemplateEarlyCondition" resultMap="WarnTemplateEarlyConditionResult">
+        <include refid="selectWarnTemplateEarlyConditionVo"/>
+        <where>  
+            <if test="templateEarlyWarnId != null "> and template_early_warn_id = #{templateEarlyWarnId}</if>
+            <if test="conditionType != null  and conditionType != ''"> and condition_type = #{conditionType}</if>
+            <if test="earlyWarnValue != null  and earlyWarnValue != ''"> and early_warn_value = #{earlyWarnValue}</if>
+            <if test="earlyWarnStart != null  and earlyWarnStart != ''"> and early_warn_start = #{earlyWarnStart}</if>
+            <if test="earlyWarnEnd != null  and earlyWarnEnd != ''"> and early_warn_end = #{earlyWarnEnd}</if>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnTemplateEarlyConditionById" parameterType="Long" resultMap="WarnTemplateEarlyConditionResult">
+        <include refid="selectWarnTemplateEarlyConditionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWarnTemplateEarlyCondition" parameterType="WarnTemplateEarlyCondition" useGeneratedKeys="true" keyProperty="id">
+        insert into warn_template_early_condition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateEarlyWarnId != null">template_early_warn_id,</if>
+            <if test="conditionType != null">condition_type,</if>
+            <if test="earlyWarnValue != null">early_warn_value,</if>
+            <if test="earlyWarnStart != null">early_warn_start,</if>
+            <if test="earlyWarnEnd != null">early_warn_end,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="propertyId != null">property_id,</if>
+            <if test="templateId != null">template_id,</if>
+
+            <if test="earlyWarnLevel != null">early_warn_level,</if>
+            <if test="sexCondition != null">sex_condition,</if>
+            <if test="ageConditionType != null">age_condition_type,</if>
+            <if test="ageEarlyWarnValue != null">age_early_warn_value,</if>
+            <if test="ageEarlyWarnStart != null">age_early_warn_start,</if>
+            <if test="ageEarlyWarnEnd != null">age_early_warn_end,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateEarlyWarnId != null">#{templateEarlyWarnId},</if>
+            <if test="conditionType != null">#{conditionType},</if>
+            <if test="earlyWarnValue != null">#{earlyWarnValue},</if>
+            <if test="earlyWarnStart != null">#{earlyWarnStart},</if>
+            <if test="earlyWarnEnd != null">#{earlyWarnEnd},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="templateId != null">#{templateId},</if>
+
+            <if test="earlyWarnLevel != null">#{earlyWarnLevel},</if>
+            <if test="sexCondition != null">#{sexCondition},</if>
+            <if test="ageConditionType != null">#{ageConditionType},</if>
+            <if test="ageEarlyWarnValue != null">#{ageEarlyWarnValue},</if>
+            <if test="ageEarlyWarnStart != null">#{ageEarlyWarnStart},</if>
+            <if test="ageEarlyWarnEnd != null">#{ageEarlyWarnEnd},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnTemplateEarlyCondition" parameterType="WarnTemplateEarlyCondition">
+        update warn_template_early_condition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateEarlyWarnId != null">template_early_warn_id = #{templateEarlyWarnId},</if>
+            <if test="conditionType != null">condition_type = #{conditionType},</if>
+            <if test="earlyWarnValue != null">early_warn_value = #{earlyWarnValue},</if>
+            <if test="earlyWarnStart != null">early_warn_start = #{earlyWarnStart},</if>
+            <if test="earlyWarnEnd != null">early_warn_end = #{earlyWarnEnd},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+
+            <if test="earlyWarnLevel != null">early_warn_level = #{earlyWarnLevel},</if>
+            <if test="sexCondition != null">sex_condition = #{sexCondition},</if>
+            <if test="ageConditionType != null">age_condition_type = #{ageConditionType},</if>
+            <if test="ageEarlyWarnValue != null">age_early_warn_value = #{ageEarlyWarnValue},</if>
+            <if test="ageEarlyWarnStart != null">age_early_warn_start = #{ageEarlyWarnStart},</if>
+            <if test="ageEarlyWarnEnd != null">age_early_warn_end = #{ageEarlyWarnEnd},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWarnTemplateEarlyConditionById" parameterType="Long">
+        delete from warn_template_early_condition where id = #{id}
+    </delete>
+
+    <delete id="deleteWarnTemplateEarlyConditionByWarnTemplateEarlyId" parameterType="Long">
+        delete from warn_template_early_condition where template_early_warn_id = #{id}
+    </delete>
+
+    <delete id="deleteWarnTemplateEarlyConditionByIds" parameterType="String">
+        delete from warn_template_early_condition where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

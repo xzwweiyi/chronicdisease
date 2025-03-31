@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.account.mapper.PatientAccountMapper">
+    
+    <resultMap type="com.dchealth.cro.account.domain.PatientAccount" id="PatientAccountResult">
+        <result property="accountId"    column="account_id"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="registrySigns"    column="registry_signs"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="bindStatus"    column="bind_status"    />
+        <result property="openId"    column="open_id"    />
+    </resultMap>
+
+    <sql id="selectPatientAccountVo">
+        select account_id, mobile, status,open_id, create_time, registry_signs, id_card, bind_status from patient_account
+    </sql>
+
+    <select id="selectPatientAccountList" parameterType="com.dchealth.cro.account.domain.PatientAccount" resultMap="PatientAccountResult">
+        <include refid="selectPatientAccountVo"/>
+        <where>  
+            <if test="mobile != null  and mobile != ''"> and mobile = #{mobile}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="registrySigns != null  and registrySigns != ''"> and registry_signs = #{registrySigns}</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="bindStatus != null  and bindStatus != ''"> and bind_status = #{bindStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientAccountByAccountId" parameterType="Long" resultMap="PatientAccountResult">
+        <include refid="selectPatientAccountVo"/>
+        where account_id = #{accountId}
+    </select>
+
+    <select id="selectPatientAccountByMobile" parameterType="String" resultMap="PatientAccountResult">
+        <include refid="selectPatientAccountVo"/>
+        where mobile = #{mobile} ORDER BY account_id DESC limit 0,1
+    </select>
+    <select id="selectPatientAccountByOpenId" parameterType="String" resultMap="PatientAccountResult">
+        <include refid="selectPatientAccountVo"/>
+        where open_id = #{openId} limit 0,1
+    </select>
+        
+    <insert id="insertPatientAccount" parameterType="com.dchealth.cro.account.domain.PatientAccount" useGeneratedKeys="true" keyProperty="accountId">
+        insert into patient_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mobile != null and mobile != ''">mobile,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="registrySigns != null">registry_signs,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="bindStatus != null">bind_status,</if>
+            <if test="openId != null and openId != ''">open_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mobile != null and mobile != ''">#{mobile},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="registrySigns != null">#{registrySigns},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="bindStatus != null">#{bindStatus},</if>
+            <if test="openId != null and openId != ''">#{openId},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientAccount" parameterType="com.dchealth.cro.account.domain.PatientAccount">
+        update patient_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="registrySigns != null">registry_signs = #{registrySigns},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="bindStatus != null">bind_status = #{bindStatus},</if>
+             <if test="openId != null and openId != ''">open_id = #{openId},</if>
+        </trim>
+        where account_id = #{accountId}
+    </update>
+    <update id="resetOpenId" >
+        update patient_account  set open_id = ''  where  account_id = #{accountId}
+    </update>
+
+    <delete id="deletePatientAccountByAccountId" parameterType="Long">
+        delete from patient_account where account_id = #{accountId}
+    </delete>
+
+    <delete id="deletePatientAccountByAccountIds" parameterType="String">
+        delete from patient_account where account_id in 
+        <foreach item="accountId" collection="array" open="(" separator="," close=")">
+            #{accountId}
+        </foreach>
+    </delete>
+</mapper>

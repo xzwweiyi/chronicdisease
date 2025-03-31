@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchHospitalMapper">
+
+    <resultMap type="ResearchHospital" id="ResearchHospitalResult">
+        <result property="id"    column="id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="targetNum"    column="target_num"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+
+
+    <sql id="selectResearchHospitalVo">
+        select id, research_id, dept_id, target_num from research_hospital
+    </sql>
+
+
+    <select id="selectByResearchHospital" parameterType="ResearchHospital" resultMap="ResearchHospitalResult">
+        select h.id, h.research_id, h.dept_id, h.target_num, d.dept_name , f.project_name from research_hospital h
+        left join sys_dept d on h.dept_id = d.dept_id
+        left join research_info f on h.research_id = f.id
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="deptId != null  "> and dept_id = #{deptId}</if>
+            <if test="targetNum != null  "> and target_num = #{targetNum}</if>
+        </where>
+    </select>
+
+    <insert id="insertResearchHospital" parameterType="ResearchHospital" useGeneratedKeys="true" keyProperty="id">
+        insert into research_hospital
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="targetNum != null">target_num,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="targetNum != null">#{targetNum},</if>
+        </trim>
+        <!--insert into research_hospital(research_id, dept_id, target_num) values
+        <foreach item="item" index="index" collection="researchHospitals" separator=",">
+            (#{item.researchId},#{item.deptId},#{item.targetNum})
+        </foreach>-->
+    </insert>
+
+    <update id="updateResearchHospital" parameterType="ResearchHospital">
+        update research_hospital
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="targetNum != null">target_num = #{targetNum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchHospitalByIds" parameterType="Long">
+        delete from research_hospital where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findResearchHospitalByIds" parameterType="Long" resultMap="ResearchHospitalResult">
+        <include refid="selectResearchHospitalVo"/>
+        where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="findResearchHospitalByResearchIdAndDeptId" parameterType="Long" resultMap="ResearchHospitalResult">
+        <include refid="selectResearchHospitalVo"/>
+         where research_id = #{researchId} and dept_id = #{deptId}
+    </select>
+
+</mapper>

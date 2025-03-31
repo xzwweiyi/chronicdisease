@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.JcmxxMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.Jcmxx" id="JcmxxMap">
+        <result property="xxid" column="XXID" jdbcType="VARCHAR"/>
+        <result property="ordercode" column="OrderCode" jdbcType="VARCHAR"/>
+        <result property="xxdm" column="XXDM" jdbcType="VARCHAR"/>
+        <result property="xxmc" column="XXMC" jdbcType="VARCHAR"/>
+        <result property="exxmc" column="EXXMC" jdbcType="VARCHAR"/>
+        <result property="unit" column="Unit" jdbcType="VARCHAR"/>
+        <result property="ifprint" column="IFPrint" jdbcType="VARCHAR"/>
+        <result property="lbdm" column="LBDM" jdbcType="VARCHAR"/>
+        <result property="mdefvalueup" column="MDefValueUp" jdbcType="VARCHAR"/>
+        <result property="mdefvaluedown" column="MDefValueDown" jdbcType="VARCHAR"/>
+        <result property="wdefvalueup" column="WDefValueUp" jdbcType="VARCHAR"/>
+        <result property="wdefvaluedown" column="WDefValueDown" jdbcType="VARCHAR"/>
+        <result property="defvalue1" column="DefValue1" jdbcType="VARCHAR"/>
+        <result property="defvalue2" column="DefValue2" jdbcType="VARCHAR"/>
+        <result property="defvalue3" column="DefValue3" jdbcType="VARCHAR"/>
+        <result property="defvalue4" column="DefValue4" jdbcType="VARCHAR"/>
+        <result property="defvalue5" column="DefValue5" jdbcType="VARCHAR"/>
+        <result property="zjf" column="ZJF" jdbcType="VARCHAR"/>
+        <result property="xxvaluetype" column="XXValueType" jdbcType="VARCHAR"/>
+        <result property="gxdm" column="GXDM" jdbcType="VARCHAR"/>
+        <result property="ifxj" column="IFXJ" jdbcType="VARCHAR"/>
+        <result property="outflag" column="OutFlag" jdbcType="VARCHAR"/>
+        <result property="outname" column="OutName" jdbcType="VARCHAR"/>
+        <result property="ifdx" column="IFDX" jdbcType="VARCHAR"/>
+        <result property="jcmxxbz" column="JCMXXBZ" jdbcType="VARCHAR"/>
+        <result property="nofx" column="NoFX" jdbcType="VARCHAR"/>
+        <result property="mdsdefvaluedown" column="MDsDefValueDown" jdbcType="VARCHAR"/>
+        <result property="mdsdefvalueup" column="MDsDefValueUp" jdbcType="VARCHAR"/>
+        <result property="mdsdefvalue" column="MDsDefValue" jdbcType="VARCHAR"/>
+        <result property="wdsdefvaluedown" column="WDsDefValueDown" jdbcType="VARCHAR"/>
+        <result property="wdsdefvalueup" column="WDsDefValueUp" jdbcType="VARCHAR"/>
+        <result property="wdsdefvalue" column="WDsDefValue" jdbcType="VARCHAR"/>
+        <result property="xxxb" column="XXXB" jdbcType="VARCHAR"/>
+        <result property="xmlen" column="XMLen" jdbcType="INTEGER"/>
+        <result property="btflag" column="BTflag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="JcmxxMap">
+        select
+          XXID, OrderCode, XXDM, XXMC, EXXMC, Unit, IFPrint, LBDM, MDefValueUp, MDefValueDown, WDefValueUp, WDefValueDown, DefValue1, DefValue2, DefValue3, DefValue4, DefValue5, ZJF, XXValueType, GXDM, IFXJ, OutFlag, OutName, IFDX, JCMXXBZ, NoFX, MDsDefValueDown, MDsDefValueUp, MDsDefValue, WDsDefValueDown, WDsDefValueUp, WDsDefValue, XXXB, XMLen, BTflag
+        from jcmxx
+        where  = #{xxid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="JcmxxMap">
+        select
+          XXID, OrderCode, XXDM, XXMC, EXXMC, Unit, IFPrint, LBDM, MDefValueUp, MDefValueDown, WDefValueUp, WDefValueDown, DefValue1, DefValue2, DefValue3, DefValue4, DefValue5, ZJF, XXValueType, GXDM, IFXJ, OutFlag, OutName, IFDX, JCMXXBZ, NoFX, MDsDefValueDown, MDsDefValueUp, MDsDefValue, WDsDefValueDown, WDsDefValueUp, WDsDefValue, XXXB, XMLen, BTflag
+        from jcmxx
+        <where>
+            <if test="xxid != null and xxid != ''">
+                and XXID = #{xxid}
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                and OrderCode = #{ordercode}
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                and XXDM = #{xxdm}
+            </if>
+            <if test="xxmc != null and xxmc != ''">
+                and XXMC = #{xxmc}
+            </if>
+            <if test="exxmc != null and exxmc != ''">
+                and EXXMC = #{exxmc}
+            </if>
+            <if test="unit != null and unit != ''">
+                and Unit = #{unit}
+            </if>
+            <if test="ifprint != null and ifprint != ''">
+                and IFPrint = #{ifprint}
+            </if>
+            <if test="lbdm != null and lbdm != ''">
+                and LBDM = #{lbdm}
+            </if>
+            <if test="mdefvalueup != null and mdefvalueup != ''">
+                and MDefValueUp = #{mdefvalueup}
+            </if>
+            <if test="mdefvaluedown != null and mdefvaluedown != ''">
+                and MDefValueDown = #{mdefvaluedown}
+            </if>
+            <if test="wdefvalueup != null and wdefvalueup != ''">
+                and WDefValueUp = #{wdefvalueup}
+            </if>
+            <if test="wdefvaluedown != null and wdefvaluedown != ''">
+                and WDefValueDown = #{wdefvaluedown}
+            </if>
+            <if test="defvalue1 != null and defvalue1 != ''">
+                and DefValue1 = #{defvalue1}
+            </if>
+            <if test="defvalue2 != null and defvalue2 != ''">
+                and DefValue2 = #{defvalue2}
+            </if>
+            <if test="defvalue3 != null and defvalue3 != ''">
+                and DefValue3 = #{defvalue3}
+            </if>
+            <if test="defvalue4 != null and defvalue4 != ''">
+                and DefValue4 = #{defvalue4}
+            </if>
+            <if test="defvalue5 != null and defvalue5 != ''">
+                and DefValue5 = #{defvalue5}
+            </if>
+            <if test="zjf != null and zjf != ''">
+                and ZJF = #{zjf}
+            </if>
+            <if test="xxvaluetype != null and xxvaluetype != ''">
+                and XXValueType = #{xxvaluetype}
+            </if>
+            <if test="gxdm != null and gxdm != ''">
+                and GXDM = #{gxdm}
+            </if>
+            <if test="ifxj != null and ifxj != ''">
+                and IFXJ = #{ifxj}
+            </if>
+            <if test="outflag != null and outflag != ''">
+                and OutFlag = #{outflag}
+            </if>
+            <if test="outname != null and outname != ''">
+                and OutName = #{outname}
+            </if>
+            <if test="ifdx != null and ifdx != ''">
+                and IFDX = #{ifdx}
+            </if>
+            <if test="jcmxxbz != null and jcmxxbz != ''">
+                and JCMXXBZ = #{jcmxxbz}
+            </if>
+            <if test="nofx != null and nofx != ''">
+                and NoFX = #{nofx}
+            </if>
+            <if test="mdsdefvaluedown != null and mdsdefvaluedown != ''">
+                and MDsDefValueDown = #{mdsdefvaluedown}
+            </if>
+            <if test="mdsdefvalueup != null and mdsdefvalueup != ''">
+                and MDsDefValueUp = #{mdsdefvalueup}
+            </if>
+            <if test="mdsdefvalue != null and mdsdefvalue != ''">
+                and MDsDefValue = #{mdsdefvalue}
+            </if>
+            <if test="wdsdefvaluedown != null and wdsdefvaluedown != ''">
+                and WDsDefValueDown = #{wdsdefvaluedown}
+            </if>
+            <if test="wdsdefvalueup != null and wdsdefvalueup != ''">
+                and WDsDefValueUp = #{wdsdefvalueup}
+            </if>
+            <if test="wdsdefvalue != null and wdsdefvalue != ''">
+                and WDsDefValue = #{wdsdefvalue}
+            </if>
+            <if test="xxxb != null and xxxb != ''">
+                and XXXB = #{xxxb}
+            </if>
+            <if test="xmlen != null">
+                and XMLen = #{xmlen}
+            </if>
+            <if test="btflag != null">
+                and BTflag = #{btflag}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from jcmxx
+        <where>
+            <if test="xxid != null and xxid != ''">
+                and XXID = #{xxid}
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                and OrderCode = #{ordercode}
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                and XXDM = #{xxdm}
+            </if>
+            <if test="xxmc != null and xxmc != ''">
+                and XXMC = #{xxmc}
+            </if>
+            <if test="exxmc != null and exxmc != ''">
+                and EXXMC = #{exxmc}
+            </if>
+            <if test="unit != null and unit != ''">
+                and Unit = #{unit}
+            </if>
+            <if test="ifprint != null and ifprint != ''">
+                and IFPrint = #{ifprint}
+            </if>
+            <if test="lbdm != null and lbdm != ''">
+                and LBDM = #{lbdm}
+            </if>
+            <if test="mdefvalueup != null and mdefvalueup != ''">
+                and MDefValueUp = #{mdefvalueup}
+            </if>
+            <if test="mdefvaluedown != null and mdefvaluedown != ''">
+                and MDefValueDown = #{mdefvaluedown}
+            </if>
+            <if test="wdefvalueup != null and wdefvalueup != ''">
+                and WDefValueUp = #{wdefvalueup}
+            </if>
+            <if test="wdefvaluedown != null and wdefvaluedown != ''">
+                and WDefValueDown = #{wdefvaluedown}
+            </if>
+            <if test="defvalue1 != null and defvalue1 != ''">
+                and DefValue1 = #{defvalue1}
+            </if>
+            <if test="defvalue2 != null and defvalue2 != ''">
+                and DefValue2 = #{defvalue2}
+            </if>
+            <if test="defvalue3 != null and defvalue3 != ''">
+                and DefValue3 = #{defvalue3}
+            </if>
+            <if test="defvalue4 != null and defvalue4 != ''">
+                and DefValue4 = #{defvalue4}
+            </if>
+            <if test="defvalue5 != null and defvalue5 != ''">
+                and DefValue5 = #{defvalue5}
+            </if>
+            <if test="zjf != null and zjf != ''">
+                and ZJF = #{zjf}
+            </if>
+            <if test="xxvaluetype != null and xxvaluetype != ''">
+                and XXValueType = #{xxvaluetype}
+            </if>
+            <if test="gxdm != null and gxdm != ''">
+                and GXDM = #{gxdm}
+            </if>
+            <if test="ifxj != null and ifxj != ''">
+                and IFXJ = #{ifxj}
+            </if>
+            <if test="outflag != null and outflag != ''">
+                and OutFlag = #{outflag}
+            </if>
+            <if test="outname != null and outname != ''">
+                and OutName = #{outname}
+            </if>
+            <if test="ifdx != null and ifdx != ''">
+                and IFDX = #{ifdx}
+            </if>
+            <if test="jcmxxbz != null and jcmxxbz != ''">
+                and JCMXXBZ = #{jcmxxbz}
+            </if>
+            <if test="nofx != null and nofx != ''">
+                and NoFX = #{nofx}
+            </if>
+            <if test="mdsdefvaluedown != null and mdsdefvaluedown != ''">
+                and MDsDefValueDown = #{mdsdefvaluedown}
+            </if>
+            <if test="mdsdefvalueup != null and mdsdefvalueup != ''">
+                and MDsDefValueUp = #{mdsdefvalueup}
+            </if>
+            <if test="mdsdefvalue != null and mdsdefvalue != ''">
+                and MDsDefValue = #{mdsdefvalue}
+            </if>
+            <if test="wdsdefvaluedown != null and wdsdefvaluedown != ''">
+                and WDsDefValueDown = #{wdsdefvaluedown}
+            </if>
+            <if test="wdsdefvalueup != null and wdsdefvalueup != ''">
+                and WDsDefValueUp = #{wdsdefvalueup}
+            </if>
+            <if test="wdsdefvalue != null and wdsdefvalue != ''">
+                and WDsDefValue = #{wdsdefvalue}
+            </if>
+            <if test="xxxb != null and xxxb != ''">
+                and XXXB = #{xxxb}
+            </if>
+            <if test="xmlen != null">
+                and XMLen = #{xmlen}
+            </if>
+            <if test="btflag != null">
+                and BTflag = #{btflag}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into jcmxx(XXID, OrderCode, XXDM, XXMC, EXXMC, Unit, IFPrint, LBDM, MDefValueUp, MDefValueDown, WDefValueUp, WDefValueDown, DefValue1, DefValue2, DefValue3, DefValue4, DefValue5, ZJF, XXValueType, GXDM, IFXJ, OutFlag, OutName, IFDX, JCMXXBZ, NoFX, MDsDefValueDown, MDsDefValueUp, MDsDefValue, WDsDefValueDown, WDsDefValueUp, WDsDefValue, XXXB, XMLen, BTflag)
+        values (#{xxid}, #{ordercode}, #{xxdm}, #{xxmc}, #{exxmc}, #{unit}, #{ifprint}, #{lbdm}, #{mdefvalueup}, #{mdefvaluedown}, #{wdefvalueup}, #{wdefvaluedown}, #{defvalue1}, #{defvalue2}, #{defvalue3}, #{defvalue4}, #{defvalue5}, #{zjf}, #{xxvaluetype}, #{gxdm}, #{ifxj}, #{outflag}, #{outname}, #{ifdx}, #{jcmxxbz}, #{nofx}, #{mdsdefvaluedown}, #{mdsdefvalueup}, #{mdsdefvalue}, #{wdsdefvaluedown}, #{wdsdefvalueup}, #{wdsdefvalue}, #{xxxb}, #{xmlen}, #{btflag})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into jcmxx(XXID, OrderCode, XXDM, XXMC, EXXMC, Unit, IFPrint, LBDM, MDefValueUp, MDefValueDown, WDefValueUp, WDefValueDown, DefValue1, DefValue2, DefValue3, DefValue4, DefValue5, ZJF, XXValueType, GXDM, IFXJ, OutFlag, OutName, IFDX, JCMXXBZ, NoFX, MDsDefValueDown, MDsDefValueUp, MDsDefValue, WDsDefValueDown, WDsDefValueUp, WDsDefValue, XXXB, XMLen, BTflag)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.xxid}, #{entity.ordercode}, #{entity.xxdm}, #{entity.xxmc}, #{entity.exxmc}, #{entity.unit}, #{entity.ifprint}, #{entity.lbdm}, #{entity.mdefvalueup}, #{entity.mdefvaluedown}, #{entity.wdefvalueup}, #{entity.wdefvaluedown}, #{entity.defvalue1}, #{entity.defvalue2}, #{entity.defvalue3}, #{entity.defvalue4}, #{entity.defvalue5}, #{entity.zjf}, #{entity.xxvaluetype}, #{entity.gxdm}, #{entity.ifxj}, #{entity.outflag}, #{entity.outname}, #{entity.ifdx}, #{entity.jcmxxbz}, #{entity.nofx}, #{entity.mdsdefvaluedown}, #{entity.mdsdefvalueup}, #{entity.mdsdefvalue}, #{entity.wdsdefvaluedown}, #{entity.wdsdefvalueup}, #{entity.wdsdefvalue}, #{entity.xxxb}, #{entity.xmlen}, #{entity.btflag})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into jcmxx(XXID, OrderCode, XXDM, XXMC, EXXMC, Unit, IFPrint, LBDM, MDefValueUp, MDefValueDown, WDefValueUp, WDefValueDown, DefValue1, DefValue2, DefValue3, DefValue4, DefValue5, ZJF, XXValueType, GXDM, IFXJ, OutFlag, OutName, IFDX, JCMXXBZ, NoFX, MDsDefValueDown, MDsDefValueUp, MDsDefValue, WDsDefValueDown, WDsDefValueUp, WDsDefValue, XXXB, XMLen, BTflag)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.xxid}, #{entity.ordercode}, #{entity.xxdm}, #{entity.xxmc}, #{entity.exxmc}, #{entity.unit}, #{entity.ifprint}, #{entity.lbdm}, #{entity.mdefvalueup}, #{entity.mdefvaluedown}, #{entity.wdefvalueup}, #{entity.wdefvaluedown}, #{entity.defvalue1}, #{entity.defvalue2}, #{entity.defvalue3}, #{entity.defvalue4}, #{entity.defvalue5}, #{entity.zjf}, #{entity.xxvaluetype}, #{entity.gxdm}, #{entity.ifxj}, #{entity.outflag}, #{entity.outname}, #{entity.ifdx}, #{entity.jcmxxbz}, #{entity.nofx}, #{entity.mdsdefvaluedown}, #{entity.mdsdefvalueup}, #{entity.mdsdefvalue}, #{entity.wdsdefvaluedown}, #{entity.wdsdefvalueup}, #{entity.wdsdefvalue}, #{entity.xxxb}, #{entity.xmlen}, #{entity.btflag})
+        </foreach>
+        on duplicate key update
+        XXID = values(XXID),
+        OrderCode = values(OrderCode),
+        XXDM = values(XXDM),
+        XXMC = values(XXMC),
+        EXXMC = values(EXXMC),
+        Unit = values(Unit),
+        IFPrint = values(IFPrint),
+        LBDM = values(LBDM),
+        MDefValueUp = values(MDefValueUp),
+        MDefValueDown = values(MDefValueDown),
+        WDefValueUp = values(WDefValueUp),
+        WDefValueDown = values(WDefValueDown),
+        DefValue1 = values(DefValue1),
+        DefValue2 = values(DefValue2),
+        DefValue3 = values(DefValue3),
+        DefValue4 = values(DefValue4),
+        DefValue5 = values(DefValue5),
+        ZJF = values(ZJF),
+        XXValueType = values(XXValueType),
+        GXDM = values(GXDM),
+        IFXJ = values(IFXJ),
+        OutFlag = values(OutFlag),
+        OutName = values(OutName),
+        IFDX = values(IFDX),
+        JCMXXBZ = values(JCMXXBZ),
+        NoFX = values(NoFX),
+        MDsDefValueDown = values(MDsDefValueDown),
+        MDsDefValueUp = values(MDsDefValueUp),
+        MDsDefValue = values(MDsDefValue),
+        WDsDefValueDown = values(WDsDefValueDown),
+        WDsDefValueUp = values(WDsDefValueUp),
+        WDsDefValue = values(WDsDefValue),
+        XXXB = values(XXXB),
+        XMLen = values(XMLen),
+        BTflag = values(BTflag)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update jcmxx
+        <set>
+            <if test="xxid != null and xxid != ''">
+                XXID = #{xxid},
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                OrderCode = #{ordercode},
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                XXDM = #{xxdm},
+            </if>
+            <if test="xxmc != null and xxmc != ''">
+                XXMC = #{xxmc},
+            </if>
+            <if test="exxmc != null and exxmc != ''">
+                EXXMC = #{exxmc},
+            </if>
+            <if test="unit != null and unit != ''">
+                Unit = #{unit},
+            </if>
+            <if test="ifprint != null and ifprint != ''">
+                IFPrint = #{ifprint},
+            </if>
+            <if test="lbdm != null and lbdm != ''">
+                LBDM = #{lbdm},
+            </if>
+            <if test="mdefvalueup != null and mdefvalueup != ''">
+                MDefValueUp = #{mdefvalueup},
+            </if>
+            <if test="mdefvaluedown != null and mdefvaluedown != ''">
+                MDefValueDown = #{mdefvaluedown},
+            </if>
+            <if test="wdefvalueup != null and wdefvalueup != ''">
+                WDefValueUp = #{wdefvalueup},
+            </if>
+            <if test="wdefvaluedown != null and wdefvaluedown != ''">
+                WDefValueDown = #{wdefvaluedown},
+            </if>
+            <if test="defvalue1 != null and defvalue1 != ''">
+                DefValue1 = #{defvalue1},
+            </if>
+            <if test="defvalue2 != null and defvalue2 != ''">
+                DefValue2 = #{defvalue2},
+            </if>
+            <if test="defvalue3 != null and defvalue3 != ''">
+                DefValue3 = #{defvalue3},
+            </if>
+            <if test="defvalue4 != null and defvalue4 != ''">
+                DefValue4 = #{defvalue4},
+            </if>
+            <if test="defvalue5 != null and defvalue5 != ''">
+                DefValue5 = #{defvalue5},
+            </if>
+            <if test="zjf != null and zjf != ''">
+                ZJF = #{zjf},
+            </if>
+            <if test="xxvaluetype != null and xxvaluetype != ''">
+                XXValueType = #{xxvaluetype},
+            </if>
+            <if test="gxdm != null and gxdm != ''">
+                GXDM = #{gxdm},
+            </if>
+            <if test="ifxj != null and ifxj != ''">
+                IFXJ = #{ifxj},
+            </if>
+            <if test="outflag != null and outflag != ''">
+                OutFlag = #{outflag},
+            </if>
+            <if test="outname != null and outname != ''">
+                OutName = #{outname},
+            </if>
+            <if test="ifdx != null and ifdx != ''">
+                IFDX = #{ifdx},
+            </if>
+            <if test="jcmxxbz != null and jcmxxbz != ''">
+                JCMXXBZ = #{jcmxxbz},
+            </if>
+            <if test="nofx != null and nofx != ''">
+                NoFX = #{nofx},
+            </if>
+            <if test="mdsdefvaluedown != null and mdsdefvaluedown != ''">
+                MDsDefValueDown = #{mdsdefvaluedown},
+            </if>
+            <if test="mdsdefvalueup != null and mdsdefvalueup != ''">
+                MDsDefValueUp = #{mdsdefvalueup},
+            </if>
+            <if test="mdsdefvalue != null and mdsdefvalue != ''">
+                MDsDefValue = #{mdsdefvalue},
+            </if>
+            <if test="wdsdefvaluedown != null and wdsdefvaluedown != ''">
+                WDsDefValueDown = #{wdsdefvaluedown},
+            </if>
+            <if test="wdsdefvalueup != null and wdsdefvalueup != ''">
+                WDsDefValueUp = #{wdsdefvalueup},
+            </if>
+            <if test="wdsdefvalue != null and wdsdefvalue != ''">
+                WDsDefValue = #{wdsdefvalue},
+            </if>
+            <if test="xxxb != null and xxxb != ''">
+                XXXB = #{xxxb},
+            </if>
+            <if test="xmlen != null">
+                XMLen = #{xmlen},
+            </if>
+            <if test="btflag != null">
+                BTflag = #{btflag},
+            </if>
+        </set>
+        where  = #{xxid}
+    </update>
+
+
+</mapper>
+

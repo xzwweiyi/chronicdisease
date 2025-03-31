@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientRecordTemplateMapper">
+    
+    <resultMap type="PatientRecordTemplate" id="PatientRecordTemplateResult">
+        <result property="followId"    column="follow_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="followStartDate"    column="follow_start_date"    />
+        <result property="followEndDate"    column="follow_end_date"    />
+        <result property="followInterval"    column="follow_Interval"    />
+        <result property="followIntervalUnit"    column="follow_Interval_unit"    />
+        <result property="followFrequency"    column="follow_frequency"    />
+        <result property="followTotal"    column="follow_total"    />
+        <result property="followNum"    column="follow_num"    />
+        <result property="followName"    column="follow_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="PatientMedicalPropertyResVO" id="PatientMedicalPropertyResResult">
+        <result property="followId"    column="follow_id"    />
+        <result property="followName"    column="follow_name"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="propertyCode"    column="property_code"    />
+        <result property="propertyType"    column="property_type"    />
+        <result property="propertyName"    column="property_name"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="propertyValue"    column="property_value"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_Name"    />
+        <result property="medicalName"    column="medical_name"    />
+        <result property="medicalCode"    column="medical_code"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="followSubmitTime"    column="follow_submit_time"    />
+        <result property="followNum"    column="follow_num"    />
+        <result property="edcStatus"    column="edc_status"    />
+        <result property="type"    column="type"    />
+
+
+    </resultMap>
+
+    <sql id="selectPatientRecordTemplateVo">
+        select follow_id, research_id, follow_start_date, follow_end_date, follow_Interval, follow_Interval_unit,
+               follow_frequency, follow_total, follow_num, follow_name, create_by, create_time, update_by,
+               update_time from patient_record_template
+    </sql>
+
+    <select id="selectPatientRecordTemplateList" parameterType="PatientRecordTemplate" resultMap="PatientRecordTemplateResult">
+        <include refid="selectPatientRecordTemplateVo"/>
+        <where>  
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="followStartDate != null "> and follow_start_date = #{followStartDate}</if>
+            <if test="followEndDate != null "> and follow_end_date = #{followEndDate}</if>
+            <if test="followInterval != null "> and follow_Interval = #{followInterval}</if>
+            <if test="followIntervalUnit != null and followIntervalUnit != ''"> and follow_Interval_unit = #{followIntervalUnit}</if>
+            <if test="followFrequency != null  and followFrequency != ''"> and follow_frequency = #{followFrequency}</if>
+            <if test="followTotal != null "> and follow_total = #{followTotal}</if>
+            <if test="followNum != null "> and follow_num = #{followNum}</if>
+            <if test="followName != null "> and follow_name = #{followName}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientRecordTemplateByFollowId" parameterType="Long" resultMap="PatientRecordTemplateResult">
+        <include refid="selectPatientRecordTemplateVo"/>
+        where follow_id = #{followId}
+    </select>
+
+    <select id="selectPatientRecordTemplateByResearchId" parameterType="Long" resultMap="PatientRecordTemplateResult">
+        <include refid="selectPatientRecordTemplateVo"/>
+        where research_id = #{researchId} order by follow_num asc
+    </select>
+
+    <select id="selectPatientRecordTemplateByResearchRelease" resultMap="PatientRecordTemplateResult">
+        select t.follow_id,t.follow_end_date,t.follow_frequency,t.follow_Interval,t.follow_Interval_unit,
+        t.follow_name,t.follow_num,t.follow_start_date,t.research_id, t.follow_total
+        from patient_record_template t,research_info r
+        where r.id = t.research_id and r.research_status='1'
+    </select>
+
+    <select id="selectPatientRecordTemplateByResearchIds" parameterType="Long" resultMap="PatientRecordTemplateResult">
+        select t.follow_id,t.follow_end_date,t.follow_frequency,t.follow_Interval,t.follow_Interval_unit,
+        t.follow_name,t.follow_num,t.follow_start_date,t.research_id, t.follow_total
+        from patient_record_template t,research_info r
+        where r.id = t.research_id
+        and r.id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+        
+    <insert id="insertPatientRecordTemplate" parameterType="PatientRecordTemplate" useGeneratedKeys="true" keyProperty="followId">
+        insert into patient_record_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="followStartDate != null">follow_start_date,</if>
+            <if test="followEndDate != null">follow_end_date,</if>
+            <if test="followInterval != null">follow_Interval,</if>
+            <if test="followIntervalUnit != null and followIntervalUnit != ''">follow_Interval_unit,</if>
+            <if test="followFrequency != null">follow_frequency,</if>
+            <if test="followTotal != null">follow_total,</if>
+            <if test="followNum != null">follow_num,</if>
+            <if test="followName != null">follow_name,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="followStartDate != null">#{followStartDate},</if>
+            <if test="followEndDate != null">#{followEndDate},</if>
+            <if test="followInterval != null">#{followInterval},</if>
+            <if test="followIntervalUnit != null and followIntervalUnit != ''">#{followIntervalUnit},</if>
+            <if test="followFrequency != null">#{followFrequency},</if>
+            <if test="followTotal != null">#{followTotal},</if>
+            <if test="followNum != null">#{followNum},</if>
+            <if test="followName != null">#{followName},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientRecordTemplate" parameterType="PatientRecordTemplate">
+        update patient_record_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="followStartDate != null">follow_start_date = #{followStartDate},</if>
+            <if test="followEndDate != null">follow_end_date = #{followEndDate},</if>
+            <if test="followInterval != null">follow_Interval = #{followInterval},</if>
+            <if test="followIntervalUnit != null and followIntervalUnit != ''">follow_Interval_unit = #{followIntervalUnit},</if>
+            <if test="followFrequency != null">follow_frequency = #{followFrequency},</if>
+            <if test="followTotal != null">follow_total = #{followTotal},</if>
+            <if test="followNum != null">follow_num = #{followNum},</if>
+            <if test="followName != null">follow_name = #{followName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where follow_id = #{followId}
+    </update>
+
+    <delete id="deletePatientRecordTemplateByFollowId" parameterType="Long">
+        delete from patient_record_template where follow_id = #{followId}
+    </delete>
+
+    <delete id="deletePatientRecordTemplateByFollowIds" parameterType="String">
+        delete from patient_record_template where follow_id in 
+        <foreach item="followId" collection="array" open="(" separator="," close=")">
+            #{followId}
+        </foreach>
+    </delete>
+
+    <select id="selectMaxFollowNumByResearchId" resultType="Integer" parameterType="Long">
+        select max(follow_num) from patient_record_template where research_id = #{researchId}
+    </select>
+
+    <select id="selectPatientMedicalPropertyRes" resultMap="PatientMedicalPropertyResResult">
+        select prt.follow_id,prt.follow_num,pr.name as follow_name,prt.research_id,fmp.id,fmp.property_code,fmp.property_name,fmp.property_type,
+        fmp.sort_num,fmf.medical_code,fmf.medical_name,res.record_id,res.property_value,res.create_time,pr.patient_id,
+        pi2.dept_id,sd.dept_name,pr.follow_submit_time, pr.edc_status, res.type
+        from patient_record_template prt
+        left join f_medical_property fmp on prt.follow_id = fmp.follow_id
+        left join f_medical_form fmf on fmf.medical_form_id = fmp.medical_form_id
+        right join ${tableName} res on fmp.id = res.property_id
+        left join patient_record pr on res.record_id = pr.record_id
+        left join patient_info pi2 on pr.patient_id = pi2.patient_id
+        left join sys_dept sd on pi2.dept_id = sd.dept_id
+        where prt.research_id = #{researchId}
+      <!--  <if test="deptIds!=null and deptIds!='' ">
+            and pi2.dept_id in (${deptIds})
+        </if> -->
+        <if test="patientIds!=null and patientIds.size > 0">
+            and pr.patient_id in
+            <foreach item="patientId" collection="patientIds" open="(" separator="," close=")">
+                #{patientId}
+            </foreach>
+        </if>
+        order by res.record_id
+    </select>
+
+    <select id="selectByResearchIdAndNum"  resultMap="PatientRecordTemplateResult">
+        <include refid="selectPatientRecordTemplateVo"/>
+        where research_id = #{researchId} and follow_num = #{followNum} limit 0,1
+    </select>
+
+    <select id="selectPatientMedicalPropertyExamRes" resultMap="PatientMedicalPropertyResResult">
+        select prt.follow_id,prt.follow_num,pr.name as follow_name,prt.research_id,fmp.id,fmp.property_code,fmp.property_name,fmp.property_type,
+        fmp.sort_num,fmf.medical_code,fmf.medical_name,res.record_id,res.property_value,res.create_time,pr.patient_id,
+        pi2.dept_id,sd.dept_name,pr.follow_submit_time, pr.edc_status,res.type
+        from patient_record_template prt
+        left join f_medical_exam_subject fmp on prt.follow_id = fmp.follow_id
+        left join f_medical_form fmf on fmf.medical_form_id = fmp.medical_form_id
+        right join ${tableName} res on fmp.id = res.property_id
+        left join patient_record pr on res.record_id = pr.record_id
+        left join patient_info pi2 on pr.patient_id = pi2.patient_id
+        left join sys_dept sd on pi2.dept_id = sd.dept_id
+        where prt.research_id = #{researchId}
+        <!--  <if test="deptIds!=null and deptIds!='' ">
+              and pi2.dept_id in (${deptIds})
+          </if> -->
+        <if test="patientIds!=null and patientIds.size > 0">
+            and pr.patient_id in
+            <foreach item="patientId" collection="patientIds" open="(" separator="," close=")">
+                #{patientId}
+            </foreach>
+        </if>
+        order by res.record_id
+    </select>
+</mapper>

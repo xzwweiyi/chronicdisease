@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchOutboundMapper">
+    
+    <resultMap type="com.dchealth.cro.research.domain.ResearchOutbound" id="ResearchOutboundResult">
+        <result property="id"    column="id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="type"    column="type"    />
+        <result property="followAdvanceDays"    column="follow_advance_days"    />
+        <result property="followAdvanceTime"    column="follow_advance_time"    />
+        <result property="followSpeechId"    column="follow_speech_id"    />
+        <result property="followReplay"    column="follow_replay"    />
+        <result property="followReplaySpaceMinute"    column="follow_replay_space_minute"    />
+        <result property="followMailContent"    column="follow_mail_content"    />
+        <result property="overAdvanceDays"    column="over_advance_days"    />
+        <result property="overAdvanceTime"    column="over_advance_time"    />
+        <result property="overSpeechId"    column="over_speech_id"    />
+        <result property="overReplay"    column="over_replay"    />
+        <result property="overReplaySpaceMinute"    column="over_replay_space_minute"    />
+        <result property="overMailContent"    column="over_mail_content"    />
+        <result property="warnSpeechId"    column="warn_speech_id"    />
+        <result property="warnReplay"    column="warn_replay"    />
+        <result property="warnReplaySpaceMinute"    column="warn_replay_space_minute"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectResearchOutboundVo">
+        select id, research_id, type, follow_advance_days, follow_advance_time, follow_speech_id, follow_replay, follow_replay_space_minute,
+        follow_mail_content, over_advance_days, over_advance_time, over_speech_id, over_replay, over_replay_space_minute, over_mail_content,
+        warn_speech_id, warn_replay, warn_replay_space_minute, del_flag, update_by, create_by, create_time, update_time
+        from research_outbound
+    </sql>
+
+    <select id="selectResearchOutboundList" parameterType="com.dchealth.cro.research.domain.ResearchOutbound" resultMap="ResearchOutboundResult">
+        <include refid="selectResearchOutboundVo"/>
+        <where>
+            <if test="researchId != null  and researchId != ''"> and research_id = #{researchId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="followAdvanceDays != null "> and follow_advance_days = #{followAdvanceDays}</if>
+            <if test="followAdvanceTime != null  and followAdvanceTime != ''"> and follow_advance_time = #{followAdvanceTime}</if>
+            <if test="followSpeechId != null "> and follow_speech_id = #{followSpeechId}</if>
+            <if test="followReplay != null  and followReplay != ''"> and follow_replay = #{followReplay}</if>
+            <if test="followReplaySpaceMinute != null "> and follow_replay_space_minute = #{followReplaySpaceMinute}</if>
+            <if test="followMailContent != null  and followMailContent != ''"> and follow_mail_content = #{followMailContent}</if>
+            <if test="overAdvanceDays != null "> and over_advance_days = #{overAdvanceDays}</if>
+            <if test="overAdvanceTime != null  and overAdvanceTime != ''"> and over_advance_time = #{overAdvanceTime}</if>
+            <if test="overSpeechId != null "> and over_speech_id = #{overSpeechId}</if>
+            <if test="overReplay != null  and overReplay != ''"> and over_replay = #{overReplay}</if>
+            <if test="overReplaySpaceMinute != null "> and over_replay_space_minute = #{overReplaySpaceMinute}</if>
+            <if test="overMailContent != null  and overMailContent != ''"> and over_mail_content = #{overMailContent}</if>
+            <if test="warnSpeechId != null "> and warn_speech_id = #{warnSpeechId}</if>
+            <if test="warnReplay != null  and warnReplay != ''"> and warn_replay = #{warnReplay}</if>
+            <if test="warnReplaySpaceMinute != null "> and warn_replay_space_minute = #{warnReplaySpaceMinute}</if>
+            <if test="delFlag != null "> and del_flag = #{delFlag}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearchOutboundById" parameterType="Long" resultMap="ResearchOutboundResult">
+        <include refid="selectResearchOutboundVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectByResearchIdAndType" resultMap="ResearchOutboundResult">
+        <include refid="selectResearchOutboundVo"/>
+         where research_id = #{researchId} and type = #{type} and del_flag='0' limit 0,1
+    </select>
+
+    <insert id="insertResearchOutbound" parameterType="com.dchealth.cro.research.domain.ResearchOutbound" useGeneratedKeys="true" keyProperty="id">
+        insert into research_outbound
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="type != null">type,</if>
+            <if test="followAdvanceDays != null">follow_advance_days,</if>
+            <if test="followAdvanceTime != null">follow_advance_time,</if>
+            <if test="followSpeechId != null">follow_speech_id,</if>
+            <if test="followReplay != null">follow_replay,</if>
+            <if test="followReplaySpaceMinute != null">follow_replay_space_minute,</if>
+            <if test="followMailContent != null">follow_mail_content,</if>
+            <if test="overAdvanceDays != null">over_advance_days,</if>
+            <if test="overAdvanceTime != null">over_advance_time,</if>
+            <if test="overSpeechId != null">over_speech_id,</if>
+            <if test="overReplay != null">over_replay,</if>
+            <if test="overReplaySpaceMinute != null">over_replay_space_minute,</if>
+            <if test="overMailContent != null">over_mail_content,</if>
+            <if test="warnSpeechId != null">warn_speech_id,</if>
+            <if test="warnReplay != null">warn_replay,</if>
+            <if test="warnReplaySpaceMinute != null">warn_replay_space_minute,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="followAdvanceDays != null">#{followAdvanceDays},</if>
+            <if test="followAdvanceTime != null">#{followAdvanceTime},</if>
+            <if test="followSpeechId != null">#{followSpeechId},</if>
+            <if test="followReplay != null">#{followReplay},</if>
+            <if test="followReplaySpaceMinute != null">#{followReplaySpaceMinute},</if>
+            <if test="followMailContent != null">#{followMailContent},</if>
+            <if test="overAdvanceDays != null">#{overAdvanceDays},</if>
+            <if test="overAdvanceTime != null">#{overAdvanceTime},</if>
+            <if test="overSpeechId != null">#{overSpeechId},</if>
+            <if test="overReplay != null">#{overReplay},</if>
+            <if test="overReplaySpaceMinute != null">#{overReplaySpaceMinute},</if>
+            <if test="overMailContent != null">#{overMailContent},</if>
+            <if test="warnSpeechId != null">#{warnSpeechId},</if>
+            <if test="warnReplay != null">#{warnReplay},</if>
+            <if test="warnReplaySpaceMinute != null">#{warnReplaySpaceMinute},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchOutbound" parameterType="com.dchealth.cro.research.domain.ResearchOutbound">
+        update research_outbound
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="followAdvanceDays != null">follow_advance_days = #{followAdvanceDays},</if>
+            <if test="followAdvanceTime != null">follow_advance_time = #{followAdvanceTime},</if>
+            <if test="followSpeechId != null">follow_speech_id = #{followSpeechId},</if>
+            <if test="followReplay != null">follow_replay = #{followReplay},</if>
+            <if test="followReplaySpaceMinute != null">follow_replay_space_minute = #{followReplaySpaceMinute},</if>
+            <if test="followMailContent != null">follow_mail_content = #{followMailContent},</if>
+            <if test="overAdvanceDays != null">over_advance_days = #{overAdvanceDays},</if>
+            <if test="overAdvanceTime != null">over_advance_time = #{overAdvanceTime},</if>
+            <if test="overSpeechId != null">over_speech_id = #{overSpeechId},</if>
+            <if test="overReplay != null">over_replay = #{overReplay},</if>
+            <if test="overReplaySpaceMinute != null">over_replay_space_minute = #{overReplaySpaceMinute},</if>
+            <if test="overMailContent != null">over_mail_content = #{overMailContent},</if>
+            <if test="warnSpeechId != null">warn_speech_id = #{warnSpeechId},</if>
+            <if test="warnReplay != null">warn_replay = #{warnReplay},</if>
+            <if test="warnReplaySpaceMinute != null">warn_replay_space_minute = #{warnReplaySpaceMinute},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateResearchOutbound2" parameterType="com.dchealth.cro.research.domain.ResearchOutbound">
+        update research_outbound
+        <trim prefix="SET" suffixOverrides=",">
+            follow_advance_days = #{followAdvanceDays},
+            follow_advance_time = #{followAdvanceTime},
+            follow_speech_id = #{followSpeechId},
+            follow_replay = #{followReplay},
+            follow_replay_space_minute = #{followReplaySpaceMinute},
+            follow_mail_content = #{followMailContent},
+            over_advance_days = #{overAdvanceDays},
+            over_advance_time = #{overAdvanceTime},
+            over_speech_id = #{overSpeechId},
+            over_replay = #{overReplay},
+            over_replay_space_minute = #{overReplaySpaceMinute},
+            over_mail_content = #{overMailContent},
+            warn_speech_id = #{warnSpeechId},
+            warn_replay = #{warnReplay},
+            warn_replay_space_minute = #{warnReplaySpaceMinute},
+            del_flag = #{delFlag},
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateSetDelByResearchId" parameterType="Long">
+        update research_outbound set del_flag='1' where research_id=#{researchId}
+    </update>
+
+    <delete id="deleteResearchOutboundById" parameterType="Long">
+        delete from research_outbound where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchOutboundByIds" parameterType="String">
+        delete from research_outbound where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,29 @@
+# 开发环境配置
+# HTTP Server
+server:
+  port: 7925 # HTTP (Tomcat) port
+  servlet:
+    context-path: /xfapi
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    threads:
+      max: 800
+      min-spare: 30
+
+# Spring配置
+spring:
+  profiles:
+    active: test
+  application:
+    name: health-service
+ 
+# MyBatis
+mybatis:
+    # 搜索指定包别名
+    typeAliasesPackage: com.dchealth.cro
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    mapperLocations: classpath*:mapper/**/*Mapper.xml
+    # 加载全局的配置文件
+    configLocation: classpath:mybatis-config.xml

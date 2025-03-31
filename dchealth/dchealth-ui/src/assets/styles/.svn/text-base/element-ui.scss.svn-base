@@ -1,0 +1,790 @@
+// cover some element-ui styles
+
+.el-breadcrumb__inner,
+.el-breadcrumb__inner a {
+    font-weight: 400 !important;
+}
+
+.el-upload {
+    input[type="file"] {
+        display: none !important;
+    }
+}
+
+.el-upload__input {
+    display: none;
+}
+
+.cell {
+    .el-tag {
+        margin-right: 0px;
+    }
+}
+
+.small-padding {
+    .cell {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+.fixed-width {
+    .el-button--mini {
+        padding: 7px 10px;
+        width: 60px;
+    }
+}
+
+.status-col {
+    .cell {
+        padding: 0 10px;
+        text-align: center;
+
+        .el-tag {
+            margin-right: 0px;
+        }
+    }
+}
+
+// refine element ui upload
+.upload-container {
+    .el-upload {
+        width: 100%;
+
+        .el-upload-dragger {
+            width: 100%;
+            height: 200px;
+        }
+    }
+}
+
+// dropdown
+.el-dropdown-menu {
+    a {
+        display: block
+    }
+}
+
+// fix date-picker ui bug in filter-item
+.el-range-editor.el-input__inner {
+    display: inline-flex !important;
+}
+
+// to fix el-date-picker css style
+.el-range-separator {
+    box-sizing: content-box;
+}
+
+.el-menu--collapse>div>.el-submenu>.el-submenu__title .el-submenu__icon-arrow {
+    display: none;
+}
+
+.el-select-dropdown .el-scrollbar,
+.el-cascader-panel .el-scrollbar {
+    padding-bottom: 20px;
+}
+
+.el-tree--highlight-current {
+    .el-tree-node.is-current {
+        >.el-tree-node__content {
+            color: rgba(24, 144, 255, 1);
+        }
+    }
+
+    .el-tree-node {
+        .el-tree-node__content {
+            height: 32px;
+        }
+
+    }
+}
+
+.el-tabs {
+    .el-tabs__header {
+        margin-bottom: 0 !important;
+    }
+}
+
+.user_tree_line {
+    .el-tree-node {
+        position: relative;
+        padding-left: 16px; // 缩进量
+    }
+
+    .el-tree-node__children {
+        padding-left: 16px; // 缩进量
+    }
+
+    // 竖线
+    .el-tree-node::before {
+        content: "";
+        height: 100%;
+        width: 1px;
+        position: absolute;
+        left: -3px;
+        top: -26px;
+        border-width: 1px;
+        border-left: 1px dashed #BBBBBB;
+    }
+
+    // 当前层最后一个节点的竖线高度固定
+    .el-tree-node:last-child::before {
+        height: 38px; // 可以自己调节到合适数值
+    }
+
+    // 横线
+    .el-tree-node::after {
+        content: "";
+        width: 24px;
+        height: 20px;
+        position: absolute;
+        left: -3px;
+        top: 16px;
+        border-width: 1px;
+        border-top: 1px dashed #BBBBBB;
+    }
+
+    // 去掉最顶层的虚线，放最下面样式才不会被上面的覆盖了
+    &>.el-tree-node::after {
+        border-top: none;
+    }
+
+    &>.el-tree-node::before {
+        border-left: none;
+    }
+
+    // 展开关闭的icon
+    .el-tree-node__expand-icon {
+
+        // 叶子节点（无子节点）
+        &.is-leaf {
+            color: transparent;
+            // display: none; // 也可以去掉
+            padding: 0;
+        }
+    }
+}
+
+// Popover 弹出框
+
+.qRCode_global_popover{
+    &.el-popover{
+        background-color: #FFFFFF;
+        color: #333;
+    }
+}
+.el-popover {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: rgba(0, 0, 0, 0.7);
+
+    &[x-placement^=left] .popper__arrow::after {
+        border-left-color: rgba(0, 0, 0, 0.7);
+    }
+
+    &[x-placement^=right] .popper__arrow::after {
+        border-right-color: rgba(0, 0, 0, 0.7);
+    }
+
+    &[x-placement^=bottom] .popper__arrow::after {
+        border-bottom-color: rgba(0, 0, 0, 0.7);
+    }
+
+    &[x-placement^=top] .popper__arrow::after {
+        border-top-color: rgba(0, 0, 0, 0.7);
+    }
+}
+
+.el-tooltip__popper {
+    max-width: 500px;
+    overflow: auto;
+}
+
+.el-button,
+.el-radio-button__inner {
+    padding: 8px 15px;
+}
+
+.el-alert {
+    padding: 0;
+
+    .el-alert__content {
+        padding: 8px 10px;
+    }
+
+    .el-alert__description {
+        margin-top: 0;
+        line-height: 1.5;
+    }
+}
+
+.el-button-text_delete {
+    color: #ff9292;
+
+    &:hover,
+    &:focus {
+        color: #ff9292;
+    }
+}
+
+.el-button-text_warning {
+    color: #e6a23c;
+
+    &:hover,
+    &:focus{
+        color: #e6a23c;
+    }
+}
+
+.el-button--text {
+    padding: 5px 0;
+}
+
+.display-inline {
+    display: inline-block;
+}
+
+.el-dialog__title {
+    font-weight: bolder;
+}
+
+.el-statistic {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    color: #606266;
+
+    .con {
+        color: #606266;
+    }
+}
+
+.select_table_style {
+    .el-table__row:hover {
+        cursor: pointer;
+    }
+}
+
+.el-radio__label,
+.el-checkbox_label {
+    text-overflow: ellipsis;
+    white-space: normal;
+    line-height: 18px;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.fontSize_medium {
+    .el-table .el-table__cell {
+        padding: 12px 0
+    }
+
+    .el-alert__description,
+    .el-button--medium,
+    .el-checkbox,
+    .el-checkbox__label,
+    .el-radio,
+    .el-radio__label,
+    .el-radio,
+    .el-input,
+    .el-textarea__inner,
+    .el-form-item__label,
+    .el-form-item__content,
+    .el-pagination span:not([class*=suffix]),
+    .el-pagination button,
+    .el-tag,
+    .plan_research_name,
+    .el-select-dropdown__item,
+    .el-range-editor--medium .el-range-input,
+    .queue_stage_item,
+    .stage_item_previewFrequency,
+    .stage_item_frequency,
+    .follow_name,
+    .el-date-editor .el-range-input,
+    .el-table--medium,
+    .el-table--medium .el-table__header-wrapper th,
+    .el-table--medium .el-table__fixed-header-wrapper th,
+    .tags-view-item,
+    .tags-view-container .tags-view-wrapper .tags-view-item,
+    .el-descriptions,
+    .el-descriptions__title,
+    .stemp_title_item,
+    .details_content,
+    .el-pager li,
+    .el-pagination__sizes .el-input .el-input__inner,
+    p,
+    h4,
+    h3,
+    span {
+        font-size: 18px;
+    }
+
+    ::v-deep .el-select-dropdown__item {
+        font-size: 18px !important;
+    }
+
+    .drawing-item-copy,
+    .drawing-item-delete,
+    .drawing-item-logic,
+    .el-step__description,
+    .el-upload__tip {
+        font-size: 16px;
+    }
+
+    .tabPane_title,
+    .info_tit,
+    .statistic_mediumn,
+    .el-dialog__title,
+    .com-details_title {
+        font-size: 20px;
+    }
+
+    .com-details_title {
+        .el-checkbox__label {
+            font-size: 20px;
+        }
+    }
+
+    .el-rate__icon {
+        font-size: 22px;
+    }
+
+    .big_number_val {
+        font-size: 36px;
+    }
+
+    .file_img {
+        font-size: 68px;
+    }
+
+    .category_card {
+        font-size: 18px;
+
+        .category_text {
+            font-size: 15px;
+        }
+    }
+
+    .add_template_cont {
+        font-size: 18px;
+
+        .el-icon-folder-add,
+        .el-icon-plus {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+    }
+
+    .el-tabs {
+        .el-tabs__item {
+            font-size: 18px;
+        }
+    }
+
+    .components-item {
+        .custom_item {
+            font-size: 18px;
+
+            .svg-icon {
+                font-size: 20px;
+            }
+        }
+    }
+
+}
+
+.fontSize_small {
+    .el-table .el-table__cell {
+        padding: 10px 0
+    }
+
+    .el-alert__description,
+    .el-button--small,
+    .el-checkbox,
+    .el-checkbox__label,
+    .el-radio,
+    .el-radio__label,
+    .el-radio,
+    .el-input,
+    .el-textarea__inner,
+    .el-form-item__label,
+    .el-form-item__content,
+    .el-pagination span:not([class*=suffix]),
+    .el-pagination button,
+    .el-tag,
+    .plan_research_name,
+    .el-select-dropdown__item,
+    .el-range-editor--medium .el-range-input,
+    .queue_stage_item,
+    .stage_item_previewFrequency,
+    .stage_item_frequency,
+    .follow_name,
+    .el-date-editor .el-range-input,
+    .el-table--small,
+    .el-table--small .el-table__header-wrapper th,
+    .el-table--small .el-table__fixed-header-wrapper th,
+    .tags-view-item,
+    .tags-view-container .tags-view-wrapper .tags-view-item,
+    .el-descriptions,
+    .el-descriptions__title,
+    .stemp_title_item,
+    .details_content,
+    .el-pager li,
+    .el-pagination__sizes .el-input .el-input__inner,
+    p,
+    h4,
+    h3,
+    span {
+        font-size: 16px;
+    }
+
+    .drawing-item-copy,
+    .drawing-item-delete,
+    .drawing-item-logic,
+    .el-step__description,
+    .el-upload__tip {
+        font-size: 14px;
+    }
+
+    .tabPane_title,
+    .info_tit,
+    .statistic_mediumn,
+    .el-dialog__title,
+    .com-details_title {
+        font-size: 18px;
+    }
+
+    .com-details_title {
+        .el-checkbox__label {
+            font-size: 18px;
+        }
+    }
+
+    .el-rate__icon {
+        font-size: 20px;
+    }
+
+    .big_number_val {
+        font-size: 32px;
+    }
+
+    .file_img {
+        font-size: 64px;
+    }
+
+    .category_card {
+        font-size: 16px;
+
+        .category_text {
+            font-size: 14px;
+        }
+    }
+
+    .add_template_cont {
+        font-size: 16px;
+
+        .el-icon-folder-add,
+        .el-icon-plus {
+            font-size: 35px;
+            margin-bottom: 5px;
+        }
+    }
+
+    .el-tabs {
+        .el-tabs__item {
+            font-size: 16px;
+        }
+    }
+
+    .components-item {
+        .custom_item {
+            font-size: 16px;
+
+            .svg-icon {
+                font-size: 18px;
+            }
+        }
+    }
+
+}
+
+.fontSize_default {
+    .el-table .el-table__cell {
+        padding: 8px 0
+    }
+
+    .el-alert__description,
+    .el-button--default,
+    .el-checkbox,
+    .el-checkbox__label,
+    .el-radio,
+    .el-radio__label,
+    .el-radio,
+    .el-input,
+    .el-textarea__inner,
+    .el-form-item__label,
+    .el-form-item__content,
+    .el-pagination span:not([class*=suffix]),
+    .el-pagination button,
+    .el-tag,
+    .plan_research_name,
+    .el-select-dropdown__item,
+    .el-range-editor--medium .el-range-input,
+    .queue_stage_item,
+    .stage_item_previewFrequency,
+    .stage_item_frequency,
+    .follow_name,
+    .el-date-editor .el-range-input,
+    .el-table--default,
+    .el-table--default .el-table__header-wrapper th,
+    .el-table--default .el-table__fixed-header-wrapper th,
+    .tags-view-item,
+    .tags-view-container .tags-view-wrapper .tags-view-item,
+    .el-descriptions,
+    .el-descriptions__title,
+    .stemp_title_item,
+    .details_content,
+    .el-pager li,
+    .el-pagination__sizes .el-input .el-input__inner,
+    p,
+    h4,
+    h3,
+    span {
+        font-size: 14px;
+    }
+
+    .drawing-item-copy,
+    .drawing-item-delete,
+    .drawing-item-logic,
+    .el-step__description,
+    .el-upload__tip {
+        font-size: 12px;
+    }
+
+    .tabPane_title,
+    .info_tit,
+    .statistic_mediumn,
+    .el-dialog__title,
+    .com-details_title {
+        font-size: 16px;
+    }
+
+    .com-details_title {
+        .el-checkbox__label {
+            font-size: 16px;
+        }
+    }
+
+    .el-rate__icon {
+        font-size: 18px;
+    }
+
+    .big_number_val {
+        font-size: 28px;
+    }
+
+
+    .file_img {
+        font-size: 60px;
+    }
+
+    .category_card {
+        font-size: 15px;
+
+        .category_text {
+            font-size: 13px;
+        }
+    }
+
+    .add_template_cont {
+        font-size: 14px;
+
+        .el-icon-folder-add,
+        .el-icon-plus {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+    }
+
+    .el-tabs {
+        .el-tabs__item {
+            font-size: 14px;
+        }
+    }
+
+    .components-item {
+        .custom_item {
+            font-size: 14px;
+
+            .svg-icon {
+                font-size: 16px;
+            }
+        }
+    }
+
+}
+
+.fontSize_mini {
+    .el-table .el-table__cell {
+        padding: 6px 0
+    }
+
+    .el-alert__description,
+    .el-button--mini,
+    .el-checkbox,
+    .el-checkbox__label,
+    .el-radio,
+    .el-radio__label,
+    .el-radio,
+    .el-input,
+    .el-textarea__inner,
+    .el-form-item__label,
+    .el-form-item__content,
+    .el-pagination span:not([class*=suffix]),
+    .el-pagination button,
+    .el-tag,
+    .plan_research_name,
+    .el-select-dropdown__item,
+    .el-range-editor--medium .el-range-input,
+    .queue_stage_item,
+    .stage_item_previewFrequency,
+    .stage_item_frequency,
+    .follow_name,
+    .el-date-editor .el-range-input,
+    .el-table--mini,
+    .el-table--mini .el-table__header-wrapper th,
+    .el-table--mini .el-table__fixed-header-wrapper th,
+    .tags-view-item,
+    .tags-view-container .tags-view-wrapper .tags-view-item,
+    .el-descriptions,
+    .el-descriptions__title,
+    .stemp_title_item,
+    .details_content,
+    .el-pager li,
+    .el-pagination__sizes .el-input .el-input__inner,
+    p,
+    h4 {
+        font-size: 12px;
+    }
+
+    .drawing-item-copy,
+    .drawing-item-delete,
+    .drawing-item-logic,
+    .el-step__description,
+    .el-upload__tip {
+        font-size: 12px;
+    }
+
+    .tabPane_title,
+    .info_tit,
+    .statistic_mediumn,
+    .el-dialog__title,
+    .com-details_title {
+        font-size: 14px;
+    }
+
+    .com-details_title {
+        .el-checkbox__label {
+            font-size: 16px;
+        }
+    }
+
+    .el-rate__icon {
+        font-size: 16px;
+    }
+
+    .big_number_val {
+        font-size: 26px;
+    }
+
+
+    .file_img {
+        font-size: 52px;
+    }
+
+    .category_card {
+        font-size: 14px;
+
+        .category_text {
+            font-size: 12px;
+        }
+    }
+
+    .add_template_cont {
+        font-size: 12px;
+
+        .el-icon-folder-add,
+        .el-icon-plus {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+    }
+
+    .el-tabs {
+        .el-tabs__item {
+            font-size: 12px;
+        }
+    }
+
+    .components-item {
+        .custom_item {
+            font-size: 12px;
+
+            .svg-icon {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.dispose_explain {
+    line-height: 1.5;
+    color: #606266;
+    width: 100%;
+}
+
+.el-cascader__suggestion-list {
+    padding-bottom: 20px;
+}
+
+.el-cascader__empty-text {
+    padding-bottom: 10px;
+}
+
+.el-table {
+    .el-tag {
+        border-width: 2px;
+        background-color: #fff;
+        border-color: #80c0fe;
+        display: inline;
+        line-height: 28px;
+
+        &.el-tag--warning {
+            border-color: #f8bc68;
+        }
+
+        &.el-tag--success {
+            border-width: 2px;
+            border-color: #6cefa5;
+        }
+
+        &.el-tag--danger {
+            border-width: 2px;
+            border-color: #ff7171;
+        }
+
+        &.el-tag--info {
+            border-width: 2px;
+            border-color: #909399;
+        }
+    }
+}
+
+.el-drawer__wrapper {
+    z-index: 9999;
+}
+.el-collapse-item__content{
+    padding-bottom:0;
+}

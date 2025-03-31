@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpOtolaryngologyExamMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpOtolaryngologyExam" id="MpOtolaryngologyExamResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="hearing"    column="hearing"    />
+        <result property="auricle"    column="auricle"    />
+        <result property="earExternalMeatus"    column="ear_external_meatus"    />
+        <result property="earDrum"    column="ear_drum"    />
+        <result property="noseExternal"    column="nose_external"    />
+        <result property="noseCavity"    column="nose_cavity"    />
+        <result property="oropharynx"    column="oropharynx"    />
+        <result property="throat"    column="throat"    />
+        <result property="tonsil"    column="tonsil"    />
+        <result property="healthExamDate"    column="health_exam_date"    />
+        <result property="resultDate"    column="result_date"    />
+    </resultMap>
+
+    <sql id="selectMpOtolaryngologyExamVo">
+        select id, care_site_id, person_id, visit_occurrence_id, hearing, auricle, ear_external_meatus, ear_drum, nose_external, nose_cavity, oropharynx, throat, tonsil, health_exam_date, result_date from mp_otolaryngology_exam
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpOtolaryngologyExamResult">
+        <include refid="selectMpOtolaryngologyExamVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+    
+
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.base.mapper.AppDoctorMapper">
+    
+    <resultMap type="com.dchealth.cro.base.domain.AppDoctor" id="AppDoctorResult">
+        <result property="id"    column="id"    />
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="positionType"    column="position_type"    />
+    </resultMap>
+
+    <sql id="selectAppDoctorVo">
+        select id, doctor_id, position_type, order_num, remark, create_time, update_time from app_doctor
+    </sql>
+
+    <select id="selectAppDoctorList" parameterType="com.dchealth.cro.base.domain.AppDoctor" resultMap="AppDoctorResult">
+        <include refid="selectAppDoctorVo"/>
+        <where>  
+            <if test="doctorId != null "> and doctor_id = #{doctorId}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppDoctorById" parameterType="Long" resultMap="AppDoctorResult">
+        <include refid="selectAppDoctorVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAppDoctor" parameterType="com.dchealth.cro.base.domain.AppDoctor" useGeneratedKeys="true" keyProperty="id">
+        insert into app_doctor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="doctorId != null ">doctor_id,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="doctorId != null ">#{doctorId},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppDoctor" parameterType="com.dchealth.cro.base.domain.AppDoctor">
+        update app_doctor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="doctorId != null ">doctor_id = #{doctorId},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppDoctorById" parameterType="Long">
+        delete from app_doctor where id = #{id}
+    </delete>
+
+    <delete id="deleteAppDoctorByIds" parameterType="String">
+        delete from app_doctor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectAppDoctor"  resultType="com.dchealth.cro.base.vo.DoctorIndexVO">
+     select ad.doctor_id as doctorId, acc.head_image as userHead, acc.real_name as realName,accd.title,h.hospital_name as hospitalName,h.id as hospitalId from  hospital h, account acc,account_doctor_info accd, app_doctor ad  where acc.id=accd.account_id and ad.doctor_id=acc.id and accd.hospital_id=h.id 
+      ORDER BY ad.order_num  LIMIT 0,${pageSize}
+    </select>
+
+    <select id="selectMobileDoctor"  resultType="com.dchealth.cro.base.vo.DoctorIndexVO">
+     select ad.doctor_id as doctorId, acc.head_image as userHead, acc.real_name as realName,accd.title,h.hospital_name as hospitalName,h.id as hospitalId from  hospital h, account acc,account_doctor_info accd, app_doctor ad  where acc.id=accd.account_id and ad.doctor_id=acc.id and accd.hospital_id=h.id
+      and acc.position_type like concat('%', #{positionType}, '%')  ORDER BY ad.order_num  LIMIT 0,${pageSize}
+    </select>
+    
+    <select id="selectAppArticle" resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+     select ca.id as articleId,ca.image as imageUrl,ca.title,ca.create_time as createTime,ca.description ,cs.view_num as viewNum,cs.comment_num as commentNum from cms_article ca ,cms_stat cs  where   ca.id=cs.id  and ca.tenant_id=#{tenantId} and ca.del_flag='N' and ca.list_show='Y'  ORDER BY  ca.list_order_num desc ,ca.create_time desc  LIMIT 0,${pageSize}
+    </select>
+
+<!--    <select id="selectMobileArticle" resultType="com.dchealth.cro.cms.vo.ArticleListVO">-->
+<!--     select ca.id as articleId,ca.image as imageUrl,ca.title,ca.create_time as createTime,ca.description ,cs.view_num as viewNum,cs.comment_num as commentNum-->
+<!--     from cms_article ca ,cms_stat cs-->
+<!--     where   ca.id=cs.id  and ca.tenant_id=#{tenantId} and ca.del_flag='N' and ca.list_show='Y' and ca.position_type like concat('%', #{positionType}, '%') ORDER BY ca.list_order_num desc ,ca.create_time desc  LIMIT 0,${pageSize}-->
+<!--    </select>-->
+
+    <select id="selectMobileArticle" resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        SELECT
+            ca.id AS articleId,
+            ca.image AS imageUrl,
+            ca.title,
+            ca.create_time AS createTime,
+            ca.description,
+            cs.view_num AS viewNum,
+            cs.comment_num AS commentNum
+        FROM
+            cms_article ca
+                LEFT JOIN cms_stat cs ON ca.id = cs.id
+                LEFT JOIN cms_category cc ON ca.category_id = cc.id
+        where
+          ca.del_flag = 'N'
+          AND ca.list_show = 'Y'
+          AND ca.position_type = #{positionType}
+          AND ca.del_flag = 'N'
+          AND cc.del_flag = 'N'
+        ORDER BY ca.list_order_num DESC,
+                 ca.create_time DESC LIMIT 0,
+			#{pageSize}
+    </select>
+    <select id="selectMobileArticlePageInfo" resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        SELECT
+            ca.id AS articleId,
+            ca.image AS imageUrl,
+            ca.title,
+            ca.create_time AS createTime,
+            ca.description,
+            ca.dept_id AS deptId,
+            ca.type,
+            cs.view_num as viewNum
+        FROM
+            cms_article ca
+           left join cms_stat cs on ca.id = cs.id
+        WHERE
+            ca.del_flag = 'N'
+          AND ca.list_show = 'Y'
+          AND ca.position_type = #{positionType}
+          AND ca.article_type=2
+	      <!-- AND ca.dept_id = #{deptId}-->
+        ORDER BY
+            ca.list_order_num asc,
+            ca.create_time DESC
+            LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+
+</mapper>

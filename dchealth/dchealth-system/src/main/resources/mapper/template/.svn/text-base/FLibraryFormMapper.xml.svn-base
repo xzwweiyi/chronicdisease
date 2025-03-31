@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FLibraryFormMapper">
+    
+    <resultMap type="FLibraryForm" id="FLibraryFormResult">
+        <result property="libraryId"    column="library_id"    />
+        <result property="formCode"    column="form_code"    />
+        <result property="formName"    column="form_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="openImage"    column="open_image"    />
+        <result property="openProperty"    column="open_property"    />
+        <result property="openMultiple"    column="open_multiple"    />
+        <result property="attribute"    column="attribute"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="formType"    column="form_type"    />
+        <result property="scoresTotalVal"    column="scores_total_val"    />
+        <result property="dynamic"    column="dynamic"    />
+        <result property="openCollapse"    column="open_collapse"    />
+        <result property="propertyNums"    column="property_nums"    />
+        <result property="childNums"    column="child_nums"    />
+    </resultMap>
+
+    <sql id="selectFLibraryFormVo">
+        select library_id, form_code, form_name, parent_id, open_image, open_property, open_multiple, attribute, create_time, update_time, create_by, update_by,del_flag,
+               sort_num,form_type,scores_total_val,dynamic, open_collapse from f_library_form
+    </sql>
+
+    <select id="selectFLibraryFormList" parameterType="FLibraryForm" resultMap="FLibraryFormResult">
+        select t.library_id, t.form_code, t.form_name, t.parent_id, t.open_image, t.open_property, t.open_multiple, t.attribute, t.create_time, t.update_time, t.create_by,
+        t.update_by,t.del_flag,t.sort_num,t.form_type,t.scores_total_val,t.dynamic, t.open_collapse,
+        (select count(1) from f_library_property where library_id=t.library_id and property_type != 'Upload') property_nums,
+        (select count(1) from f_library_form where parent_id=t.library_id and del_flag=0 ) child_nums
+        from f_library_form t
+        <if test="formNameSearch != null  and formNameSearch != ''">
+            INNER JOIN (
+            select fpar.library_id,flp.property_name
+            from f_library_property  flp
+            INNER JOIN f_library_form flf on flp.library_id=flf.library_id and flf.del_flag=0
+            INNER JOIN f_library_form fpar on fpar.library_id = flf.parent_id and fpar.del_flag=0
+            where fpar.form_type=1
+            and flp.property_name like concat('%', #{formNameSearch}, '%')
+            group by fpar.library_id
+            ) y on t.library_id=y.library_id
+        </if>
+        <if test="formNameSearch2 != null  and formNameSearch2 != ''">
+            INNER JOIN (
+            select flp.library_id,flp.property_name
+            from f_library_property  flp
+            INNER JOIN f_library_form flf on flp.library_id=flf.library_id and flf.del_flag=0
+            INNER JOIN f_library_form fpar on fpar.library_id = flf.parent_id and fpar.del_flag=0
+            where fpar.form_type=1
+            and flp.property_name like concat('%', #{formNameSearch2}, '%')
+            group by fpar.library_id
+            ) y on t.library_id=y.library_id
+        </if>
+        <where>  
+            <if test="formCode != null  and formCode != ''"> and t.form_code = #{formCode}</if>
+            <if test="formName != null  and formName != ''"> and t.form_name like concat('%', #{formName}, '%')</if>
+            <if test="parentId != null "> and t.parent_id = #{parentId}</if>
+            <if test="openImage != null  and openImage != ''"> and t.open_image = #{openImage}</if>
+            <if test="openProperty != null  and openProperty != ''"> and t.open_property = #{openProperty}</if>
+            <if test="openMultiple != null  and openMultiple != ''"> and t.open_multiple = #{openMultiple}</if>
+            <if test="formType != null  and formType != ''"> and t.form_type = #{formType}</if>
+            <if test="dynamic != null  and dynamic != ''"> and t.dynamic = #{dynamic}</if>
+             and t.del_flag='0'
+        </where>
+        order by t.sort_num asc
+    </select>
+    
+    <select id="selectFLibraryFormByLibraryId" parameterType="Long" resultMap="FLibraryFormResult">
+        <include refid="selectFLibraryFormVo"/>
+        where library_id = #{libraryId}
+    </select>
+        
+    <insert id="insertFLibraryForm" parameterType="FLibraryForm" useGeneratedKeys="true" keyProperty="libraryId">
+        insert into f_library_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="formCode != null and formCode != ''">form_code,</if>
+            <if test="formName != null">form_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="openImage != null">open_image,</if>
+            <if test="openProperty != null">open_property,</if>
+            <if test="openMultiple != null">open_multiple,</if>
+            <if test="attribute != null">attribute,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="formType != null and formType != ''">form_type,</if>
+            <if test="scoresTotalVal != null and scoresTotalVal != ''">scores_total_val,</if>
+            <if test="dynamic != null and dynamic != ''">dynamic,</if>
+            <if test="openCollapse != null and openCollapse != ''">open_collapse,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="formCode != null and formCode != ''">#{formCode},</if>
+            <if test="formName != null">#{formName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="openImage != null">#{openImage},</if>
+            <if test="openProperty != null">#{openProperty},</if>
+            <if test="openMultiple != null">#{openMultiple},</if>
+            <if test="attribute != null">#{attribute},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="formType != null and formType != ''">#{formType},</if>
+            <if test="scoresTotalVal != null and scoresTotalVal != ''">#{scoresTotalVal},</if>
+            <if test="dynamic != null and dynamic != ''">#{dynamic},</if>
+            <if test="openCollapse != null and openCollapse != ''">#{dynamic},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFLibraryForm" parameterType="FLibraryForm">
+        update f_library_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formCode != null and formCode != ''">form_code = #{formCode},</if>
+            <if test="formName != null">form_name = #{formName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="openImage != null">open_image = #{openImage},</if>
+            <if test="openProperty != null">open_property = #{openProperty},</if>
+            <if test="openMultiple != null">open_multiple = #{openMultiple},</if>
+            <if test="attribute != null">attribute = #{attribute},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="formType != null and formType != ''">form_type = #{formType},</if>
+            <if test="scoresTotalVal != null and scoresTotalVal != ''">scores_total_val = #{scoresTotalVal},</if>
+            <if test="dynamic != null and dynamic != ''">dynamic = #{dynamic},</if>
+            <if test="openCollapse != null and openCollapse != ''">open_collapse = #{openCollapse},</if>
+        </trim>
+        where library_id = #{libraryId}
+    </update>
+
+    <delete id="deleteFLibraryFormByLibraryId" parameterType="Long">
+        delete from f_library_form where library_id = #{libraryId}
+    </delete>
+
+    <delete id="deleteFLibraryFormByLibraryIds" parameterType="String">
+        delete from f_library_form where library_id in 
+        <foreach item="libraryId" collection="array" open="(" separator="," close=")">
+            #{libraryId}
+        </foreach>
+    </delete>
+
+    <update id="updateDelFlagByLibraryIds" parameterType="String">
+        update f_library_form set del_flag = '1' where library_id in
+        <foreach item="libraryId" collection="array" open="(" separator="," close=")">
+            #{libraryId}
+        </foreach>
+    </update>
+</mapper>

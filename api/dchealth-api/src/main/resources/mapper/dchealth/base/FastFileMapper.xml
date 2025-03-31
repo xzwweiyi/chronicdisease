@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.base.mapper.FastFileMapper">
+    
+    <resultMap type="com.dchealth.cro.base.domain.FastFile" id="FastFileResult">
+        <result property="id"    column="id"    />
+        <result property="fileMd5"    column="file_md5"    />
+        <result property="channel"    column="channel"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="groupName"    column="group_name"    />
+        <result property="remoteFileName"    column="remote_file_name"    />
+        <result property="createDate"    column="create_date"    />
+    </resultMap>
+
+    <sql id="selectFastFileVo">
+        select id, file_md5, channel, file_path, group_name, remote_file_name, create_date from t_fast_file
+    </sql>
+
+    <select id="selectFastFileList" parameterType="com.dchealth.cro.base.domain.FastFile" resultMap="FastFileResult">
+        <include refid="selectFastFileVo"/>
+        <where>  
+            <if test="fileMd5 != null  and fileMd5 != ''"> and file_md5 = #{fileMd5}</if>
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="groupName != null  and groupName != ''"> and group_name like concat('%', #{groupName}, '%')</if>
+            <if test="remoteFileName != null  and remoteFileName != ''"> and remote_file_name like concat('%', #{remoteFileName}, '%')</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectFastFileById" parameterType="Long" resultMap="FastFileResult">
+        <include refid="selectFastFileVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectFastFileByFileMd5"  resultMap="FastFileResult">
+        <include refid="selectFastFileVo"/>
+        where file_md5 = #{fileMd5}
+    </select>
+        
+    <insert id="insertFastFile" parameterType="com.dchealth.cro.base.domain.FastFile" useGeneratedKeys="true" keyProperty="id">
+        insert into t_fast_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileMd5 != null  and fileMd5 != ''">file_md5,</if>
+            <if test="channel != null  and channel != ''">channel,</if>
+            <if test="filePath != null  and filePath != ''">file_path,</if>
+            <if test="groupName != null  and groupName != ''">group_name,</if>
+            <if test="remoteFileName != null  and remoteFileName != ''">remote_file_name,</if>
+            <if test="createDate != null ">create_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileMd5 != null  and fileMd5 != ''">#{fileMd5},</if>
+            <if test="channel != null  and channel != ''">#{channel},</if>
+            <if test="filePath != null  and filePath != ''">#{filePath},</if>
+            <if test="groupName != null  and groupName != ''">#{groupName},</if>
+            <if test="remoteFileName != null  and remoteFileName != ''">#{remoteFileName},</if>
+            <if test="createDate != null ">#{createDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFastFile" parameterType="com.dchealth.cro.base.domain.FastFile">
+        update t_fast_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileMd5 != null  and fileMd5 != ''">file_md5 = #{fileMd5},</if>
+            <if test="channel != null  and channel != ''">channel = #{channel},</if>
+            <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
+            <if test="groupName != null  and groupName != ''">group_name = #{groupName},</if>
+            <if test="remoteFileName != null  and remoteFileName != ''">remote_file_name = #{remoteFileName},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFastFileById" parameterType="Long">
+        delete from t_fast_file where id = #{id}
+    </delete>
+
+    <delete id="deleteFastFileByIds" parameterType="String">
+        delete from t_fast_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

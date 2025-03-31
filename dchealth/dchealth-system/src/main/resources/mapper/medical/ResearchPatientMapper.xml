@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.ResearchPatientMapper">
+
+    <resultMap type="ResearchPatient" id="ResearchPatientResult">
+        <result property="id"    column="id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="patientId"    column="patient_id"    />
+    </resultMap>
+
+   <resultMap type="MpPerson" id="MpPersonResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="personName"    column="person_name"    />
+        <result property="genderSourceValue"    column="gender_source_value"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="cardType"    column="card_type"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="locationId"    column="location_id"    />
+        <result property="address"    column="address"    />
+        <result property="contactsName"    column="contacts_name"    />
+        <result property="contactsPhone"    column="contacts_phone"    />
+        <result property="personCareer"    column="person_career"    />
+        <result property="maritalStatus"    column="marital_status"    />
+        <result property="degreeOfEducation"    column="degree_of_education"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="sex"    column="sex"    />
+    </resultMap>
+
+   <sql id="selectMpPersonVo">
+        select mp.id,  mp.care_site_id,  mp.person_id,  mp.person_name,  mp.gender_source_value,  mp.card_id,  mp.card_type,  mp.phone_number,  mp.location_id,  mp.address,  mp.contacts_name,
+                mp.contacts_phone,  mp.person_career,  mp.marital_status,  mp.degree_of_education,  mp.create_time,  mp.update_time,  mp.sex
+        from mp_person mp
+    </sql>
+
+    <sql id="selectResearchPatientVo">
+        select id, person_id, research_id, create_time, create_by,patient_id from research_patient
+    </sql>
+
+    <select id="selectResearchPatientList" parameterType="ResearchPatient" resultMap="ResearchPatientResult">
+        <include refid="selectResearchPatientVo"/>
+        <where>
+            <if test="personId != null "> and person_id = #{personId}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+        </where>
+    </select>
+
+    <select id="selectResearchPatientById" parameterType="Long" resultMap="ResearchPatientResult">
+        <include refid="selectResearchPatientVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectResearchPatientByResearchId" parameterType="Long" resultMap="ResearchPatientResult">
+        <include refid="selectResearchPatientVo"/>
+        where research_id = #{researchId}
+    </select>
+
+    <insert id="insertResearchPatient" parameterType="ResearchPatient" useGeneratedKeys="true" keyProperty="id">
+        insert into research_patient
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="personId != null">person_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="patientId != null">patient_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="personId != null">#{personId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="patientId != null">#{patientId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateResearchPatient" parameterType="ResearchPatient">
+        update research_patient
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchPatientById" parameterType="Long">
+        delete from research_patient where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchPatientByIds" parameterType="String">
+        delete from research_patient where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="listByDiseaseId" parameterType="ResearchPatient" resultMap="MpPersonResult">
+        <include refid="selectMpPersonVo"></include>
+        right join research_patient rep on rep.person_id =  mp.person_id
+        <where>
+            <if test="researchId != null">  rep.research_id = #{researchId}</if>
+        </where>
+    </select>
+
+
+    <insert id="batchInsertResearchPatient" parameterType="list" useGeneratedKeys="true" keyProperty="id">
+        insert into research_patient (person_id,research_id,create_time,patient_id) values
+        <foreach collection="list" item="item" separator=",">
+            (
+            <if test="item != null">#{item.personId},</if>
+            <if test="item != null">#{item.researchId},</if>
+            <if test="item != null">#{item.patientId},</if>
+            now()
+            )
+        </foreach>
+    </insert>
+    <insert id="batchInsert" parameterType="list" useGeneratedKeys="true" keyProperty="id">
+        insert into research_patient (person_id,research_id,create_time,patient_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (
+                #{item.personId},
+                #{item.researchId},
+                #{item.createTime},
+                #{item.patientId}
+            )
+        </foreach>
+    </insert>
+
+
+    <delete id="delResearchPatient" parameterType="ResearchPatient">
+            delete from research_patient where research_id = #{researchId} and person_id =#{personId}
+    </delete>
+
+    <select id="selectResearchPatientByPatId" parameterType="String" resultMap="ResearchPatientResult">
+        <include refid="selectResearchPatientVo"/>
+        where person_id = #{personId}
+    </select>
+</mapper>

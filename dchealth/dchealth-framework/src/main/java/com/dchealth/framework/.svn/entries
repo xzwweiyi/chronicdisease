@@ -1,0 +1,49 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-framework/src/main/java/com/dchealth/framework
+svn://xiaoshiguang.top
+
+
+
+2023-12-05T09:35:11.548254Z
+15575
+zhangxinyu
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+aspectj
+dir
+
+config
+dir
+
+datasource
+dir
+
+interceptor
+dir
+
+manager
+dir
+
+security
+dir
+
+web
+dir
+

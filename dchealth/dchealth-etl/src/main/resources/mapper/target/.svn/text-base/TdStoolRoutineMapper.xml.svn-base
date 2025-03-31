@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdStoolRoutineMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdStoolRoutine" id="TdStoolRoutineMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="stoolColor" column="stool_color" jdbcType="VARCHAR"/>
+        <result property="stoolConsistency" column="stool_consistency" jdbcType="VARCHAR"/>
+        <result property="stoolRedCells" column="stool_red_cells" jdbcType="VARCHAR"/>
+        <result property="stoolWhiteCells" column="stool_white_cells" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEgg" column="stool_parasite_egg" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEggB" column="stool_parasite_egg_b" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEggR" column="stool_parasite_egg_r" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEggT" column="stool_parasite_egg_t" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdStoolRoutineMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, stool_color, stool_consistency, stool_red_cells, stool_white_cells, stool_parasite_egg, stool_parasite_egg_b, stool_parasite_egg_r, stool_parasite_egg_t
+        from td_stool_routine
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdStoolRoutineMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, stool_color, stool_consistency, stool_red_cells, stool_white_cells, stool_parasite_egg, stool_parasite_egg_b, stool_parasite_egg_r, stool_parasite_egg_t
+        from td_stool_routine
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="stoolColor != null and stoolColor != ''">
+                and stool_color = #{stoolColor}
+            </if>
+            <if test="stoolConsistency != null and stoolConsistency != ''">
+                and stool_consistency = #{stoolConsistency}
+            </if>
+            <if test="stoolRedCells != null and stoolRedCells != ''">
+                and stool_red_cells = #{stoolRedCells}
+            </if>
+            <if test="stoolWhiteCells != null and stoolWhiteCells != ''">
+                and stool_white_cells = #{stoolWhiteCells}
+            </if>
+            <if test="stoolParasiteEgg != null and stoolParasiteEgg != ''">
+                and stool_parasite_egg = #{stoolParasiteEgg}
+            </if>
+            <if test="stoolParasiteEggB != null and stoolParasiteEggB != ''">
+                and stool_parasite_egg_b = #{stoolParasiteEggB}
+            </if>
+            <if test="stoolParasiteEggR != null and stoolParasiteEggR != ''">
+                and stool_parasite_egg_r = #{stoolParasiteEggR}
+            </if>
+            <if test="stoolParasiteEggT != null and stoolParasiteEggT != ''">
+                and stool_parasite_egg_t = #{stoolParasiteEggT}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_stool_routine
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="stoolColor != null and stoolColor != ''">
+                and stool_color = #{stoolColor}
+            </if>
+            <if test="stoolConsistency != null and stoolConsistency != ''">
+                and stool_consistency = #{stoolConsistency}
+            </if>
+            <if test="stoolRedCells != null and stoolRedCells != ''">
+                and stool_red_cells = #{stoolRedCells}
+            </if>
+            <if test="stoolWhiteCells != null and stoolWhiteCells != ''">
+                and stool_white_cells = #{stoolWhiteCells}
+            </if>
+            <if test="stoolParasiteEgg != null and stoolParasiteEgg != ''">
+                and stool_parasite_egg = #{stoolParasiteEgg}
+            </if>
+            <if test="stoolParasiteEggB != null and stoolParasiteEggB != ''">
+                and stool_parasite_egg_b = #{stoolParasiteEggB}
+            </if>
+            <if test="stoolParasiteEggR != null and stoolParasiteEggR != ''">
+                and stool_parasite_egg_r = #{stoolParasiteEggR}
+            </if>
+            <if test="stoolParasiteEggT != null and stoolParasiteEggT != ''">
+                and stool_parasite_egg_t = #{stoolParasiteEggT}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_stool_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, stool_color, stool_consistency, stool_red_cells, stool_white_cells, stool_parasite_egg, stool_parasite_egg_b, stool_parasite_egg_r, stool_parasite_egg_t)
+        values (#{studyId}, #{examNo}, #{testNo}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{createTime}, #{updateTime}, #{stoolColor}, #{stoolConsistency}, #{stoolRedCells}, #{stoolWhiteCells}, #{stoolParasiteEgg}, #{stoolParasiteEggB}, #{stoolParasiteEggR}, #{stoolParasiteEggT})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_stool_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, stool_color, stool_consistency, stool_red_cells, stool_white_cells, stool_parasite_egg, stool_parasite_egg_b, stool_parasite_egg_r, stool_parasite_egg_t)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.stoolColor}, #{entity.stoolConsistency}, #{entity.stoolRedCells}, #{entity.stoolWhiteCells}, #{entity.stoolParasiteEgg}, #{entity.stoolParasiteEggB}, #{entity.stoolParasiteEggR}, #{entity.stoolParasiteEggT})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_stool_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, stool_color, stool_consistency, stool_red_cells, stool_white_cells, stool_parasite_egg, stool_parasite_egg_b, stool_parasite_egg_r, stool_parasite_egg_t)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.stoolColor}, #{entity.stoolConsistency}, #{entity.stoolRedCells}, #{entity.stoolWhiteCells}, #{entity.stoolParasiteEgg}, #{entity.stoolParasiteEggB}, #{entity.stoolParasiteEggR}, #{entity.stoolParasiteEggT})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_stool_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, stool_color, stool_consistency, stool_red_cells, stool_white_cells, stool_parasite_egg, stool_parasite_egg_b, stool_parasite_egg_r, stool_parasite_egg_t)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.stoolColor}, #{entity.stoolConsistency}, #{entity.stoolRedCells}, #{entity.stoolWhiteCells}, #{entity.stoolParasiteEgg}, #{entity.stoolParasiteEggB}, #{entity.stoolParasiteEggR}, #{entity.stoolParasiteEggT})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        stool_color = values(stool_color),
+        stool_consistency = values(stool_consistency),
+        stool_red_cells = values(stool_red_cells),
+        stool_white_cells = values(stool_white_cells),
+        stool_parasite_egg = values(stool_parasite_egg),
+        stool_parasite_egg_b = values(stool_parasite_egg_b),
+        stool_parasite_egg_r = values(stool_parasite_egg_r),
+        stool_parasite_egg_t = values(stool_parasite_egg_t)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_stool_routine
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="stoolColor != null and stoolColor != ''">
+                stool_color = #{stoolColor},
+            </if>
+            <if test="stoolConsistency != null and stoolConsistency != ''">
+                stool_consistency = #{stoolConsistency},
+            </if>
+            <if test="stoolRedCells != null and stoolRedCells != ''">
+                stool_red_cells = #{stoolRedCells},
+            </if>
+            <if test="stoolWhiteCells != null and stoolWhiteCells != ''">
+                stool_white_cells = #{stoolWhiteCells},
+            </if>
+            <if test="stoolParasiteEgg != null and stoolParasiteEgg != ''">
+                stool_parasite_egg = #{stoolParasiteEgg},
+            </if>
+            <if test="stoolParasiteEggB != null and stoolParasiteEggB != ''">
+                stool_parasite_egg_b = #{stoolParasiteEggB},
+            </if>
+            <if test="stoolParasiteEggR != null and stoolParasiteEggR != ''">
+                stool_parasite_egg_r = #{stoolParasiteEggR},
+            </if>
+            <if test="stoolParasiteEggT != null and stoolParasiteEggT != ''">
+                stool_parasite_egg_t = #{stoolParasiteEggT},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_stool_routine where id = #{id}
+    </delete>
+
+</mapper>
+

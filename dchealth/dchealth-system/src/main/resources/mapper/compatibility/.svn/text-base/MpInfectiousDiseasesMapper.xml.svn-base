@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpInfectiousDiseasesMapper">
+    
+    <resultMap type="MpInfectiousDiseases" id="MpInfectiousDiseasesResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="hbvSag"    column="hbv_sag"    />
+        <result property="hbvSab"    column="hbv_sab"    />
+        <result property="hbvEag"    column="hbv_eag"    />
+        <result property="hbvEab"    column="hbv_eab"    />
+        <result property="hbvCab"    column="hbv_cab"    />
+        <result property="hbvDna"    column="hbv_dna"    />
+        <result property="hcvRna"    column="hcv_rna"    />
+        <result property="hcvAb"    column="hcv_ab"    />
+        <result property="hivAg"    column="hiv_ag"    />
+        <result property="syphilisAb"    column="syphilis_ab"    />
+    </resultMap>
+
+    <sql id="selectMpInfectiousDiseasesVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, hbv_sag, hbv_sab, hbv_eag, hbv_eab, hbv_cab, hbv_dna, hcv_rna, hcv_ab, hiv_ag, syphilis_ab from mp_infectious_diseases
+    </sql>
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpInfectiousDiseasesResult">
+        <include refid="selectMpInfectiousDiseasesVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpInfectiousDiseasesResult">
+        <include refid="selectMpInfectiousDiseasesVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+
+</mapper>

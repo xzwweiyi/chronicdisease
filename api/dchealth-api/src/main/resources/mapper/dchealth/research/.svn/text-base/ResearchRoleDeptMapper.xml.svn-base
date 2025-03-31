@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchRoleDeptMapper">
+    
+    <resultMap type="com.dchealth.cro.research.domain.ResearchRoleDept" id="ResearchRoleDeptResult">
+        <result property="roleId"    column="role_id"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectResearchRoleDeptVo">
+        select role_id, dept_id from research_role_dept
+    </sql>
+
+    <select id="selectResearchRoleDeptList" parameterType="com.dchealth.cro.research.domain.ResearchRoleDept" resultMap="ResearchRoleDeptResult">
+        <include refid="selectResearchRoleDeptVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectResearchRoleDeptByRoleId" parameterType="Long" resultMap="ResearchRoleDeptResult">
+        <include refid="selectResearchRoleDeptVo"/>
+        where role_id = #{roleId}
+    </select>
+        
+    <insert id="insertResearchRoleDept" parameterType="com.dchealth.cro.research.domain.ResearchRoleDept">
+        insert into research_role_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">role_id,</if>
+            <if test="deptId != null">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">#{roleId},</if>
+            <if test="deptId != null">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchRoleDept" parameterType="com.dchealth.cro.research.domain.ResearchRoleDept">
+        update research_role_dept
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteResearchRoleDeptByRoleId" parameterType="Long">
+        delete from research_role_dept where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteResearchRoleDeptByRoleIds" parameterType="String">
+        delete from research_role_dept where role_id in 
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+</mapper>

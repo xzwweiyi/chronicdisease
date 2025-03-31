@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.core.mapper.HospitalMapper">
+    
+    <resultMap type="com.dchealth.cro.core.domain.Hospital" id="HospitalResult">
+        <result property="id"    column="id"    />
+        <result property="hospitalName"    column="hospital_name"    />
+        <result property="hospitalCode"    column="hospital_code"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="hospitalIntro"    column="hospital_intro"    />
+        <result property="hospitalImage"    column="hospital_image"    />
+        <result property="tenantId"    column="tenant_id"    />
+    </resultMap>
+
+    <sql id="selectHospitalVo">
+        select id, hospital_name,hospital_code,hospital_intro,hospital_image,create_date, update_date,tenant_id from hospital
+    </sql>
+
+    <select id="selectHospitalList" parameterType="com.dchealth.cro.core.domain.Hospital" resultMap="HospitalResult">
+        <include refid="selectHospitalVo"/>
+        <where>  
+            <if test="hospitalName != null  and hospitalName != ''"> and hospital_name like concat('%', #{hospitalName}, '%')</if>
+             <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+        </where>
+        
+    </select>
+    
+    <select id="selectHospitalById" parameterType="Integer" resultMap="HospitalResult">
+        <include refid="selectHospitalVo"/>
+        where id = #{id}
+    </select>
+        
+     <insert id="insertHospital" parameterType="com.dchealth.cro.core.domain.Hospital" useGeneratedKeys="true" keyProperty="id">
+        insert into hospital
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hospitalName != null  and hospitalName != ''">hospital_name,</if>
+            <if test="hospitalIntro != null  and hospitalIntro != ''">hospital_intro,</if>
+            <if test="hospitalImage != null  and hospitalImage != ''">hospital_image,</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="createDate != null ">create_date,</if>
+            <if test="updateDate != null ">update_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hospitalName != null  and hospitalName != ''">#{hospitalName},</if>
+            <if test="hospitalIntro != null  and hospitalIntro != ''">#{hospitalIntro},</if>
+            <if test="hospitalImage != null  and hospitalImage != ''">#{hospitalImage},</if>
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="createDate != null ">#{createDate},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHospital" parameterType="com.dchealth.cro.core.domain.Hospital">
+        update hospital
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hospitalName != null  and hospitalName != ''">hospital_name = #{hospitalName},</if>
+            <if test="hospitalIntro != null  and hospitalIntro != ''">hospital_intro = #{hospitalIntro},</if>
+            <if test="hospitalImage != null  and hospitalImage != ''">hospital_image = #{hospitalImage},</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="updateDate != null ">update_date = #{updateDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHospitalById" parameterType="Integer">
+        delete from hospital where id = #{id}
+    </delete>
+
+    <delete id="deleteHospitalByIds" parameterType="String">
+        delete from hospital where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <select id="selectHospitalDepartment" parameterType="String" resultType="com.dchealth.cro.core.vo.DictVO" >
+    select  d.depart_name as dictValue, d.id as dictKey from  hospital_department d where d.tenant_id =#{tenantId} order by order_num 
+    </select>
+    
+    <select id="selectHospital" resultType="com.dchealth.cro.core.vo.DictVO">
+      select h.hospital_name as dictValue,h.id as dictKey from hospital h  where h.tenant_id =#{tenantId}
+    </select>
+    <select id="selectHospitalByAccountId" resultType="com.dchealth.cro.core.vo.DictVO">
+      select h.hospital_name as dictValue,h.id as dictKey from hospital h ,research_expert_admin  a where h.tenant_id =#{tenantId} and  a.hospital_id=h.id and a.account_id =#{accountId}
+    </select>
+    
+</mapper>

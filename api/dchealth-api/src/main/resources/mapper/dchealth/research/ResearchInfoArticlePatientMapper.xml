@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchInfoArticlePatientMapper">
+
+    <resultMap type="com.dchealth.cro.research.domain.ResearchInfoArticlePatient" id="ResearchInfoArticlePatientResult">
+        <result property="accountId"    column="account_id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="examRecordId"    column="exam_record_id"    />
+        <result property="fillStatus"    column="fill_status"    />
+        <result property="scores"    column="scores"    />
+        <result property="evaluationResult"    column="evaluation_result"    />
+    </resultMap>
+
+    <sql id="selectResearchInfoArticlePatientVo">
+        select account_id, article_id, research_id, exam_record_id,fill_status,is_fill_again,scores,evaluation_result from
+            research_info_article_patient
+    </sql>
+
+    <select id="selectResearchInfoArticlePatientList"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient" resultMap="ResearchInfoArticlePatientResult">
+        <include refid="selectResearchInfoArticlePatientVo"/>
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="examRecordId != null "> and exam_record_id = #{examRecordId}</if>
+        </where>
+    </select>
+    <select id="selectResearchInfoArticlePatientByArticleIdAndAccountId"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultMap="ResearchInfoArticlePatientResult">
+        select riap.account_id, riap.article_id, riap.research_id,
+        riap.exam_record_id,riap.fill_status,riap.is_fill_again,riap.scores,riap.evaluation_result from
+        research_info_article_patient as riap left join research_info as ri on riap.research_id = ri.id
+        <where>
+            <if test="articleId != null ">and riap.article_id = #{articleId}</if>
+            <if test="accountId != null ">and riap.account_id = #{accountId}</if>
+            <if test="fillStatus != null ">and riap.fill_status = #{fillStatus}</if>
+            <if test="survivalResearchIds != null and survivalResearchIds != '' ">and ri.id in
+                (${survivalResearchIds})
+            </if>
+        </where>
+    </select>
+
+    <select id="selectResearchInfoArticlePatientByAccountId" parameterType="Long" resultMap="ResearchInfoArticlePatientResult">
+        <include refid="selectResearchInfoArticlePatientVo"/>
+        where account_id = #{accountId}
+    </select>
+
+    <insert id="insertResearchInfoArticlePatient"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient">
+        insert into research_info_article_patient
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">account_id,</if>
+            <if test="articleId != null">article_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="examRecordId != null">exam_record_id,</if>
+            <if test="fillStatus != null">fill_status,</if>
+            <if test="isFillAgain != null">is_fill_again,</if>
+            <if test="scores != null">scores,</if>
+            <if test="evaluationResult != null">evaluation_result,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">#{accountId},</if>
+            <if test="articleId != null">#{articleId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="examRecordId != null">#{examRecordId},</if>
+            <if test="fillStatus != null">#{fillStatus},</if>
+            <if test="isFillAgain != null">#{isFillAgain},</if>
+            <if test="scores != null">#{scores},</if>
+            <if test="evaluationResult != null">#{evaluationResult},</if>
+        </trim>
+    </insert>
+
+    <update id="updateResearchInfoArticlePatient"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient">
+        update research_info_article_patient
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+        </trim>
+        where account_id = #{accountId}
+    </update>
+
+    <update id="updateResearchInfoArticlePatientByExamRecordId"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient">
+        update research_info_article_patient
+        <trim prefix="SET" suffixOverrides=",">
+             is_fill_again = #{isFillAgain},
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="fillStatus != null">fill_status = #{fillStatus},</if>
+            <if test="scores != null">scores = #{scores},</if>
+            <if test="evaluationResult != null">evaluation_result = #{evaluationResult},</if>
+        </trim>
+        where exam_record_id = #{examRecordId}
+    </update>
+
+    <delete id="deleteResearchInfoArticlePatientByAccountId" parameterType="Long">
+        delete from research_info_article_patient where account_id = #{accountId}
+    </delete>
+
+    <delete id="deleteResearchInfoArticlePatientByAccountIds" parameterType="String">
+        delete from research_info_article_patient where account_id in
+        <foreach item="accountId" collection="array" open="(" separator="," close=")">
+            #{accountId}
+        </foreach>
+    </delete>
+
+    <select id="selectResearchInfoArticlePatient"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient" resultMap="ResearchInfoArticlePatientResult">
+        <include refid="selectResearchInfoArticlePatientVo"/>
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="examRecordId != null "> and exam_record_id = #{examRecordId}</if>
+        </where>
+    </select>
+
+    <delete id="deleteResearchInfoArticlePatient"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient">
+        delete from research_info_article_patient
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="examRecordId != null "> and exam_record_id = #{examRecordId}</if>
+        </where>
+    </delete>
+
+    <update id="updateResearchInfoArticlePatientStatus"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient">
+        update research_info_article_patient
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fillStatus != null">fill_status = #{fillStatus},</if>
+            <if test="isFillAgain != null">is_fill_again = #{isFillAgain},</if>
+        </trim>
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="examRecordId != null "> and exam_record_id = #{examRecordId}</if>
+        </where>
+    </update>
+</mapper>

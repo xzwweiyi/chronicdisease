@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FLibraryPropertyMapper">
+    
+    <resultMap type="FLibraryProperty" id="FLibraryPropertyResult">
+        <result property="id"    column="id"    />
+        <result property="propertyCode"    column="property_code"    />
+        <result property="propertyName"    column="property_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="propertyType"    column="property_type"    />
+        <result property="dictType"    column="dict_type"    />
+        <result property="libraryId"    column="library_id"    />
+        <result property="attribute"    column="attribute"    />
+        <result property="openProperty"    column="open_property"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="sortNum"    column="sort_num"    />
+    </resultMap>
+
+    <sql id="selectFLibraryPropertyVo">
+        select id, property_code, property_name, parent_id, property_type, dict_type, library_id, attribute, open_property, create_by, create_time, update_time, update_by,sort_num from f_library_property
+    </sql>
+
+    <select id="selectFLibraryPropertyList" parameterType="FLibraryProperty" resultMap="FLibraryPropertyResult">
+        <include refid="selectFLibraryPropertyVo"/>
+        <where>  
+            <if test="propertyCode != null  and propertyCode != ''"> and property_code = #{propertyCode}</if>
+            <if test="propertyName != null  and propertyName != ''"> and property_name like concat('%', #{propertyName}, '%')</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="propertyType != null  and propertyType != ''"> and property_type = #{propertyType}</if>
+            <if test="dictType != null  and dictType != ''"> and dict_type = #{dictType}</if>
+            <if test="libraryId != null "> and library_id = #{libraryId}</if>
+            <if test="attribute != null  and attribute != ''"> and attribute = #{attribute}</if>
+            <if test="openProperty != null  and openProperty != ''"> and open_property = #{openProperty}</if>
+        </where>
+        order by sort_num asc
+    </select>
+    
+    <select id="selectFLibraryPropertyById" parameterType="Long" resultMap="FLibraryPropertyResult">
+        <include refid="selectFLibraryPropertyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFLibraryProperty" parameterType="FLibraryProperty" useGeneratedKeys="true" keyProperty="id">
+        insert into f_library_property
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propertyCode != null and propertyCode != ''">property_code,</if>
+            <if test="propertyName != null and propertyName != ''">property_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="propertyType != null">property_type,</if>
+            <if test="dictType != null">dict_type,</if>
+            <if test="libraryId != null">library_id,</if>
+            <if test="attribute != null">attribute,</if>
+            <if test="openProperty != null">open_property,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sortNum != null">sort_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propertyCode != null and propertyCode != ''">#{propertyCode},</if>
+            <if test="propertyName != null and propertyName != ''">#{propertyName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="propertyType != null">#{propertyType},</if>
+            <if test="dictType != null">#{dictType},</if>
+            <if test="libraryId != null">#{libraryId},</if>
+            <if test="attribute != null">#{attribute},</if>
+            <if test="openProperty != null">#{openProperty},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFLibraryProperty" parameterType="FLibraryProperty">
+        update f_library_property
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="propertyCode != null and propertyCode != ''">property_code = #{propertyCode},</if>
+            <if test="propertyName != null and propertyName != ''">property_name = #{propertyName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="propertyType != null">property_type = #{propertyType},</if>
+            <if test="dictType != null">dict_type = #{dictType},</if>
+            <if test="libraryId != null">library_id = #{libraryId},</if>
+            <if test="attribute != null">attribute = #{attribute},</if>
+            <if test="openProperty != null">open_property = #{openProperty},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFLibraryPropertyById" parameterType="Long">
+        delete from f_library_property where id = #{id}
+    </delete>
+
+    <delete id="deleteFLibraryPropertyByLibraryId" parameterType="Long">
+        delete from f_library_property where library_id = #{id}
+    </delete>
+
+    <delete id="deleteFLibraryPropertyByIds" parameterType="String">
+        delete from f_library_property where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

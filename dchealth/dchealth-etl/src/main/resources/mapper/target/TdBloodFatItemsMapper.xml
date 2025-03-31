@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdBloodFatItemsMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdBloodFatItems" id="TdBloodFatItemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="totalCholesterol" column="total_cholesterol" jdbcType="VARCHAR"/>
+        <result property="triglycerides" column="triglycerides" jdbcType="VARCHAR"/>
+        <result property="hdlCholesterol" column="hdl_cholesterol" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinA1" column="apolipoprotein_a1" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinB" column="apolipoprotein_b" jdbcType="VARCHAR"/>
+        <result property="ldlCholesterol" column="ldl_cholesterol" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdBloodFatItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_cholesterol, triglycerides, hdl_cholesterol, apolipoprotein_a1, apolipoprotein_b, ldl_cholesterol
+        from td_blood_fat_items
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdBloodFatItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_cholesterol, triglycerides, hdl_cholesterol, apolipoprotein_a1, apolipoprotein_b, ldl_cholesterol
+        from td_blood_fat_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="totalCholesterol != null and totalCholesterol != ''">
+                and total_cholesterol = #{totalCholesterol}
+            </if>
+            <if test="triglycerides != null and triglycerides != ''">
+                and triglycerides = #{triglycerides}
+            </if>
+            <if test="hdlCholesterol != null and hdlCholesterol != ''">
+                and hdl_cholesterol = #{hdlCholesterol}
+            </if>
+            <if test="apolipoproteinA1 != null and apolipoproteinA1 != ''">
+                and apolipoprotein_a1 = #{apolipoproteinA1}
+            </if>
+            <if test="apolipoproteinB != null and apolipoproteinB != ''">
+                and apolipoprotein_b = #{apolipoproteinB}
+            </if>
+            <if test="ldlCholesterol != null and ldlCholesterol != ''">
+                and ldl_cholesterol = #{ldlCholesterol}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_blood_fat_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="totalCholesterol != null and totalCholesterol != ''">
+                and total_cholesterol = #{totalCholesterol}
+            </if>
+            <if test="triglycerides != null and triglycerides != ''">
+                and triglycerides = #{triglycerides}
+            </if>
+            <if test="hdlCholesterol != null and hdlCholesterol != ''">
+                and hdl_cholesterol = #{hdlCholesterol}
+            </if>
+            <if test="apolipoproteinA1 != null and apolipoproteinA1 != ''">
+                and apolipoprotein_a1 = #{apolipoproteinA1}
+            </if>
+            <if test="apolipoproteinB != null and apolipoproteinB != ''">
+                and apolipoprotein_b = #{apolipoproteinB}
+            </if>
+            <if test="ldlCholesterol != null and ldlCholesterol != ''">
+                and ldl_cholesterol = #{ldlCholesterol}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_fat_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_cholesterol, triglycerides, hdl_cholesterol, apolipoprotein_a1, apolipoprotein_b, ldl_cholesterol)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{totalCholesterol}, #{triglycerides}, #{hdlCholesterol}, #{apolipoproteinA1}, #{apolipoproteinB}, #{ldlCholesterol})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_fat_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_cholesterol, triglycerides, hdl_cholesterol, apolipoprotein_a1, apolipoprotein_b, ldl_cholesterol)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalCholesterol}, #{entity.triglycerides}, #{entity.hdlCholesterol}, #{entity.apolipoproteinA1}, #{entity.apolipoproteinB}, #{entity.ldlCholesterol})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_fat_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_cholesterol, triglycerides, hdl_cholesterol, apolipoprotein_a1, apolipoprotein_b, ldl_cholesterol)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalCholesterol}, #{entity.triglycerides}, #{entity.hdlCholesterol}, #{entity.apolipoproteinA1}, #{entity.apolipoproteinB}, #{entity.ldlCholesterol})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_fat_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_cholesterol, triglycerides, hdl_cholesterol, apolipoprotein_a1, apolipoprotein_b, ldl_cholesterol)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalCholesterol}, #{entity.triglycerides}, #{entity.hdlCholesterol}, #{entity.apolipoproteinA1}, #{entity.apolipoproteinB}, #{entity.ldlCholesterol})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        total_cholesterol = values(total_cholesterol),
+        triglycerides = values(triglycerides),
+        hdl_cholesterol = values(hdl_cholesterol),
+        apolipoprotein_a1 = values(apolipoprotein_a1),
+        apolipoprotein_b = values(apolipoprotein_b),
+        ldl_cholesterol = values(ldl_cholesterol)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_blood_fat_items
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="totalCholesterol != null and totalCholesterol != ''">
+                total_cholesterol = #{totalCholesterol},
+            </if>
+            <if test="triglycerides != null and triglycerides != ''">
+                triglycerides = #{triglycerides},
+            </if>
+            <if test="hdlCholesterol != null and hdlCholesterol != ''">
+                hdl_cholesterol = #{hdlCholesterol},
+            </if>
+            <if test="apolipoproteinA1 != null and apolipoproteinA1 != ''">
+                apolipoprotein_a1 = #{apolipoproteinA1},
+            </if>
+            <if test="apolipoproteinB != null and apolipoproteinB != ''">
+                apolipoprotein_b = #{apolipoproteinB},
+            </if>
+            <if test="ldlCholesterol != null and ldlCholesterol != ''">
+                ldl_cholesterol = #{ldlCholesterol},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_blood_fat_items where id = #{id}
+    </delete>
+
+</mapper>
+

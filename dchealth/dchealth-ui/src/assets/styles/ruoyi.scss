@@ -1,0 +1,615 @@
+/**
+ * 通用css样式布局处理
+ * Copyright (c) 2019 ruoyi
+ */
+/** 基础通用 **/
+.pt5 {
+    padding-top: 5px;
+}
+
+.pr5 {
+    padding-right: 5px;
+}
+
+.pb5 {
+    padding-bottom: 5px;
+}
+
+.pl5 {
+    padding-bottom: 5px;
+}
+
+.paddingLR5 {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.paddingTB5 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.paddingALL5 {
+    padding: 5px;
+}
+
+.pb8 {
+    padding-bottom: 8px;
+}
+
+.pt8 {
+    padding-top: 8px;
+}
+
+.pr8 {
+    padding-right: 8px;
+}
+
+.pl8 {
+    padding-bottom: 8px;
+}
+
+.paddingLR8 {
+    padding-right: 8px;
+    padding-left: 8px;
+}
+
+.paddingTB8 {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.paddingALL8 {
+    padding: 8px;
+}
+
+.pt10 {
+    padding-top: 10px;
+}
+
+.pr10 {
+    padding-right: 10px;
+}
+
+.pb10 {
+    padding-bottom: 10px;
+}
+
+.pl10 {
+    padding-left: 10px;
+}
+
+.paddingLR10 {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.paddingTB10 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.paddingALL10 {
+    padding: 10px;
+}
+
+.pt15 {
+    padding-top: 15px;
+}
+
+.pr15 {
+    padding-right: 15px;
+}
+
+.pb15 {
+    padding-bottom: 15px;
+}
+
+.pl15 {
+    padding-left: 15px;
+}
+
+.paddingLR15 {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.paddingTB15 {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.paddingALL15 {
+    padding: 15px;
+}
+
+.pt20 {
+    padding-top: 20px;
+}
+
+.pr20 {
+    padding-right: 20px;
+}
+
+.pb20 {
+    padding-bottom: 20px;
+}
+
+.pl20 {
+    padding-left: 20px;
+}
+
+.paddingLR20 {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.paddingTB20 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.paddingALL20 {
+    padding: 20px;
+}
+
+.mt0 {
+    margin-top: 0px !important;
+}
+
+.mr0 {
+    margin-right: 0px !important;
+}
+
+.mb0 {
+    margin-bottom: 0px !important;
+}
+
+.ml0 {
+    margin-left: 0px !important;
+}
+
+.marginLR0 {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+.marginTB0 {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.marginALL0 {
+    margin: 5px;
+}
+
+.mt5 {
+    margin-top: 5px;
+}
+
+.mr5 {
+    margin-right: 5px;
+}
+
+.mb5 {
+    margin-bottom: 5px;
+}
+
+.ml5 {
+    margin-left: 5px;
+}
+
+.marginLR5 {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.marginTB5 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.marginALL5 {
+    margin: 5px;
+}
+
+.mb8 {
+    margin-bottom: 8px;
+}
+
+.mt8 {
+    margin-top: 8px;
+}
+
+.mr8 {
+    margin-right: 8px;
+}
+
+.ml8 {
+    margin-left: 8px;
+}
+
+.marginLR8 {
+    margin-right: 8px;
+    margin-left: 8px;
+}
+
+.marginTB8 {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.marginALL8 {
+    margin: 8px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+
+.mb10 {
+    margin-bottom: 10px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
+.marginLR10 {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.marginTB10 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.marginALL10 {
+    margin: 10px;
+}
+
+.mt15 {
+    margin-top: 15px;
+}
+
+.mr15 {
+    margin-right: 15px;
+}
+
+.mb15 {
+    margin-bottom: 15px;
+}
+
+.ml15 {
+    margin-left: 15px;
+}
+
+.marginLR15 {
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.marginTB20 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.marginALL20 {
+    margin: 20px;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+
+.mr20 {
+    margin-right: 20px;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+
+.ml20 {
+    margin-left: 20px;
+}
+
+.marginLR20 {
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.marginTB20 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.marginALL20 {
+    margin: 20px;
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
+
+.el-dialog__wrapper.scrollbar .el-dialog .el-dialog__body {
+    overflow: auto;
+    overflow-x: hidden;
+    max-height: 70vh;
+    padding: 10px 20px 0;
+}
+
+.el-table {
+
+    .el-table__header-wrapper,
+    .el-table__fixed-header-wrapper {
+        th {
+            word-break: break-word;
+            // background-color: #e0f0e9;
+            background-color: rgb(64, 158, 255, 0.2);
+            color: #515a6e;
+            height: 40px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+
+    .el-table__body-wrapper {
+        .el-button [class*="el-icon-"]+span {
+            margin-left: 1px;
+        }
+    }
+
+    .el-table__fixed {
+        height: 100% !important; //设置高优先，以覆盖内联样式
+    }
+
+    .el-table__fixed-right {
+        height: 100% !important; //设置高优先，以覆盖内联样式
+    }
+}
+
+/* 设置全局 */
+.el-input input[type="number"]::-webkit-outer-spin-button,
+.el-input input[type="number"]::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none !important;
+}
+
+.el-input {
+    -moz-appearance: textfield;
+}
+
+.el-input input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/** 表单布局 **/
+.com-details_title {
+    font-size: 18px;
+    color: #6379bb;
+    font-weight: bold;
+    margin: 15px 0 10px;
+    padding: 13px 0;
+    text-indent: 12px;
+    border-left: 3px #409eff solid;
+    background: rgba(24, 144, 255, 0.06);
+
+    .el-button {
+        margin-left: 10px;
+    }
+}
+
+/** 表格布局 **/
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    margin-top: 15px;
+}
+
+/* tree border */
+.tree-border {
+    margin-top: 5px;
+    border: 1px solid #e5e6e7;
+    background: #FFFFFF none;
+    border-radius: 4px;
+}
+
+@media (max-width : 768px) {
+    .pagination-container .el-pagination>.el-pagination__jump {
+        display: none !important;
+    }
+
+    .pagination-container .el-pagination>.el-pagination__sizes {
+        display: none !important;
+    }
+}
+
+.el-table .fixed-width .el-button--mini {
+    padding-left: 0;
+    padding-right: 0;
+    width: inherit;
+}
+
+/** 表格更多操作下拉样式 */
+.el-table .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+    margin-left: 5px;
+}
+
+.el-table .el-dropdown,
+.el-icon-arrow-down {
+    font-size: 12px;
+}
+
+.el-tree-node__content>.el-checkbox {
+    margin-right: 8px;
+}
+
+.list-group-striped>.list-group-item {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.list-group {
+    padding-left: 0px;
+    list-style: none;
+}
+
+.list-group-item {
+    border-bottom: 1px solid #e7eaec;
+    border-top: 1px solid #e7eaec;
+    margin-bottom: -1px;
+    padding: 11px 0px;
+    font-size: 13px;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+.el-card__header {
+    padding: 14px 15px 7px;
+    min-height: 40px;
+}
+
+.el-card__body {
+    padding: 15px 20px 30px 20px;
+}
+
+.role-left {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-box {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-bottom: 10px;
+}
+
+/* button color */
+.el-button--cyan.is-active,
+.el-button--cyan:active {
+    background: #20B2AA;
+    border-color: #20B2AA;
+    color: #FFFFFF;
+}
+
+.el-button--cyan:focus,
+.el-button--cyan:hover {
+    background: #48D1CC;
+    border-color: #48D1CC;
+    color: #FFFFFF;
+}
+
+.el-button--cyan {
+    background-color: #20B2AA;
+    border-color: #20B2AA;
+    color: #FFFFFF;
+}
+
+/* text color */
+.text-navy {
+    color: #1ab394;
+}
+
+.text-primary {
+    color: inherit;
+}
+
+.text-success {
+    color: #1c84c6;
+}
+
+.text-info {
+    color: #23c6c8;
+}
+
+.text-warning {
+    color: #f8ac59!important;
+    border:none;
+}
+
+.text-danger {
+    color: #ed5565;
+}
+
+.text-muted {
+    color: #888888;
+}
+
+/* image */
+.img-circle {
+    border-radius: 50%;
+}
+
+.img-lg {
+    width: 120px;
+    height: 120px;
+}
+
+.avatar-upload-preview {
+    position: absolute;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #ccc;
+    overflow: hidden;
+}
+
+/* 拖拽列样式 */
+.sortable-ghost {
+    opacity: .8;
+    color: #fff !important;
+    background: #42b983 !important;
+}
+
+.top-right-btn {
+    position: relative;
+    float: right;
+}
+
+.ptb710 {
+    padding: 7px 10px !important;
+}
+
+.back-more {
+    background-color: #ff8c31;
+}
+
+.text-white {
+    color: #fff !important;
+}
+
+.border-radius3 {
+    border-radius: 3px;
+}

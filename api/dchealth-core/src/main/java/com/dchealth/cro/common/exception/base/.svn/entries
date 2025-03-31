@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/api/dchealth-core/src/main/java/com/dchealth/cro/common/exception/base
+svn://xiaoshiguang.top
+
+
+
+2022-06-30T01:03:40.466088Z
+7811
+guanmi
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+BaseException.java
+file
+
+
+
+
+2024-09-03T07:48:13.706000Z
+215331b60de0e9f8ebfee4df18f8b9b6
+2022-06-14T01:44:42.815248Z
+7564
+guanmi
+
+ServiceException.java
+file
+
+
+
+
+2024-09-03T07:48:13.706000Z
+1b1c706dde9a0d2de1691a02fbf1393d
+2022-06-30T01:03:40.466088Z
+7811
+guanmi
+

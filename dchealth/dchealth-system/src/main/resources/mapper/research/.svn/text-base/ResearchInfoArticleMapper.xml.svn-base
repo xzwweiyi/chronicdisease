@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchInfoArticleMapper">
+    
+    <resultMap type="ResearchInfoArticle" id="ResearchInfoArticleResult">
+        <result property="researchId"    column="research_id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="diseaseId"    column="disease_id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+
+    <resultMap type="ResearchInfoArticlePatient" id="ResearchInfoArticlePatientResult">
+        <result property="accountId"    column="account_id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="examRecordId"    column="exam_record_id"    />
+        <result property="fillStatus"    column="fill_status"    />
+        <result property="scores"    column="scores"    />
+        <result property="evaluationResult"    column="evaluation_result"    />
+    </resultMap>
+
+    <sql id="selectResearchInfoArticleVo">
+        select research_id, article_id, disease_id, category_id from research_info_article
+    </sql>
+
+    <select id="selectResearchInfoArticleList" parameterType="ResearchInfoArticle" resultMap="ResearchInfoArticleResult">
+        <include refid="selectResearchInfoArticleVo"/>
+        <where>  
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="diseaseId != null "> and disease_id = #{diseaseId}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+        </where>
+    </select>
+
+    <select id="selectResearchInfoArticleList2" parameterType="ResearchInfoArticle" resultMap="ResearchInfoArticleResult">
+        select g.research_id, g.article_id, g.disease_id, g.category_id,g.type
+        from research_info_article g
+        INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
+        inner join cms_article ac on g.article_id=ac.id and ac.del_flag='N'
+        inner join research_diseases rd on g.disease_id=rd.disease_id and rd.is_deleted=0
+        INNER JOIN cms_category cc on g.category_id=cc.id and cc.del_flag='N'
+        <where>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="articleId != null "> and g.article_id = #{articleId}</if>
+            <if test="diseaseId != null "> and g.disease_id = #{diseaseId}</if>
+            <if test="categoryId != null "> and g.category_id = #{categoryId}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearchInfoArticleByResearchId" parameterType="Long" resultMap="ResearchInfoArticleResult">
+        <include refid="selectResearchInfoArticleVo"/>
+        where research_id = #{researchId}
+    </select>
+        
+    <insert id="insertResearchInfoArticle" parameterType="ResearchInfoArticle">
+        insert into research_info_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="articleId != null">article_id,</if>
+            <if test="diseaseId != null">disease_id,</if>
+            <if test="categoryId != null">category_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="articleId != null">#{articleId},</if>
+            <if test="diseaseId != null">#{diseaseId},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchInfoArticle" parameterType="ResearchInfoArticle">
+        update research_info_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="diseaseId != null">disease_id = #{diseaseId},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+        </trim>
+        where research_id = #{researchId}
+    </update>
+
+    <delete id="deleteResearchInfoArticleByResearchId" parameterType="Long">
+        delete from research_info_article where research_id = #{researchId}
+    </delete>
+
+    <delete id="deleteResearchInfoArticleByResearchIds" parameterType="String">
+        delete from research_info_article where research_id in 
+        <foreach item="researchId" collection="array" open="(" separator="," close=")">
+            #{researchId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteResearchArticle" parameterType="ResearchInfoArticle">
+        delete from research_info_article where research_id = #{researchId} and category_id = #{categoryId} and article_id = #{articleId}
+    </delete>
+
+    <update id="updateResearchArticleType" parameterType="ResearchInfoArticle">
+        update  research_info_article set type = #{type} where research_id = #{researchId} and category_id = #{categoryId} and article_id = #{articleId}
+    </update>
+
+    <select id="queryByArticleIdAndAccountId"  resultMap="ResearchInfoArticleResult">
+        SELECT
+            a.article_id,
+            a.research_id
+        FROM
+            research_info_article a,
+            research_patient b,
+            mp_person c,
+            mp_patient_account mpa
+        WHERE
+            a.research_id = b.research_id
+          AND b.base_patient_id = c.id
+          AND mpa.person_id = c.person_id
+          AND mpa.account_id = #{accountId}
+          AND a.article_id = #{articleId}
+
+    </select>
+
+
+    <select id="selectResearchInfoArticlePatient"
+            parameterType="ResearchInfoArticlePatient" resultMap="ResearchInfoArticlePatientResult">
+        select account_id, article_id, research_id, exam_record_id,fill_status,is_fill_again,scores,evaluation_result from
+        research_info_article_patient
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="examRecordId != null "> and exam_record_id = #{examRecordId}</if>
+        </where>
+    </select>
+
+    <delete id="deleteResearchInfoArticleByArticleId" parameterType="Long">
+        delete from research_info_article where article_id = #{articleId}
+    </delete>
+
+
+    <delete id="deleteResearchInfoArticleByCategoryId" parameterType="Long">
+        delete from research_info_article where  category_id = #{categoryId}
+    </delete>
+</mapper>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.medical.mapper.PatientInfoMapper">
+    
+    <resultMap type="com.dchealth.cro.medical.domain.PatientInfo" id="PatientInfoResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="oldPatientId"    column="old_patient_id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="clinicNo"    column="clinic_no"    />
+        <result property="patientCode"    column="patient_code"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="planResearchId"    column="plan_research_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="patientMobile"    column="patient_mobile"    />
+        <result property="patientStatus"    column="patient_status"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="enrollmentStatus"    column="enrollment_status"    />
+        <result property="lossCause"    column="loss_cause"    />
+        <result property="lossCauseOther"    column="loss_cause_other"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="enrollmentHandlerStatus"    column="enrollment_handler_status"    />
+        <result property="isEndCreateRecord"    column="is_end_create_record"    />
+        <result property="adjustType"    column="adjust_type"    />
+        <result property="isShowApp"    column="is_show_app"    />
+        <result property="refuseCount"    column="refuse_count"    />
+        <result property="smsSendCount"    column="sms_send_count"    />
+        <result property="enrollmentResult"    column="enrollment_result"    />
+        <result property="enrollmentResultContent"    column="enrollment_result_content"    />
+
+    </resultMap>
+
+    <resultMap type="com.dchealth.cro.medical.vo.FollowWorkListVO" id="FollowWorkListVOResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="stageName"    column="stage_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="enrollmentResult"    column="enrollment_result"    />
+        <result property="enrollmentResultContent"    column="enrollment_result_content"    />
+    </resultMap>
+
+
+    <sql id="selectPatientInfoVo">
+        select patient_id, account_id, person_id, patient_name,old_patient_id, clinic_no, patient_code, research_id,
+               plan_research_id, dept_id, doctor_id, patient_mobile, patient_status, enrollment_status, enrollment_time , loss_cause,
+               loss_cause_other, update_by, create_by, create_time, update_time,enrollment_handler_status ,is_end_create_record,adjust_type,
+               refuse_count,sms_send_count,enrollment_result,enrollment_result_content
+        from patient_info
+    </sql>
+
+    <select id="selectPatientInfoById" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where patient_id = #{patientId}
+    </select>
+    <select id="selectPatientByResearchIdAndPatietnId" parameterType="java.util.Map" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where research_id = #{researchId} and  patient_id = #{patientId}
+    </select>
+
+    <select id="selectPatientInfoByAccountId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where account_id = #{accountId}
+    </select>
+
+
+    <select id="selectPatientInfoByOldId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where old_patient_id = #{patientId}
+    </select>
+    <select id="selectPatientInfoByPlanResearchId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where plan_research_id = #{planResearchId}
+    </select>
+    <select id="selectPatientInfoByResearchId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where research_id = #{researchId}
+    </select>
+
+    <select id="selectPatientInfoList" parameterType="com.dchealth.cro.medical.domain.PatientInfo" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        <where>  
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="personId != null "> and person_id = #{personId}</if>
+            <if test="patientName != null  and patientName != ''"> and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="clinicNo != null  and clinicNo != ''"> and clinic_no = #{clinicNo}</if>
+            <if test="patientCode != null  and patientCode != ''"> and patient_code = #{patientCode}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="doctorId != null "> and doctor_id = #{doctorId}</if>
+            <if test="patientMobile != null  and patientMobile != ''"> and patient_mobile = #{patientMobile}</if>
+            <if test="patientStatus != null  and patientStatus != ''"> and patient_status = #{patientStatus}</if>
+            <if test="enrollmentStatus != null  and enrollmentStatus != ''"> and enrollment_status = #{enrollmentStatus}</if>
+            <if test="lossCause != null  and lossCause != ''"> and loss_cause = #{lossCause}</if>
+            <if test="lossCauseOther != null  and lossCauseOther != ''"> and loss_cause_other = #{lossCauseOther}</if>
+            <if test="channelType != null  and channelType != ''"> and channel_type = #{channelType}</if>
+            <if test="enrollmentHandlerStatus != null  and enrollmentHandlerStatus != ''"> and enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+            <if test="isShowApp != null  and isShowApp != ''"> and is_show_app = #{isShowApp}</if>
+        </where>
+    </select>
+
+    <select id="allocatedList" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, i.project_name, p.create_time, p.enrollment_result, p.enrollment_result_content
+        from patient_info p, research_info i
+        where i.id=p.plan_research_id
+        and p.allocated_status='1' and p.allocated_handler_status = #{allocatedHandlerStatus}
+        and p.plan_research_id = #{researchId}
+        LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+
+    <insert id="insertPatientInfo" parameterType="com.dchealth.cro.medical.domain.PatientInfo" useGeneratedKeys="true" keyProperty="patientId">
+        insert into patient_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">account_id,</if>
+            <if test="oldPatientId != null">old_patient_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="patientName != null">patient_name,</if>
+            <if test="clinicNo != null">clinic_no,</if>
+            <if test="patientCode != null">patient_code,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="planScanResearchId != null">plan_scan_research_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="doctorId != null">doctor_id,</if>
+            <if test="patientMobile != null">patient_mobile,</if>
+            <if test="patientStatus != null">patient_status,</if>
+            <if test="enrollmentStatus != null">enrollment_status,</if>
+            <if test="enrollmentTime != null">enrollment_time,</if>
+            <if test="lossCause != null">loss_cause,</if>
+            <if test="lossCauseOther != null">loss_cause_other,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="channelType != null">channel_type,</if>
+            <if test="enrollmentHandlerStatus != null and enrollmentHandlerStatus != ''">enrollment_handler_status,</if>
+            <if test="enrollmentResultContent != null and enrollmentResultContent != ''">enrollment_result_content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">#{accountId},</if>
+            <if test="oldPatientId != null">#{oldPatientId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="patientName != null">#{patientName},</if>
+            <if test="clinicNo != null">#{clinicNo},</if>
+            <if test="patientCode != null">#{patientCode},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="planScanResearchId != null">#{planScanResearchId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="doctorId != null">#{doctorId},</if>
+            <if test="patientMobile != null">#{patientMobile},</if>
+            <if test="patientStatus != null">#{patientStatus},</if>
+            <if test="enrollmentStatus != null">#{enrollmentStatus},</if>
+            <if test="enrollmentTime != null">#{enrollmentTime},</if>
+            <if test="lossCause != null">#{lossCause},</if>
+            <if test="lossCauseOther != null">#{lossCauseOther},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="channelType != null">#{channelType},</if>
+            <if test="enrollmentHandlerStatus != null and enrollmentHandlerStatus != '' ">#{enrollmentHandlerStatus},</if>
+            <if test="enrollmentResultContent != null and enrollmentResultContent != '' ">#{enrollmentResultContent},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientInfo" parameterType="com.dchealth.cro.medical.domain.PatientInfo">
+        update patient_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="clinicNo != null">clinic_no = #{clinicNo},</if>
+            <if test="patientCode != null">patient_code = #{patientCode},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="planResearchId != null">plan_research_id = #{planResearchId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="doctorId != null">doctor_id = #{doctorId},</if>
+            <if test="patientMobile != null">patient_mobile = #{patientMobile},</if>
+            <if test="patientStatus != null">patient_status = #{patientStatus},</if>
+            <if test="enrollmentStatus != null">enrollment_status = #{enrollmentStatus},</if>
+            <if test="enrollmentHandlerStatus != null">enrollment_handler_status = #{enrollmentHandlerStatus},</if>
+            <if test="adjustType != null">adjust_type = #{adjustType},</if>
+            <if test="lossCause != null">loss_cause = #{lossCause},</if>
+            <if test="lossCauseOther != null">loss_cause_other = #{lossCauseOther},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="patientStatus != null">patient_status = #{patientStatus},</if>
+            <if test="provinceId != null">province_id = #{provinceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="visitType != null">visit_type = #{visitType},</if>
+            <if test="refuseCount != null">refuse_count = #{refuseCount},</if>
+            <if test="smsSendCount != null">sms_send_count = #{smsSendCount},</if>
+            <if test="enrollmentResultContent != null">enrollment_result_content = #{enrollmentResultContent},</if>
+            <if test="channelType != null">channel_type = #{channelType},</if>
+        </trim>
+        where patient_id = #{patientId}
+    </update>
+
+    <delete id="deletePatientInfoByPatientId" parameterType="Long">
+        delete from patient_info where patient_id = #{patientId}
+    </delete>
+
+    <delete id="deletePatientInfoByPatientIds" parameterType="String">
+        delete from patient_info where patient_id in 
+        <foreach item="patientId" collection="array" open="(" separator="," close=")">
+            #{patientId}
+        </foreach>
+    </delete>
+    
+    
+     <select id="selectPatientInfoByAccountIdEnrollment" parameterType="Long" resultMap="PatientInfoResult">
+        select g.patient_id,g.account_id,g.person_id,g.old_patient_id,g.adjust_type,g.clinic_no,g.patient_code,g.plan_research_id,g.research_id,g.dept_id,
+        g.doctor_id,g.patient_mobile,g.patient_status,g.patient_activity_status,g.enrollment_status,g.loss_cause,g.loss_cause_other,g.update_by,g.create_by,
+        g.create_time,g.update_time,g.enrollment_time,g.enrollment_result,g.enrollment_result_content,g.enrollment_handler_status,g.allocated_status, g.allocated_handler_status
+        from patient_info g
+        INNER JOIN research_info ri on g.research_id=ri.id
+        where g.account_id=#{accountId} and g.enrollment_handler_status = 3 and  g.is_show_app=1 and ri.del_flag=0
+          and ri.research_status=1
+    </select>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FTemplateWarnConfigMapper">
+    
+    <resultMap type="FTemplateWarnConfig" id="FTemplateWarnConfigResult">
+        <result property="id"    column="id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="standardValue"    column="standard_value"    />
+        <result property="warnFormulaTitle"    column="warn_formula_title"    />
+        <result property="warnFormula"    column="warn_formula"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="templatePropertyCode"    column="template_property_code"    />
+        <result property="templateFormId"    column="template_form_id"    />
+    </resultMap>
+
+    <sql id="selectFTemplateWarnConfigVo">
+        select id, template_id, research_id, standard_value, warn_formula_title, warn_formula, create_time, update_time, create_by, update_by, template_property_code, template_form_id from f_template_warn_config
+    </sql>
+
+    <select id="selectFTemplateWarnConfigList" parameterType="FTemplateWarnConfig" resultMap="FTemplateWarnConfigResult">
+        <include refid="selectFTemplateWarnConfigVo"/>
+        <where>  
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="standardValue != null  and standardValue != ''"> and standard_value = #{standardValue}</if>
+            <if test="warnFormulaTitle != null  and warnFormulaTitle != ''"> and warn_formula_title = #{warnFormulaTitle}</if>
+            <if test="warnFormula != null  and warnFormula != ''"> and warn_formula = #{warnFormula}</if>
+            <if test="templatePropertyCode != null  and templatePropertyCode != ''"> and template_property_code = #{templatePropertyCode}</if>
+            <if test="templateFormId != null "> and template_form_id = #{templateFormId}</if>
+        </where>
+    </select>
+    
+    <select id="selectFTemplateWarnConfigById" parameterType="Long" resultMap="FTemplateWarnConfigResult">
+        <include refid="selectFTemplateWarnConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectFTemplateWarnConfigByTemplateId" parameterType="Long" resultMap="FTemplateWarnConfigResult">
+        <include refid="selectFTemplateWarnConfigVo"/>
+        where template_id = #{templateId}
+    </select>
+        
+    <insert id="insertFTemplateWarnConfig" parameterType="FTemplateWarnConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into f_template_warn_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="standardValue != null">standard_value,</if>
+            <if test="warnFormulaTitle != null">warn_formula_title,</if>
+            <if test="warnFormula != null">warn_formula,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="templatePropertyCode != null">template_property_code,</if>
+            <if test="templateFormId != null">template_form_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="standardValue != null">#{standardValue},</if>
+            <if test="warnFormulaTitle != null">#{warnFormulaTitle},</if>
+            <if test="warnFormula != null">#{warnFormula},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="templatePropertyCode != null">#{templatePropertyCode},</if>
+            <if test="templateFormId != null">#{templateFormId},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertFTemplateWarnConfig">
+        insert into research_role_source(template_id, research_id,standard_value,warn_formula_title,warn_formula,create_time,update_time,create_by,update_by,template_property_code,template_form_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{templateId},#{researchId},#{standardValue},#{warnFormulaTitle},#{warnFormula},#{createTime},#{updateTime},#{createBy},#{updateBy},#{templatePropertyCode},#{templateFormId})
+        </foreach>
+    </insert>
+
+
+    <update id="updateFTemplateWarnConfig" parameterType="FTemplateWarnConfig">
+        update f_template_warn_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="standardValue != null">standard_value = #{standardValue},</if>
+            <if test="warnFormulaTitle != null">warn_formula_title = #{warnFormulaTitle},</if>
+            <if test="warnFormula != null">warn_formula = #{warnFormula},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="templatePropertyCode != null">template_property_code = #{templatePropertyCode},</if>
+            <if test="templateFormId != null">template_form_id = #{templateFormId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFTemplateWarnConfigById" parameterType="Long">
+        delete from f_template_warn_config where id = #{id}
+    </delete>
+
+    <delete id="deleteFTemplateWarnConfigByTemplateId" parameterType="Long">
+        delete from f_template_warn_config where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteFTemplateWarnConfigByIds" parameterType="String">
+        delete from f_template_warn_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

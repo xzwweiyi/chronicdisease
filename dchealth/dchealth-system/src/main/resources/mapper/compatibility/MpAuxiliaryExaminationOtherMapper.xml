@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpAuxiliaryExaminationOtherMapper">
+    
+    <resultMap type="MpAuxiliaryExaminationOther" id="MpAuxiliaryExaminationOtherResult">
+        <result property="id"    column="id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="examNo"    column="exam_no"    />
+        <result property="testNo"    column="test_no"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="ecg"    column="ecg"    />
+        <result property="conventionalEnteroscope"    column="conventional_enteroscope"    />
+        <result property="painlessGastroscope"    column="painless_gastroscope"    />
+        <result property="painlessGastroenteroscopy"    column="painless_gastroenteroscopy"    />
+        <result property="superficialOrgan"    column="superficial_organ"    />
+        <result property="boneMineralDensity"    column="bone_mineral_density"    />
+        <result property="c13BreathTest"    column="c13_breath_test"    />
+        <result property="generalGastroscope"    column="general_gastroscope"    />
+        <result property="painlessColonoscopy"    column="painless_colonoscopy"    />
+        <result property="painlessGastroscopyPlus"    column="painless_gastroscopy_plus"    />
+        <result property="otherExaminationItem"    column="other_examination_item"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="technologyGroup"    column="technology_group"    />
+        <result property="positionSctid"    column="position_sctid"    />
+        <result property="position"    column="position"    />
+        <result property="testMethod"    column="test_method"    />
+        <result property="subjectiveHints"    column="subjective_hints"    />
+        <result property="relevantClinicDiagnosis"    column="relevant_clinic_diagnosis"    />
+        <result property="technologyName"    column="technology_name"    />
+        <result property="reportType"    column="report_type"    />
+    </resultMap>
+
+    <sql id="selectMpAuxiliaryExaminationOtherVo">
+        select id, visit_occurrence_id, person_id, exam_no, test_no, create_time, update_time, result_time, ecg, conventional_enteroscope, painless_gastroscope, painless_gastroenteroscopy, superficial_organ, bone_mineral_density, c13_breath_test, general_gastroscope, painless_colonoscopy, painless_gastroscopy_plus, other_examination_item, care_site_id, technology_group, position_sctid, position, test_method, subjective_hints, relevant_clinic_diagnosis, technology_name, report_type from mp_auxiliary_examination_other
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpAuxiliaryExaminationOtherResult">
+        <include refid="selectMpAuxiliaryExaminationOtherVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+   
+
+</mapper>

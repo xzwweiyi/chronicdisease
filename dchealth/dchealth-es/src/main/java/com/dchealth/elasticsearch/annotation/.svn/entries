@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-es/src/main/java/com/dchealth/elasticsearch/annotation
+svn://xiaoshiguang.top
+
+
+
+2022-12-05T02:26:15.452636Z
+9951
+majingming
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+ESID.java
+file
+
+
+
+
+2024-09-03T07:48:13.343000Z
+d08e531b9c831ca2272632838cda2d34
+2022-12-05T02:26:15.452636Z
+9951
+majingming
+
+ESIndices.java
+file
+
+
+
+
+2024-09-03T07:48:13.343000Z
+70848283cbe1eaf7ec4b1d9b754044f2
+2022-12-05T02:26:15.452636Z
+9951
+majingming
+

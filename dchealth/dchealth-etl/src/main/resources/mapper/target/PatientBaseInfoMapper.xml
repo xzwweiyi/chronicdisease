@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.PatientBaseInfoMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.PatientBaseInfo" id="PatientBaseInfoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="accountId" column="account_id" jdbcType="INTEGER"/>
+        <result property="headImage" column="head_image" jdbcType="VARCHAR"/>
+        <result property="hospitalCode" column="hospital_code" jdbcType="VARCHAR"/>
+        <result property="registrySigns" column="registry_signs" jdbcType="VARCHAR"/>
+        <result property="medicalRecordNo" column="medical_record_no" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="birthday" column="birthday" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="maritalStatus" column="marital_status" jdbcType="VARCHAR"/>
+        <result property="profession" column="profession" jdbcType="VARCHAR"/>
+        <result property="workUnit" column="work_unit" jdbcType="VARCHAR"/>
+        <result property="nation" column="nation" jdbcType="VARCHAR"/>
+        <result property="nationality" column="nationality" jdbcType="VARCHAR"/>
+        <result property="idCard" column="id_card" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="presentAddress" column="present_address" jdbcType="VARCHAR"/>
+        <result property="permanentAddress" column="permanent_address" jdbcType="VARCHAR"/>
+        <result property="degreeOfEducation" column="degree_of_education" jdbcType="VARCHAR"/>
+        <result property="abo" column="abo" jdbcType="VARCHAR"/>
+        <result property="linkMan" column="link_man" jdbcType="VARCHAR"/>
+        <result property="relationship" column="relationship" jdbcType="VARCHAR"/>
+        <result property="linkManAddress" column="link_man_address" jdbcType="VARCHAR"/>
+        <result property="admissionHospitalWay" column="admission_hospital_way" jdbcType="VARCHAR"/>
+        <result property="linkManMobile" column="link_man_mobile" jdbcType="VARCHAR"/>
+        <result property="admissionHospitalDate" column="admission_hospital_date" jdbcType="TIMESTAMP"/>
+        <result property="admissionHospitalDepartment" column="admission_hospital_department" jdbcType="VARCHAR"/>
+        <result property="patientStatus" column="patient_status" jdbcType="VARCHAR"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="deptDischargeFrom" column="dept_discharge_from" jdbcType="VARCHAR"/>
+        <result property="dischargeDate" column="discharge_date" jdbcType="TIMESTAMP"/>
+        <result property="lastVisitDate" column="last_visit_date" jdbcType="TIMESTAMP"/>
+        <result property="patientClinicTime" column="patient_clinic_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PatientBaseInfoMap">
+        select
+          id, account_id, head_image, hospital_code, registry_signs, medical_record_no, name, birthday, age, sex, marital_status, profession, work_unit, nation, nationality, id_card, mobile, present_address, permanent_address, degree_of_education, abo, link_man, relationship, link_man_address, admission_hospital_way, link_man_mobile, admission_hospital_date, admission_hospital_department, patient_status, update_by, create_by, create_time, update_time, patient_id
+        from patient_base_info
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PatientBaseInfoMap">
+        select
+          id, account_id, head_image, hospital_code, registry_signs, medical_record_no, name, birthday, age, sex, marital_status, profession, work_unit, nation, nationality, id_card, mobile, present_address, permanent_address, degree_of_education, abo, link_man, relationship, link_man_address, admission_hospital_way, link_man_mobile, admission_hospital_date, admission_hospital_department, patient_status, update_by, create_by, create_time, update_time, patient_id
+        from patient_base_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="headImage != null and headImage != ''">
+                and head_image = #{headImage}
+            </if>
+            <if test="hospitalCode != null and hospitalCode != ''">
+                and hospital_code = #{hospitalCode}
+            </if>
+            <if test="registrySigns != null and registrySigns != ''">
+                and registry_signs = #{registrySigns}
+            </if>
+            <if test="medicalRecordNo != null">
+                and medical_record_no = #{medicalRecordNo}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="birthday != null and birthday != ''">
+                and birthday = #{birthday}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                and marital_status = #{maritalStatus}
+            </if>
+            <if test="profession != null and profession != ''">
+                and profession = #{profession}
+            </if>
+            <if test="workUnit != null and workUnit != ''">
+                and work_unit = #{workUnit}
+            </if>
+            <if test="nation != null and nation != ''">
+                and nation = #{nation}
+            </if>
+            <if test="nationality != null and nationality != ''">
+                and nationality = #{nationality}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card = #{idCard}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="presentAddress != null and presentAddress != ''">
+                and present_address = #{presentAddress}
+            </if>
+            <if test="permanentAddress != null and permanentAddress != ''">
+                and permanent_address = #{permanentAddress}
+            </if>
+            <if test="degreeOfEducation != null and degreeOfEducation != ''">
+                and degree_of_education = #{degreeOfEducation}
+            </if>
+            <if test="abo != null and abo != ''">
+                and abo = #{abo}
+            </if>
+            <if test="linkMan != null and linkMan != ''">
+                and link_man = #{linkMan}
+            </if>
+            <if test="relationship != null and relationship != ''">
+                and relationship = #{relationship}
+            </if>
+            <if test="linkManAddress != null and linkManAddress != ''">
+                and link_man_address = #{linkManAddress}
+            </if>
+            <if test="admissionHospitalWay != null and admissionHospitalWay != ''">
+                and admission_hospital_way = #{admissionHospitalWay}
+            </if>
+            <if test="linkManMobile != null and linkManMobile != ''">
+                and link_man_mobile = #{linkManMobile}
+            </if>
+            <if test="admissionHospitalDate != null">
+                and admission_hospital_date = #{admissionHospitalDate}
+            </if>
+            <if test="admissionHospitalDepartment != null and admissionHospitalDepartment != ''">
+                and admission_hospital_department = #{admissionHospitalDepartment}
+            </if>
+            <if test="patientStatus != null and patientStatus != ''">
+                and patient_status = #{patientStatus}
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                and update_by = #{updateBy}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from patient_base_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="headImage != null and headImage != ''">
+                and head_image = #{headImage}
+            </if>
+            <if test="hospitalCode != null and hospitalCode != ''">
+                and hospital_code = #{hospitalCode}
+            </if>
+            <if test="registrySigns != null and registrySigns != ''">
+                and registry_signs = #{registrySigns}
+            </if>
+            <if test="medicalRecordNo != null">
+                and medical_record_no = #{medicalRecordNo}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="birthday != null and birthday != ''">
+                and birthday = #{birthday}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                and marital_status = #{maritalStatus}
+            </if>
+            <if test="profession != null and profession != ''">
+                and profession = #{profession}
+            </if>
+            <if test="workUnit != null and workUnit != ''">
+                and work_unit = #{workUnit}
+            </if>
+            <if test="nation != null and nation != ''">
+                and nation = #{nation}
+            </if>
+            <if test="nationality != null and nationality != ''">
+                and nationality = #{nationality}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card = #{idCard}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="presentAddress != null and presentAddress != ''">
+                and present_address = #{presentAddress}
+            </if>
+            <if test="permanentAddress != null and permanentAddress != ''">
+                and permanent_address = #{permanentAddress}
+            </if>
+            <if test="degreeOfEducation != null and degreeOfEducation != ''">
+                and degree_of_education = #{degreeOfEducation}
+            </if>
+            <if test="abo != null and abo != ''">
+                and abo = #{abo}
+            </if>
+            <if test="linkMan != null and linkMan != ''">
+                and link_man = #{linkMan}
+            </if>
+            <if test="relationship != null and relationship != ''">
+                and relationship = #{relationship}
+            </if>
+            <if test="linkManAddress != null and linkManAddress != ''">
+                and link_man_address = #{linkManAddress}
+            </if>
+            <if test="admissionHospitalWay != null and admissionHospitalWay != ''">
+                and admission_hospital_way = #{admissionHospitalWay}
+            </if>
+            <if test="linkManMobile != null and linkManMobile != ''">
+                and link_man_mobile = #{linkManMobile}
+            </if>
+            <if test="admissionHospitalDate != null">
+                and admission_hospital_date = #{admissionHospitalDate}
+            </if>
+            <if test="admissionHospitalDepartment != null and admissionHospitalDepartment != ''">
+                and admission_hospital_department = #{admissionHospitalDepartment}
+            </if>
+            <if test="patientStatus != null and patientStatus != ''">
+                and patient_status = #{patientStatus}
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                and update_by = #{updateBy}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+        </where>
+    </select>
+    <!--查询单个-->
+    <select id="queryByIdCard" resultMap="PatientBaseInfoMap">
+        select
+          id,  id_card
+        from patient_base_info
+        where id_card = #{idCard}
+    </select>
+    <select id="queryByPage" resultMap="PatientBaseInfoMap">
+        select
+        id, account_id, head_image, hospital_code, registry_signs, medical_record_no, name, birthday, age, sex, marital_status, profession, work_unit, nation, nationality, id_card, mobile, present_address, permanent_address, degree_of_education, abo, link_man, relationship, link_man_address, admission_hospital_way, link_man_mobile, admission_hospital_date, admission_hospital_department, patient_status, update_by, create_by, create_time, update_time, patient_id,dept_discharge_from,discharge_date,last_visit_date,patient_clinic_time
+        from patient_base_info
+        <where>
+            <if test="id != null">
+                and id > #{id}
+            </if>
+        </where>
+        order by id
+        limit #{params.pageSize}
+    </select>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into patient_base_info(account_id, head_image, hospital_code, registry_signs, medical_record_no, name, birthday, age, sex, marital_status, profession, work_unit, nation, nationality, id_card, mobile, present_address, permanent_address, degree_of_education, abo, link_man, relationship, link_man_address, admission_hospital_way, link_man_mobile, admission_hospital_date, admission_hospital_department, patient_status, update_by, create_by, create_time, update_time, patient_id)
+        values (#{accountId}, #{headImage}, #{hospitalCode}, #{registrySigns}, #{medicalRecordNo}, #{name}, #{birthday}, #{age}, #{sex}, #{maritalStatus}, #{profession}, #{workUnit}, #{nation}, #{nationality}, #{idCard}, #{mobile}, #{presentAddress}, #{permanentAddress}, #{degreeOfEducation}, #{abo}, #{linkMan}, #{relationship}, #{linkManAddress}, #{admissionHospitalWay}, #{linkManMobile}, #{admissionHospitalDate}, #{admissionHospitalDepartment}, #{patientStatus}, #{updateBy}, #{createBy}, #{createTime}, #{updateTime}, #{patientId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into patient_base_info(account_id, head_image, hospital_code, registry_signs, medical_record_no, name, birthday, age, sex, marital_status, profession, work_unit, nation, nationality, id_card, mobile, present_address, permanent_address, degree_of_education, abo, link_man, relationship, link_man_address, admission_hospital_way, link_man_mobile, admission_hospital_date, admission_hospital_department, patient_status, update_by, create_by, create_time, update_time, patient_id,dept_discharge_from,discharge_date,last_visit_date,patient_clinic_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.accountId}, #{entity.headImage}, #{entity.hospitalCode}, #{entity.registrySigns}, #{entity.medicalRecordNo}, #{entity.name}, #{entity.birthday}, #{entity.age}, #{entity.sex}, #{entity.maritalStatus}, #{entity.profession}, #{entity.workUnit}, #{entity.nation}, #{entity.nationality}, #{entity.idCard}, #{entity.mobile}, #{entity.presentAddress}, #{entity.permanentAddress}, #{entity.degreeOfEducation}, #{entity.abo}, #{entity.linkMan}, #{entity.relationship}, #{entity.linkManAddress}, #{entity.admissionHospitalWay}, #{entity.linkManMobile}, #{entity.admissionHospitalDate}, #{entity.admissionHospitalDepartment}, #{entity.patientStatus}, #{entity.updateBy}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{entity.patientId}, #{entity.deptDischargeFrom}, #{entity.dischargeDate}, #{entity.lastVisitDate}, #{entity.patientClinicTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into patient_base_info(account_id, head_image, hospital_code, registry_signs, medical_record_no, name, birthday, age, sex, marital_status, profession, work_unit, nation, nationality, id_card, mobile, present_address, permanent_address, degree_of_education, abo, link_man, relationship, link_man_address, admission_hospital_way, link_man_mobile, admission_hospital_date, admission_hospital_department, patient_status, update_by, create_by, create_time, update_time, patient_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.accountId}, #{entity.headImage}, #{entity.hospitalCode}, #{entity.registrySigns}, #{entity.medicalRecordNo}, #{entity.name}, #{entity.birthday}, #{entity.age}, #{entity.sex}, #{entity.maritalStatus}, #{entity.profession}, #{entity.workUnit}, #{entity.nation}, #{entity.nationality}, #{entity.idCard}, #{entity.mobile}, #{entity.presentAddress}, #{entity.permanentAddress}, #{entity.degreeOfEducation}, #{entity.abo}, #{entity.linkMan}, #{entity.relationship}, #{entity.linkManAddress}, #{entity.admissionHospitalWay}, #{entity.linkManMobile}, #{entity.admissionHospitalDate}, #{entity.admissionHospitalDepartment}, #{entity.patientStatus}, #{entity.updateBy}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{entity.patientId})
+        </foreach>
+        on duplicate key update
+        account_id = values(account_id),
+        head_image = values(head_image),
+        hospital_code = values(hospital_code),
+        registry_signs = values(registry_signs),
+        medical_record_no = values(medical_record_no),
+        name = values(name),
+        birthday = values(birthday),
+        age = values(age),
+        sex = values(sex),
+        marital_status = values(marital_status),
+        profession = values(profession),
+        work_unit = values(work_unit),
+        nation = values(nation),
+        nationality = values(nationality),
+        id_card = values(id_card),
+        mobile = values(mobile),
+        present_address = values(present_address),
+        permanent_address = values(permanent_address),
+        degree_of_education = values(degree_of_education),
+        abo = values(abo),
+        link_man = values(link_man),
+        relationship = values(relationship),
+        link_man_address = values(link_man_address),
+        admission_hospital_way = values(admission_hospital_way),
+        link_man_mobile = values(link_man_mobile),
+        admission_hospital_date = values(admission_hospital_date),
+        admission_hospital_department = values(admission_hospital_department),
+        patient_status = values(patient_status),
+        update_by = values(update_by),
+        create_by = values(create_by),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        patient_id = values(patient_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update patient_base_info
+        <set>
+            <if test="accountId != null">
+                account_id = #{accountId},
+            </if>
+            <if test="headImage != null and headImage != ''">
+                head_image = #{headImage},
+            </if>
+            <if test="hospitalCode != null and hospitalCode != ''">
+                hospital_code = #{hospitalCode},
+            </if>
+            <if test="registrySigns != null and registrySigns != ''">
+                registry_signs = #{registrySigns},
+            </if>
+            <if test="medicalRecordNo != null">
+                medical_record_no = #{medicalRecordNo},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                marital_status = #{maritalStatus},
+            </if>
+            <if test="profession != null and profession != ''">
+                profession = #{profession},
+            </if>
+            <if test="workUnit != null and workUnit != ''">
+                work_unit = #{workUnit},
+            </if>
+            <if test="nation != null and nation != ''">
+                nation = #{nation},
+            </if>
+            <if test="nationality != null and nationality != ''">
+                nationality = #{nationality},
+            </if>
+            <if test="idCard != null and idCard != ''">
+                id_card = #{idCard},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="presentAddress != null and presentAddress != ''">
+                present_address = #{presentAddress},
+            </if>
+            <if test="permanentAddress != null and permanentAddress != ''">
+                permanent_address = #{permanentAddress},
+            </if>
+            <if test="degreeOfEducation != null and degreeOfEducation != ''">
+                degree_of_education = #{degreeOfEducation},
+            </if>
+            <if test="abo != null and abo != ''">
+                abo = #{abo},
+            </if>
+            <if test="linkMan != null and linkMan != ''">
+                link_man = #{linkMan},
+            </if>
+            <if test="relationship != null and relationship != ''">
+                relationship = #{relationship},
+            </if>
+            <if test="linkManAddress != null and linkManAddress != ''">
+                link_man_address = #{linkManAddress},
+            </if>
+            <if test="admissionHospitalWay != null and admissionHospitalWay != ''">
+                admission_hospital_way = #{admissionHospitalWay},
+            </if>
+            <if test="linkManMobile != null and linkManMobile != ''">
+                link_man_mobile = #{linkManMobile},
+            </if>
+            <if test="admissionHospitalDate != null">
+                admission_hospital_date = #{admissionHospitalDate},
+            </if>
+            <if test="admissionHospitalDepartment != null and admissionHospitalDepartment != ''">
+                admission_hospital_department = #{admissionHospitalDepartment},
+            </if>
+            <if test="patientStatus != null and patientStatus != ''">
+                patient_status = #{patientStatus},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateBatch">
+        <foreach collection="list" item="item" separator=";" open="" close="">
+            update   patient_base_info
+            <set>
+                <if test="item.maritalStatus != null and item.maritalStatus != ''">
+                    marital_status = #{item.maritalStatus},
+                </if>
+                <if test="item.admissionHospitalDate != null">
+                    admission_hospital_date = #{item.admissionHospitalDate},
+                </if>
+                <if test="item.admissionHospitalDepartment != null and item.admissionHospitalDepartment != ''">
+                    admission_hospital_department = #{item.admissionHospitalDepartment},
+                </if>
+                <if test="item.deptDischargeFrom != null">
+                    dept_discharge_from = #{item.deptDischargeFrom},
+                </if>
+                <if test="item.dischargeDate != null ">
+                    discharge_date = #{item.dischargeDate},
+                </if>
+                <if test="item.patientClinicTime != null ">
+                    patient_clinic_time = #{item.patientClinicTime},
+                </if>
+            </set>
+            where patient_id = #{item.patientId}
+        </foreach>
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from patient_base_info where id = #{id}
+    </delete>
+
+</mapper>
+

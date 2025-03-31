@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-system/src/main/java/com/dchealth/dynamic/domain
+svn://xiaoshiguang.top
+
+
+
+2022-05-26T01:10:31.981735Z
+7273
+zhanghui
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+DynamicColumn.java
+file
+
+
+
+
+2024-09-03T07:48:08.718000Z
+523e526f641e1f8a9839162bdc3d8146
+2022-05-26T01:10:31.981735Z
+7273
+zhanghui
+
+TbDynamicRecord.java
+file
+
+
+
+
+2024-09-03T07:48:08.718000Z
+370c09b61b391e4a8ae91d009932e04e
+2022-05-26T01:10:31.981735Z
+7273
+zhanghui
+

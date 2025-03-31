@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.cms.mapper.CmsGuestImagesMapper">
+    
+    <resultMap type="com.dchealth.cro.cms.domain.CmsGuestImages" id="CmsGuestImagesResult">
+        <result property="id"    column="id"    />
+        <result property="guestbookId"    column="guestbook_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCmsGuestImagesVo">
+        select id, guestbook_id, image_url, create_time from cms_guest_images
+    </sql>
+
+    <select id="selectCmsGuestImagesList" parameterType="com.dchealth.cro.cms.domain.CmsGuestImages" resultMap="CmsGuestImagesResult">
+        <include refid="selectCmsGuestImagesVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectCmsGuestImagesById" parameterType="Long" resultMap="CmsGuestImagesResult">
+        <include refid="selectCmsGuestImagesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCmsGuestImages" parameterType="com.dchealth.cro.cms.domain.CmsGuestImages" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_guest_images
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="guestbookId != null ">guestbook_id,</if>
+            <if test="imageUrl != null  and imageUrl != ''">image_url,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="guestbookId != null ">#{guestbookId},</if>
+            <if test="imageUrl != null  and imageUrl != ''">#{imageUrl},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsGuestImages" parameterType="com.dchealth.cro.cms.domain.CmsGuestImages">
+        update cms_guest_images
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="guestbookId != null ">guestbook_id = #{guestbookId},</if>
+            <if test="imageUrl != null  and imageUrl != ''">image_url = #{imageUrl},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsGuestImagesById" parameterType="Long">
+        delete from cms_guest_images where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsGuestImagesByIds" parameterType="String">
+        delete from cms_guest_images where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

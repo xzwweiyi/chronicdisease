@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/xfapi/xunfei-core/src/main/java/com/dchealth/cro/core/contants
+svn://xiaoshiguang.top
+
+
+
+2022-06-21T05:46:20.033448Z
+7654
+guanmi
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+CroCoreConstant.java
+file
+
+
+
+
+2024-09-03T07:48:17.474000Z
+7f73b9d880563eec8697a31887f2a7ad
+2022-06-21T05:46:20.033448Z
+7654
+guanmi
+
+DictConstant.java
+file
+
+
+
+
+2024-09-03T07:48:17.474000Z
+1bf9bc577ed8131b78430ee62c622828
+2022-06-14T01:44:42.815248Z
+7564
+guanmi
+

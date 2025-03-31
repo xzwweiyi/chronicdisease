@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpProcedureOccurrenceMapper">
+    
+    <resultMap type="MpProcedureOccurrence" id="MpProcedureOccurrenceResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="procedureCode"    column="procedure_code"    />
+        <result property="procedureName"    column="procedure_name"    />
+        <result property="modifierName"    column="modifier_name"    />
+        <result property="procedureType"    column="procedure_type"    />
+        <result property="operationDoctorName"    column="operation_doctor_name"    />
+        <result property="operationGrade"    column="operation_grade"    />
+        <result property="departmentName"    column="department_name"    />
+    </resultMap>
+
+    <sql id="selectMpProcedureOccurrenceVo">
+        select id, care_site_id, person_id, visit_occurrence_id, procedure_code, procedure_name, modifier_name, procedure_type, operation_doctor_name, operation_grade, department_name from mp_procedure_occurrence
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId" resultMap="MpProcedureOccurrenceResult">
+        <include refid="selectMpProcedureOccurrenceVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+   
+
+</mapper>

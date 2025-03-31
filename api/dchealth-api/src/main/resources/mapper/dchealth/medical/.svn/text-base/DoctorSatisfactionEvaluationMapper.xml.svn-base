@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.medical.mapper.DoctorSatisfactionEvaluationMapper">
+    
+    <resultMap type="com.dchealth.cro.medical.domain.DoctorSatisfactionEvaluation" id="DoctorSatisfactionEvaluationResult">
+        <result property="id"    column="id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="score"    column="score"    />
+        <result property="suggestion"    column="suggestion"    />
+        <result property="createTime"    column="create_time"    />
+
+        <result property="nickName"    column="nick_name"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectDoctorSatisfactionEvaluationVo">
+        select g.id, g.account_id, g.score, g.suggestion, g.create_time ,su.nick_name,sd.dept_name
+        from doctor_satisfaction_evaluation g
+        INNER JOIN sys_user su on g.account_id=su.user_id
+        INNER JOIN sys_dept sd on su.dept_id=sd.dept_id
+    </sql>
+
+    <select id="selectDoctorSatisfactionEvaluationList" parameterType="com.dchealth.cro.medical.domain.DoctorSatisfactionEvaluation" resultMap="DoctorSatisfactionEvaluationResult">
+        <include refid="selectDoctorSatisfactionEvaluationVo"/>
+        <where>  
+            <if test="accountId != null "> and g.account_id = #{accountId}</if>
+            <if test="score != null "> and g.score = #{score}</if>
+            <if test="suggestion != null  and suggestion != ''"> and g.suggestion = #{suggestion}</if>
+            <if test="nickName != null  and nickName != ''"> and su.nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="deptId != null  and deptId != ''"> and su.dept_id = #{deptId}</if>
+        </where>
+    </select>
+
+    <select id="selectListByForm" parameterType="com.dchealth.cro.medical.form.SatisfactionForm" resultMap="DoctorSatisfactionEvaluationResult">
+        <include refid="selectDoctorSatisfactionEvaluationVo"/>
+        <where>
+            <if test="accountId != null "> and g.account_id = #{accountId}</if>
+        </where>
+        ORDER BY g.create_time desc
+        LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+    
+    <select id="selectDoctorSatisfactionEvaluationById" parameterType="Long" resultMap="DoctorSatisfactionEvaluationResult">
+        <include refid="selectDoctorSatisfactionEvaluationVo"/>
+        where g.id = #{id}
+    </select>
+
+    <select id="getSumScore" resultType="Integer">
+        select sum(g.score)
+        from doctor_satisfaction_evaluation g
+        INNER JOIN sys_user su on g.account_id=su.user_id
+        INNER JOIN sys_dept sd on su.dept_id=sd.dept_id
+    </select>
+        
+    <insert id="insertDoctorSatisfactionEvaluation" parameterType="com.dchealth.cro.medical.domain.DoctorSatisfactionEvaluation" useGeneratedKeys="true" keyProperty="id">
+        insert into doctor_satisfaction_evaluation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">account_id,</if>
+            <if test="score != null">score,</if>
+            <if test="suggestion != null">suggestion,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">#{accountId},</if>
+            <if test="score != null">#{score},</if>
+            <if test="suggestion != null">#{suggestion},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDoctorSatisfactionEvaluation" parameterType="com.dchealth.cro.medical.domain.DoctorSatisfactionEvaluation">
+        update doctor_satisfaction_evaluation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="suggestion != null">suggestion = #{suggestion},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDoctorSatisfactionEvaluationById" parameterType="Long">
+        delete from doctor_satisfaction_evaluation where id = #{id}
+    </delete>
+
+    <delete id="deleteDoctorSatisfactionEvaluationByIds" parameterType="String">
+        delete from doctor_satisfaction_evaluation where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,58 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-ui/src/components/KFormDesign/packages/KFormDesign
+svn://xiaoshiguang.top
+
+
+
+2023-07-07T03:20:47.277422Z
+12377
+lixiaohe
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+config
+dir
+
+index.js
+file
+
+
+
+
+2024-09-03T07:48:03.967000Z
+845c16f881b3cf8b0a2180bb3953d813
+2022-06-06T11:14:29.264133Z
+7440
+lixiaohe
+
+index.vue
+file
+
+
+
+
+2024-09-03T07:48:03.967000Z
+92460f2f09e7ece82716694f9e0bda00
+2022-06-06T11:14:29.264133Z
+7440
+lixiaohe
+
+module
+dir
+

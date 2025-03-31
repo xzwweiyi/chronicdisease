@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.warn.mapper.WarnGuideConverMapper">
+
+    <resultMap type="com.dchealth.cro.warn.domain.WarnGuideConver" id="WarnGuideConverResult">
+        <result property="warnGuideConverId"    column="warn_guide_conver_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="createUserId"    column="create_user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectWarnGuideConverVo">
+        select warn_guide_conver_id, record_id, dept_id, create_user_id, create_time, update_time from warn_guide_conver
+    </sql>
+
+    <select id="selectWarnGuideConverList" parameterType="com.dchealth.cro.warn.domain.WarnGuideConver" resultMap="WarnGuideConverResult">
+        <include refid="selectWarnGuideConverVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="createUserId != null "> and create_user_id = #{createUserId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnGuideConverByWarnGuideConverId" parameterType="Long" resultMap="WarnGuideConverResult">
+        <include refid="selectWarnGuideConverVo"/>
+        where warn_guide_conver_id = #{warnGuideConverId}
+    </select>
+        
+    <insert id="insertWarnGuideConver" parameterType="com.dchealth.cro.warn.domain.WarnGuideConver" useGeneratedKeys="true" keyProperty="warnGuideConverId">
+        insert into warn_guide_conver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createUserId != null">create_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnGuideConver" parameterType="com.dchealth.cro.warn.domain.WarnGuideConver">
+        update warn_guide_conver
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where warn_guide_conver_id = #{warnGuideConverId}
+    </update>
+
+    <delete id="deleteWarnGuideConverByWarnGuideConverId" parameterType="Long">
+        delete from warn_guide_conver where warn_guide_conver_id = #{warnGuideConverId}
+    </delete>
+
+    <delete id="deleteWarnGuideConverByWarnGuideConverIds" parameterType="String">
+        delete from warn_guide_conver where warn_guide_conver_id in 
+        <foreach item="warnGuideConverId" collection="array" open="(" separator="," close=")">
+            #{warnGuideConverId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.dynamic.mapper.DynamicTableMapper">
+
+    <insert id="createTable" parameterType="string">
+       create table ${createTableSql}
+    </insert>
+
+    <select id="queryTableOrder" resultType="string" parameterType="string">
+        select max(tb_order) from f_dynamic_record where tb_pre = #{tableNamePre};
+    </select>
+
+    <select id="querySamePreTable" resultType="string" parameterType="string">
+        select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = DATABASE() and TABLE_NAME like concat(#{tableNamePre}, '%');
+    </select>
+</mapper>

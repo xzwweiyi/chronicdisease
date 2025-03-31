@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.medical.mapper.PatientRecordMapper">
+    <resultMap type="com.dchealth.cro.medical.domain.PatientRecord" id="PatientRecordResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="name"    column="name"    />
+        <result property="stageNum"    column="stage_num"    />
+        <result property="stageAddNum"    column="stage_add_num"    />
+        <result property="questionStatus"    column="question_status"    />
+        <result property="warnStatus"    column="warn_status"    />
+        <result property="overTimeStatus"    column="over_time_status"    />
+        <result property="overTimeHandleStatus"    column="over_time_handle_status"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="fillTime"    column="fill_time"    />
+        <result property="visitTime"    column="visit_time"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="lockVisitTime"    column="lock_visit_time"    />
+        <result property="evaluatePrescription"    column="evaluate_prescription"    />
+        <result property="evaluateQuality"    column="evaluate_quality"    />
+        <result property="evaluateReply"    column="evaluate_reply"    />
+        <result property="evaluateReplyTime"    column="evaluate_reply_time"    />
+        <result property="evaluateStatus"    column="evaluate_status"    />
+        <result property="edcStatus"    column="edc_status"    />
+        <result property="followTipStatus"    column="follow_tip_status"    />
+        <result property="followStatus"    column="follow_status"    />
+        <result property="isSeeDetail"    column="is_see_detail"    />
+        <result property="isSubmit"    column="is_submit"    />
+        <result property="followOpinion"    column="follow_opinion"    />
+        <result property="followOpinionUserId"    column="follow_opinion_user_id"    />
+        <result property="fillStatus"    column="fill_status"    />
+        <result property="followNum"    column="follow_num"    />
+        <result property="overTimeNum"    column="over_time_num"    />
+        <result property="warnNum"    column="warn_num"    />
+        <result property="loseReason"    column="lose_reason"    />
+        <result property="loseType"    column="lose_type"    />
+
+        <result property="evaluateStatusBack"    column="evaluate_status_back"    />
+        <result property="followCompleteTime"    column="follow_complete_time"    />
+
+        <result property="evaluateStatusBack"    column="evaluate_status_back"    />
+        <result property="evaluatePrescriptionBack"    column="evaluate_prescription_back"    />
+        <result property="evaluateQualityBack"    column="evaluate_quality_back"    />
+        <result property="evaluateReplyBack"    column="evaluate_reply_back"    />
+        <result property="evaluateReplyBackTime"    column="evaluate_reply_back_time"    />
+
+        <result property="overEvaluateStatusBack"    column="over_evaluate_status_back"    />
+        <result property="overEvaluatePrescriptionBack"    column="over_evaluate_prescription_back"    />
+        <result property="overEvaluateQualityBack"    column="over_evaluate_quality_back"    />
+        <result property="overEvaluateReplyBack"    column="over_evaluate_reply_back"    />
+        <result property="overEvaluateReplyBackTime"    column="over_evaluate_reply_back_time"    />
+
+        <result property="warnEvaluateStatusBack"    column="warn_evaluate_status_back"    />
+        <result property="warnEvaluatePrescriptionBack"    column="warn_evaluate_prescription_back"    />
+        <result property="warnEvaluateQualityBack"    column="warn_evaluate_quality_back"    />
+        <result property="warnEvaluateReplyBack"    column="warn_evaluate_reply_back"    />
+        <result property="warnEvaluateReplyBackTime"    column="warn_evaluate_reply_back_time"    />
+        <result property="overTimeHandleTime"    column="over_time_handle_time"    />
+    </resultMap>
+
+    <resultMap type="com.dchealth.cro.medical.vo.FollowWorkListVO" id="FollowWorkListVOResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="stageName"    column="stage_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="patientMobile"    column="patient_mobile"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="overTimeHandleStatus"    column="over_time_handle_status"    />
+        <result property="loseType"    column="lose_type"    />
+        <result property="loseReason"    column="lose_reason"    />
+        <result property="visitTime"    column="visit_time"    />
+        <result property="warnStatus"    column="warn_status"    />
+    </resultMap>
+
+    <resultMap type="com.dchealth.cro.medical.vo.PatientRecordVo" id="PatientRecordVoResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="name"    column="name"    />
+        <result property="stageNum"    column="stage_num"    />
+        <result property="questionStatus"    column="question_status"    />
+        <result property="warnStatus"    column="warn_status"    />
+        <result property="overTimeStatus"    column="over_time_status"    />
+        <result property="overTimeHandleStatus"    column="over_time_handle_status"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="fillTime"    column="fill_time"    />
+        <result property="visitTime"    column="visit_time"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="lockVisitTime"    column="lock_visit_time"    />
+        <result property="edcStatus"    column="edc_status"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="followName"    column="follow_name"    />
+    </resultMap>
+
+    <resultMap type="com.dchealth.cro.medical.dto.PatientResearchDto" id="patientResearchInfo">
+        <result property="diseaseName"    column="disease_name"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordVo">
+        select record_id, patient_id, research_id, follow_id, name, stage_num, stage_add_num, question_status, warn_status,
+               over_time_status, over_time_handle_status, update_by, create_by, create_time, update_time, fill_time,
+               visit_time,is_submit,
+               fill_status,lock_visit_time,evaluate_status,evaluate_prescription,evaluate_quality,evaluate_reply,evaluate_reply_time,edc_status, follow_status, follow_tip_status,follow_opinion,lose_type,lose_reason,	evaluate_status_back,evaluate_prescription_back,evaluate_quality_back,evaluate_reply_back,evaluate_reply_back_time,
+               over_evaluate_status_back,over_evaluate_prescription_back,over_evaluate_quality_back,over_evaluate_reply_back,over_evaluate_reply_back_time,
+               warn_evaluate_status_back,warn_evaluate_prescription_back,warn_evaluate_quality_back,warn_evaluate_reply_back,warn_evaluate_reply_back_time from patient_record
+
+    </sql>
+
+    <select id="selectPatientRecordList" parameterType="com.dchealth.cro.medical.domain.PatientRecord" resultMap="PatientRecordResult">
+        select record_id,patient_id,research_id,follow_id,name,stage_num,
+        stage_add_num,question_status,warn_status,over_time_status,over_time_handle_status,update_by,create_by,create_time,
+        update_time,fill_time,fill_status,visit_time,lock_visit_time,evaluate_status,edc_status, follow_tip_status ,is_see_detail ,is_submit,
+        follow_opinion,follow_status,lose_reason,lose_type
+        from patient_record
+        <where>
+            and research_id not in (select qr.research_id from quit_record qr, patient_info pi
+            where qr.research_id = patient_record.research_id and qr.is_agree = 1
+            and pi.patient_id = patient_record.patient_id and qr.research_id = pi.research_id
+            and pi.person_id = qr.person_id)
+            <if test="recordId != null "> and record_id= #{recordId}</if>
+            <if test="patientId != null "> and patient_id= #{patientId}</if>
+            <if test="researchId != null "> and research_id= #{researchId}</if>
+            <if test="followId != null "> and follow_id= #{followId}</if>
+            <if test="name != null "> and name= #{name}</if>
+            <if test="stageNum != null "> and stage_num= #{stageNum}</if>
+            <if test="questionStatus != null "> and question_status= #{questionStatus}</if>
+            <if test="warnStatus != null "> and warn_status= #{warnStatus}</if>
+            <if test="overTimeStatus != null "> and over_time_status= #{overTimeStatus}</if>
+            <if test="overTimeHandleStatus != null "> and over_time_handle_status= #{overTimeHandleStatus}</if>
+            <if test="updateBy != null "> and update_by= #{updateBy}</if>
+            <if test="createBy != null "> and create_by= #{createBy}</if>
+            <if test="createTime != null "> and create_time= #{createTime}</if>
+            <if test="updateTime != null "> and update_time= #{updateTime}</if>
+            <if test="fillTime != null "> and fill_time= #{fillTime}</if>
+            <if test="fillStatus != null "> and fill_status= #{fillStatus}</if>
+            <if test="loseReason != null "> and lose_reason= #{loseReason}</if>
+            <if test="visitTime != null "> and visit_time= #{visitTime}</if>
+            <if test="lockVisitTime != null "> and lock_visit_time= #{lockVisitTime}</if>
+            <if test="evaluateStatus != null "> and evaluate_status= #{evaluateStatus}</if>
+            <if test="edcStatus != null "> and edc_status= #{edcStatus}</if>
+            <if test="followTipStatus != null "> and follow_tip_status= #{followTipStatus,jdbcType=INTEGER}</if>
+            <if test="isSeeDetail != null "> and is_see_detail= #{isSeeDetail}</if>
+            <if test="followOpinion != null "> and follow_opinion= #{followOpinion}</if>
+            <if test="followStatus != null "> and follow_status= #{followStatus}</if>
+        </where>
+            order by visit_time desc;
+    </select>
+
+    <select id="selectFollowWorkPatientRecordListByPage" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, b.phone_number as mobile,r.over_time_handle_status,
+        r.lose_type,r.lose_reason,r.visit_time  from patient_record r, patient_info p, research_info i, mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and p.patient_activity_status = '1'
+        and r.research_id = #{researchId} and i.del_flag = '0'
+        and r.is_submit = 1
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+        <if test="searchKey != null  and searchKey != ''"> and p.patient_name  like concat('%', #{searchKey}, '%')</if>
+        order by r.visit_time desc
+        LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+    <select id="selectFollowWorkPatientRecordLis" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, p.patient_mobile mobile,r.over_time_handle_status,
+        r.lose_type,r.lose_reason,r.visit_time  from patient_record r, patient_info p, research_info i, mp_person mp
+        where i.id=p.research_id and p.patient_id=r.patient_id and mp.person_id=p.person_id and p.patient_activity_status = '1'
+        and r.research_id = #{researchId} and i.del_flag = '0'
+        and r.is_submit = 1
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+        <if test="searchKey != null  and searchKey != ''"> and p.patient_name  like concat('%', #{searchKey}, '%')</if>
+        order by r.visit_time desc
+
+    </select>
+
+
+    <select id="selectFollowWorkPatientRecordList" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, p.patient_mobile mobile,r.over_time_handle_status,
+        r.lose_type,r.lose_reason,r.visit_time,r.warn_status  from patient_record r, patient_info p, research_info i,
+        mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and p.patient_activity_status = '1'
+        and r.research_id = #{researchId}
+        and r.is_submit = 1
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+        <if test="searchKey != null  and searchKey != ''"> and p.patient_name  like concat('%', #{searchKey}, '%')</if>
+
+    </select>
+
+    <select id="selectPatientRecordByRecordId" parameterType="Long" resultMap="PatientRecordResult">
+        <include refid="selectPatientRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertPatientRecord" parameterType="com.dchealth.cro.medical.domain.PatientRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into patient_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">patient_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="followId != null">follow_id,</if>
+            <if test="name != null">name,</if>
+            <if test="stageNum != null">stage_num,</if>
+            <if test="questionStatus != null">question_status,</if>
+            <if test="warnStatus != null">warn_status,</if>
+            <if test="overTimeStatus != null">over_time_status,</if>
+            <if test="overTimeHandleStatus != null">over_time_handle_status,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="fillTime != null">fill_time,</if>
+            <if test="visitTime != null">visit_time,</if>
+            <if test="lockVisitTime != null">lock_visit_time,</if>
+            <if test="edcStatus != null">edc_status,</if>
+            <if test="followOpinion != null and followOpinion != ''">follow_opinion,</if>
+            <if test="followStatus != null and followStatus != ''">follow_status,</if>
+            <if test="followTipStatus != null">follow_tip_status,</if>
+            <if test="followOpinionUserId != null">follow_opinion_user_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patientId != null">#{patientId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="followId != null">#{followId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="stageNum != null">#{stageNum},</if>
+            <if test="questionStatus != null">#{questionStatus},</if>
+            <if test="warnStatus != null">#{warnStatus},</if>
+            <if test="overTimeStatus != null">#{overTimeStatus},</if>
+            <if test="overTimeHandleStatus != null">#{overTimeHandleStatus},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="fillTime != null">#{fillTime},</if>
+            <if test="visitTime != null">#{visitTime},</if>
+            <if test="lockVisitTime != null">#{lockVisitTime},</if>
+            <if test="edcStatus != null">#{edcStatus},</if>
+            <if test="followOpinion != null and followOpinion != ''">#{followOpinion},</if>
+            <if test="followStatus != null and followStatus != ''">#{followStatus},</if>
+            <if test="followTipStatus != null">#{followTipStatus},</if>
+            <if test="followOpinionUserId != null">#{followOpinionUserId},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientRecord" parameterType="com.dchealth.cro.medical.domain.PatientRecord">
+        update patient_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="followId != null">follow_id = #{followId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="stageNum != null">stage_num = #{stageNum},</if>
+            <if test="questionStatus != null">question_status = #{questionStatus},</if>
+            <if test="warnStatus != null">warn_status = #{warnStatus},</if>
+            <if test="overTimeStatus != null">over_time_status = #{overTimeStatus},</if>
+            <if test="overTimeHandleStatus != null">over_time_handle_status = #{overTimeHandleStatus},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="followSubmitTime != null">follow_submit_time = #{followSubmitTime},</if>
+            <if test="fillTime != null">fill_time = #{fillTime},</if>
+            <if test="fillStatus != null">fill_status = #{fillStatus},</if>
+            <if test="visitTime != null">visit_time = #{visitTime},</if>
+            <if test="lockVisitTime != null">lock_visit_time = #{lockVisitTime},</if>
+            <if test="evaluateStatus != null">evaluate_status = #{evaluateStatus},</if>
+            <if test="evaluatePrescription != null">evaluate_prescription = #{evaluatePrescription},</if>
+            <if test="evaluateQuality != null">evaluate_quality = #{evaluateQuality},</if>
+            <if test="evaluateReply != null">evaluate_reply = #{evaluateReply},</if>
+            <if test="evaluateReplyTime != null">evaluate_reply_time = #{evaluateReplyTime},</if>
+            <if test="edcStatus != null">edc_status = #{edcStatus},</if>
+            <if test="followTipStatus != null">follow_tip_status = #{followTipStatus,jdbcType=INTEGER},</if>
+            <if test="isSeeDetail != null">is_see_detail = #{isSeeDetail,jdbcType=INTEGER},</if>
+            <if test="followOpinion != null">follow_opinion = #{followOpinion},</if>
+            <if test="followStatus != null">follow_status = #{followStatus},</if>
+            <if test="loseType != null">lose_type = #{loseType},</if>
+            <if test="loseReason != null">lose_reason = #{loseReason},</if>
+            <if test="followOpinionUserId != null">follow_opinion_user_id = #{followOpinionUserId},</if>
+            <if test="ignoreType != null">ignore_type = #{ignoreType},</if>
+            <if test="evaluateStatusBack != null">evaluate_status_back = #{evaluateStatusBack},</if>
+            <if test="followCompleteTime != null">follow_complete_time = #{followCompleteTime},</if>
+            <if test="isSubmit != null">is_submit = #{isSubmit},</if>
+            <if test="overTimeHandleTime != null">over_time_handle_time = #{overTimeHandleTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deletePatientRecordByRecordId" parameterType="Long">
+        delete from patient_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deletePatientRecordByRecordIds" parameterType="String">
+        delete from patient_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePatientRecord" parameterType="com.dchealth.cro.medical.form.FollowWorkListCmdForm">
+        delete from patient_record where  research_id = #{researchId} and patient_id = #{patientId} and follow_id = #{followId}
+    </delete>
+
+    <select id="selectFollowWorkPatientRecordCount" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultType="Integer">
+        select count(*) from patient_record r, patient_info p, research_info i, mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and p.patient_activity_status = '1'
+        and r.research_id = #{researchId} and i.del_flag = '0'
+        and r.is_submit = 1
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+    </select>
+    <select id="selectFollowWorkPatientRecordCounts" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultType="Integer">
+        select count(*) from patient_record r, patient_info p, research_info i, mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and p.patient_activity_status = '1'
+        and r.research_id = #{researchId} and i.del_flag = '0'
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+    </select>
+
+    <!--小程序暂时删除这个条件 为了代填后的预警可以显示后期有问题可以再加上
+    and p.patient_activity_status = '1'-->
+    <select id="selectFollowWorkWarnpatientList" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, b.phone_number as mobile
+        from patient_record r, patient_info p, research_info i, mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id
+        and p.account_id = #{accountId}
+        and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+    </select>
+
+    <select id="selectFollowWorkWarnpatientCount" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultType="Integer">
+        select count(*) from patient_record r, patient_info p, research_info i, mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and p.patient_activity_status = '1'
+        and  p.account_id = #{accountId}
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+    </select>
+
+    <select id="selectPatientRecordFollowStatusGroupInfoByResearchId" parameterType="Long" resultMap="PatientRecordResult">
+        select r.follow_status, r.name,r.evaluate_status_back
+        from patient_record r,patient_info p,research_info i,mp_person mp
+        where i.id = p.research_id
+          and p.patient_id = r.patient_id
+          and mp.person_id = p.person_id
+          and p.patient_activity_status = '1'
+          and r.research_id = #{researchId}
+          and r.is_submit= 1
+
+    </select>
+
+
+    <select id="selectPatientRecordOverTimeGroupInfoByResearchId" parameterType="Long" resultMap="PatientRecordResult">
+         select r.over_time_status,r.name,r.over_evaluate_status_back
+         from patient_record r,patient_info p,research_info i,mp_person b ,patient_record_template prt
+         where i.id = p.research_id and p.patient_id = r.patient_id and b.person_id = p.person_id
+         and prt.follow_id=r.follow_id and prt.follow_num>0 and r.research_id = #{researchId}
+    </select>
+    <select id="selectPatientRecordWarnGroupInfoByResearchId" parameterType="Long" resultMap="PatientRecordResult">
+        select r.warn_status,r.name,r.warn_evaluate_status_back
+        from patient_record r,
+             patient_info p,
+             research_info i,
+             mp_person b
+        where i.id = p.research_id
+          and p.patient_id = r.patient_id
+          and b.person_id = p.person_id
+          and p.patient_activity_status = '1'
+          and r.research_id = #{researchId}
+
+    </select>
+
+    <select id="selectPatientAndResearchNameByRecordId" parameterType="Long"  resultMap="patientResearchInfo">
+        select  rd.disease_name, ri.project_name from  patient_record  pr
+                                                           left join patient_info pi
+                                                                     on pr.patient_id = pi.patient_id
+                                                           left join research_info ri
+                                                                     on pi.research_id = ri.id
+                                                           left join research_diseases rd
+                                                                     on ri.disease_type_id = rd.disease_id
+        where pr.research_id = #{researchId}
+    </select>
+    <select id="selectFollowWorkPatientRecordsByPage"
+            resultType="com.dchealth.cro.medical.vo.FollowWorkListVO" resultMap="FollowWorkListVOResult">
+
+        select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, b.phone_number as mobile,r.over_time_handle_status,
+        r.lose_type,r.lose_reason,r.visit_time  from patient_record r, patient_info p, research_info i, mp_person b
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and p.patient_activity_status = '1'
+        and r.research_id = #{researchId} and i.del_flag = '0'
+
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+        <if test="searchKey != null  and searchKey != ''"> and p.patient_name  like concat('%', #{searchKey}, '%')</if>
+        order by r.visit_time desc
+        LIMIT ${(pageNo-1)*pageSize},${pageSize}
+
+    </select>
+
+
+    <select id="selectFollowWorkList" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id,
+               b.phone_number as mobile,r.over_time_handle_status,r.lose_type,r.lose_reason,r.visit_time
+        from patient_record r, patient_info p, research_info i, mp_person b ,patient_record_template prt
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and prt.follow_id=r.follow_id and prt.follow_num>0
+        and i.del_flag = '0'
+        <if test="researchId != null  and researchId != ''"> and r.research_id = #{researchId}</if>
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+        <if test="searchKey != null  and searchKey != ''"> and p.patient_name  like concat('%', #{searchKey}, '%')</if>
+        LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+
+    <select id="selectFollowWorkListCount" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultType="Integer">
+        select count(1)
+        from patient_record r, patient_info p, research_info i, mp_person b ,patient_record_template prt
+        where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id and prt.follow_id=r.follow_id and prt.follow_num>0
+        and r.research_id = #{researchId} and i.del_flag = '0'
+        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
+        <if test="evaluateStatus != null  and evaluateStatus != ''"> and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
+        <if test="searchKey != null  and searchKey != ''"> and p.patient_name  like concat('%', #{searchKey}, '%')</if>
+    </select>
+
+    <select id="selectOldByPatientId" resultMap="PatientRecordResult">
+        <include refid="selectPatientRecordVo"/>
+        where patient_id = #{patientId} order by create_time asc limit 0,1
+    </select>
+
+
+</mapper>

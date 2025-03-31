@@ -1,0 +1,65 @@
+package com.dchealth.cro.base.mapper;
+
+import com.dchealth.cro.base.domain.FastFile;
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+/**
+ * 文件管理Mapper接口
+ * 
+ * @author genemax1107@aliyun.com
+ * @date 2020-01-07
+ */
+@Repository
+public interface FastFileMapper 
+{
+    /**
+     * 查询文件管理
+     * 
+     * @param id 文件管理ID
+     * @return 文件管理
+     */
+    public FastFile selectFastFileById(Long id);
+    public FastFile selectFastFileByFileMd5(String fileMd5);
+
+    /**
+     * 查询文件管理列表
+     * 
+     * @param fastFile 文件管理
+     * @return 文件管理集合
+     */
+    public List<FastFile> selectFastFileList(FastFile fastFile);
+
+    /**
+     * 新增文件管理
+     * 
+     * @param fastFile 文件管理
+     * @return 结果
+     */
+    public int insertFastFile(FastFile fastFile);
+
+    /**
+     * 修改文件管理
+     * 
+     * @param fastFile 文件管理
+     * @return 结果
+     */
+    public int updateFastFile(FastFile fastFile);
+
+    /**
+     * 删除文件管理
+     * 
+     * @param id 文件管理ID
+     * @return 结果
+     */
+    public int deleteFastFileById(Long id);
+
+    /**
+     * 批量删除文件管理
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    public int deleteFastFileByIds(String[] ids);
+}

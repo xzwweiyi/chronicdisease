@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.cms.mapper.CmsCommentBlankMapper">
+    
+    <resultMap type="com.dchealth.cro.cms.domain.CmsCommentBlank" id="CmsCommentBlankResult">
+        <result property="id"    column="id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="commentId"    column="comment_id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="cmsContent"    column="cms_content"    />
+        <result property="realName"    column="real_name"    />
+        <result property="appType"    column="app_type"    />
+    </resultMap>
+
+    <sql id="selectCmsCommentBlankVo">
+        select t.id, t.article_id, t.comment_id, t.tenant_id, t.account_id, t.create_time ,m.content  as cms_content,t.app_type
+        from cms_comment_blank  t ,cms_comment m
+        where m.id=t.comment_id
+    </sql>
+
+    <select id="selectCmsCommentBlankList" parameterType="com.dchealth.cro.cms.domain.CmsCommentBlank" resultMap="CmsCommentBlankResult">
+        <include refid="selectCmsCommentBlankVo"/> 
+            <if test="articleId != null "> and t.article_id = #{articleId}</if>
+            <if test="commentId != null "> and t.comment_id = #{commentId}</if>
+            <if test="tenantId != null  and tenantId != ''"> and t.tenant_id = #{tenantId} </if>
+            <if test="accountId != null "> and t.account_id = #{accountId}</if>
+        order by t.create_time desc
+    </select>
+    
+    <select id="selectCmsCommentBlankById" parameterType="Long" resultMap="CmsCommentBlankResult">
+        <include refid="selectCmsCommentBlankVo"/>
+         and  t.id = #{id}
+    </select>
+        
+    <insert id="insertCmsCommentBlank" parameterType="com.dchealth.cro.cms.domain.CmsCommentBlank" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_comment_blank
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">article_id,</if>
+            <if test="commentId != null ">comment_id,</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="accountId != null ">account_id,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">#{articleId},</if>
+            <if test="commentId != null ">#{commentId},</if>
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="accountId != null ">#{accountId},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsCommentBlank" parameterType="com.dchealth.cro.cms.domain.CmsCommentBlank">
+        update cms_comment_blank
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null ">article_id = #{articleId},</if>
+            <if test="commentId != null ">comment_id = #{commentId},</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="accountId != null ">account_id = #{accountId},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsCommentBlankById" parameterType="Long">
+        delete from cms_comment_blank where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsCommentBlankByIds" parameterType="String">
+        delete from cms_comment_blank where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

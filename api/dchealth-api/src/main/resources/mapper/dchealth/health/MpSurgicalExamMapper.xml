@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpSurgicalExamMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpSurgicalExam" id="MpSurgicalExamResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="skin"    column="skin"    />
+        <result property="anus"    column="anus"    />
+        <result property="superficialLynph"    column="superficial_lynph"    />
+        <result property="thyroid"    column="thyroid"    />
+        <result property="spine"    column="spine"    />
+        <result property="limbJoint"    column="limb_joint"    />
+        <result property="healthExamDate"    column="health_exam_date"    />
+        <result property="resultDate"    column="result_date"    />
+    </resultMap>
+
+    <sql id="selectMpSurgicalExamVo">
+        select id, care_site_id, person_id,visit_type, visit_occurrence_id, skin, anus, superficial_lynph, thyroid, spine, limb_joint, health_exam_date, result_date from mp_surgical_exam
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId" resultMap="MpSurgicalExamResult">
+        <include refid="selectMpSurgicalExamVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+    <select id="selectByPersonId" resultMap="MpSurgicalExamResult">
+        <include refid="selectMpSurgicalExamVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+    </select>
+
+
+</mapper>

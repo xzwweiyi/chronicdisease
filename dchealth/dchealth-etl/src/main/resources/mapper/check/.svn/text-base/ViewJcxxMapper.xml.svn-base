@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.ViewJcxxMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.ViewJcxx" id="ViewJcxxMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="checkdate" column="checkdate" jdbcType="TIMESTAMP"/>
+        <result property="studydate" column="studydate" jdbcType="TIMESTAMP"/>
+        <result property="sfzh" column="sfzh" jdbcType="VARCHAR"/>
+        <result property="xm" column="xm" jdbcType="VARCHAR"/>
+        <result property="csny" column="csny" jdbcType="TIMESTAMP"/>
+        <result property="nl" column="nl" jdbcType="INTEGER"/>
+        <result property="xb" column="xb" jdbcType="VARCHAR"/>
+        <result property="lxdh" column="lxdh" jdbcType="VARCHAR"/>
+        <result property="mz" column="mz" jdbcType="VARCHAR"/>
+        <result property="hf" column="hf" jdbcType="VARCHAR"/>
+        <result property="lxrxm" column="lxrxm" jdbcType="VARCHAR"/>
+        <result property="lxrdh" column="lxrdh" jdbcType="VARCHAR"/>
+        <result property="txdz" column="txdz" jdbcType="VARCHAR"/>
+        <result property="resultdate" column="resultdate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ViewJcxxMap">
+        select
+          id, checkdate, studydate, sfzh, xm, csny, nl, xb, lxdh, mz, hf, lxrxm, lxrdh, txdz, resultdate
+        from view_jcxx
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ViewJcxxMap">
+        select
+          id, checkdate, studydate, sfzh, xm, csny, nl, xb, lxdh, mz, hf, lxrxm, lxrdh, txdz, resultdate
+        from view_jcxx
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="studydate != null">
+                and studydate = #{studydate}
+            </if>
+            <if test="sfzh != null and sfzh != ''">
+                and sfzh = #{sfzh}
+            </if>
+            <if test="xm != null and xm != ''">
+                and xm = #{xm}
+            </if>
+            <if test="csny != null">
+                and csny = #{csny}
+            </if>
+            <if test="nl != null">
+                and nl = #{nl}
+            </if>
+            <if test="xb != null and xb != ''">
+                and xb = #{xb}
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                and lxdh = #{lxdh}
+            </if>
+            <if test="mz != null and mz != ''">
+                and mz = #{mz}
+            </if>
+            <if test="hf != null and hf != ''">
+                and hf = #{hf}
+            </if>
+            <if test="lxrxm != null and lxrxm != ''">
+                and lxrxm = #{lxrxm}
+            </if>
+            <if test="lxrdh != null and lxrdh != ''">
+                and lxrdh = #{lxrdh}
+            </if>
+            <if test="txdz != null and txdz != ''">
+                and txdz = #{txdz}
+            </if>
+            <if test="resultdate != null">
+                and resultdate = #{resultdate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from view_jcxx
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="studydate != null">
+                and studydate = #{studydate}
+            </if>
+            <if test="sfzh != null and sfzh != ''">
+                and sfzh = #{sfzh}
+            </if>
+            <if test="xm != null and xm != ''">
+                and xm = #{xm}
+            </if>
+            <if test="csny != null">
+                and csny = #{csny}
+            </if>
+            <if test="nl != null">
+                and nl = #{nl}
+            </if>
+            <if test="xb != null and xb != ''">
+                and xb = #{xb}
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                and lxdh = #{lxdh}
+            </if>
+            <if test="mz != null and mz != ''">
+                and mz = #{mz}
+            </if>
+            <if test="hf != null and hf != ''">
+                and hf = #{hf}
+            </if>
+            <if test="lxrxm != null and lxrxm != ''">
+                and lxrxm = #{lxrxm}
+            </if>
+            <if test="lxrdh != null and lxrdh != ''">
+                and lxrdh = #{lxrdh}
+            </if>
+            <if test="txdz != null and txdz != ''">
+                and txdz = #{txdz}
+            </if>
+            <if test="resultdate != null">
+                and resultdate = #{resultdate}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="ViewJcxxMap">
+        select
+        预约id id,检查日期 checkdate,预约日期 studydate,身份证号 sfzh,姓名 xm,出生日期 csny,年龄 nl,性别 xb,电话 lxdh,民族 mz,婚姻状况 hf,
+        联系人姓名 lxrxm,联系人电话 lxrdh,通信地址 txdz,结论日期 resultdate
+        from 患者基本信息
+        <where>
+            <if test="jcxx.id != null and jcxx.id != ''">
+                and 预约id > #{患者基本信息.id}
+            </if>
+        </where>
+        order by 预约id
+        limit #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into view_jcxx(checkdate, studydate, sfzh, xm, csny, nl, xb, lxdh, mz, hf, lxrxm, lxrdh, txdz, resultdate)
+        values (#{checkdate}, #{studydate}, #{sfzh}, #{xm}, #{csny}, #{nl}, #{xb}, #{lxdh}, #{mz}, #{hf}, #{lxrxm}, #{lxrdh}, #{txdz}, #{resultdate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into view_jcxx(checkdate, studydate, sfzh, xm, csny, nl, xb, lxdh, mz, hf, lxrxm, lxrdh, txdz, resultdate)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.checkdate}, #{entity.studydate}, #{entity.sfzh}, #{entity.xm}, #{entity.csny}, #{entity.nl}, #{entity.xb}, #{entity.lxdh}, #{entity.mz}, #{entity.hf}, #{entity.lxrxm}, #{entity.lxrdh}, #{entity.txdz}, #{entity.resultdate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into view_jcxx(checkdate, studydate, sfzh, xm, csny, nl, xb, lxdh, mz, hf, lxrxm, lxrdh, txdz, resultdate)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.checkdate}, #{entity.studydate}, #{entity.sfzh}, #{entity.xm}, #{entity.csny}, #{entity.nl}, #{entity.xb}, #{entity.lxdh}, #{entity.mz}, #{entity.hf}, #{entity.lxrxm}, #{entity.lxrdh}, #{entity.txdz}, #{entity.resultdate})
+        </foreach>
+        on duplicate key update
+        checkdate = values(checkdate),
+        studydate = values(studydate),
+        sfzh = values(sfzh),
+        xm = values(xm),
+        csny = values(csny),
+        nl = values(nl),
+        xb = values(xb),
+        lxdh = values(lxdh),
+        mz = values(mz),
+        hf = values(hf),
+        lxrxm = values(lxrxm),
+        lxrdh = values(lxrdh),
+        txdz = values(txdz),
+        resultdate = values(resultdate)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update view_jcxx
+        <set>
+            <if test="checkdate != null">
+                checkdate = #{checkdate},
+            </if>
+            <if test="studydate != null">
+                studydate = #{studydate},
+            </if>
+            <if test="sfzh != null and sfzh != ''">
+                sfzh = #{sfzh},
+            </if>
+            <if test="xm != null and xm != ''">
+                xm = #{xm},
+            </if>
+            <if test="csny != null">
+                csny = #{csny},
+            </if>
+            <if test="nl != null">
+                nl = #{nl},
+            </if>
+            <if test="xb != null and xb != ''">
+                xb = #{xb},
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                lxdh = #{lxdh},
+            </if>
+            <if test="mz != null and mz != ''">
+                mz = #{mz},
+            </if>
+            <if test="hf != null and hf != ''">
+                hf = #{hf},
+            </if>
+            <if test="lxrxm != null and lxrxm != ''">
+                lxrxm = #{lxrxm},
+            </if>
+            <if test="lxrdh != null and lxrdh != ''">
+                lxrdh = #{lxrdh},
+            </if>
+            <if test="txdz != null and txdz != ''">
+                txdz = #{txdz},
+            </if>
+            <if test="resultdate != null">
+                resultdate = #{resultdate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from view_jcxx where id = #{id}
+    </delete>
+
+</mapper>
+

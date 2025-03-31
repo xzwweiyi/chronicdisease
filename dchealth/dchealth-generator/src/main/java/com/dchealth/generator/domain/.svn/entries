@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-generator/src/main/java/com/dchealth/generator/domain
+svn://xiaoshiguang.top
+
+
+
+2022-03-15T07:40:09.200200Z
+6252
+guanmi
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+GenTable.java
+file
+
+
+
+
+2024-09-03T07:48:12.781000Z
+c34c09db2e83487654292ee1f74d4ce9
+2022-03-15T07:40:09.200200Z
+6252
+guanmi
+
+GenTableColumn.java
+file
+
+
+
+
+2024-09-03T07:48:12.781000Z
+54032a6d79a0b3c6092ffc3e259a188c
+2022-03-15T07:40:09.200200Z
+6252
+guanmi
+

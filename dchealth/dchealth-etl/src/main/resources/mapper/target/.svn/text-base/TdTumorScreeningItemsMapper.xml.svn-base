@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdTumorScreeningItemsMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdTumorScreeningItems" id="TdTumorScreeningItemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="alphaFetoprotein" column="alpha_fetoprotein" jdbcType="VARCHAR"/>
+        <result property="carcinoembryonicAntigen" column="carcinoembryonic_antigen" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen199" column="carbohydrate_antigen199" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen125" column="carbohydrate_antigen125" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen242" column="carbohydrate_antigen242" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen153" column="carbohydrate_antigen153" jdbcType="VARCHAR"/>
+        <result property="neuronSpecificEnolase" column="neuron_specific_enolase" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen724" column="carbohydrate_antigen724" jdbcType="VARCHAR"/>
+        <result property="cytokeratin19Fragment" column="cytokeratin19_fragment" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen50" column="carbohydrate_antigen50" jdbcType="VARCHAR"/>
+        <result property="freePsmAntigen" column="free_psm_antigen" jdbcType="VARCHAR"/>
+        <result property="psmAntigen" column="psm_antigen" jdbcType="VARCHAR"/>
+        <result property="ft" column="ft" jdbcType="VARCHAR"/>
+        <result property="squCellCarcinomaAntigen" column="squ_cell_carcinoma_antigen" jdbcType="VARCHAR"/>
+        <result property="vegf" column="vegf" jdbcType="VARCHAR"/>
+        <result property="hcg" column="hcg" jdbcType="VARCHAR"/>
+        <result property="humanPididymisRotein" column="human_pididymis_rotein" jdbcType="VARCHAR"/>
+        <result property="aberrantGlycosylationProtein" column="aberrant_glycosylation_protein" jdbcType="VARCHAR"/>
+        <result property="ferritin" column="ferritin" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdTumorScreeningItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, alpha_fetoprotein, carcinoembryonic_antigen, carbohydrate_antigen199, carbohydrate_antigen125, carbohydrate_antigen242, carbohydrate_antigen153, neuron_specific_enolase, carbohydrate_antigen724, cytokeratin19_fragment, carbohydrate_antigen50, free_psm_antigen, psm_antigen, ft, squ_cell_carcinoma_antigen, vegf, hcg, human_pididymis_rotein, aberrant_glycosylation_protein
+        from td_tumor_screening_items
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdTumorScreeningItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, alpha_fetoprotein, carcinoembryonic_antigen, carbohydrate_antigen199, carbohydrate_antigen125, carbohydrate_antigen242, carbohydrate_antigen153, neuron_specific_enolase, carbohydrate_antigen724, cytokeratin19_fragment, carbohydrate_antigen50, free_psm_antigen, psm_antigen, ft, squ_cell_carcinoma_antigen, vegf, hcg, human_pididymis_rotein, aberrant_glycosylation_protein ,ferritin
+        from td_tumor_screening_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="alphaFetoprotein != null and alphaFetoprotein != ''">
+                and alpha_fetoprotein = #{alphaFetoprotein}
+            </if>
+            <if test="carcinoembryonicAntigen != null and carcinoembryonicAntigen != ''">
+                and carcinoembryonic_antigen = #{carcinoembryonicAntigen}
+            </if>
+            <if test="carbohydrateAntigen199 != null and carbohydrateAntigen199 != ''">
+                and carbohydrate_antigen199 = #{carbohydrateAntigen199}
+            </if>
+            <if test="carbohydrateAntigen125 != null and carbohydrateAntigen125 != ''">
+                and carbohydrate_antigen125 = #{carbohydrateAntigen125}
+            </if>
+            <if test="carbohydrateAntigen242 != null and carbohydrateAntigen242 != ''">
+                and carbohydrate_antigen242 = #{carbohydrateAntigen242}
+            </if>
+            <if test="carbohydrateAntigen153 != null and carbohydrateAntigen153 != ''">
+                and carbohydrate_antigen153 = #{carbohydrateAntigen153}
+            </if>
+            <if test="neuronSpecificEnolase != null and neuronSpecificEnolase != ''">
+                and neuron_specific_enolase = #{neuronSpecificEnolase}
+            </if>
+            <if test="carbohydrateAntigen724 != null and carbohydrateAntigen724 != ''">
+                and carbohydrate_antigen724 = #{carbohydrateAntigen724}
+            </if>
+            <if test="cytokeratin19Fragment != null and cytokeratin19Fragment != ''">
+                and cytokeratin19_fragment = #{cytokeratin19Fragment}
+            </if>
+            <if test="carbohydrateAntigen50 != null and carbohydrateAntigen50 != ''">
+                and carbohydrate_antigen50 = #{carbohydrateAntigen50}
+            </if>
+            <if test="freePsmAntigen != null and freePsmAntigen != ''">
+                and free_psm_antigen = #{freePsmAntigen}
+            </if>
+            <if test="psmAntigen != null and psmAntigen != ''">
+                and psm_antigen = #{psmAntigen}
+            </if>
+            <if test="ft != null and ft != ''">
+                and ft = #{ft}
+            </if>
+            <if test="squCellCarcinomaAntigen != null and squCellCarcinomaAntigen != ''">
+                and squ_cell_carcinoma_antigen = #{squCellCarcinomaAntigen}
+            </if>
+            <if test="vegf != null and vegf != ''">
+                and vegf = #{vegf}
+            </if>
+            <if test="hcg != null and hcg != ''">
+                and hcg = #{hcg}
+            </if>
+            <if test="humanPididymisRotein != null and humanPididymisRotein != ''">
+                and human_pididymis_rotein = #{humanPididymisRotein}
+            </if>
+            <if test="aberrantGlycosylationProtein != null and aberrantGlycosylationProtein != ''">
+                and aberrant_glycosylation_protein = #{aberrantGlycosylationProtein}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_tumor_screening_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="alphaFetoprotein != null and alphaFetoprotein != ''">
+                and alpha_fetoprotein = #{alphaFetoprotein}
+            </if>
+            <if test="carcinoembryonicAntigen != null and carcinoembryonicAntigen != ''">
+                and carcinoembryonic_antigen = #{carcinoembryonicAntigen}
+            </if>
+            <if test="carbohydrateAntigen199 != null and carbohydrateAntigen199 != ''">
+                and carbohydrate_antigen199 = #{carbohydrateAntigen199}
+            </if>
+            <if test="carbohydrateAntigen125 != null and carbohydrateAntigen125 != ''">
+                and carbohydrate_antigen125 = #{carbohydrateAntigen125}
+            </if>
+            <if test="carbohydrateAntigen242 != null and carbohydrateAntigen242 != ''">
+                and carbohydrate_antigen242 = #{carbohydrateAntigen242}
+            </if>
+            <if test="carbohydrateAntigen153 != null and carbohydrateAntigen153 != ''">
+                and carbohydrate_antigen153 = #{carbohydrateAntigen153}
+            </if>
+            <if test="neuronSpecificEnolase != null and neuronSpecificEnolase != ''">
+                and neuron_specific_enolase = #{neuronSpecificEnolase}
+            </if>
+            <if test="carbohydrateAntigen724 != null and carbohydrateAntigen724 != ''">
+                and carbohydrate_antigen724 = #{carbohydrateAntigen724}
+            </if>
+            <if test="cytokeratin19Fragment != null and cytokeratin19Fragment != ''">
+                and cytokeratin19_fragment = #{cytokeratin19Fragment}
+            </if>
+            <if test="carbohydrateAntigen50 != null and carbohydrateAntigen50 != ''">
+                and carbohydrate_antigen50 = #{carbohydrateAntigen50}
+            </if>
+            <if test="freePsmAntigen != null and freePsmAntigen != ''">
+                and free_psm_antigen = #{freePsmAntigen}
+            </if>
+            <if test="psmAntigen != null and psmAntigen != ''">
+                and psm_antigen = #{psmAntigen}
+            </if>
+            <if test="ft != null and ft != ''">
+                and ft = #{ft}
+            </if>
+            <if test="squCellCarcinomaAntigen != null and squCellCarcinomaAntigen != ''">
+                and squ_cell_carcinoma_antigen = #{squCellCarcinomaAntigen}
+            </if>
+            <if test="vegf != null and vegf != ''">
+                and vegf = #{vegf}
+            </if>
+            <if test="hcg != null and hcg != ''">
+                and hcg = #{hcg}
+            </if>
+            <if test="humanPididymisRotein != null and humanPididymisRotein != ''">
+                and human_pididymis_rotein = #{humanPididymisRotein}
+            </if>
+            <if test="aberrantGlycosylationProtein != null and aberrantGlycosylationProtein != ''">
+                and aberrant_glycosylation_protein = #{aberrantGlycosylationProtein}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_tumor_screening_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, alpha_fetoprotein, carcinoembryonic_antigen, carbohydrate_antigen199, carbohydrate_antigen125, carbohydrate_antigen242, carbohydrate_antigen153, neuron_specific_enolase, carbohydrate_antigen724, cytokeratin19_fragment, carbohydrate_antigen50, free_psm_antigen, psm_antigen, ft, squ_cell_carcinoma_antigen, vegf, hcg, human_pididymis_rotein, aberrant_glycosylation_protein)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{alphaFetoprotein}, #{carcinoembryonicAntigen}, #{carbohydrateAntigen199}, #{carbohydrateAntigen125}, #{carbohydrateAntigen242}, #{carbohydrateAntigen153}, #{neuronSpecificEnolase}, #{carbohydrateAntigen724}, #{cytokeratin19Fragment}, #{carbohydrateAntigen50}, #{freePsmAntigen}, #{psmAntigen}, #{ft}, #{squCellCarcinomaAntigen}, #{vegf}, #{hcg}, #{humanPididymisRotein}, #{aberrantGlycosylationProtein})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_tumor_screening_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, alpha_fetoprotein, carcinoembryonic_antigen, carbohydrate_antigen199, carbohydrate_antigen125, carbohydrate_antigen242, carbohydrate_antigen153, neuron_specific_enolase, carbohydrate_antigen724, cytokeratin19_fragment, carbohydrate_antigen50, free_psm_antigen, psm_antigen, ft, squ_cell_carcinoma_antigen, vegf, hcg, human_pididymis_rotein, aberrant_glycosylation_protein,ferritin)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.alphaFetoprotein}, #{entity.carcinoembryonicAntigen}, #{entity.carbohydrateAntigen199}, #{entity.carbohydrateAntigen125}, #{entity.carbohydrateAntigen242}, #{entity.carbohydrateAntigen153}, #{entity.neuronSpecificEnolase}, #{entity.carbohydrateAntigen724}, #{entity.cytokeratin19Fragment}, #{entity.carbohydrateAntigen50}, #{entity.freePsmAntigen}, #{entity.psmAntigen}, #{entity.ft}, #{entity.squCellCarcinomaAntigen}, #{entity.vegf}, #{entity.hcg}, #{entity.humanPididymisRotein}, #{entity.aberrantGlycosylationProtein}, #{entity.ferritin})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_tumor_screening_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, alpha_fetoprotein, carcinoembryonic_antigen, carbohydrate_antigen199, carbohydrate_antigen125, carbohydrate_antigen242, carbohydrate_antigen153, neuron_specific_enolase, carbohydrate_antigen724, cytokeratin19_fragment, carbohydrate_antigen50, free_psm_antigen, psm_antigen, ft, squ_cell_carcinoma_antigen, vegf, hcg, human_pididymis_rotein, aberrant_glycosylation_protein,ferritin)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.alphaFetoprotein}, #{entity.carcinoembryonicAntigen}, #{entity.carbohydrateAntigen199}, #{entity.carbohydrateAntigen125}, #{entity.carbohydrateAntigen242}, #{entity.carbohydrateAntigen153}, #{entity.neuronSpecificEnolase}, #{entity.carbohydrateAntigen724}, #{entity.cytokeratin19Fragment}, #{entity.carbohydrateAntigen50}, #{entity.freePsmAntigen}, #{entity.psmAntigen}, #{entity.ft}, #{entity.squCellCarcinomaAntigen}, #{entity.vegf}, #{entity.hcg}, #{entity.humanPididymisRotein}, #{entity.aberrantGlycosylationProtein}, #{entity.ferritin})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_tumor_screening_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, alpha_fetoprotein, carcinoembryonic_antigen, carbohydrate_antigen199, carbohydrate_antigen125, carbohydrate_antigen242, carbohydrate_antigen153, neuron_specific_enolase, carbohydrate_antigen724, cytokeratin19_fragment, carbohydrate_antigen50, free_psm_antigen, psm_antigen, ft, squ_cell_carcinoma_antigen, vegf, hcg, human_pididymis_rotein, aberrant_glycosylation_protein)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.alphaFetoprotein}, #{entity.carcinoembryonicAntigen}, #{entity.carbohydrateAntigen199}, #{entity.carbohydrateAntigen125}, #{entity.carbohydrateAntigen242}, #{entity.carbohydrateAntigen153}, #{entity.neuronSpecificEnolase}, #{entity.carbohydrateAntigen724}, #{entity.cytokeratin19Fragment}, #{entity.carbohydrateAntigen50}, #{entity.freePsmAntigen}, #{entity.psmAntigen}, #{entity.ft}, #{entity.squCellCarcinomaAntigen}, #{entity.vegf}, #{entity.hcg}, #{entity.humanPididymisRotein}, #{entity.aberrantGlycosylationProtein})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        alpha_fetoprotein = values(alpha_fetoprotein),
+        carcinoembryonic_antigen = values(carcinoembryonic_antigen),
+        carbohydrate_antigen199 = values(carbohydrate_antigen199),
+        carbohydrate_antigen125 = values(carbohydrate_antigen125),
+        carbohydrate_antigen242 = values(carbohydrate_antigen242),
+        carbohydrate_antigen153 = values(carbohydrate_antigen153),
+        neuron_specific_enolase = values(neuron_specific_enolase),
+        carbohydrate_antigen724 = values(carbohydrate_antigen724),
+        cytokeratin19_fragment = values(cytokeratin19_fragment),
+        carbohydrate_antigen50 = values(carbohydrate_antigen50),
+        free_psm_antigen = values(free_psm_antigen),
+        psm_antigen = values(psm_antigen),
+        ft = values(ft),
+        squ_cell_carcinoma_antigen = values(squ_cell_carcinoma_antigen),
+        vegf = values(vegf),
+        hcg = values(hcg),
+        human_pididymis_rotein = values(human_pididymis_rotein),
+        aberrant_glycosylation_protein = values(aberrant_glycosylation_protein)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_tumor_screening_items
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="alphaFetoprotein != null and alphaFetoprotein != ''">
+                alpha_fetoprotein = #{alphaFetoprotein},
+            </if>
+            <if test="carcinoembryonicAntigen != null and carcinoembryonicAntigen != ''">
+                carcinoembryonic_antigen = #{carcinoembryonicAntigen},
+            </if>
+            <if test="carbohydrateAntigen199 != null and carbohydrateAntigen199 != ''">
+                carbohydrate_antigen199 = #{carbohydrateAntigen199},
+            </if>
+            <if test="carbohydrateAntigen125 != null and carbohydrateAntigen125 != ''">
+                carbohydrate_antigen125 = #{carbohydrateAntigen125},
+            </if>
+            <if test="carbohydrateAntigen242 != null and carbohydrateAntigen242 != ''">
+                carbohydrate_antigen242 = #{carbohydrateAntigen242},
+            </if>
+            <if test="carbohydrateAntigen153 != null and carbohydrateAntigen153 != ''">
+                carbohydrate_antigen153 = #{carbohydrateAntigen153},
+            </if>
+            <if test="neuronSpecificEnolase != null and neuronSpecificEnolase != ''">
+                neuron_specific_enolase = #{neuronSpecificEnolase},
+            </if>
+            <if test="carbohydrateAntigen724 != null and carbohydrateAntigen724 != ''">
+                carbohydrate_antigen724 = #{carbohydrateAntigen724},
+            </if>
+            <if test="cytokeratin19Fragment != null and cytokeratin19Fragment != ''">
+                cytokeratin19_fragment = #{cytokeratin19Fragment},
+            </if>
+            <if test="carbohydrateAntigen50 != null and carbohydrateAntigen50 != ''">
+                carbohydrate_antigen50 = #{carbohydrateAntigen50},
+            </if>
+            <if test="freePsmAntigen != null and freePsmAntigen != ''">
+                free_psm_antigen = #{freePsmAntigen},
+            </if>
+            <if test="psmAntigen != null and psmAntigen != ''">
+                psm_antigen = #{psmAntigen},
+            </if>
+            <if test="ft != null and ft != ''">
+                ft = #{ft},
+            </if>
+            <if test="squCellCarcinomaAntigen != null and squCellCarcinomaAntigen != ''">
+                squ_cell_carcinoma_antigen = #{squCellCarcinomaAntigen},
+            </if>
+            <if test="vegf != null and vegf != ''">
+                vegf = #{vegf},
+            </if>
+            <if test="hcg != null and hcg != ''">
+                hcg = #{hcg},
+            </if>
+            <if test="humanPididymisRotein != null and humanPididymisRotein != ''">
+                human_pididymis_rotein = #{humanPididymisRotein},
+            </if>
+            <if test="aberrantGlycosylationProtein != null and aberrantGlycosylationProtein != ''">
+                aberrant_glycosylation_protein = #{aberrantGlycosylationProtein},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_tumor_screening_items where id = #{id}
+    </delete>
+
+</mapper>
+

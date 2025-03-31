@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.his.mapper.PatMasterIndexMapper">
+
+    <resultMap type="com.dchealth.cro.his.domain.PatMasterIndex" id="PatMasterIndexMap">
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="inpNo" column="inp_no" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="namePhonetic" column="name_phonetic" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="dateOfBirth" column="date_of_birth" jdbcType="VARCHAR"/>
+        <result property="birthPlace" column="birth_place" jdbcType="VARCHAR"/>
+        <result property="nation" column="nation" jdbcType="VARCHAR"/>
+        <result property="idNo" column="id_no" jdbcType="VARCHAR"/>
+        <result property="identity" column="identity" jdbcType="VARCHAR"/>
+        <result property="chargeType" column="charge_type" jdbcType="VARCHAR"/>
+        <result property="unitInContract" column="unit_in_contract" jdbcType="VARCHAR"/>
+        <result property="mailingAddress" column="mailing_address" jdbcType="VARCHAR"/>
+        <result property="zipCode" column="zip_code" jdbcType="VARCHAR"/>
+        <result property="phoneNumberHome" column="phone_number_home" jdbcType="VARCHAR"/>
+        <result property="phoneNumberBusiness" column="phone_number_business" jdbcType="VARCHAR"/>
+        <result property="nextOfKin" column="next_of_kin" jdbcType="VARCHAR"/>
+        <result property="relationship" column="relationship" jdbcType="VARCHAR"/>
+        <result property="nextOfKinAddr" column="next_of_kin_addr" jdbcType="VARCHAR"/>
+        <result property="nextOfKinZipCode" column="next_of_kin_zip_code" jdbcType="VARCHAR"/>
+        <result property="nextOfKinPhone" column="next_of_kin_phone" jdbcType="VARCHAR"/>
+        <result property="lastVisitDate" column="last_visit_date" jdbcType="TIMESTAMP"/>
+        <result property="vipIndicator" column="vip_indicator" jdbcType="INTEGER"/>
+        <result property="createDate" column="create_date" jdbcType="VARCHAR"/>
+        <result property="operator" column="operator" jdbcType="VARCHAR"/>
+        <result property="cardStatus" column="card_status" jdbcType="INTEGER"/>
+        <result property="rundcode" column="rundcode" jdbcType="VARCHAR"/>
+        <result property="bankflag" column="bankflag" jdbcType="INTEGER"/>
+        <result property="bankcardNo" column="bankcard_no" jdbcType="VARCHAR"/>
+        <result property="secretLevel" column="secret_level" jdbcType="INTEGER"/>
+        <result property="citizenship" column="citizenship" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="selectByIdNoAndPatientId" resultMap="PatMasterIndexMap">
+        select
+          patient_id, inp_no, name,  sex, date_of_birth,  nation, id_no, identity, charge_type,  mailing_address, phone_number_home,  next_of_kin, relationship, next_of_kin_addr,  next_of_kin_phone, last_visit_date, create_date
+        from pat_master_index
+        where patient_id = #{patientId} and id_no =#{idNo} and charge_type not in ('军队医改','不孕不育','武警不孕')
+    </select>
+</mapper>
+

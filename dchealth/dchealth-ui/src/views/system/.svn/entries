@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-ui/src/views/system
+svn://xiaoshiguang.top
+
+
+
+2024-07-11T09:16:28.212306Z
+19658
+lixiaohe
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+config
+dir
+
+dept
+dir
+
+dict
+dir
+
+menu
+dir
+
+notice
+dir
+
+post
+dir
+
+role
+dir
+
+user
+dir
+

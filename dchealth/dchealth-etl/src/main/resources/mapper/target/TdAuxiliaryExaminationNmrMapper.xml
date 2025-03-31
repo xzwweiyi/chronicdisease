@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdAuxiliaryExaminationNmrMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdAuxiliaryExaminationNmr" id="TdAuxiliaryExaminationNmrMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="mri" column="mri" jdbcType="VARCHAR"/>
+        <result property="cranialVascularImaging" column="cranial_vascular_imaging" jdbcType="VARCHAR"/>
+        <result property="cranialVenousMrv" column="cranial_venous_mrv" jdbcType="VARCHAR"/>
+        <result property="cranialArteryMra" column="cranial_artery_mra" jdbcType="VARCHAR"/>
+        <result property="cardiacCoronaryAngiography" column="cardiac_coronary_angiography" jdbcType="VARCHAR"/>
+        <result property="headFlatScan15" column="head_flat_scan15" jdbcType="VARCHAR"/>
+        <result property="csFlatScan15" column="cs_flat_scan15" jdbcType="VARCHAR"/>
+        <result property="lsFlatScan15" column="ls_flat_scan15" jdbcType="VARCHAR"/>
+        <result property="headFlatScan3" column="head_flat_scan3" jdbcType="VARCHAR"/>
+        <result property="csFlatScan3" column="cs_flat_scan3" jdbcType="VARCHAR"/>
+        <result property="lsFlatScan3" column="ls_flat_scan3" jdbcType="VARCHAR"/>
+        <result property="dwi" column="dwi" jdbcType="VARCHAR"/>
+        <result property="chestXray" column="chest_xray" jdbcType="VARCHAR"/>
+        <result property="asl" column="asl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdAuxiliaryExaminationNmrMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, mri
+        from td_auxiliary_examination_nmr
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdAuxiliaryExaminationNmrMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, mri
+        from td_auxiliary_examination_nmr
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="mri != null and mri != ''">
+                and mri = #{mri}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_auxiliary_examination_nmr
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="mri != null and mri != ''">
+                and mri = #{mri}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_auxiliary_examination_nmr(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, mri)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{mri})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_auxiliary_examination_nmr(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, mri, cranial_vascular_imaging, cranial_venous_mrv, cranial_artery_mra, cardiac_coronary_angiography, head_flat_scan15, cs_flat_scan15, ls_flat_scan15, head_flat_scan3, cs_flat_scan3, ls_flat_scan3, dwi, chest_xray, asl)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.mri}, #{entity.cranialVascularImaging}, #{entity.cranialVenousMrv}, #{entity.cranialArteryMra}, #{entity.cardiacCoronaryAngiography}, #{entity.headFlatScan15}, #{entity.csFlatScan15}, #{entity.lsFlatScan15}, #{entity.headFlatScan3}, #{entity.csFlatScan3}, #{entity.lsFlatScan3}, #{entity.dwi}, #{entity.chestXray}, #{entity.asl})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_auxiliary_examination_nmr(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, mri, cranial_vascular_imaging, cranial_venous_mrv, cranial_artery_mra, cardiac_coronary_angiography, head_flat_scan15, cs_flat_scan15, ls_flat_scan15, head_flat_scan3, cs_flat_scan3, ls_flat_scan3, dwi, chest_xray, asl)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.mri}, #{entity.cranialVascularImaging}, #{entity.cranialVenousMrv}, #{entity.cranialArteryMra}, #{entity.cardiacCoronaryAngiography}, #{entity.headFlatScan15}, #{entity.csFlatScan15}, #{entity.lsFlatScan15}, #{entity.headFlatScan3}, #{entity.csFlatScan3}, #{entity.lsFlatScan3}, #{entity.dwi}, #{entity.chestXray}, #{entity.asl})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        mri = values(mri),
+        cranial_vascular_imaging = values(cranial_vascular_imaging),
+        cranial_venous_mrv = values(cranial_venous_mrv),
+        cranial_artery_mra = values(cranial_artery_mra),
+        cardiac_coronary_angiography = values(cardiac_coronary_angiography),
+        head_flat_scan15 = values(head_flat_scan15),
+        cs_flat_scan15 = values(cs_flat_scan15),
+        ls_flat_scan15 = values(ls_flat_scan15),
+        head_flat_scan3 = values(head_flat_scan3),
+        cs_flat_scan3 = values(cs_flat_scan3),
+        ls_flat_scan3 = values(ls_flat_scan3),
+        dwi = values(dwi),
+        chest_xray = values(chest_xray),
+        asl = values(asl)
+    </insert>
+
+    <insert id="insertBatchByMaps">
+        insert into td_auxiliary_examination_nmr(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, mri, cranial_vascular_imaging, cranial_venous_mrv, cranial_artery_mra, cardiac_coronary_angiography, head_flat_scan15, cs_flat_scan15, ls_flat_scan15, head_flat_scan3, cs_flat_scan3, ls_flat_scan3, dwi, chest_xray, asl)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.mri}, #{entity.cranialVascularImaging}, #{entity.cranialVenousMrv}, #{entity.cranialArteryMra}, #{entity.cardiacCoronaryAngiography}, #{entity.headFlatScan15}, #{entity.csFlatScan15}, #{entity.lsFlatScan15}, #{entity.headFlatScan3}, #{entity.csFlatScan3}, #{entity.lsFlatScan3}, #{entity.dwi}, #{entity.chestXray}, #{entity.asl})
+        </foreach>
+
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_auxiliary_examination_nmr
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="mri != null and mri != ''">
+                mri = #{mri},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_auxiliary_examination_nmr where id = #{id}
+    </delete>
+
+</mapper>
+

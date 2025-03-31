@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.question.mapper.QuestionQuickMapper">
+    
+    <resultMap type="com.dchealth.cro.question.domain.QuestionQuick" id="QuestionQuickResult">
+        <result property="questionQuickId"    column="question_quick_id"    />
+        <result property="quickContent"    column="quick_content"    />
+        <result property="createUserId"    column="create_user_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectQuestionQuickVo">
+        select question_quick_id, quick_content, create_user_id, dept_id, create_time from question_quick
+    </sql>
+
+    <select id="selectQuestionQuickList" parameterType="com.dchealth.cro.question.domain.QuestionQuick" resultMap="QuestionQuickResult">
+        <include refid="selectQuestionQuickVo"/>
+        <where>  
+            <if test="quickContent != null  and quickContent != ''"> and quick_content = #{quickContent}</if>
+            <if test="createUserId != null "> and create_user_id = #{createUserId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuestionQuickByQuestionQuickId" parameterType="Long" resultMap="QuestionQuickResult">
+        <include refid="selectQuestionQuickVo"/>
+        where question_quick_id = #{questionQuickId}
+    </select>
+
+    <select id="selectQuestionQuickListByUserId" parameterType="Long" resultMap="QuestionQuickResult">
+        <include refid="selectQuestionQuickVo"/>
+        where create_user_id = #{userId}
+    </select>
+        
+    <insert id="insertQuestionQuick" parameterType="com.dchealth.cro.question.domain.QuestionQuick" useGeneratedKeys="true" keyProperty="questionQuickId">
+        insert into question_quick
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="quickContent != null">quick_content,</if>
+            <if test="createUserId != null">create_user_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="quickContent != null">#{quickContent},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuestionQuick" parameterType="com.dchealth.cro.question.domain.QuestionQuick">
+        update question_quick
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="quickContent != null">quick_content = #{quickContent},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where question_quick_id = #{questionQuickId}
+    </update>
+
+    <delete id="deleteQuestionQuickByQuestionQuickId" parameterType="Long">
+        delete from question_quick where question_quick_id = #{questionQuickId}
+    </delete>
+
+    <delete id="deleteQuestionQuickByQuestionQuickIds" parameterType="String">
+        delete from question_quick where question_quick_id in 
+        <foreach item="questionQuickId" collection="array" open="(" separator="," close=")">
+            #{questionQuickId}
+        </foreach>
+    </delete>
+</mapper>

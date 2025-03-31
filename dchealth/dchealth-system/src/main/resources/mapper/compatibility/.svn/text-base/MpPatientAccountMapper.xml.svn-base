@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpPatientAccountMapper">
+    
+    <resultMap type="MpPatientAccount" id="MpPatientAccountResult">
+        <result property="personId"    column="person_id"    />
+        <result property="accountId"    column="account_id"    />
+    </resultMap>
+
+    <sql id="selectMpPatientAccountVo">
+        select person_id, account_id from mp_patient_account
+    </sql>
+
+    <select id="selectMpPatientAccountList" parameterType="MpPatientAccount" resultMap="MpPatientAccountResult">
+        <include refid="selectMpPatientAccountVo"/>
+        <where>  
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMpPatientAccountBypersonId" parameterType="String" resultMap="MpPatientAccountResult">
+        <include refid="selectMpPatientAccountVo"/>
+        where person_id = #{personId}
+    </select>
+    <select id="selectMpPatientAccountByAccountId" parameterType="Long" resultMap="MpPatientAccountResult">
+        <include refid="selectMpPatientAccountVo"/>
+        where account_id = #{accountId}
+    </select>
+        
+    <insert id="insertMpPatientAccount" parameterType="MpPatientAccount">
+        insert into mp_patient_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="personId != null">person_id,</if>
+            <if test="accountId != null">account_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="personId != null">#{personId},</if>
+            <if test="accountId != null">#{accountId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMpPatientAccount" parameterType="MpPatientAccount">
+        update mp_patient_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">account_id = #{accountId},</if>
+        </trim>
+        where person_id = #{personId}
+    </update>
+
+    <delete id="deleteMpPatientAccountBypersonId" parameterType="String">
+        delete from mp_patient_account where person_id = #{personId}
+    </delete>
+
+    <delete id="deleteMpPatientAccountBypersonIds" parameterType="String">
+        delete from mp_patient_account where person_id in 
+        <foreach item="personId" collection="array" open="(" separator="," close=")">
+            #{personId}
+        </foreach>
+    </delete>
+
+</mapper>

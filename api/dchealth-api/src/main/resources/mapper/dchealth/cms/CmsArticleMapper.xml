@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.cms.mapper.CmsArticleMapper">
+
+    <resultMap type="com.dchealth.cro.cms.domain.CmsArticle" id="CmsArticleResult">
+        <result property="id" column="id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="title" column="title"/>
+        <result property="link" column="link"/>
+        <result property="uploadType"    column="upload_type"    />
+        <result property="forwardLink"    column="forward_link"    />
+        <result property="image" column="image"/>
+        <result property="keywords" column="keywords"/>
+        <result property="description" column="description"/>
+        <result property="listOrderNum" column="list_order_num"/>
+        <result property="videoUrl" column="video_url"/>
+        <result property="listShow" column="list_show"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="relation" column="relation"/>
+        <result property="content" column="content"/>
+        <result property="allowComment" column="allow_comment"/>
+        <result property="copyFrom" column="copy_from"/>
+        <result property="videoImage" column="video_image"/>
+        <result property="positionType" column="position_type"/>
+        <result property="quesNum" column="ques_num"/>
+    </resultMap>
+
+    <sql id="selectCmsArticleVo">
+        select id,
+               category_id,
+               tenant_id,
+               title,
+               link,upload_type,forward_link,
+               image,
+               video_image,
+               keywords,
+               description,
+               position_type,
+               list_order_num,
+               video_url,
+               list_show,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark,
+               del_flag
+        from cms_article
+    </sql>
+
+    <select id="selectCmsArticleList" parameterType="com.dchealth.cro.cms.form.ActicleListSearchForm"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id as articleId,ca.image as imageUrl,ca.title,ca.create_time as createTime,
+        cs.view_num as viewNum,cs.comment_num as commentNum
+        from cms_article ca
+        left join cms_stat cs on ca.id = cs.id
+        where  ca.del_flag='N' and FIND_IN_SET(#{positionType},position_type)
+        <if test="tenantId != null  and tenantId != ''">and ca.tenant_id = #{tenantId}</if>
+        <if test="categoryId != null ">and ca.category_id = #{categoryId}</if>
+        <if test="title != null  and title != ''">and ca.title like concat('%', #{title}, '%')</if>
+        <if test="type != null  and type !='' and type=='2'.toString()">
+            and ca.list_show = 'Y' order by ca.list_order_num desc
+        </if>
+        <if test="type != null  and type !='' and type=='3'.toString()">
+            order by ca.create_time desc
+        </if>
+        <if test="type == null  or type =='' ">
+            order by ca.create_time desc
+        </if>
+        LIMIT ${(pageNo-1)*pageSize},${pageSize}
+    </select>
+
+    <select id="selectCmsArticlePatientList" parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id          as articleId,
+               ca.image       as imageUrl,
+               ca.title,ca.link,
+               ca.create_time as createTime,
+               ca.description,
+               cs.view_num    as viewNum,
+               cs.comment_num as commentNum
+        from cms_article ca
+                 left join cms_stat cs on ca.id = cs.id
+        where
+              ca.del_flag = 'N'
+          and ca.type = 1
+          and FIND_IN_SET("2", ca.position_type)
+          and ca.id in (SELECT a.article_id
+                        FROM research_info_article a,
+                             research_patient b,
+                             patient_base_info c
+                        where a.research_id = b.research_id
+                          and b.base_patient_id = c.id
+                          AND c.account_id = #{accountId}
+        )
+--         order by ca.create_time desc
+    </select>
+
+
+    <select id="selectAllCmsArticlePatientList"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id as articleId,ca.image as imageUrl,ca.title,ca.type,
+               ca.link,ca.upload_type as uploadType,ca.forward_link as forwardLink,
+               ca.create_time as createTime,ca.description,
+               cs.view_num as viewNum,cs.comment_num as commentNum
+        FROM
+            cms_article ca LEFT JOIN cms_stat cs ON ca.id = cs.id
+        WHERE
+            ca.del_flag = 'N'
+          AND ca.type in (1,3)
+          AND FIND_IN_SET( "2", ca.position_type )
+          AND ca.id IN (
+            SELECT
+                a.article_id
+            FROM
+                research_info_article a,
+                research_patient b,
+                mp_person c,
+                research_info d,
+                mp_patient_account mpa
+            WHERE
+                a.research_id = b.research_id
+              AND a.research_id = d.id
+              AND b.person_id = c.person_id
+              AND mpa.person_id = c.person_id
+              AND mpa.account_id = #{accountId}
+              <if test="infoType != null  and infoType != ''">and a.type = #{infoType}</if>
+              AND d.id in (${survivalResearchIds})
+        )
+        ORDER BY ca.create_time desc
+            LIMIT ${(pageNo-1)*pageSize}, ${pageSize}
+    </select>
+
+
+    <select id="selectAllDefaultCmsArticlePatientList"
+            parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id as articleId,ca.image as imageUrl,ca.title,ca.type,
+        ca.link,ca.upload_type as uploadType,ca.forward_link as forwardLink,
+        ca.create_time as createTime,ca.description,
+        cs.view_num as viewNum,cs.comment_num as commentNum
+        FROM
+        cms_article ca LEFT JOIN cms_stat cs ON ca.id = cs.id
+        WHERE
+        ca.del_flag = 'N'
+        AND ca.type in (1,3)
+        AND FIND_IN_SET( "2", ca.position_type )
+        AND article_type = 3
+        ORDER BY  ca.list_order_num asc,ca.create_time DESC
+        LIMIT ${(pageNo-1)*pageSize}, ${pageSize}
+    </select>
+
+
+    <select id="selectOwnQuestionnaireList" parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id          as articleId,
+               ca.image       as imageUrl,
+               ca.title,
+               ca.link,
+               ca.create_time as createTime,
+               ca.description
+        from cms_article ca
+        where ca.del_flag = 'N'
+          and ca.type = 2
+          and FIND_IN_SET("2", ca.position_type)
+          and ca.id in (SELECT a.article_id
+                        from research_info_article a,
+                             research_patient b,
+                             mp_person c,
+                             mp_patient_account mpa
+                        where a.research_id = b.research_id
+                          and b.base_patient_id = c.id
+                          AND mpa.person_id = c.person_id
+                          and mpa.account_id = #{accountId}
+        )
+--         order by ca.create_time desc
+    </select>
+
+    <select id="selectAllQuestionnaireList" parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id          as articleId,
+               ca.image       as imageUrl,
+               ca.title,
+               ca.link,
+               ca.create_time as createTime,
+               ca.description
+        from cms_article ca
+        where ca.del_flag = 'N'
+          and ca.type = 2
+          and FIND_IN_SET("2", ca.position_type)
+          and ca.id in (SELECT a.article_id
+                        from research_info_article_patient a,
+                             research_patient b,
+                             patient_base_info c
+                        where a.research_id = b.research_id
+                          and b.base_patient_id = c.id
+                          and c.account_id = #{accountId}
+                          and a.fill_status = #{fillStatus}
+        )
+--         order by ca.create_time desc
+            LIMIT ${(pageNo-1)*pageSize}, ${pageSize}
+    </select>
+
+    <select id="selectCmsArticleById" parameterType="Long" resultMap="CmsArticleResult">
+        select ca.id,
+               ca.image,
+               ca.title,
+               ca.create_time,
+               cd.copy_from,
+               cd.relation,
+               cd.content,
+               cd.allow_comment,
+               ca.video_image,
+               ca.video_url,
+               ca.tenant_id,
+               ca.ques_num,ca.upload_type,ca.forward_link
+        from cms_article ca,
+             cms_article_data cd
+        where cd.id = ca.id
+          and ca.del_flag = 'N'
+          and ca.id = #{id}
+    </select>
+
+
+    <select id="selectArticleTitleById" parameterType="Long" resultMap="CmsArticleResult">
+        select ca.id, ca.title
+        from cms_article ca
+        where ca.id = #{id}
+          and ca.del_flag = 'N'
+
+    </select>
+    <insert id="insertCmsArticle" parameterType="com.dchealth.cro.cms.domain.CmsArticle" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null ">category_id,</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="title != null  and title != ''">title,</if>
+            <if test="link != null  and link != ''">link,</if>
+            <if test="image != null  and image != ''">image,</if>
+            <if test="keywords != null  and keywords != ''">keywords,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="listOrderNum != null ">list_order_num ,</if>
+            <if test="videoUrl != null and videoUrl !='' ">video_url,</if>
+            <if test="listShow != null and listShow !='' ">list_show ,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null ">#{categoryId},</if>
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="link != null  and link != ''">#{link},</if>
+            <if test="image != null  and image != ''">#{image},</if>
+            <if test="keywords != null  and keywords != ''">#{keywords},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="listOrderNum != null ">#{listOrderNum},</if>
+            <if test="videoUrl != null and videoUrl !='' ">#{videoUrl},</if>
+            <if test="listShow != null and listShow !='' ">#{listShow},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCmsArticle" parameterType="com.dchealth.cro.cms.domain.CmsArticle">
+        update cms_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryId != null ">category_id = #{categoryId},</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="link != null  and link != ''">link = #{link},</if>
+            <if test="image != null  and image != ''">image = #{image},</if>
+            <if test="keywords != null  and keywords != ''">keywords = #{keywords},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="listOrderNum != null ">list_order_num = #{listOrderNum},</if>
+            <if test="videoUrl != null and videoUrl !='' ">video_url = #{videoUrl},</if>
+            <if test="listShow != null and listShow !='' ">list_show = #{listShow},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsArticleById" parameterType="Long">
+        delete
+        from cms_article
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsArticleByIds" parameterType="String">
+        delete from cms_article where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectCollectArticleList" parameterType="com.dchealth.cro.cms.form.CollectionActicleSearchForm"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        select ca.id          as articleId,
+               ca.image       as imageUrl,
+               ca.title,
+               ca.create_time as createTime,
+               ca.description,
+               cs.view_num    as viewNum,
+               cs.comment_num as commentNum
+        from cms_article ca,
+             cms_stat cs,
+             cms_collection cc
+        where ca.id = cs.id
+          and cc.tenant_id = #{tenantId}
+          and cc.account_id = #{accountId}
+          and cc.article_id = ca.id
+          and ca.del_flag = 'N'
+        order by cc.create_time desc
+            LIMIT ${(pageNo-1)*pageSize}, ${pageSize}
+    </select>
+
+        <select id="selectWriteQuestionnaireList" parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+                resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+            select
+                ca.id AS articleId,
+                ca.image AS imageUrl,
+                ca.title,
+                ca.link,
+                ca.create_time AS createTime,
+                ca.description,
+                s.research_id AS researchId,
+                s.project_name as projectName
+            from (
+                SELECT a.article_id,a.research_id,d.project_name
+                from research_info_article a,
+                     research_patient b,
+                     mp_person c,
+                     research_info d,
+                     mp_patient_account mpa
+                where a.research_id = b.research_id
+                  and b.person_id = c.person_id
+                  AND mpa.person_id = c.person_id
+                  AND mpa.account_id = #{accountId}
+                  AND a.research_id = d.id
+                  AND d.id in (${survivalResearchIds})
+                  AND CONCAT(a.article_id,a.research_id) not in(
+                    SELECT
+                        CONCAT(rp.article_id,rp.research_id)
+                    FROM
+                        research_info_article_patient rp
+                    WHERE
+                        rp.account_id = #{accountId}
+                )
+           )s left join  cms_article ca on s.article_id = ca.id
+            where ca.del_flag = 'N'
+              and ca.type = 2
+              and FIND_IN_SET("2", ca.position_type)
+            order by ca.id desc
+        </select>
+
+
+
+    <select id="selectProgressQuestionnaireList" parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        SELECT
+            ca.id AS articleId,
+            ca.image AS imageUrl,
+            ca.title,
+            ca.link,
+            ca.create_time AS createTime,
+            ca.description,
+            rp.exam_record_id as examRecordId,
+            rp.scores as score,
+            rp.is_fill_again isFillAgain
+        FROM
+            cms_article ca
+                LEFT JOIN research_info_article_patient rp ON ca.id = rp.article_id
+        WHERE
+            ca.del_flag = 'N'
+          AND ca.id = rp.article_id
+          AND ca.type = 2
+          AND FIND_IN_SET( "2", ca.position_type )
+          AND rp.account_id = #{accountId}
+          AND rp.fill_status =  #{fillStatus}
+    </select>
+
+    <select id="selectCmsArticleByArticleId" parameterType="Long" resultMap="CmsArticleResult">
+        select ca.id,
+               ca.image,
+               ca.title,
+               ca.create_time,
+               ca.video_image,
+               ca.video_url,
+               ca.tenant_id,
+               ca.ques_num
+        from cms_article ca
+        where ca.del_flag = 'N'
+          and ca.id = #{id}
+    </select>
+    <select id="selectProgressQuestionnaireListByPage" parameterType="com.dchealth.cro.research.domain.ResearchInfoArticlePatient"
+            resultType="com.dchealth.cro.cms.vo.ArticleListVO">
+        SELECT
+        ca.id AS articleId,
+        ca.image AS imageUrl,
+        ca.title,
+        ca.link,
+        ca.create_time AS createTime,
+        ca.description,
+        rp.exam_record_id as examRecordId,
+        rp.scores as score,
+        rp.is_fill_again isFillAgain,
+        S.research_id  as researchId,
+        S.project_name as projectName
+
+        FROM (SELECT a.article_id,a.research_id,d.project_name
+        from research_info_article a,
+        research_patient b,
+        mp_person c,
+        research_info d,
+        mp_patient_account mpa
+        where a.research_id = b.research_id
+        and b.person_id = c.person_id
+        AND mpa.person_id = c.person_id
+        AND mpa.account_id = #{accountId}
+        AND a.research_id = d.id
+        AND d.id in (${survivalResearchIds}))S
+
+        LEFT JOIN cms_article ca ON ca.id = s.article_id
+        LEFT JOIN research_info_article_patient rp ON S.article_id = rp.article_id AND S.research_id = rp.research_id
+        WHERE
+        ca.del_flag = 'N'
+        AND ca.type = 2
+        AND FIND_IN_SET( "2", ca.position_type )
+        AND rp.account_id = #{accountId}
+        AND rp.fill_status =  #{fillStatus}
+        order by rp.exam_record_id desc
+        limit ${pageNo},${pageSize}
+    </select>
+    <select id="selectProgressQuestionnaireCountByPage" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM (SELECT a.article_id,a.research_id,d.project_name
+              from research_info_article a,
+                   research_patient b,
+                   mp_person c,
+                   research_info d,
+                   mp_patient_account mpa
+              where a.research_id = b.research_id
+                and b.person_id = c.person_id
+                AND mpa.person_id = c.person_id
+                AND mpa.account_id = #{accountId}
+                AND a.research_id = d.id
+                AND d.id in (${survivalResearchIds}))S
+
+                 LEFT JOIN cms_article ca ON ca.id = s.article_id
+                 LEFT JOIN research_info_article_patient rp ON S.article_id = rp.article_id AND S.research_id = rp.research_id
+        WHERE
+            ca.del_flag = 'N'
+          AND ca.type = 2
+          AND FIND_IN_SET( "2", ca.position_type )
+          AND rp.account_id = #{accountId}
+          AND rp.fill_status =  #{fillStatus}
+        order by rp.exam_record_id desc
+            limit ${pageNo},${pageSize}
+    </select>
+
+</mapper>

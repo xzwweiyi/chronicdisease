@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdCoagulationItemsMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdCoagulationItems" id="TdCoagulationItemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="prothrombinTime" column="prothrombin_time" jdbcType="VARCHAR"/>
+        <result property="aptt" column="aptt" jdbcType="VARCHAR"/>
+        <result property="thrombinTime" column="thrombin_time" jdbcType="VARCHAR"/>
+        <result property="fibrinogen" column="fibrinogen" jdbcType="VARCHAR"/>
+        <result property="fdp" column="fdp" jdbcType="VARCHAR"/>
+        <result property="dDimerQuantitativeTest" column="d_dimer_quantitative_test" jdbcType="VARCHAR"/>
+        <result property="internationalNormRatio" column="international_norm_ratio" jdbcType="VARCHAR"/>
+        <result property="prothrombinActivity" column="prothrombin_activity" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdCoagulationItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, prothrombin_time, aptt, thrombin_time, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity
+        from td_coagulation_items
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdCoagulationItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, prothrombin_time, aptt, thrombin_time, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity
+        from td_coagulation_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="prothrombinTime != null and prothrombinTime != ''">
+                and prothrombin_time = #{prothrombinTime}
+            </if>
+            <if test="aptt != null and aptt != ''">
+                and aptt = #{aptt}
+            </if>
+            <if test="thrombinTime != null and thrombinTime != ''">
+                and thrombin_time = #{thrombinTime}
+            </if>
+            <if test="fibrinogen != null and fibrinogen != ''">
+                and fibrinogen = #{fibrinogen}
+            </if>
+            <if test="fdp != null and fdp != ''">
+                and fdp = #{fdp}
+            </if>
+            <if test="dDimerQuantitativeTest != null and dDimerQuantitativeTest != ''">
+                and d_dimer_quantitative_test = #{dDimerQuantitativeTest}
+            </if>
+            <if test="internationalNormRatio != null and internationalNormRatio != ''">
+                and international_norm_ratio = #{internationalNormRatio}
+            </if>
+            <if test="prothrombinActivity != null and prothrombinActivity != ''">
+                and prothrombin_activity = #{prothrombinActivity}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_coagulation_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="prothrombinTime != null and prothrombinTime != ''">
+                and prothrombin_time = #{prothrombinTime}
+            </if>
+            <if test="aptt != null and aptt != ''">
+                and aptt = #{aptt}
+            </if>
+            <if test="thrombinTime != null and thrombinTime != ''">
+                and thrombin_time = #{thrombinTime}
+            </if>
+            <if test="fibrinogen != null and fibrinogen != ''">
+                and fibrinogen = #{fibrinogen}
+            </if>
+            <if test="fdp != null and fdp != ''">
+                and fdp = #{fdp}
+            </if>
+            <if test="dDimerQuantitativeTest != null and dDimerQuantitativeTest != ''">
+                and d_dimer_quantitative_test = #{dDimerQuantitativeTest}
+            </if>
+            <if test="internationalNormRatio != null and internationalNormRatio != ''">
+                and international_norm_ratio = #{internationalNormRatio}
+            </if>
+            <if test="prothrombinActivity != null and prothrombinActivity != ''">
+                and prothrombin_activity = #{prothrombinActivity}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_coagulation_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, prothrombin_time, aptt, thrombin_time, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{prothrombinTime}, #{aptt}, #{thrombinTime}, #{fibrinogen}, #{fdp}, #{dDimerQuantitativeTest}, #{internationalNormRatio}, #{prothrombinActivity})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_coagulation_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, prothrombin_time, aptt, thrombin_time, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.prothrombinTime}, #{entity.aptt}, #{entity.thrombinTime}, #{entity.fibrinogen}, #{entity.fdp}, #{entity.dDimerQuantitativeTest}, #{entity.internationalNormRatio}, #{entity.prothrombinActivity})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_coagulation_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, prothrombin_time, aptt, thrombin_time, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.prothrombinTime}, #{entity.aptt}, #{entity.thrombinTime}, #{entity.fibrinogen}, #{entity.fdp}, #{entity.dDimerQuantitativeTest}, #{entity.internationalNormRatio}, #{entity.prothrombinActivity})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_coagulation_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, prothrombin_time, aptt, thrombin_time, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.prothrombinTime}, #{entity.aptt}, #{entity.thrombinTime}, #{entity.fibrinogen}, #{entity.fdp}, #{entity.dDimerQuantitativeTest}, #{entity.internationalNormRatio}, #{entity.prothrombinActivity})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        prothrombin_time = values(prothrombin_time),
+        aptt = values(aptt),
+        thrombin_time = values(thrombin_time),
+        fibrinogen = values(fibrinogen),
+        fdp = values(fdp),
+        d_dimer_quantitative_test = values(d_dimer_quantitative_test),
+        international_norm_ratio = values(international_norm_ratio),
+        prothrombin_activity = values(prothrombin_activity)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_coagulation_items
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="prothrombinTime != null and prothrombinTime != ''">
+                prothrombin_time = #{prothrombinTime},
+            </if>
+            <if test="aptt != null and aptt != ''">
+                aptt = #{aptt},
+            </if>
+            <if test="thrombinTime != null and thrombinTime != ''">
+                thrombin_time = #{thrombinTime},
+            </if>
+            <if test="fibrinogen != null and fibrinogen != ''">
+                fibrinogen = #{fibrinogen},
+            </if>
+            <if test="fdp != null and fdp != ''">
+                fdp = #{fdp},
+            </if>
+            <if test="dDimerQuantitativeTest != null and dDimerQuantitativeTest != ''">
+                d_dimer_quantitative_test = #{dDimerQuantitativeTest},
+            </if>
+            <if test="internationalNormRatio != null and internationalNormRatio != ''">
+                international_norm_ratio = #{internationalNormRatio},
+            </if>
+            <if test="prothrombinActivity != null and prothrombinActivity != ''">
+                prothrombin_activity = #{prothrombinActivity},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_coagulation_items where id = #{id}
+    </delete>
+
+</mapper>
+

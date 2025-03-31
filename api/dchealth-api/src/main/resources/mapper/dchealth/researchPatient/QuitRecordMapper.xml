@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.researchPatient.mapper.QuitRecordMapper">
+    
+
+    <!-- 更新患者队列状态为申请退出 -->
+    <update id="updatePatientStatus">
+        update patient_info set old_patient_status = patient_status,patient_status = '5'
+        where person_id = #{quitRecord.personId} and research_id = #{quitRecord.queueId}
+    </update>
+
+
+    
+</mapper>

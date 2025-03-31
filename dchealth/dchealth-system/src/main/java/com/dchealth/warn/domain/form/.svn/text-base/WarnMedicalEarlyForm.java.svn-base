@@ -1,0 +1,47 @@
+package com.dchealth.warn.domain.form;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class WarnMedicalEarlyForm {
+
+    private Long id;
+
+    /** 预警类型 */
+    private String earlyWarnType;
+
+    /** 是否生效1生效0失效 */
+    private String isEffect;
+
+    /** 正常值起始 */
+    private String normalStart;
+
+    /** 正常值末 */
+    private String normalEnd;
+
+    /** 正常值 */
+    private String normalValue;
+
+    /** 条件类型1等于2大于3大于等于4小于5小于等于6区间 */
+    private String conditionType;
+
+    /** 是否有条件0无1有 */
+    private String isCondition;
+
+    /** 字段id */
+    private Long propertyId;
+
+    /** form id */
+    private Long formId;
+
+    /** 预警等级0无状态1异常2危机 */
+    private String earlyWarnLevel;
+
+    /** 随访表单id */
+    private Long followId;
+    
+    private List<WarnMedicalEarlyConditionForm> warnMedicalEarlyConditionForms;
+    
+}

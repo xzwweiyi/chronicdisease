@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdOphthalmologicalExamMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdOphthalmologicalExam" id="TdOphthalmologicalExamMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="visualAcuityLeft" column="visual_acuity_left" jdbcType="VARCHAR"/>
+        <result property="visualAcuityRight" column="visual_acuity_right" jdbcType="VARCHAR"/>
+        <result property="correctedVisualAcuityLeft" column="corrected_visual_acuity_left" jdbcType="VARCHAR"/>
+        <result property="correctedVisualAcuityRight" column="corrected_visual_acuity_right" jdbcType="VARCHAR"/>
+        <result property="eyePosition" column="eye_position" jdbcType="VARCHAR"/>
+        <result property="eyeMovement" column="eye_movement" jdbcType="VARCHAR"/>
+        <result property="eyelid" column="eyelid" jdbcType="VARCHAR"/>
+        <result property="conjunctivaOfEyelids" column="conjunctiva_of_eyelids" jdbcType="VARCHAR"/>
+        <result property="conjunctivaOfEyeball" column="conjunctiva_of_eyeball" jdbcType="VARCHAR"/>
+        <result property="intraocularPressureExam" column="intraocular_pressure_exam" jdbcType="VARCHAR"/>
+        <result property="slitLampExam" column="slit_lamp_exam" jdbcType="VARCHAR"/>
+        <result property="fundusPhotography" column="fundus_photography" jdbcType="VARCHAR"/>
+        <result property="colorVisionExam" column="color_vision_exam" jdbcType="VARCHAR"/>
+        <result property="lacrimalApparatus" column="lacrimal_apparatus" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdOphthalmologicalExamMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, visual_acuity_left, visual_acuity_right, corrected_visual_acuity_left, corrected_visual_acuity_right, eye_position, eye_movement, eyelid, conjunctiva_of_eyelids, conjunctiva_of_eyeball, intraocular_pressure_exam, slit_lamp_exam, fundus_photography, color_vision_exam, lacrimal_apparatus
+        from td_ophthalmological_exam
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdOphthalmologicalExamMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, visual_acuity_left, visual_acuity_right, corrected_visual_acuity_left, corrected_visual_acuity_right, eye_position, eye_movement, eyelid, conjunctiva_of_eyelids, conjunctiva_of_eyeball, intraocular_pressure_exam, slit_lamp_exam, fundus_photography, color_vision_exam, lacrimal_apparatus
+        from td_ophthalmological_exam
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="visualAcuityLeft != null and visualAcuityLeft != ''">
+                and visual_acuity_left = #{visualAcuityLeft}
+            </if>
+            <if test="visualAcuityRight != null and visualAcuityRight != ''">
+                and visual_acuity_right = #{visualAcuityRight}
+            </if>
+            <if test="correctedVisualAcuityLeft != null and correctedVisualAcuityLeft != ''">
+                and corrected_visual_acuity_left = #{correctedVisualAcuityLeft}
+            </if>
+            <if test="correctedVisualAcuityRight != null and correctedVisualAcuityRight != ''">
+                and corrected_visual_acuity_right = #{correctedVisualAcuityRight}
+            </if>
+            <if test="eyePosition != null and eyePosition != ''">
+                and eye_position = #{eyePosition}
+            </if>
+            <if test="eyeMovement != null and eyeMovement != ''">
+                and eye_movement = #{eyeMovement}
+            </if>
+            <if test="eyelid != null and eyelid != ''">
+                and eyelid = #{eyelid}
+            </if>
+            <if test="conjunctivaOfEyelids != null and conjunctivaOfEyelids != ''">
+                and conjunctiva_of_eyelids = #{conjunctivaOfEyelids}
+            </if>
+            <if test="conjunctivaOfEyeball != null and conjunctivaOfEyeball != ''">
+                and conjunctiva_of_eyeball = #{conjunctivaOfEyeball}
+            </if>
+            <if test="intraocularPressureExam != null and intraocularPressureExam != ''">
+                and intraocular_pressure_exam = #{intraocularPressureExam}
+            </if>
+            <if test="slitLampExam != null and slitLampExam != ''">
+                and slit_lamp_exam = #{slitLampExam}
+            </if>
+            <if test="fundusPhotography != null and fundusPhotography != ''">
+                and fundus_photography = #{fundusPhotography}
+            </if>
+            <if test="colorVisionExam != null and colorVisionExam != ''">
+                and color_vision_exam = #{colorVisionExam}
+            </if>
+            <if test="lacrimalApparatus != null and lacrimalApparatus != ''">
+                and lacrimal_apparatus = #{lacrimalApparatus}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_ophthalmological_exam
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="visualAcuityLeft != null and visualAcuityLeft != ''">
+                and visual_acuity_left = #{visualAcuityLeft}
+            </if>
+            <if test="visualAcuityRight != null and visualAcuityRight != ''">
+                and visual_acuity_right = #{visualAcuityRight}
+            </if>
+            <if test="correctedVisualAcuityLeft != null and correctedVisualAcuityLeft != ''">
+                and corrected_visual_acuity_left = #{correctedVisualAcuityLeft}
+            </if>
+            <if test="correctedVisualAcuityRight != null and correctedVisualAcuityRight != ''">
+                and corrected_visual_acuity_right = #{correctedVisualAcuityRight}
+            </if>
+            <if test="eyePosition != null and eyePosition != ''">
+                and eye_position = #{eyePosition}
+            </if>
+            <if test="eyeMovement != null and eyeMovement != ''">
+                and eye_movement = #{eyeMovement}
+            </if>
+            <if test="eyelid != null and eyelid != ''">
+                and eyelid = #{eyelid}
+            </if>
+            <if test="conjunctivaOfEyelids != null and conjunctivaOfEyelids != ''">
+                and conjunctiva_of_eyelids = #{conjunctivaOfEyelids}
+            </if>
+            <if test="conjunctivaOfEyeball != null and conjunctivaOfEyeball != ''">
+                and conjunctiva_of_eyeball = #{conjunctivaOfEyeball}
+            </if>
+            <if test="intraocularPressureExam != null and intraocularPressureExam != ''">
+                and intraocular_pressure_exam = #{intraocularPressureExam}
+            </if>
+            <if test="slitLampExam != null and slitLampExam != ''">
+                and slit_lamp_exam = #{slitLampExam}
+            </if>
+            <if test="fundusPhotography != null and fundusPhotography != ''">
+                and fundus_photography = #{fundusPhotography}
+            </if>
+            <if test="colorVisionExam != null and colorVisionExam != ''">
+                and color_vision_exam = #{colorVisionExam}
+            </if>
+            <if test="lacrimalApparatus != null and lacrimalApparatus != ''">
+                and lacrimal_apparatus = #{lacrimalApparatus}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_ophthalmological_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, visual_acuity_left, visual_acuity_right, corrected_visual_acuity_left, corrected_visual_acuity_right, eye_position, eye_movement, eyelid, conjunctiva_of_eyelids, conjunctiva_of_eyeball, intraocular_pressure_exam, slit_lamp_exam, fundus_photography, color_vision_exam, lacrimal_apparatus)
+        values (#{studyId}, #{examNo}, #{testNo}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{createTime}, #{updateTime}, #{visualAcuityLeft}, #{visualAcuityRight}, #{correctedVisualAcuityLeft}, #{correctedVisualAcuityRight}, #{eyePosition}, #{eyeMovement}, #{eyelid}, #{conjunctivaOfEyelids}, #{conjunctivaOfEyeball}, #{intraocularPressureExam}, #{slitLampExam}, #{fundusPhotography}, #{colorVisionExam}, #{lacrimalApparatus})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_ophthalmological_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, visual_acuity_left, visual_acuity_right, corrected_visual_acuity_left, corrected_visual_acuity_right, eye_position, eye_movement, eyelid, conjunctiva_of_eyelids, conjunctiva_of_eyeball, intraocular_pressure_exam, slit_lamp_exam, fundus_photography, color_vision_exam, lacrimal_apparatus)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.visualAcuityLeft}, #{entity.visualAcuityRight}, #{entity.correctedVisualAcuityLeft}, #{entity.correctedVisualAcuityRight}, #{entity.eyePosition}, #{entity.eyeMovement}, #{entity.eyelid}, #{entity.conjunctivaOfEyelids}, #{entity.conjunctivaOfEyeball}, #{entity.intraocularPressureExam}, #{entity.slitLampExam}, #{entity.fundusPhotography}, #{entity.colorVisionExam}, #{entity.lacrimalApparatus})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_ophthalmological_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, visual_acuity_left, visual_acuity_right, corrected_visual_acuity_left, corrected_visual_acuity_right, eye_position, eye_movement, eyelid, conjunctiva_of_eyelids, conjunctiva_of_eyeball, intraocular_pressure_exam, slit_lamp_exam, fundus_photography, color_vision_exam, lacrimal_apparatus)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.visualAcuityLeft}, #{entity.visualAcuityRight}, #{entity.correctedVisualAcuityLeft}, #{entity.correctedVisualAcuityRight}, #{entity.eyePosition}, #{entity.eyeMovement}, #{entity.eyelid}, #{entity.conjunctivaOfEyelids}, #{entity.conjunctivaOfEyeball}, #{entity.intraocularPressureExam}, #{entity.slitLampExam}, #{entity.fundusPhotography}, #{entity.colorVisionExam}, #{entity.lacrimalApparatus})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_ophthalmological_exam(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, visual_acuity_left, visual_acuity_right, corrected_visual_acuity_left, corrected_visual_acuity_right, eye_position, eye_movement, eyelid, conjunctiva_of_eyelids, conjunctiva_of_eyeball, intraocular_pressure_exam, slit_lamp_exam, fundus_photography, color_vision_exam, lacrimal_apparatus)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.visualAcuityLeft}, #{entity.visualAcuityRight}, #{entity.correctedVisualAcuityLeft}, #{entity.correctedVisualAcuityRight}, #{entity.eyePosition}, #{entity.eyeMovement}, #{entity.eyelid}, #{entity.conjunctivaOfEyelids}, #{entity.conjunctivaOfEyeball}, #{entity.intraocularPressureExam}, #{entity.slitLampExam}, #{entity.fundusPhotography}, #{entity.colorVisionExam}, #{entity.lacrimalApparatus})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        visual_acuity_left = values(visual_acuity_left),
+        visual_acuity_right = values(visual_acuity_right),
+        corrected_visual_acuity_left = values(corrected_visual_acuity_left),
+        corrected_visual_acuity_right = values(corrected_visual_acuity_right),
+        eye_position = values(eye_position),
+        eye_movement = values(eye_movement),
+        eyelid = values(eyelid),
+        conjunctiva_of_eyelids = values(conjunctiva_of_eyelids),
+        conjunctiva_of_eyeball = values(conjunctiva_of_eyeball),
+        intraocular_pressure_exam = values(intraocular_pressure_exam),
+        slit_lamp_exam = values(slit_lamp_exam),
+        fundus_photography = values(fundus_photography),
+        color_vision_exam = values(color_vision_exam),
+        lacrimal_apparatus = values(lacrimal_apparatus)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_ophthalmological_exam
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="visualAcuityLeft != null and visualAcuityLeft != ''">
+                visual_acuity_left = #{visualAcuityLeft},
+            </if>
+            <if test="visualAcuityRight != null and visualAcuityRight != ''">
+                visual_acuity_right = #{visualAcuityRight},
+            </if>
+            <if test="correctedVisualAcuityLeft != null and correctedVisualAcuityLeft != ''">
+                corrected_visual_acuity_left = #{correctedVisualAcuityLeft},
+            </if>
+            <if test="correctedVisualAcuityRight != null and correctedVisualAcuityRight != ''">
+                corrected_visual_acuity_right = #{correctedVisualAcuityRight},
+            </if>
+            <if test="eyePosition != null and eyePosition != ''">
+                eye_position = #{eyePosition},
+            </if>
+            <if test="eyeMovement != null and eyeMovement != ''">
+                eye_movement = #{eyeMovement},
+            </if>
+            <if test="eyelid != null and eyelid != ''">
+                eyelid = #{eyelid},
+            </if>
+            <if test="conjunctivaOfEyelids != null and conjunctivaOfEyelids != ''">
+                conjunctiva_of_eyelids = #{conjunctivaOfEyelids},
+            </if>
+            <if test="conjunctivaOfEyeball != null and conjunctivaOfEyeball != ''">
+                conjunctiva_of_eyeball = #{conjunctivaOfEyeball},
+            </if>
+            <if test="intraocularPressureExam != null and intraocularPressureExam != ''">
+                intraocular_pressure_exam = #{intraocularPressureExam},
+            </if>
+            <if test="slitLampExam != null and slitLampExam != ''">
+                slit_lamp_exam = #{slitLampExam},
+            </if>
+            <if test="fundusPhotography != null and fundusPhotography != ''">
+                fundus_photography = #{fundusPhotography},
+            </if>
+            <if test="colorVisionExam != null and colorVisionExam != ''">
+                color_vision_exam = #{colorVisionExam},
+            </if>
+            <if test="lacrimalApparatus != null and lacrimalApparatus != ''">
+                lacrimal_apparatus = #{lacrimalApparatus},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_ophthalmological_exam where id = #{id}
+    </delete>
+
+</mapper>
+

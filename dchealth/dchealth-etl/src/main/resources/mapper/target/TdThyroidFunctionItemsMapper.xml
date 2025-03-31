@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdThyroidFunctionItemsMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdThyroidFunctionItems" id="TdThyroidFunctionItemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="INTEGER"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="triiodothyronine" column="triiodothyronine" jdbcType="VARCHAR"/>
+        <result property="thyroxine" column="thyroxine" jdbcType="VARCHAR"/>
+        <result property="thyroidStimulatingHormone" column="thyroid_stimulating_hormone" jdbcType="VARCHAR"/>
+        <result property="freeTriiodothyronine" column="free_triiodothyronine" jdbcType="VARCHAR"/>
+        <result property="freeThyroxine" column="free_thyroxine" jdbcType="VARCHAR"/>
+        <result property="antithyroglobulinAntibody" column="antithyroglobulin_antibody" jdbcType="VARCHAR"/>
+        <result property="antithyroidPeroxidaseAntibody" column="antithyroid_peroxidase_antibody" jdbcType="VARCHAR"/>
+        <result property="thyrotropinReceptorAntibody" column="thyrotropin_receptor_antibody" jdbcType="VARCHAR"/>
+        <result property="antithyroidMicrosomeAntibody" column="antithyroid_microsome_antibody" jdbcType="VARCHAR"/>
+        <result property="thyroglobulin" column="thyroglobulin" jdbcType="VARCHAR"/>
+        <result property="ft3" column="ft3" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdThyroidFunctionItemsMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, triiodothyronine, thyroxine, thyroid_stimulating_hormone, free_triiodothyronine, free_thyroxine, antithyroglobulin_antibody, antithyroid_peroxidase_antibody, thyrotropin_receptor_antibody
+        from td_thyroid_function_items
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdThyroidFunctionItemsMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, triiodothyronine, thyroxine, thyroid_stimulating_hormone, free_triiodothyronine, free_thyroxine, antithyroglobulin_antibody, antithyroid_peroxidase_antibody, thyrotropin_receptor_antibody
+        from td_thyroid_function_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="triiodothyronine != null and triiodothyronine != ''">
+                and triiodothyronine = #{triiodothyronine}
+            </if>
+            <if test="thyroxine != null and thyroxine != ''">
+                and thyroxine = #{thyroxine}
+            </if>
+            <if test="thyroidStimulatingHormone != null and thyroidStimulatingHormone != ''">
+                and thyroid_stimulating_hormone = #{thyroidStimulatingHormone}
+            </if>
+            <if test="freeTriiodothyronine != null and freeTriiodothyronine != ''">
+                and free_triiodothyronine = #{freeTriiodothyronine}
+            </if>
+            <if test="freeThyroxine != null and freeThyroxine != ''">
+                and free_thyroxine = #{freeThyroxine}
+            </if>
+            <if test="antithyroglobulinAntibody != null and antithyroglobulinAntibody != ''">
+                and antithyroglobulin_antibody = #{antithyroglobulinAntibody}
+            </if>
+            <if test="antithyroidPeroxidaseAntibody != null and antithyroidPeroxidaseAntibody != ''">
+                and antithyroid_peroxidase_antibody = #{antithyroidPeroxidaseAntibody}
+            </if>
+            <if test="thyrotropinReceptorAntibody != null and thyrotropinReceptorAntibody != ''">
+                and thyrotropin_receptor_antibody = #{thyrotropinReceptorAntibody}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_thyroid_function_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="triiodothyronine != null and triiodothyronine != ''">
+                and triiodothyronine = #{triiodothyronine}
+            </if>
+            <if test="thyroxine != null and thyroxine != ''">
+                and thyroxine = #{thyroxine}
+            </if>
+            <if test="thyroidStimulatingHormone != null and thyroidStimulatingHormone != ''">
+                and thyroid_stimulating_hormone = #{thyroidStimulatingHormone}
+            </if>
+            <if test="freeTriiodothyronine != null and freeTriiodothyronine != ''">
+                and free_triiodothyronine = #{freeTriiodothyronine}
+            </if>
+            <if test="freeThyroxine != null and freeThyroxine != ''">
+                and free_thyroxine = #{freeThyroxine}
+            </if>
+            <if test="antithyroglobulinAntibody != null and antithyroglobulinAntibody != ''">
+                and antithyroglobulin_antibody = #{antithyroglobulinAntibody}
+            </if>
+            <if test="antithyroidPeroxidaseAntibody != null and antithyroidPeroxidaseAntibody != ''">
+                and antithyroid_peroxidase_antibody = #{antithyroidPeroxidaseAntibody}
+            </if>
+            <if test="thyrotropinReceptorAntibody != null and thyrotropinReceptorAntibody != ''">
+                and thyrotropin_receptor_antibody = #{thyrotropinReceptorAntibody}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_thyroid_function_items(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, triiodothyronine, thyroxine, thyroid_stimulating_hormone, free_triiodothyronine, free_thyroxine, antithyroglobulin_antibody, antithyroid_peroxidase_antibody, thyrotropin_receptor_antibody)
+        values (#{studyId}, #{examNo}, #{testNo}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{createTime}, #{updateTime}, #{triiodothyronine}, #{thyroxine}, #{thyroidStimulatingHormone}, #{freeTriiodothyronine}, #{freeThyroxine}, #{antithyroglobulinAntibody}, #{antithyroidPeroxidaseAntibody}, #{thyrotropinReceptorAntibody})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_thyroid_function_items(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, triiodothyronine, thyroxine, thyroid_stimulating_hormone, free_triiodothyronine, free_thyroxine, antithyroglobulin_antibody, antithyroid_peroxidase_antibody, thyrotropin_receptor_antibody, antithyroid_microsome_antibody, thyroglobulin, ft3)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.triiodothyronine}, #{entity.thyroxine}, #{entity.thyroidStimulatingHormone}, #{entity.freeTriiodothyronine}, #{entity.freeThyroxine}, #{entity.antithyroglobulinAntibody}, #{entity.antithyroidPeroxidaseAntibody}, #{entity.thyrotropinReceptorAntibody}, #{entity.antithyroidMicrosomeAntibody}, #{entity.thyroglobulin}, #{entity.ft3})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_thyroid_function_items(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, triiodothyronine, thyroxine, thyroid_stimulating_hormone, free_triiodothyronine, free_thyroxine, antithyroglobulin_antibody, antithyroid_peroxidase_antibody, thyrotropin_receptor_antibody)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.triiodothyronine}, #{entity.thyroxine}, #{entity.thyroidStimulatingHormone}, #{entity.freeTriiodothyronine}, #{entity.freeThyroxine}, #{entity.antithyroglobulinAntibody}, #{entity.antithyroidPeroxidaseAntibody}, #{entity.thyrotropinReceptorAntibody})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_thyroid_function_items(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, triiodothyronine, thyroxine, thyroid_stimulating_hormone, free_triiodothyronine, free_thyroxine, antithyroglobulin_antibody, antithyroid_peroxidase_antibody, thyrotropin_receptor_antibody)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.triiodothyronine}, #{entity.thyroxine}, #{entity.thyroidStimulatingHormone}, #{entity.freeTriiodothyronine}, #{entity.freeThyroxine}, #{entity.antithyroglobulinAntibody}, #{entity.antithyroidPeroxidaseAntibody}, #{entity.thyrotropinReceptorAntibody})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        triiodothyronine = values(triiodothyronine),
+        thyroxine = values(thyroxine),
+        thyroid_stimulating_hormone = values(thyroid_stimulating_hormone),
+        free_triiodothyronine = values(free_triiodothyronine),
+        free_thyroxine = values(free_thyroxine),
+        antithyroglobulin_antibody = values(antithyroglobulin_antibody),
+        antithyroid_peroxidase_antibody = values(antithyroid_peroxidase_antibody),
+        thyrotropin_receptor_antibody = values(thyrotropin_receptor_antibody)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_thyroid_function_items
+        <set>
+            <if test="studyId != null">
+                study_id = #{studyId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="triiodothyronine != null and triiodothyronine != ''">
+                triiodothyronine = #{triiodothyronine},
+            </if>
+            <if test="thyroxine != null and thyroxine != ''">
+                thyroxine = #{thyroxine},
+            </if>
+            <if test="thyroidStimulatingHormone != null and thyroidStimulatingHormone != ''">
+                thyroid_stimulating_hormone = #{thyroidStimulatingHormone},
+            </if>
+            <if test="freeTriiodothyronine != null and freeTriiodothyronine != ''">
+                free_triiodothyronine = #{freeTriiodothyronine},
+            </if>
+            <if test="freeThyroxine != null and freeThyroxine != ''">
+                free_thyroxine = #{freeThyroxine},
+            </if>
+            <if test="antithyroglobulinAntibody != null and antithyroglobulinAntibody != ''">
+                antithyroglobulin_antibody = #{antithyroglobulinAntibody},
+            </if>
+            <if test="antithyroidPeroxidaseAntibody != null and antithyroidPeroxidaseAntibody != ''">
+                antithyroid_peroxidase_antibody = #{antithyroidPeroxidaseAntibody},
+            </if>
+            <if test="thyrotropinReceptorAntibody != null and thyrotropinReceptorAntibody != ''">
+                thyrotropin_receptor_antibody = #{thyrotropinReceptorAntibody},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_thyroid_function_items where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.core.mapper.HospitalDepartmentMapper">
+    
+    <resultMap type="com.dchealth.cro.core.domain.HospitalDepartment" id="HospitalDepartmentResult">
+        <result property="id"    column="id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="departName"    column="depart_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectHospitalDepartmentVo">
+        select id, tenant_id, depart_name, order_num, del_flag, create_time, update_time, create_by, update_by from hospital_department
+    </sql>
+
+    <select id="selectHospitalDepartmentList" parameterType="com.dchealth.cro.core.domain.HospitalDepartment" resultMap="HospitalDepartmentResult">
+        <include refid="selectHospitalDepartmentVo"/>
+        <where>  
+            <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+            <if test="departName != null  and departName != ''"> and depart_name like concat('%', #{departName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectHospitalDepartmentById" parameterType="Integer" resultMap="HospitalDepartmentResult">
+        <include refid="selectHospitalDepartmentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHospitalDepartment" parameterType="com.dchealth.cro.core.domain.HospitalDepartment" useGeneratedKeys="true" keyProperty="id">
+        insert into hospital_department
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="departName != null  and departName != ''">depart_name,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="departName != null  and departName != ''">#{departName},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHospitalDepartment" parameterType="com.dchealth.cro.core.domain.HospitalDepartment">
+        update hospital_department
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="departName != null  and departName != ''">depart_name = #{departName},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHospitalDepartmentById" parameterType="Integer">
+        delete from hospital_department where id = #{id}
+    </delete>
+
+    <delete id="deleteHospitalDepartmentByIds" parameterType="String">
+        delete from hospital_department where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

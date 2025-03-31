@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpSpecimenMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpSpecimen" id="MpSpecimenResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="technologyName"    column="technology_name"    />
+        <result property="specimenRecordId"    column="specimen_record_id"    />
+        <result property="specimenSourceValue"    column="specimen_source_value"    />
+        <result property="nakedEyeView"    column="naked_eye_view"    />
+        <result property="microscopicView"    column="microscopic_view"    />
+        <result property="pathologicDiagnosis"    column="pathologic_diagnosis"    />
+        <result property="reportDate"    column="report_date"    />
+    </resultMap>
+
+    <sql id="selectMpSpecimenVo">
+        select id, care_site_id, person_id, visit_occurrence_id, technology_name, specimen_record_id, specimen_source_value, naked_eye_view, microscopic_view, pathologic_diagnosis, report_date from mp_specimen
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpSpecimenResult">
+        <include refid="selectMpSpecimenVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+
+</mapper>

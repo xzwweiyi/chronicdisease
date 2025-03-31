@@ -1,0 +1,500 @@
+package com.dchealth.cms.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.dchealth.cms.domain.CmsArticleData;
+import com.dchealth.cms.domain.CmsArticleMoveParam;
+import com.dchealth.cms.domain.CmsArticleRecord;
+import com.dchealth.cms.domain.CmsCategory;
+import com.dchealth.cms.domain.CmsDeptArticle;
+import com.dchealth.cms.domain.CmsDeptArticleMoveDo;
+import com.dchealth.cms.domain.FMedicalExamRes;
+import com.dchealth.cms.domain.ResearchInfoArticlePatient;
+import com.dchealth.cms.domain.vo.CmsArticleCateGoryVo;
+import com.dchealth.cms.mapper.CmsArticleDataMapper;
+import com.dchealth.cms.mapper.CmsCategoryMapper;
+import com.dchealth.cms.mapper.CmsDeptArticleMapper;
+import com.dchealth.cms.service.ICmsCategoryService;
+import com.dchealth.common.DynamicSql;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.dynamic.mapper.DynamicCommonMapper;
+import com.dchealth.dynamic.templete.DynamicArticle;
+import com.dchealth.dynamic.templete.DynamicArticleLog;
+import com.dchealth.medical.contants.MedicalContants;
+import com.dchealth.medical.domain.PatientExamRecord;
+import com.dchealth.medical.domain.PatientRecordFiles;
+import com.dchealth.medical.domain.form.DynamicCommonProperty;
+import com.dchealth.medical.domain.form.DynamicForm;
+import com.dchealth.medical.mapper.PatientExamRecordMapper;
+import com.dchealth.medical.mapper.PatientRecordFilesMapper;
+import com.dchealth.research.domain.ResearchInfoArticle;
+import com.dchealth.research.domain.constant.PropertyType;
+import com.dchealth.research.mapper.ResearchInfoArticleMapper;
+import com.dchealth.system.mapper.SysRoleDeptMapper;
+import com.dchealth.template.domain.FMedicalExamForm;
+import com.dchealth.template.domain.FMedicalExamItem;
+import com.dchealth.template.domain.FMedicalExamSubject;
+import com.dchealth.template.mapper.FMedicalExamItemMapper;
+import com.dchealth.template.mapper.FMedicalExamSubjectMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.dchealth.cms.mapper.CmsArticleMapper;
+import com.dchealth.cms.domain.CmsArticle;
+import com.dchealth.cms.service.ICmsArticleService;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+/**
+ * 资讯管理Service业务层处理
+ * 
+ * @author ruoyi
+ * @date 2022-03-16
+ */
+@Service
+public class CmsArticleServiceImpl implements ICmsArticleService
+{
+
+    private static final Logger L = LoggerFactory.getLogger(CmsArticleServiceImpl.class);
+
+    @Autowired
+    private CmsArticleMapper cmsArticleMapper;
+    @Autowired
+    private DynamicArticle dynamicArticle;
+    @Autowired
+    private DynamicArticleLog dynamicArticleLog;
+    @Autowired
+    private CmsArticleDataMapper cmsArticleDataMapper;
+    @Autowired
+    private SysRoleDeptMapper sysRoleDeptMapper;
+
+    @Autowired
+    private CmsDeptArticleMapper cmsDeptArticleMapper;
+
+    @Autowired
+    private CmsCategoryMapper cmsCategoryMapper;
+
+    @Autowired
+    private ResearchInfoArticleMapper researchInfoArticleMapper;
+
+    @Autowired
+    private PatientExamRecordMapper patientExamRecordMapper;
+    @Autowired
+    private FMedicalExamSubjectMapper fMedicalExamSubjectMapper;
+
+    @Autowired
+    private FMedicalExamItemMapper fMedicalExamItemMapper;
+
+    @Autowired
+    private PatientRecordFilesMapper patientRecordFilesMapper;
+
+    @Autowired
+    private DynamicCommonMapper dynamicCommonMapper;
+
+
+    @Autowired
+    private DynamicSql dynamicSql;
+
+    @Autowired
+    private ICmsCategoryService cmsCategoryService;
+
+    /**
+     * 查询资讯管理
+     * 
+     * @param id 资讯管理主键
+     * @return 资讯管理
+     */
+    @Override
+    public CmsArticle selectCmsArticleById(Long id)
+    {
+        return cmsArticleMapper.selectCmsArticleById(id);
+    }
+
+    /**
+     * 查询资讯管理列表
+     * 
+     * @param cmsArticle 资讯管理
+     * @return 资讯管理
+     */
+    @Override
+    public List<CmsArticle> selectCmsArticleList(CmsArticle cmsArticle)
+    {
+        return cmsArticleMapper.selectCmsArticleList(cmsArticle);
+    }
+
+
+    @Override
+    public List<CmsArticle> selectCmsInformationList(CmsArticle cmsArticle)
+    {
+        return cmsArticleMapper.selectCmsInformationList(cmsArticle);
+    }
+
+
+    /**
+     * 查询科室资讯及子文件夹列表
+     *
+     * @param cmsArticle 资讯管理
+     * @return 资讯管理
+     */
+    @Override
+    public List<CmsArticle> selectCmsDeptArticleList(CmsArticle cmsArticle)
+    {
+        List<CmsArticle> list = cmsArticleMapper.selectCmsDeptArticleList(cmsArticle);
+        return list;
+
+    }
+
+    /**
+     * 查询科室分类资讯列表
+     *
+     * @param cmsArticle 资讯管理
+     * @return 资讯管理
+     */
+    @Override
+    public List<CmsArticleCateGoryVo> selectCmsDeptCategoryArticleList(CmsArticle cmsArticle)
+    {
+        return cmsArticleMapper.selectCmsDeptCategoryArticleList(cmsArticle);
+
+    }
+
+    @Override
+    public List<CmsArticleRecord> selectCmsArticleRecord(CmsArticleRecord cmsArticleRecord) {
+        return cmsArticleMapper.selectCmsArticleRecord(cmsArticleRecord);
+    }
+
+
+
+    public FMedicalExamForm selectExamFromDetailInfo(FMedicalExamRes fMedicalExamRes) {
+        Long articleId = fMedicalExamRes.getArticleId();
+        String status = fMedicalExamRes.getStatus();
+        Long examRecordId = fMedicalExamRes.getExamRecordId();
+        //查询问卷模板信息
+        Optional<FMedicalExamForm> examForm =
+                Optional.ofNullable(patientExamRecordMapper.selectFMedicalExamFormByArticleId(articleId));
+        if (examForm.isPresent()) {
+            FMedicalExamForm fMedicalExamForm = examForm.get();
+            Long medicalFormId = fMedicalExamForm.getMedicalFormId();
+            //查询问卷题干信息
+            Optional<List<FMedicalExamSubject>> fMedicalExamSubjects =
+                    Optional.ofNullable(fMedicalExamSubjectMapper.selectFMedicalExamSubjectByFromId(medicalFormId));
+            if (fMedicalExamSubjects.isPresent()) {
+                List<FMedicalExamSubject> examSubjects = fMedicalExamSubjects.get();
+                examSubjects.forEach(subject -> {
+                    //查询问卷选项信息
+                    List<FMedicalExamItem> items =
+                            fMedicalExamItemMapper.selectFMedicalExamItemByProId(subject.getId());
+                    subject.setItemList(items);
+                    //查询问卷选项值信息
+                    if (MedicalContants.EXAM_STATUS_1.equals(status) || MedicalContants.EXAM_STATUS_2.equals(status)) {
+                        //题目类型是图片、文件
+                        if (PropertyType.eq(PropertyType.UPLOAD, subject.getPropertyType())) {
+                            List<PatientRecordFiles> recordFiles =
+                                    patientRecordFilesMapper.selectPatientRecordFiles(subject.getId(),
+                                            fMedicalExamRes.getExamRecordId());
+                            List<String> imageUrls =
+                                    recordFiles.stream().map(PatientRecordFiles::getImageUrl).collect(Collectors.toList());
+                            subject.setImageUrls(imageUrls);
+                        } else {
+                            //题目类型是单选、多选、文本等
+                            PatientExamRecord patientExamRecord =
+                                    patientExamRecordMapper.selectPatientExamRecordById(examRecordId);
+                            String sql = dynamicSql.buildSelectArticleByTableName(patientExamRecord.getExamTable());
+                            DynamicForm dynamicForm = new DynamicForm();
+                            dynamicForm.setArticleId(articleId);
+                            dynamicForm.setExamRecordId(examRecordId);
+                            dynamicForm.setSql(sql);
+                            List<DynamicCommonProperty> properties = dynamicCommonMapper.selectBySql(dynamicForm);
+                            if (properties != null && !properties.isEmpty()) {
+//                                Map<Long, List<DynamicCommonProperty>> collect = properties.stream().collect
+//                                (Collectors.groupingBy(DynamicCommonProperty::getPropertyId));
+                                Map<Long, DynamicCommonProperty> collect =
+                                        properties.stream().collect(Collectors.toMap(DynamicCommonProperty::getPropertyId, item -> item));
+                                if (collect != null && !collect.isEmpty() && collect.containsKey(subject.getId())) {
+                                    DynamicCommonProperty commonProperties = collect.get(subject.getId());
+                                    subject.setPropertyValue(commonProperties.getPropertyValue());
+                                    subject.setOther(commonProperties.getOther());
+                                }
+                            }
+                        }
+                    }
+                });
+                //分数统计
+                if (MedicalContants.EXAM_STATUS_2.equals(status)) {
+                    ResearchInfoArticlePatient articlePatient = new ResearchInfoArticlePatient();
+                    articlePatient.setExamRecordId(examRecordId);
+                    articlePatient.setArticleId(articleId);
+                    ResearchInfoArticlePatient riap =
+                            researchInfoArticleMapper.selectResearchInfoArticlePatient(articlePatient);
+                    if (riap != null && StringUtils.isNotBlank(riap.getScores())) {
+                        fMedicalExamForm.setScores(Long.valueOf(riap.getScores()));
+                        fMedicalExamForm.setEvaluation(riap.getEvaluationResult());
+                    }
+                    //题干分数
+//                    long subjectScores = examSubjects.stream()
+//                            .filter(subject -> subject.getSubjectScores() != null && "1".equals(subject.getIfScore
+//                            ()) && (subject.getPropertyValue() != null || subject.getImageUrls() != null))
+//                            .mapToLong(FMedicalExamSubject::getSubjectScores).sum();
+//                    //选项分数
+//                    //单选、多选、下拉框、级联分数
+//                    long radioScores = 0;
+//                   // AtomicLong radioScores = new AtomicLong();
+//                    List<FMedicalExamSubject> subjects = examSubjects.stream().filter(subject -> (PropertyType
+//                    .RADIO.equals(subject.getPropertyType())
+//                            || PropertyType.CHECKBOX.equals(subject.getPropertyType())
+//                            || PropertyType.SELECT.equals(subject.getPropertyType())
+//                            || PropertyType.CASCADER.equals(subject.getPropertyType()))
+//                            && "1".equals(subject.getIfScore()) && subject.getPropertyValue() != null).collect
+//                            (Collectors.toList());
+//                    for (FMedicalExamSubject subject : subjects) {
+//                        //选项信息
+//                        List<FMedicalExamItem> items = fMedicalExamItemMapper.selectFMedicalExamItemByProId(subject
+//                        .getId());
+//                        //题所选答案
+//                        List<String> propertyValues = Arrays.stream(subject.getPropertyValue().split(",")).collect
+//                        (Collectors.toList());
+//                        long scores = items.stream().filter(item -> propertyValues.contains(item.getItemValue()))
+//                        .mapToLong(FMedicalExamItem::getItemScores).sum();
+//                        radioScores += scores;
+//                    }
+//                    fMedicalExamForm.setScores(subjectScores + radioScores);
+//
+//
+//                    CmsArticleSetEvaluation cmsArticleSetEvaluation = cmsArticleSetEvaluationMapper
+//                    .selectCmsArticleSetEvaluationByCmsArticleId(articleId,fMedicalExamForm.getScores());
+//                      if(cmsArticleSetEvaluation != null){
+//                          fMedicalExamForm.setEvaluation(cmsArticleSetEvaluation.getEvaluationResult());
+//                      }
+                }
+                fMedicalExamForm.setSubjectList(examSubjects);
+                //"再来一次"按钮是否显示处理
+                handleIsShowAgain(articleId, fMedicalExamRes.getAccountId(), fMedicalExamForm);
+            }
+
+            return fMedicalExamForm;
+        }
+        return null;
+    }
+
+
+    private void handleIsShowAgain(Long articleId, Long accountId, FMedicalExamForm fMedicalExamForm) {
+        // 该患者在哪几个队列中能看到该问卷，只要有一个队列能看到该问卷，“再来一次”按钮就显示
+        // 至于当后台有队列删该问卷，App上就应该把删除该问卷的队列对应的问卷不展示，这个 别的逻辑 会处理。
+        if(!Objects.isNull(accountId)){
+            List<ResearchInfoArticle> researchInfoArticleList =
+                    researchInfoArticleMapper.queryByArticleIdAndAccountId(articleId, accountId);
+            if (!CollectionUtils.isEmpty(researchInfoArticleList) && researchInfoArticleList.size() > 0) {
+                fMedicalExamForm.setIsShowAgain(true);
+            } else {
+                fMedicalExamForm.setIsShowAgain(false);
+            }
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * 新增资讯管理
+     * 
+     * @param cmsArticle 资讯管理
+     * @return 结果
+     */
+    @Override
+    public int insertCmsArticle(CmsArticle cmsArticle)
+    {
+        cmsArticle.setCreateTime(DateUtils.getNowDate());
+        cmsArticle.setUpdateTime(DateUtils.getNowDate());
+        CmsArticleData cmsArticleData = new CmsArticleData();
+        cmsArticleData.setContent(cmsArticle.getContent());
+        cmsArticleData.setCopyFrom(cmsArticle.getCopyFrom());
+        cmsArticleData.setRelation(cmsArticle.getRelation());
+        cmsArticleData.setAllowComment(cmsArticle.getAllowComment());
+//        String deptIds = sysRoleDeptMapper.getDeptIdsByUserId(cmsArticle.getCreateId());
+//        cmsArticle.setDeptIds(deptIds);
+        cmsArticleMapper.insertCmsArticle(cmsArticle);
+        cmsArticleData.setId(cmsArticle.getId());
+        cmsArticleDataMapper.insertCmsArticleData(cmsArticleData);
+        return 1;
+    }
+
+    /**
+     * 修改资讯管理
+     * 
+     * @param cmsArticle 资讯管理
+     * @return 结果
+     */
+    @Override
+    public int updateCmsArticle(CmsArticle cmsArticle)
+    {
+        cmsArticle.setUpdateTime(DateUtils.getNowDate());
+        CmsArticleData cmsArticleData = new CmsArticleData();
+        cmsArticleData.setAllowComment(cmsArticle.getAllowComment());
+        cmsArticleData.setContent(cmsArticle.getContent());
+        cmsArticleData.setCopyFrom(cmsArticle.getCopyFrom());
+        cmsArticleData.setId(cmsArticle.getId());
+        if(cmsArticleData.getContent()!=null){
+            cmsArticleDataMapper.updateCmsArticleData(cmsArticleData);
+        }
+        return cmsArticleMapper.updateCmsArticle(cmsArticle);
+    }
+
+    /**
+     * 批量删除资讯管理
+     * 
+     * @param ids 需要删除的资讯管理主键
+     * @return 结果
+     */
+    @Override
+    public int deleteCmsArticleByIds(Long[] ids)
+    {
+        return cmsArticleMapper.deleteCmsArticleByIds(ids);
+    }
+
+    /**
+     * 删除资讯管理信息
+     * 
+     * @param id 资讯管理主键
+     * @return 结果
+     */
+    @Override
+    public int deleteCmsArticleById(Long id)
+    {
+        return cmsArticleMapper.deleteCmsArticleById(id);
+    }
+
+    @Override
+    public int deleteCmsArticleByDiseaseId(Long diseaseId) {
+        return cmsArticleMapper.updateCmsArticleByDiseaseId(diseaseId);
+    }
+
+    /**
+     * 逻辑删除
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public int updateDelById(Long id) {
+        researchInfoArticleMapper.deleteResearchInfoArticleByArticleId(id);
+        return cmsArticleMapper.updateDelById(id);
+    }
+
+    /**
+     * 查询咨询嘻嘻
+     * @param articleIds
+     * @return
+     */
+    @Override
+    public List<CmsArticle> selectCmsArticleByIds(List<Long> articleIds) {
+        return cmsArticleMapper.selectCmsArticleByIds(articleIds);
+    }
+
+    /**
+     * 问卷发布(问卷表创建)
+     * @param id
+     * @return
+     */
+    @Transactional
+    @Override
+    public int updateCmsArticleStatusById(Long id) {
+        //创建问卷表(每10张问卷分一张表存值)
+        //问卷表后缀名
+        CmsArticle cmsArticle = cmsArticleMapper.selectCmsArticleById(id);
+        int i = Math.floorDiv(cmsArticle.getQuesNum(), 10);
+        //创建问卷表
+        dynamicArticle.init().createArticleTableBySuffix(i);
+        //创建问卷log表
+        dynamicArticleLog.init().createArticleTableBySuffix(i);
+        return cmsArticleMapper.updateCmsArticleStatusById(id);
+    }
+
+
+    @Override
+    public Integer fileMove(CmsArticleMoveParam articleMoveParam) {
+        List<CmsArticle> cmsArticles;
+        CmsArticle cmsArticle = new CmsArticle();
+        if (Objects.nonNull(articleMoveParam.getCategoryId())){
+            Long categoryId = articleMoveParam.getCategoryId();
+            List<CmsCategory> cmsCategoryList = cmsCategoryService.selectAllChildCategoryById(categoryId);
+            List<Long> categoryIdList = cmsCategoryList.stream().map(CmsCategory::getId).collect(Collectors.toList());
+            cmsArticle.setCategoryIdList(categoryIdList);
+            cmsArticles = cmsArticleMapper.selectCmsInformationList(cmsArticle);
+        }else {
+            cmsArticle.setArticleId(articleMoveParam.getArticleId());
+            cmsArticles = cmsArticleMapper.selectCmsInformationList(cmsArticle);
+        }
+
+        Long newCategoryId = articleMoveParam.getNewCategoryId();
+
+        List<CmsArticle> cmsArticleList = new ArrayList<>();
+        for (CmsArticle cmsArticleVo: cmsArticles) {
+            CmsArticle cmsArticle1 = new CmsArticle();
+            cmsArticle1.setArticleId(cmsArticleVo.getId());
+            cmsArticle1.setCategoryId(newCategoryId);
+            cmsArticleList.add(cmsArticle1);
+        }
+        Integer flagNum = 0;
+        if (!CollectionUtils.isEmpty(cmsArticleList)){
+            flagNum = cmsArticleMapper.batchUpdateCmsArticleCategory(cmsArticleList);
+        }
+        return flagNum;
+
+    }
+
+
+    @Override
+    public Integer deptfileMove(CmsArticleMoveParam articleMoveParam) {
+        Long categoryId = articleMoveParam.getCategoryId();
+        List<CmsArticle> cmsArticles;
+        CmsArticle cmsArticle = new CmsArticle();
+        if (Objects.nonNull(categoryId)){
+            List<CmsCategory> cmsCategoryList = cmsCategoryService.selectAllChildCategoryById(categoryId);
+            List<Long> categoryIdList = cmsCategoryList.stream().map(CmsCategory::getId).collect(Collectors.toList());
+            cmsArticle.setDeptCategoryIdList(categoryIdList);
+            cmsArticles = cmsArticleMapper.selectCmsInformationList(cmsArticle);
+        }else {
+            cmsArticle.setArticleId(articleMoveParam.getArticleId());
+            cmsArticles = cmsArticleMapper.selectCmsInformationList(cmsArticle);
+        }
+        Long newCategoryId = articleMoveParam.getNewCategoryId();
+        CmsCategory cmsCategory = cmsCategoryMapper.selectCmsCategoryById(newCategoryId);
+        Long newDeptId = cmsCategory.getDeptId();
+
+        List<CmsDeptArticleMoveDo> cmsDeptArticleMoveDos = new ArrayList<>();
+        for (CmsArticle cmsArticleVo: cmsArticles) {
+            CmsDeptArticleMoveDo deptArticleMoveDo = new CmsDeptArticleMoveDo();
+            deptArticleMoveDo.setDeptId(articleMoveParam.getDeptId());
+            deptArticleMoveDo.setNewDeptId(newDeptId);
+            deptArticleMoveDo.setArticleId(cmsArticleVo.getId());
+            deptArticleMoveDo.setNewCategoryId(newCategoryId);
+            cmsDeptArticleMoveDos.add(deptArticleMoveDo);
+        }
+        Integer flagNum = 0;
+        if (!CollectionUtils.isEmpty(cmsDeptArticleMoveDos)){
+            flagNum = cmsDeptArticleMapper.updateCmsDeptArticleCategoryAndDeptId(cmsDeptArticleMoveDos);
+        }
+        return flagNum;
+    }
+
+    @Override
+    public List<CmsDeptArticle> selectCmsDeptArticleByArticleIdList(List<Long> articleIdList) {
+        return cmsDeptArticleMapper.selectCmsDeptArticleByArticleIdList(articleIdList);
+    }
+}

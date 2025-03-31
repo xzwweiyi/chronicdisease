@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.warn.mapper.WarnGuideMsgMapper">
+    
+    <resultMap type="WarnGuideMsg" id="WarnGuideMsgResult">
+        <result property="warnGuideMsgId"    column="warn_guide_msg_id"    />
+        <result property="warnGuideConverId"    column="warn_guide_conver_id"    />
+        <result property="msgType"    column="msg_type"    />
+        <result property="msgText"    column="msg_text"    />
+        <result property="msgImageUrl"    column="msg_image_url"    />
+        <result property="fromUserId"    column="from_user_id"    />
+        <result property="fromUserType"    column="from_user_type"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectWarnGuideMsgVo">
+        select warn_guide_msg_id, warn_guide_conver_id, msg_type, msg_text, msg_image_url, from_user_id, from_user_type, create_time from warn_guide_msg
+    </sql>
+
+    <select id="selectWarnGuideMsgList" parameterType="WarnGuideMsg" resultMap="WarnGuideMsgResult">
+        <include refid="selectWarnGuideMsgVo"/>
+        <where>  
+            <if test="warnGuideConverId != null "> and warn_guide_conver_id = #{warnGuideConverId}</if>
+            <if test="msgType != null  and msgType != ''"> and msg_type = #{msgType}</if>
+            <if test="msgText != null  and msgText != ''"> and msg_text = #{msgText}</if>
+            <if test="msgImageUrl != null  and msgImageUrl != ''"> and msg_image_url = #{msgImageUrl}</if>
+            <if test="fromUserId != null "> and from_user_id = #{fromUserId}</if>
+            <if test="fromUserType != null  and fromUserType != ''"> and from_user_type = #{fromUserType}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnGuideMsgByWarnGuideMsgId" parameterType="Long" resultMap="WarnGuideMsgResult">
+        <include refid="selectWarnGuideMsgVo"/>
+        where warn_guide_msg_id = #{warnGuideMsgId}
+    </select>
+
+    <select id="selectWarnGuideMsgListByRecordId" parameterType="Long" resultMap="WarnGuideMsgResult">
+        select m.* from warn_guide_msg m, warn_guide_conver c
+        where m.warn_guide_conver_id=c.warn_guide_conver_id and c.record_id=#{recordId}
+    </select>
+        
+    <insert id="insertWarnGuideMsg" parameterType="WarnGuideMsg" useGeneratedKeys="true" keyProperty="warnGuideMsgId">
+        insert into warn_guide_msg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="warnGuideConverId != null">warn_guide_conver_id,</if>
+            <if test="msgType != null and msgType != ''">msg_type,</if>
+            <if test="msgText != null">msg_text,</if>
+            <if test="msgImageUrl != null">msg_image_url,</if>
+            <if test="fromUserId != null">from_user_id,</if>
+            <if test="fromUserType != null">from_user_type,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="warnGuideConverId != null">#{warnGuideConverId},</if>
+            <if test="msgType != null and msgType != ''">#{msgType},</if>
+            <if test="msgText != null">#{msgText},</if>
+            <if test="msgImageUrl != null">#{msgImageUrl},</if>
+            <if test="fromUserId != null">#{fromUserId},</if>
+            <if test="fromUserType != null">#{fromUserType},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnGuideMsg" parameterType="WarnGuideMsg">
+        update warn_guide_msg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="warnGuideConverId != null">warn_guide_conver_id = #{warnGuideConverId},</if>
+            <if test="msgType != null and msgType != ''">msg_type = #{msgType},</if>
+            <if test="msgText != null">msg_text = #{msgText},</if>
+            <if test="msgImageUrl != null">msg_image_url = #{msgImageUrl},</if>
+            <if test="fromUserId != null">from_user_id = #{fromUserId},</if>
+            <if test="fromUserType != null">from_user_type = #{fromUserType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where warn_guide_msg_id = #{warnGuideMsgId}
+    </update>
+
+    <delete id="deleteWarnGuideMsgByWarnGuideMsgId" parameterType="Long">
+        delete from warn_guide_msg where warn_guide_msg_id = #{warnGuideMsgId}
+    </delete>
+
+    <delete id="deleteWarnGuideMsgByWarnGuideMsgIds" parameterType="String">
+        delete from warn_guide_msg where warn_guide_msg_id in 
+        <foreach item="warnGuideMsgId" collection="array" open="(" separator="," close=")">
+            #{warnGuideMsgId}
+        </foreach>
+    </delete>
+</mapper>

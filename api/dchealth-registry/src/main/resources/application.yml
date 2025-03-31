@@ -1,0 +1,26 @@
+# Configure this Discovery Server
+eureka:
+  instance:
+    hostname: localhost
+    leaseRenewalIntervalInSeconds: 5 # DO NOT DO THIS IN PRODUCTION
+    leaseExpirationDurationInSeconds: 2
+  server:
+    #关闭自我保护 false
+    enableSelfPreservation: true
+  client: # Not a client, don't register with yourself
+    registerWithEureka: false
+    fetchRegistry: false
+    service-url:
+      defaultZone: http://localhost:7900/eureka/
+spring:
+    # 环境 dev:开发环境|test:测试环境|prod:生成环境
+    profiles:
+        active: test
+    security:
+      user:
+        name: dchealthcro
+        password: dchealthcro
+    application:
+      name: dchealth-eurka
+server:
+  port: 7900 # HTTP (Tomcat) port

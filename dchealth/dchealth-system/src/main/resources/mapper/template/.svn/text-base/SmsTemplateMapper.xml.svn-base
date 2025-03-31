@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.SmsTemplateMapper">
+    
+    <resultMap type="SmsTemplate" id="SmsTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="status"    column="status"    />
+        <result property="content"    column="content"    />
+        <result property="createId"    column="create_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateId"    column="update_id"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSmsTemplateVo">
+        select id, template_name, status, content, create_id, create_time, update_id, update_time from sms_template
+    </sql>
+
+    <select id="selectSmsTemplateList" parameterType="SmsTemplate" resultMap="SmsTemplateResult">
+        <include refid="selectSmsTemplateVo"/>
+        <where>  
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="createId != null "> and create_id = #{createId}</if>
+            <if test="updateId != null "> and update_id = #{updateId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSmsTemplateById" parameterType="Long" resultMap="SmsTemplateResult">
+        <include refid="selectSmsTemplateVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSmsTemplateByName" parameterType="String" resultMap="SmsTemplateResult">
+        <include refid="selectSmsTemplateVo"/>
+        where template_name like concat('%', #{templateName}, '%') and status=1 LIMIT 0,1
+    </select>
+        
+    <insert id="insertSmsTemplate" parameterType="SmsTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into sms_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">template_name,</if>
+            <if test="status != null">status,</if>
+            <if test="content != null">content,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateId != null">update_id,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">#{templateName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="content != null">#{content},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateId != null">#{updateId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSmsTemplate" parameterType="SmsTemplate">
+        update sms_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateId != null">update_id = #{updateId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSmsTemplateById" parameterType="Long">
+        delete from sms_template where id = #{id}
+    </delete>
+
+    <delete id="deleteSmsTemplateByIds" parameterType="String">
+        delete from sms_template where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

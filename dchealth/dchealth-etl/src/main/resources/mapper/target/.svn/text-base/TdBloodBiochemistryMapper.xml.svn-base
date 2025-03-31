@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdBloodBiochemistryMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdBloodBiochemistry" id="TdBloodBiochemistryMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="totalProtein" column="total_protein" jdbcType="VARCHAR"/>
+        <result property="albumin" column="albumin" jdbcType="VARCHAR"/>
+        <result property="globulin" column="globulin" jdbcType="VARCHAR"/>
+        <result property="albuminGlobulinRatio" column="albumin_globulin_ratio" jdbcType="VARCHAR"/>
+        <result property="aspartateAminotransferase" column="aspartate_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="alanineAminotransferase" column="alanine_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="astAltRatio" column="ast_alt_ratio" jdbcType="VARCHAR"/>
+        <result property="totalBileAcid" column="total_bile_acid" jdbcType="VARCHAR"/>
+        <result property="totalBilirubin" column="total_bilirubin" jdbcType="VARCHAR"/>
+        <result property="directBilirubin" column="direct_bilirubin" jdbcType="VARCHAR"/>
+        <result property="indirectBilirubin" column="indirect_bilirubin" jdbcType="VARCHAR"/>
+        <result property="alkalinePhosphatase" column="alkaline_phosphatase" jdbcType="VARCHAR"/>
+        <result property="glutamicPyruvicTransaminase" column="glutamic_pyruvic_transaminase" jdbcType="VARCHAR"/>
+        <result property="cholinesterase" column="cholinesterase" jdbcType="VARCHAR"/>
+        <result property="lactateDehydrogenase" column="lactate_dehydrogenase" jdbcType="VARCHAR"/>
+        <result property="alphaHbDehydrogenase" column="alpha_hb_dehydrogenase" jdbcType="VARCHAR"/>
+        <result property="creatineKinase" column="creatine_kinase" jdbcType="VARCHAR"/>
+        <result property="creatineKinaseIsoenzyme" column="creatine_kinase_isoenzyme" jdbcType="VARCHAR"/>
+        <result property="bloodUreaNitrogen" column="blood_urea_nitrogen" jdbcType="VARCHAR"/>
+        <result property="creatinine" column="creatinine" jdbcType="VARCHAR"/>
+        <result property="uricAcid" column="uric_acid" jdbcType="VARCHAR"/>
+        <result property="fastingBloodGlucose" column="fasting_blood_glucose" jdbcType="VARCHAR"/>
+        <result property="potassium" column="potassium" jdbcType="VARCHAR"/>
+        <result property="sodium" column="sodium" jdbcType="VARCHAR"/>
+        <result property="chloride" column="chloride" jdbcType="VARCHAR"/>
+        <result property="calcium" column="calcium" jdbcType="VARCHAR"/>
+        <result property="phosphorus" column="phosphorus" jdbcType="VARCHAR"/>
+        <result property="magnesium" column="magnesium" jdbcType="VARCHAR"/>
+        <result property="carbonDioxide" column="carbon_dioxide" jdbcType="VARCHAR"/>
+        <result property="triglycerides" column="triglycerides" jdbcType="VARCHAR"/>
+        <result property="totalCholesterol" column="total_cholesterol" jdbcType="VARCHAR"/>
+        <result property="hdlCholesterol" column="hdl_cholesterol" jdbcType="VARCHAR"/>
+        <result property="ldlCholesterol" column="ldl_cholesterol" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinA1" column="apolipoprotein_a1" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinB" column="apolipoprotein_b" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinA1bRatio" column="apolipoprotein_a1b_ratio" jdbcType="VARCHAR"/>
+        <result property="whiteBallRatio" column="white_ball_ratio" jdbcType="VARCHAR"/>
+        <result property="serumCystatinC" column="serum_cystatin_c" jdbcType="VARCHAR"/>
+        <result property="bloodSugar" column="blood_sugar" jdbcType="VARCHAR"/>
+        <result property="prothrombinTime" column="prothrombin_time" jdbcType="VARCHAR"/>
+        <result property="aptt" column="aptt" jdbcType="VARCHAR"/>
+        <result property="thrombinIme" column="thrombin_ime" jdbcType="VARCHAR"/>
+        <result property="fibrinogen" column="fibrinogen" jdbcType="VARCHAR"/>
+        <result property="fdp" column="fdp" jdbcType="VARCHAR"/>
+        <result property="dDimerQuantitativeTest" column="d_dimer_quantitative_test" jdbcType="VARCHAR"/>
+        <result property="internationalNormRatio" column="international_norm_ratio" jdbcType="VARCHAR"/>
+        <result property="prothrombinActivity" column="prothrombin_activity" jdbcType="VARCHAR"/>
+        <result property="pb" column="pb" jdbcType="VARCHAR"/>
+        <result property="copper" column="copper" jdbcType="VARCHAR"/>
+        <result property="zinc" column="zinc" jdbcType="VARCHAR"/>
+        <result property="iron" column="iron" jdbcType="VARCHAR"/>
+        <result property="bloodGlucose2h" column="blood_glucose2h" jdbcType="VARCHAR"/>
+        <result property="glycosylatedHemoglobin" column="glycosylated_hemoglobin" jdbcType="VARCHAR"/>
+        <result property="ogttBloodGlucose" column="ogtt_blood_glucose" jdbcType="VARCHAR"/>
+        <result property="homocysteine" column="homocysteine" jdbcType="VARCHAR"/>
+        <result property="uacr" column="uacr" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdBloodBiochemistryMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_protein, albumin, globulin, albumin_globulin_ratio, aspartate_aminotransferase, alanine_aminotransferase, ast_alt_ratio, total_bile_acid, total_bilirubin, direct_bilirubin, indirect_bilirubin, alkaline_phosphatase, glutamic_pyruvic_transaminase, cholinesterase, lactate_dehydrogenase, alpha_hb_dehydrogenase, creatine_kinase, creatine_kinase_isoenzyme, blood_urea_nitrogen, creatinine, uric_acid, fasting_blood_glucose, potassium, sodium, chloride, calcium, phosphorus, magnesium, carbon_dioxide, triglycerides, total_cholesterol, hdl_cholesterol, ldl_cholesterol, apolipoprotein_a1, apolipoprotein_b, apolipoprotein_a1b_ratio, white_ball_ratio, serum_cystatin_c, blood_sugar, prothrombin_time, aptt, thrombin_ime, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity, pb, copper, zinc, iron
+        from td_blood_biochemistry
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdBloodBiochemistryMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_protein, albumin, globulin, albumin_globulin_ratio, aspartate_aminotransferase, alanine_aminotransferase, ast_alt_ratio, total_bile_acid, total_bilirubin, direct_bilirubin, indirect_bilirubin, alkaline_phosphatase, glutamic_pyruvic_transaminase, cholinesterase, lactate_dehydrogenase, alpha_hb_dehydrogenase, creatine_kinase, creatine_kinase_isoenzyme, blood_urea_nitrogen, creatinine, uric_acid, fasting_blood_glucose, potassium, sodium, chloride, calcium, phosphorus, magnesium, carbon_dioxide, triglycerides, total_cholesterol, hdl_cholesterol, ldl_cholesterol, apolipoprotein_a1, apolipoprotein_b, apolipoprotein_a1b_ratio, white_ball_ratio, serum_cystatin_c, blood_sugar, prothrombin_time, aptt, thrombin_ime, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity, pb, copper, zinc, iron
+        from td_blood_biochemistry
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="totalProtein != null and totalProtein != ''">
+                and total_protein = #{totalProtein}
+            </if>
+            <if test="albumin != null and albumin != ''">
+                and albumin = #{albumin}
+            </if>
+            <if test="globulin != null and globulin != ''">
+                and globulin = #{globulin}
+            </if>
+            <if test="albuminGlobulinRatio != null and albuminGlobulinRatio != ''">
+                and albumin_globulin_ratio = #{albuminGlobulinRatio}
+            </if>
+            <if test="aspartateAminotransferase != null and aspartateAminotransferase != ''">
+                and aspartate_aminotransferase = #{aspartateAminotransferase}
+            </if>
+            <if test="alanineAminotransferase != null and alanineAminotransferase != ''">
+                and alanine_aminotransferase = #{alanineAminotransferase}
+            </if>
+            <if test="astAltRatio != null and astAltRatio != ''">
+                and ast_alt_ratio = #{astAltRatio}
+            </if>
+            <if test="totalBileAcid != null and totalBileAcid != ''">
+                and total_bile_acid = #{totalBileAcid}
+            </if>
+            <if test="totalBilirubin != null and totalBilirubin != ''">
+                and total_bilirubin = #{totalBilirubin}
+            </if>
+            <if test="directBilirubin != null and directBilirubin != ''">
+                and direct_bilirubin = #{directBilirubin}
+            </if>
+            <if test="indirectBilirubin != null and indirectBilirubin != ''">
+                and indirect_bilirubin = #{indirectBilirubin}
+            </if>
+            <if test="alkalinePhosphatase != null and alkalinePhosphatase != ''">
+                and alkaline_phosphatase = #{alkalinePhosphatase}
+            </if>
+            <if test="glutamicPyruvicTransaminase != null and glutamicPyruvicTransaminase != ''">
+                and glutamic_pyruvic_transaminase = #{glutamicPyruvicTransaminase}
+            </if>
+            <if test="cholinesterase != null and cholinesterase != ''">
+                and cholinesterase = #{cholinesterase}
+            </if>
+            <if test="lactateDehydrogenase != null and lactateDehydrogenase != ''">
+                and lactate_dehydrogenase = #{lactateDehydrogenase}
+            </if>
+            <if test="alphaHbDehydrogenase != null and alphaHbDehydrogenase != ''">
+                and alpha_hb_dehydrogenase = #{alphaHbDehydrogenase}
+            </if>
+            <if test="creatineKinase != null and creatineKinase != ''">
+                and creatine_kinase = #{creatineKinase}
+            </if>
+            <if test="creatineKinaseIsoenzyme != null and creatineKinaseIsoenzyme != ''">
+                and creatine_kinase_isoenzyme = #{creatineKinaseIsoenzyme}
+            </if>
+            <if test="bloodUreaNitrogen != null and bloodUreaNitrogen != ''">
+                and blood_urea_nitrogen = #{bloodUreaNitrogen}
+            </if>
+            <if test="creatinine != null and creatinine != ''">
+                and creatinine = #{creatinine}
+            </if>
+            <if test="uricAcid != null and uricAcid != ''">
+                and uric_acid = #{uricAcid}
+            </if>
+            <if test="fastingBloodGlucose != null and fastingBloodGlucose != ''">
+                and fasting_blood_glucose = #{fastingBloodGlucose}
+            </if>
+            <if test="potassium != null and potassium != ''">
+                and potassium = #{potassium}
+            </if>
+            <if test="sodium != null and sodium != ''">
+                and sodium = #{sodium}
+            </if>
+            <if test="chloride != null and chloride != ''">
+                and chloride = #{chloride}
+            </if>
+            <if test="calcium != null and calcium != ''">
+                and calcium = #{calcium}
+            </if>
+            <if test="phosphorus != null and phosphorus != ''">
+                and phosphorus = #{phosphorus}
+            </if>
+            <if test="magnesium != null and magnesium != ''">
+                and magnesium = #{magnesium}
+            </if>
+            <if test="carbonDioxide != null and carbonDioxide != ''">
+                and carbon_dioxide = #{carbonDioxide}
+            </if>
+            <if test="triglycerides != null and triglycerides != ''">
+                and triglycerides = #{triglycerides}
+            </if>
+            <if test="totalCholesterol != null and totalCholesterol != ''">
+                and total_cholesterol = #{totalCholesterol}
+            </if>
+            <if test="hdlCholesterol != null and hdlCholesterol != ''">
+                and hdl_cholesterol = #{hdlCholesterol}
+            </if>
+            <if test="ldlCholesterol != null and ldlCholesterol != ''">
+                and ldl_cholesterol = #{ldlCholesterol}
+            </if>
+            <if test="apolipoproteinA1 != null and apolipoproteinA1 != ''">
+                and apolipoprotein_a1 = #{apolipoproteinA1}
+            </if>
+            <if test="apolipoproteinB != null and apolipoproteinB != ''">
+                and apolipoprotein_b = #{apolipoproteinB}
+            </if>
+            <if test="apolipoproteinA1bRatio != null and apolipoproteinA1bRatio != ''">
+                and apolipoprotein_a1b_ratio = #{apolipoproteinA1bRatio}
+            </if>
+            <if test="whiteBallRatio != null and whiteBallRatio != ''">
+                and white_ball_ratio = #{whiteBallRatio}
+            </if>
+            <if test="serumCystatinC != null and serumCystatinC != ''">
+                and serum_cystatin_c = #{serumCystatinC}
+            </if>
+            <if test="bloodSugar != null and bloodSugar != ''">
+                and blood_sugar = #{bloodSugar}
+            </if>
+            <if test="prothrombinTime != null and prothrombinTime != ''">
+                and prothrombin_time = #{prothrombinTime}
+            </if>
+            <if test="aptt != null and aptt != ''">
+                and aptt = #{aptt}
+            </if>
+            <if test="thrombinIme != null and thrombinIme != ''">
+                and thrombin_ime = #{thrombinIme}
+            </if>
+            <if test="fibrinogen != null and fibrinogen != ''">
+                and fibrinogen = #{fibrinogen}
+            </if>
+            <if test="fdp != null and fdp != ''">
+                and fdp = #{fdp}
+            </if>
+            <if test="dDimerQuantitativeTest != null and dDimerQuantitativeTest != ''">
+                and d_dimer_quantitative_test = #{dDimerQuantitativeTest}
+            </if>
+            <if test="internationalNormRatio != null and internationalNormRatio != ''">
+                and international_norm_ratio = #{internationalNormRatio}
+            </if>
+            <if test="prothrombinActivity != null and prothrombinActivity != ''">
+                and prothrombin_activity = #{prothrombinActivity}
+            </if>
+            <if test="pb != null and pb != ''">
+                and pb = #{pb}
+            </if>
+            <if test="copper != null and copper != ''">
+                and copper = #{copper}
+            </if>
+            <if test="zinc != null and zinc != ''">
+                and zinc = #{zinc}
+            </if>
+            <if test="iron != null and iron != ''">
+                and iron = #{iron}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_blood_biochemistry
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="totalProtein != null and totalProtein != ''">
+                and total_protein = #{totalProtein}
+            </if>
+            <if test="albumin != null and albumin != ''">
+                and albumin = #{albumin}
+            </if>
+            <if test="globulin != null and globulin != ''">
+                and globulin = #{globulin}
+            </if>
+            <if test="albuminGlobulinRatio != null and albuminGlobulinRatio != ''">
+                and albumin_globulin_ratio = #{albuminGlobulinRatio}
+            </if>
+            <if test="aspartateAminotransferase != null and aspartateAminotransferase != ''">
+                and aspartate_aminotransferase = #{aspartateAminotransferase}
+            </if>
+            <if test="alanineAminotransferase != null and alanineAminotransferase != ''">
+                and alanine_aminotransferase = #{alanineAminotransferase}
+            </if>
+            <if test="astAltRatio != null and astAltRatio != ''">
+                and ast_alt_ratio = #{astAltRatio}
+            </if>
+            <if test="totalBileAcid != null and totalBileAcid != ''">
+                and total_bile_acid = #{totalBileAcid}
+            </if>
+            <if test="totalBilirubin != null and totalBilirubin != ''">
+                and total_bilirubin = #{totalBilirubin}
+            </if>
+            <if test="directBilirubin != null and directBilirubin != ''">
+                and direct_bilirubin = #{directBilirubin}
+            </if>
+            <if test="indirectBilirubin != null and indirectBilirubin != ''">
+                and indirect_bilirubin = #{indirectBilirubin}
+            </if>
+            <if test="alkalinePhosphatase != null and alkalinePhosphatase != ''">
+                and alkaline_phosphatase = #{alkalinePhosphatase}
+            </if>
+            <if test="glutamicPyruvicTransaminase != null and glutamicPyruvicTransaminase != ''">
+                and glutamic_pyruvic_transaminase = #{glutamicPyruvicTransaminase}
+            </if>
+            <if test="cholinesterase != null and cholinesterase != ''">
+                and cholinesterase = #{cholinesterase}
+            </if>
+            <if test="lactateDehydrogenase != null and lactateDehydrogenase != ''">
+                and lactate_dehydrogenase = #{lactateDehydrogenase}
+            </if>
+            <if test="alphaHbDehydrogenase != null and alphaHbDehydrogenase != ''">
+                and alpha_hb_dehydrogenase = #{alphaHbDehydrogenase}
+            </if>
+            <if test="creatineKinase != null and creatineKinase != ''">
+                and creatine_kinase = #{creatineKinase}
+            </if>
+            <if test="creatineKinaseIsoenzyme != null and creatineKinaseIsoenzyme != ''">
+                and creatine_kinase_isoenzyme = #{creatineKinaseIsoenzyme}
+            </if>
+            <if test="bloodUreaNitrogen != null and bloodUreaNitrogen != ''">
+                and blood_urea_nitrogen = #{bloodUreaNitrogen}
+            </if>
+            <if test="creatinine != null and creatinine != ''">
+                and creatinine = #{creatinine}
+            </if>
+            <if test="uricAcid != null and uricAcid != ''">
+                and uric_acid = #{uricAcid}
+            </if>
+            <if test="fastingBloodGlucose != null and fastingBloodGlucose != ''">
+                and fasting_blood_glucose = #{fastingBloodGlucose}
+            </if>
+            <if test="potassium != null and potassium != ''">
+                and potassium = #{potassium}
+            </if>
+            <if test="sodium != null and sodium != ''">
+                and sodium = #{sodium}
+            </if>
+            <if test="chloride != null and chloride != ''">
+                and chloride = #{chloride}
+            </if>
+            <if test="calcium != null and calcium != ''">
+                and calcium = #{calcium}
+            </if>
+            <if test="phosphorus != null and phosphorus != ''">
+                and phosphorus = #{phosphorus}
+            </if>
+            <if test="magnesium != null and magnesium != ''">
+                and magnesium = #{magnesium}
+            </if>
+            <if test="carbonDioxide != null and carbonDioxide != ''">
+                and carbon_dioxide = #{carbonDioxide}
+            </if>
+            <if test="triglycerides != null and triglycerides != ''">
+                and triglycerides = #{triglycerides}
+            </if>
+            <if test="totalCholesterol != null and totalCholesterol != ''">
+                and total_cholesterol = #{totalCholesterol}
+            </if>
+            <if test="hdlCholesterol != null and hdlCholesterol != ''">
+                and hdl_cholesterol = #{hdlCholesterol}
+            </if>
+            <if test="ldlCholesterol != null and ldlCholesterol != ''">
+                and ldl_cholesterol = #{ldlCholesterol}
+            </if>
+            <if test="apolipoproteinA1 != null and apolipoproteinA1 != ''">
+                and apolipoprotein_a1 = #{apolipoproteinA1}
+            </if>
+            <if test="apolipoproteinB != null and apolipoproteinB != ''">
+                and apolipoprotein_b = #{apolipoproteinB}
+            </if>
+            <if test="apolipoproteinA1bRatio != null and apolipoproteinA1bRatio != ''">
+                and apolipoprotein_a1b_ratio = #{apolipoproteinA1bRatio}
+            </if>
+            <if test="whiteBallRatio != null and whiteBallRatio != ''">
+                and white_ball_ratio = #{whiteBallRatio}
+            </if>
+            <if test="serumCystatinC != null and serumCystatinC != ''">
+                and serum_cystatin_c = #{serumCystatinC}
+            </if>
+            <if test="bloodSugar != null and bloodSugar != ''">
+                and blood_sugar = #{bloodSugar}
+            </if>
+            <if test="prothrombinTime != null and prothrombinTime != ''">
+                and prothrombin_time = #{prothrombinTime}
+            </if>
+            <if test="aptt != null and aptt != ''">
+                and aptt = #{aptt}
+            </if>
+            <if test="thrombinIme != null and thrombinIme != ''">
+                and thrombin_ime = #{thrombinIme}
+            </if>
+            <if test="fibrinogen != null and fibrinogen != ''">
+                and fibrinogen = #{fibrinogen}
+            </if>
+            <if test="fdp != null and fdp != ''">
+                and fdp = #{fdp}
+            </if>
+            <if test="dDimerQuantitativeTest != null and dDimerQuantitativeTest != ''">
+                and d_dimer_quantitative_test = #{dDimerQuantitativeTest}
+            </if>
+            <if test="internationalNormRatio != null and internationalNormRatio != ''">
+                and international_norm_ratio = #{internationalNormRatio}
+            </if>
+            <if test="prothrombinActivity != null and prothrombinActivity != ''">
+                and prothrombin_activity = #{prothrombinActivity}
+            </if>
+            <if test="pb != null and pb != ''">
+                and pb = #{pb}
+            </if>
+            <if test="copper != null and copper != ''">
+                and copper = #{copper}
+            </if>
+            <if test="zinc != null and zinc != ''">
+                and zinc = #{zinc}
+            </if>
+            <if test="iron != null and iron != ''">
+                and iron = #{iron}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_biochemistry(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_protein, albumin, globulin, albumin_globulin_ratio, aspartate_aminotransferase, alanine_aminotransferase, ast_alt_ratio, total_bile_acid, total_bilirubin, direct_bilirubin, indirect_bilirubin, alkaline_phosphatase, glutamic_pyruvic_transaminase, cholinesterase, lactate_dehydrogenase, alpha_hb_dehydrogenase, creatine_kinase, creatine_kinase_isoenzyme, blood_urea_nitrogen, creatinine, uric_acid, fasting_blood_glucose, potassium, sodium, chloride, calcium, phosphorus, magnesium, carbon_dioxide, triglycerides, total_cholesterol, hdl_cholesterol, ldl_cholesterol, apolipoprotein_a1, apolipoprotein_b, apolipoprotein_a1b_ratio, white_ball_ratio, serum_cystatin_c, blood_sugar, prothrombin_time, aptt, thrombin_ime, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity, pb, copper, zinc, iron)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{totalProtein}, #{albumin}, #{globulin}, #{albuminGlobulinRatio}, #{aspartateAminotransferase}, #{alanineAminotransferase}, #{astAltRatio}, #{totalBileAcid}, #{totalBilirubin}, #{directBilirubin}, #{indirectBilirubin}, #{alkalinePhosphatase}, #{glutamicPyruvicTransaminase}, #{cholinesterase}, #{lactateDehydrogenase}, #{alphaHbDehydrogenase}, #{creatineKinase}, #{creatineKinaseIsoenzyme}, #{bloodUreaNitrogen}, #{creatinine}, #{uricAcid}, #{fastingBloodGlucose}, #{potassium}, #{sodium}, #{chloride}, #{calcium}, #{phosphorus}, #{magnesium}, #{carbonDioxide}, #{triglycerides}, #{totalCholesterol}, #{hdlCholesterol}, #{ldlCholesterol}, #{apolipoproteinA1}, #{apolipoproteinB}, #{apolipoproteinA1bRatio}, #{whiteBallRatio}, #{serumCystatinC}, #{bloodSugar}, #{prothrombinTime}, #{aptt}, #{thrombinIme}, #{fibrinogen}, #{fdp}, #{dDimerQuantitativeTest}, #{internationalNormRatio}, #{prothrombinActivity}, #{pb}, #{copper}, #{zinc}, #{iron})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_biochemistry(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_protein, albumin, globulin, albumin_globulin_ratio, aspartate_aminotransferase, alanine_aminotransferase, ast_alt_ratio, total_bile_acid, total_bilirubin, direct_bilirubin, indirect_bilirubin, alkaline_phosphatase, glutamic_pyruvic_transaminase, cholinesterase, lactate_dehydrogenase, alpha_hb_dehydrogenase, creatine_kinase, creatine_kinase_isoenzyme, blood_urea_nitrogen, creatinine, uric_acid, fasting_blood_glucose, potassium, sodium, chloride, calcium, phosphorus, magnesium, carbon_dioxide, triglycerides, total_cholesterol, hdl_cholesterol, ldl_cholesterol, apolipoprotein_a1, apolipoprotein_b, apolipoprotein_a1b_ratio, white_ball_ratio, serum_cystatin_c, blood_sugar, prothrombin_time, aptt, thrombin_ime, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity, pb, copper, zinc, iron, blood_glucose2h, glycosylated_hemoglobin, ogtt_blood_glucose,homocysteine,uacr)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalProtein}, #{entity.albumin}, #{entity.globulin}, #{entity.albuminGlobulinRatio}, #{entity.aspartateAminotransferase}, #{entity.alanineAminotransferase}, #{entity.astAltRatio}, #{entity.totalBileAcid}, #{entity.totalBilirubin}, #{entity.directBilirubin}, #{entity.indirectBilirubin}, #{entity.alkalinePhosphatase}, #{entity.glutamicPyruvicTransaminase}, #{entity.cholinesterase}, #{entity.lactateDehydrogenase}, #{entity.alphaHbDehydrogenase}, #{entity.creatineKinase}, #{entity.creatineKinaseIsoenzyme}, #{entity.bloodUreaNitrogen}, #{entity.creatinine}, #{entity.uricAcid}, #{entity.fastingBloodGlucose}, #{entity.potassium}, #{entity.sodium}, #{entity.chloride}, #{entity.calcium}, #{entity.phosphorus}, #{entity.magnesium}, #{entity.carbonDioxide}, #{entity.triglycerides}, #{entity.totalCholesterol}, #{entity.hdlCholesterol}, #{entity.ldlCholesterol}, #{entity.apolipoproteinA1}, #{entity.apolipoproteinB}, #{entity.apolipoproteinA1bRatio}, #{entity.whiteBallRatio}, #{entity.serumCystatinC}, #{entity.bloodSugar}, #{entity.prothrombinTime}, #{entity.aptt}, #{entity.thrombinIme}, #{entity.fibrinogen}, #{entity.fdp}, #{entity.dDimerQuantitativeTest}, #{entity.internationalNormRatio}, #{entity.prothrombinActivity}, #{entity.pb}, #{entity.copper}, #{entity.zinc}, #{entity.iron}, #{entity.bloodGlucose2h}, #{entity.glycosylatedHemoglobin}, #{entity.ogttBloodGlucose}, #{entity.homocysteine}, #{entity.uacr})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_biochemistry(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, total_protein, albumin, globulin, albumin_globulin_ratio, aspartate_aminotransferase, alanine_aminotransferase, ast_alt_ratio, total_bile_acid, total_bilirubin, direct_bilirubin, indirect_bilirubin, alkaline_phosphatase, glutamic_pyruvic_transaminase, cholinesterase, lactate_dehydrogenase, alpha_hb_dehydrogenase, creatine_kinase, creatine_kinase_isoenzyme, blood_urea_nitrogen, creatinine, uric_acid, fasting_blood_glucose, potassium, sodium, chloride, calcium, phosphorus, magnesium, carbon_dioxide, triglycerides, total_cholesterol, hdl_cholesterol, ldl_cholesterol, apolipoprotein_a1, apolipoprotein_b, apolipoprotein_a1b_ratio, white_ball_ratio, serum_cystatin_c, blood_sugar, prothrombin_time, aptt, thrombin_ime, fibrinogen, fdp, d_dimer_quantitative_test, international_norm_ratio, prothrombin_activity, pb, copper, zinc, iron, blood_glucose2h, glycosylated_hemoglobin, ogtt_blood_glucose,homocysteine,uacr)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.totalProtein}, #{entity.albumin}, #{entity.globulin}, #{entity.albuminGlobulinRatio}, #{entity.aspartateAminotransferase}, #{entity.alanineAminotransferase}, #{entity.astAltRatio}, #{entity.totalBileAcid}, #{entity.totalBilirubin}, #{entity.directBilirubin}, #{entity.indirectBilirubin}, #{entity.alkalinePhosphatase}, #{entity.glutamicPyruvicTransaminase}, #{entity.cholinesterase}, #{entity.lactateDehydrogenase}, #{entity.alphaHbDehydrogenase}, #{entity.creatineKinase}, #{entity.creatineKinaseIsoenzyme}, #{entity.bloodUreaNitrogen}, #{entity.creatinine}, #{entity.uricAcid}, #{entity.fastingBloodGlucose}, #{entity.potassium}, #{entity.sodium}, #{entity.chloride}, #{entity.calcium}, #{entity.phosphorus}, #{entity.magnesium}, #{entity.carbonDioxide}, #{entity.triglycerides}, #{entity.totalCholesterol}, #{entity.hdlCholesterol}, #{entity.ldlCholesterol}, #{entity.apolipoproteinA1}, #{entity.apolipoproteinB}, #{entity.apolipoproteinA1bRatio}, #{entity.whiteBallRatio}, #{entity.serumCystatinC}, #{entity.bloodSugar}, #{entity.prothrombinTime}, #{entity.aptt}, #{entity.thrombinIme}, #{entity.fibrinogen}, #{entity.fdp}, #{entity.dDimerQuantitativeTest}, #{entity.internationalNormRatio}, #{entity.prothrombinActivity}, #{entity.pb}, #{entity.copper}, #{entity.zinc}, #{entity.iron}, #{entity.bloodGlucose2h}, #{entity.glycosylatedHemoglobin}, #{entity.ogttBloodGlucose}, #{entity.homocysteine}, #{entity.uacr})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        total_protein = values(total_protein),
+        albumin = values(albumin),
+        globulin = values(globulin),
+        albumin_globulin_ratio = values(albumin_globulin_ratio),
+        aspartate_aminotransferase = values(aspartate_aminotransferase),
+        alanine_aminotransferase = values(alanine_aminotransferase),
+        ast_alt_ratio = values(ast_alt_ratio),
+        total_bile_acid = values(total_bile_acid),
+        total_bilirubin = values(total_bilirubin),
+        direct_bilirubin = values(direct_bilirubin),
+        indirect_bilirubin = values(indirect_bilirubin),
+        alkaline_phosphatase = values(alkaline_phosphatase),
+        glutamic_pyruvic_transaminase = values(glutamic_pyruvic_transaminase),
+        cholinesterase = values(cholinesterase),
+        lactate_dehydrogenase = values(lactate_dehydrogenase),
+        alpha_hb_dehydrogenase = values(alpha_hb_dehydrogenase),
+        creatine_kinase = values(creatine_kinase),
+        creatine_kinase_isoenzyme = values(creatine_kinase_isoenzyme),
+        blood_urea_nitrogen = values(blood_urea_nitrogen),
+        creatinine = values(creatinine),
+        uric_acid = values(uric_acid),
+        fasting_blood_glucose = values(fasting_blood_glucose),
+        potassium = values(potassium),
+        sodium = values(sodium),
+        chloride = values(chloride),
+        calcium = values(calcium),
+        phosphorus = values(phosphorus),
+        magnesium = values(magnesium),
+        carbon_dioxide = values(carbon_dioxide),
+        triglycerides = values(triglycerides),
+        total_cholesterol = values(total_cholesterol),
+        hdl_cholesterol = values(hdl_cholesterol),
+        ldl_cholesterol = values(ldl_cholesterol),
+        apolipoprotein_a1 = values(apolipoprotein_a1),
+        apolipoprotein_b = values(apolipoprotein_b),
+        apolipoprotein_a1b_ratio = values(apolipoprotein_a1b_ratio),
+        white_ball_ratio = values(white_ball_ratio),
+        serum_cystatin_c = values(serum_cystatin_c),
+        blood_sugar = values(blood_sugar),
+        prothrombin_time = values(prothrombin_time),
+        aptt = values(aptt),
+        thrombin_ime = values(thrombin_ime),
+        fibrinogen = values(fibrinogen),
+        fdp = values(fdp),
+        d_dimer_quantitative_test = values(d_dimer_quantitative_test),
+        international_norm_ratio = values(international_norm_ratio),
+        prothrombin_activity = values(prothrombin_activity),
+        pb = values(pb),
+        copper = values(copper),
+        zinc = values(zinc),
+        iron = values(iron)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_blood_biochemistry
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="totalProtein != null and totalProtein != ''">
+                total_protein = #{totalProtein},
+            </if>
+            <if test="albumin != null and albumin != ''">
+                albumin = #{albumin},
+            </if>
+            <if test="globulin != null and globulin != ''">
+                globulin = #{globulin},
+            </if>
+            <if test="albuminGlobulinRatio != null and albuminGlobulinRatio != ''">
+                albumin_globulin_ratio = #{albuminGlobulinRatio},
+            </if>
+            <if test="aspartateAminotransferase != null and aspartateAminotransferase != ''">
+                aspartate_aminotransferase = #{aspartateAminotransferase},
+            </if>
+            <if test="alanineAminotransferase != null and alanineAminotransferase != ''">
+                alanine_aminotransferase = #{alanineAminotransferase},
+            </if>
+            <if test="astAltRatio != null and astAltRatio != ''">
+                ast_alt_ratio = #{astAltRatio},
+            </if>
+            <if test="totalBileAcid != null and totalBileAcid != ''">
+                total_bile_acid = #{totalBileAcid},
+            </if>
+            <if test="totalBilirubin != null and totalBilirubin != ''">
+                total_bilirubin = #{totalBilirubin},
+            </if>
+            <if test="directBilirubin != null and directBilirubin != ''">
+                direct_bilirubin = #{directBilirubin},
+            </if>
+            <if test="indirectBilirubin != null and indirectBilirubin != ''">
+                indirect_bilirubin = #{indirectBilirubin},
+            </if>
+            <if test="alkalinePhosphatase != null and alkalinePhosphatase != ''">
+                alkaline_phosphatase = #{alkalinePhosphatase},
+            </if>
+            <if test="glutamicPyruvicTransaminase != null and glutamicPyruvicTransaminase != ''">
+                glutamic_pyruvic_transaminase = #{glutamicPyruvicTransaminase},
+            </if>
+            <if test="cholinesterase != null and cholinesterase != ''">
+                cholinesterase = #{cholinesterase},
+            </if>
+            <if test="lactateDehydrogenase != null and lactateDehydrogenase != ''">
+                lactate_dehydrogenase = #{lactateDehydrogenase},
+            </if>
+            <if test="alphaHbDehydrogenase != null and alphaHbDehydrogenase != ''">
+                alpha_hb_dehydrogenase = #{alphaHbDehydrogenase},
+            </if>
+            <if test="creatineKinase != null and creatineKinase != ''">
+                creatine_kinase = #{creatineKinase},
+            </if>
+            <if test="creatineKinaseIsoenzyme != null and creatineKinaseIsoenzyme != ''">
+                creatine_kinase_isoenzyme = #{creatineKinaseIsoenzyme},
+            </if>
+            <if test="bloodUreaNitrogen != null and bloodUreaNitrogen != ''">
+                blood_urea_nitrogen = #{bloodUreaNitrogen},
+            </if>
+            <if test="creatinine != null and creatinine != ''">
+                creatinine = #{creatinine},
+            </if>
+            <if test="uricAcid != null and uricAcid != ''">
+                uric_acid = #{uricAcid},
+            </if>
+            <if test="fastingBloodGlucose != null and fastingBloodGlucose != ''">
+                fasting_blood_glucose = #{fastingBloodGlucose},
+            </if>
+            <if test="potassium != null and potassium != ''">
+                potassium = #{potassium},
+            </if>
+            <if test="sodium != null and sodium != ''">
+                sodium = #{sodium},
+            </if>
+            <if test="chloride != null and chloride != ''">
+                chloride = #{chloride},
+            </if>
+            <if test="calcium != null and calcium != ''">
+                calcium = #{calcium},
+            </if>
+            <if test="phosphorus != null and phosphorus != ''">
+                phosphorus = #{phosphorus},
+            </if>
+            <if test="magnesium != null and magnesium != ''">
+                magnesium = #{magnesium},
+            </if>
+            <if test="carbonDioxide != null and carbonDioxide != ''">
+                carbon_dioxide = #{carbonDioxide},
+            </if>
+            <if test="triglycerides != null and triglycerides != ''">
+                triglycerides = #{triglycerides},
+            </if>
+            <if test="totalCholesterol != null and totalCholesterol != ''">
+                total_cholesterol = #{totalCholesterol},
+            </if>
+            <if test="hdlCholesterol != null and hdlCholesterol != ''">
+                hdl_cholesterol = #{hdlCholesterol},
+            </if>
+            <if test="ldlCholesterol != null and ldlCholesterol != ''">
+                ldl_cholesterol = #{ldlCholesterol},
+            </if>
+            <if test="apolipoproteinA1 != null and apolipoproteinA1 != ''">
+                apolipoprotein_a1 = #{apolipoproteinA1},
+            </if>
+            <if test="apolipoproteinB != null and apolipoproteinB != ''">
+                apolipoprotein_b = #{apolipoproteinB},
+            </if>
+            <if test="apolipoproteinA1bRatio != null and apolipoproteinA1bRatio != ''">
+                apolipoprotein_a1b_ratio = #{apolipoproteinA1bRatio},
+            </if>
+            <if test="whiteBallRatio != null and whiteBallRatio != ''">
+                white_ball_ratio = #{whiteBallRatio},
+            </if>
+            <if test="serumCystatinC != null and serumCystatinC != ''">
+                serum_cystatin_c = #{serumCystatinC},
+            </if>
+            <if test="bloodSugar != null and bloodSugar != ''">
+                blood_sugar = #{bloodSugar},
+            </if>
+            <if test="prothrombinTime != null and prothrombinTime != ''">
+                prothrombin_time = #{prothrombinTime},
+            </if>
+            <if test="aptt != null and aptt != ''">
+                aptt = #{aptt},
+            </if>
+            <if test="thrombinIme != null and thrombinIme != ''">
+                thrombin_ime = #{thrombinIme},
+            </if>
+            <if test="fibrinogen != null and fibrinogen != ''">
+                fibrinogen = #{fibrinogen},
+            </if>
+            <if test="fdp != null and fdp != ''">
+                fdp = #{fdp},
+            </if>
+            <if test="dDimerQuantitativeTest != null and dDimerQuantitativeTest != ''">
+                d_dimer_quantitative_test = #{dDimerQuantitativeTest},
+            </if>
+            <if test="internationalNormRatio != null and internationalNormRatio != ''">
+                international_norm_ratio = #{internationalNormRatio},
+            </if>
+            <if test="prothrombinActivity != null and prothrombinActivity != ''">
+                prothrombin_activity = #{prothrombinActivity},
+            </if>
+            <if test="pb != null and pb != ''">
+                pb = #{pb},
+            </if>
+            <if test="copper != null and copper != ''">
+                copper = #{copper},
+            </if>
+            <if test="zinc != null and zinc != ''">
+                zinc = #{zinc},
+            </if>
+            <if test="iron != null and iron != ''">
+                iron = #{iron},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_blood_biochemistry where id = #{id}
+    </delete>
+
+</mapper>
+

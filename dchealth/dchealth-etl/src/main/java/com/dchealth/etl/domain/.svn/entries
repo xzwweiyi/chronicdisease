@@ -1,0 +1,64 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-etl/src/main/java/com/dchealth/etl/domain
+svn://xiaoshiguang.top
+
+
+
+2023-12-28T08:43:56.766212Z
+16275
+liqianfeng
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+BaseEntity.java
+file
+
+
+
+
+2024-09-03T07:48:11.432000Z
+b17dd9c798f7f201238771bd6a1c9575
+2023-04-04T08:20:43.956124Z
+10923
+zhoujianliang
+
+TdHealthIndex.java
+file
+
+
+
+
+2024-09-03T07:48:11.432000Z
+a628e8a23735a35bd6680d5c6c2d8604
+2023-12-28T08:43:56.766212Z
+16275
+liqianfeng
+
+check
+dir
+
+constant
+dir
+
+record
+dir
+
+target
+dir
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchUserRoleMapper">
+
+    <resultMap type="com.dchealth.cro.research.domain.ResearchUserRole" id="ResearchUserRoleResult">
+        <result property="userId"     column="user_id"      />
+        <result property="roleId"     column="role_id"      />
+        <result property="researchId"     column="research_id"      />
+    </resultMap>
+
+    <sql id="selectResearchUserRoleVo">
+        select user_id, role_id ,research_id from research_user_role
+    </sql>
+
+    <select id="selectResearchUserRoleList" parameterType="com.dchealth.cro.research.domain.ResearchUserRole" resultMap="ResearchUserRoleResult">
+        <include refid="selectResearchUserRoleVo"/>
+        <where>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+        </where>
+    </select>
+
+    <select id="selectListGroupByUserIdAndResearchId" parameterType="com.dchealth.cro.research.domain.ResearchUserRole" resultMap="ResearchUserRoleResult">
+        select g.user_id, g.role_id ,g.research_id
+        from research_user_role g
+        INNER JOIN research_info ri on g.research_id=ri.id
+        <where>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+        </where>
+        group by g.user_id,g.research_id
+    </select>
+
+
+    <select id="findUserRoleByResearchId" parameterType="Long" resultMap="ResearchUserRoleResult">
+        select g.user_id, g.role_id ,g.research_id
+        from research_user_role g
+        INNER JOIN research_info ri on g.research_id=ri.id
+        where research_id = #{researchId} and g.user_id > 1
+        group by g.user_id
+    </select>
+
+
+</mapper>

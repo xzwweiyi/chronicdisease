@@ -1,0 +1,88 @@
+package com.dchealth.export.domain;
+
+import com.dchealth.common.annotation.Excel;
+import com.dchealth.common.core.domain.BaseEntity;
+import lombok.Data;
+
+/**
+ * 患者数据导出实体类
+ *
+ * @author wyh
+ * @date 2023-09-19
+ */
+@Data
+public class PatientMedicalPropertyResVO extends BaseEntity {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+    private Long followId;
+
+    /**
+     * 数据来源 1患者, 2edc
+     */
+    private String type;
+    /**
+     * 随访名称
+     */
+    @Excel(name = "随访名称")
+    private String followName;
+
+    /**
+     * 研究项目ID
+     */
+    @Excel(name = "研究项目ID")
+    private Long researchId;
+
+    /** 属性编码 */
+    private String propertyCode;
+
+    /** 属性类型 */
+    private String propertyType;
+
+    /** 属性名称 */
+    private String propertyName;
+
+    /** 档案id */
+    private Long recordId;
+
+    /** 属性值 */
+    private String propertyValue;
+
+    /** 患者ID */
+    private Long patientId;
+
+    /** 部门ID */
+    private Long deptId;
+
+    /** 部门名称 */
+    private String deptName;
+
+    private String medicalName;
+
+    private String medicalCode;
+
+    /** 特殊组件类型：特殊组件类型 1.日期 2 周岁 3 月龄 4 天 */
+    private String specialType;
+
+    /**
+     * 排序
+     */
+    private Integer sortNum;
+
+
+    private String followSubmitTime;
+
+    /**
+     * 0 基线 其他随访
+     */
+    private String followNum;
+
+    /**
+     * 4 锁库
+     */
+    private String edcStatus;
+
+
+}

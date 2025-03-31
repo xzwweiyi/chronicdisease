@@ -1,0 +1,305 @@
+package com.dchealth.cro.form.common;
+
+import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.form.domain.FMedicalExamSubject;
+import com.dchealth.cro.form.domain.form.DynamicForm;
+import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * 动态SQL
+ */
+@Component
+public class DynamicSql {
+
+    private final String RES_LARGE_TEXT = "res_large_text_";
+
+    /**
+     * 大文本
+     */
+    private final List<String> largeTextFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id","create_time"}).collect(Collectors.toList());
+
+    private String largeTextFieldsStr(){
+        return largeTextFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
+    }
+
+    /**
+     * 大文本查询SQL
+     * @param researchId
+     * @return
+     */
+    public String buildSelectLargeText(Long researchId){
+        return "select " + largeTextFieldsStr() + " from " + RES_LARGE_TEXT+researchId.longValue();
+    }
+
+    /**
+     * 删除SQL
+     * @param researchId
+     * @param recordId
+     * @return
+     */
+    public String buildDeleteLargeText(Long researchId, Long recordId){
+        return "delete from " + RES_LARGE_TEXT+researchId.longValue() + " where   type= 1 and record_id="+recordId.longValue() ;
+    }
+
+    /**
+     * 批量新增SQL
+     * @param dynamicForm
+     * @param medicalPropertyForms
+     * @return
+     */
+    public String buildBatchLargeTextSql(DynamicForm dynamicForm, List<FMedicalPropertyForm> medicalPropertyForms){
+        if (medicalPropertyForms == null || medicalPropertyForms.isEmpty()){
+            return null;
+        }
+        StringBuffer insertSql = new StringBuffer();
+        insertSql.append("insert into "+RES_LARGE_TEXT+dynamicForm.getResearchId().longValue())
+                .append("(")
+                .append(largeTextFieldsStr())
+                .append(")")
+                .append(" values ");
+        medicalPropertyForms.forEach(m->{
+            insertSql.append(" (")
+                    .append(dynamicForm.getRecordId().longValue()).append(",")
+                    .append(m.getMedicalFormId().longValue()).append(",")
+                    .append("'").append(dynamicForm.getType()).append("'").append(",")
+                    .append("'").append(m.getPropertyCode()).append("'").append(",")
+                    .append("'").append(m.getPropertyValue()).append("'").append(",")
+                    .append(m.getPropertyId().longValue()).append(",")
+                    .append("'").append(DateUtils.getTime()).append("'")
+                    .append("),");
+        });
+        return insertSql.toString().substring(0,insertSql.length()-1);
+    }
+
+    private final String RES_DYNAMIC = "res_dynamic_";
+
+    /**
+     * 动态表单
+     */
+    private final List<String> dynamicFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","other","property_id","number"}).collect(Collectors.toList());
+
+    private String dynamicFieldsStr(){
+        return dynamicFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
+    }
+
+    /**
+     * 动态查询SQL
+     * @param researchId
+     * @return
+     */
+    public String buildSelectDynamic(Long researchId){
+        return "select " + dynamicFieldsStr() + " from " + RES_DYNAMIC+researchId.longValue();
+    }
+
+    /**
+     * 动态删除SQL
+     * @param researchId
+     * @param recordId
+     * @return
+     */
+    public String buildDeleteDynamic(Long researchId, Long recordId){
+        return "delete from " + RES_DYNAMIC+researchId.longValue()+" where   type= 1 and  record_id="+recordId.longValue() ;
+    }
+
+    /**
+     * 批量动态表单SQL
+     * @param dynamicForm
+     * @param medicalPropertyForms
+     * @return
+     */
+    public String buildBatchDynamicSql(DynamicForm dynamicForm, List<FMedicalPropertyForm> medicalPropertyForms){
+        if (medicalPropertyForms == null || medicalPropertyForms.isEmpty()){
+            return null;
+        }
+        StringBuffer insertSql = new StringBuffer();
+        insertSql.append("insert into "+RES_DYNAMIC+dynamicForm.getResearchId().longValue())
+                .append("(")
+                .append(dynamicFieldsStr())
+                .append(")")
+                .append(" values ");
+        medicalPropertyForms.forEach(m->{
+            insertSql.append(" (")
+                    .append(dynamicForm.getRecordId().longValue()).append(",")
+                    .append(m.getMedicalFormId().longValue()).append(",")
+                    .append("'").append(dynamicForm.getType()).append("'").append(",")
+                    .append("'").append(m.getPropertyCode()).append("'").append(",")
+                    .append("'").append(m.getPropertyValue()).append("'").append(",")
+                    .append("'").append(m.getOther()).append("'").append(",")
+                    .append(m.getPropertyId().longValue()).append(",")
+                    .append(m.getNumber().intValue())
+                    .append("),");
+        });
+        return insertSql.toString().substring(0,insertSql.length()-1);
+    }
+
+    private final String RES_TEXT = "res_text_";
+    /**
+     * 小文本
+     */
+    private final List<String> textFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","other","property_id","create_time"}).collect(Collectors.toList());
+
+    private String textFieldsStr(){
+        return textFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
+    }
+
+    /**
+     * 小文本查询SQL
+     * @param researchId
+     * @return
+     */
+    public String buildSelectText(Long researchId){
+        return "select " + textFieldsStr() + " from " + RES_TEXT+researchId.longValue();
+    }
+
+    /**
+     * 小文本删除SQL
+     * @param researchId
+     * @param recordId
+     * @return
+     */
+    public String buildDeleteText(Long researchId, Long recordId){
+        return "delete from " + RES_TEXT+researchId.longValue()+" where type= 1 and record_id="+recordId.longValue() ;
+    }
+
+    /**
+     * 小文本批量SQL
+     * @param dynamicForm
+     * @param medicalPropertyForms
+     * @return
+     */
+    public String buildBatchTextSql(DynamicForm dynamicForm, List<FMedicalPropertyForm> medicalPropertyForms){
+        if (medicalPropertyForms == null || medicalPropertyForms.isEmpty()){
+            return null;
+        }
+        StringBuffer insertSql = new StringBuffer();
+        insertSql.append("insert into "+RES_TEXT+dynamicForm.getResearchId().longValue())
+                .append("(")
+                .append(textFieldsStr())
+                .append(")")
+                .append(" values ");
+        medicalPropertyForms.forEach(m->{
+            insertSql.append(" (")
+                    .append(dynamicForm.getRecordId().longValue()).append(",")
+                    .append(m.getMedicalFormId().longValue()).append(",")
+                    .append("'").append(dynamicForm.getType()).append("'").append(",")
+                    .append("'").append(m.getPropertyCode()).append("'").append(",")
+                    .append("'").append(m.getPropertyValue()).append("'").append(",")
+                    .append("'").append(m.getOther()).append("'").append(",")
+                    .append(m.getPropertyId().longValue()).append(",")
+                    .append("'").append(DateUtils.getTime()).append("'")
+                    .append("),");
+        });
+        return insertSql.toString().substring(0,insertSql.length()-1);
+    }
+
+    private final String RES_ARTICLE = "res_article_";
+
+    /**
+     * 问卷
+     */
+    private final List<String> articleFields = Stream.of(new String[]{"patient_id","form_id","article_id","property_code","property_value","other","property_id","research_id","exam_record_id","create_time"}).collect(Collectors.toList());
+    //private final List<String> articleFields = Stream.of(new String[]{"patient_id","form_id","article_id","property_code","property_value","other","property_id","research_id","follow_id","exam_record_id"}).collect(Collectors.toList());
+
+    private String articleFieldsStr(){
+        return articleFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
+    }
+
+    /**
+     * 问卷查询SQL
+     * @param researchId
+     * @return
+     */
+    public String buildSelectArticle(Long researchId){
+        return "select " + articleFieldsStr() + " from " + RES_ARTICLE+researchId;
+    }
+
+    public String buildSelectArticleByTableName(String tableName){
+        return "select " + articleFieldsStr() + " from " + tableName;
+    }
+
+    /**
+     * 问卷删除SQL
+     * @param researchId
+     * @param recordId
+     * @return
+     */
+    public String buildDeleteArticle(Long researchId, Long recordId){
+        return "delete from " + RES_ARTICLE+researchId+" where record_id="+recordId;
+    }
+
+    public String buildDeleteArticle(String tableName, Long article, Long examRecordId){
+        return "delete from " + tableName + " where article_id = " + article + " and exam_record_id = " + examRecordId;
+    }
+
+    /**
+     * 问卷批量SQL
+     * @param dynamicForm
+     * @param medicalPropertyForms
+     * @return
+     */
+    public String buildBatchArticleSql(DynamicForm dynamicForm, List<FMedicalPropertyForm> medicalPropertyForms){
+        if (medicalPropertyForms == null || medicalPropertyForms.isEmpty()){
+            return null;
+        }
+        StringBuffer insertSql = new StringBuffer();
+        insertSql.append("insert into "+RES_ARTICLE+dynamicForm.getResearchId().longValue())
+                .append("(")
+                .append(articleFieldsStr())
+                .append(")")
+                .append(" values ");
+        medicalPropertyForms.forEach(m->{
+            insertSql.append(" (")
+                    .append(dynamicForm.getPatientId().longValue()).append(",")
+                    .append(m.getMedicalFormId().longValue()).append(",")
+                    .append(dynamicForm.getArticleId().longValue()).append(",")
+                    .append("'").append(m.getPropertyCode()).append("'").append(",")
+                    .append("'").append(m.getPropertyValue()).append("'").append(",")
+                    .append("'").append(m.getOther()).append("'").append(",")
+                    .append(m.getPropertyId().longValue()).append(",")
+                    .append(dynamicForm.getResearchId().longValue()).append(",")
+                    .append(dynamicForm.getFollowId().longValue())
+                    .append("),");
+        });
+        return insertSql.toString().substring(0,insertSql.length()-1);
+    }
+
+    /**
+     * 问卷批量SQL
+     * @param dynamicForm
+     * @param examSubjects
+     * @return
+     */
+    public String buildInsertArticleSql(DynamicForm dynamicForm, List<FMedicalExamSubject> examSubjects){
+        if (examSubjects == null || examSubjects.isEmpty()){
+            return null;
+        }
+        StringBuffer insertSql = new StringBuffer();
+        insertSql.append("insert into " + dynamicForm.getExamTable())
+                .append("(")
+                .append(articleFieldsStr())
+                .append(")")
+                .append(" values ");
+        examSubjects.forEach(m->{
+            insertSql.append(" (")
+                    .append(dynamicForm.getPatientId().longValue()).append(",")
+                    .append(m.getMedicalFormId().longValue()).append(",")
+                    .append(dynamicForm.getArticleId().longValue()).append(",")
+                    .append("'").append(m.getPropertyCode()).append("'").append(",")
+                    .append("'").append(m.getPropertyValue()).append("'").append(",")
+                    .append("'").append(m.getOther()).append("'").append(",")
+                    .append(m.getId().longValue()).append(",")
+                    .append(dynamicForm.getResearchId().longValue()).append(",")
+                   /* .append(dynamicForm.getFollowId().longValue()).append(",")*/
+                    .append(dynamicForm.getExamRecordId().longValue()).append(",")
+                    .append("'").append(DateUtils.getTime()).append("'")
+                    .append("),");
+        });
+        return insertSql.toString().substring(0,insertSql.length()-1);
+    }
+
+}

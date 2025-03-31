@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FTemplateMapper">
+    
+    <resultMap type="FTemplate" id="FTemplateResult">
+        <result property="templateId"    column="template_id"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="templateType"    column="template_type"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="shareType"    column="share_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createId"    column="create_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="templateCategoryId"    column="template_category_id"    />
+        <result property="formNum"    column="form_num"    />
+        <result property="propertyNum"    column="property_num"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptIds"    column="dept_ids"    />
+    </resultMap>
+
+    <sql id="selectFTemplateVo">
+        select template_id, template_name, template_type, is_deleted, share_type, create_time, create_by, update_time, update_by,create_id,sort_num,template_category_id,dept_id,dept_ids from f_template
+    </sql>
+
+    <sql id="selectFTemplateOtherVo">
+        select t.template_id, t.template_name, t.template_type, t.is_deleted, t.share_type, t.create_time, t.create_by,t.create_id, t.update_time, t.update_by,t.sort_num,t.template_category_id,t.dept_ids,t.dept_id,
+        (select count(1) from f_template_form where template_id=t.template_id and parent_id=0) form_num,
+        (select count(1) from f_template_property where template_id=t.template_id) property_num
+
+        <if test="deptId != null and deptId!='100'.toString() ">
+            ,case WHEN s.article_id is null THEN 0  else 1 END as isJoin
+        </if>
+        from cms_article a left join cms_category c on a.category_id = c.id
+        <if test="deptId != null and deptId!='100'.toString() ">
+            left JOIN
+            (select  article_id  from cms_dept_article where dept_id = #{deptId} and del_flag = 'N')s ON a.id = s.article_id
+        </if>
+
+        from f_template t
+    </sql>
+
+    <select id="selectFTemplateList" parameterType="FTemplate" resultMap="FTemplateResult">
+        select t.template_id, t.template_name, t.template_type, t.is_deleted, t.share_type, t.create_time, t.create_by,t.create_id, t.update_time, t.update_by,t.sort_num,t.template_category_id,t.dept_ids,t.dept_id,
+        (select count(1) from f_template_form where template_id=t.template_id and parent_id=0) form_num,
+        (select count(1) from f_template_property where template_id=t.template_id) property_num
+        <if test="deptId != null and deptId !='100'.toString() ">
+            ,case WHEN fdct.template_id is null THEN 0  else 1 END as isJoin
+        </if>
+        from f_template t
+        <if test="deptId != null and deptId !='100'.toString() ">
+            left JOIN (select * from f_dept_crf_template where del_flag = 'N' and dept_id = #{deptId}) fdct on t.template_id = fdct.template_id
+        </if>
+        <where>  
+            <if test="templateName != null  and templateName != ''"> and t.template_name like concat('%', #{templateName}, '%')</if>
+            <if test="templateType != null  and templateType != ''"> and t.template_type = #{templateType}</if>
+            <if test="isDeleted != null  and isDeleted != ''"> and t.is_deleted = #{isDeleted}</if>
+            <if test="shareType != null  and shareType != ''"> and t.share_type = #{shareType}</if>
+            <if test="templateCategoryId != null "> and t.template_category_id = #{templateCategoryId}</if>
+            <if test="deptIds != null  and deptIds != ''"> and t.dept_ids = #{deptIds}</if>
+            and is_deleted='0'
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectFTemplateByTemplateId" parameterType="Long" resultMap="FTemplateResult">
+        <include refid="selectFTemplateVo"/>
+        where template_id = #{templateId}
+    </select>
+
+    <select id="statisticsTemplateByTemplateCategoryId" parameterType="Long" resultType="Integer">
+        select count(1) from f_template where template_category_id = #{templateCategoryId}
+    </select>
+        
+    <insert id="insertFTemplate" parameterType="FTemplate" useGeneratedKeys="true" keyProperty="templateId">
+        insert into f_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">template_name,</if>
+            <if test="templateType != null">template_type,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="shareType != null">share_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="templateCategoryId != null">template_category_id,</if>
+            <if test="deptIds != null">dept_ids,</if>
+            <if test="deptId != null">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">#{templateName},</if>
+            <if test="templateType != null">#{templateType},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="shareType != null">#{shareType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="templateCategoryId != null">#{templateCategoryId},</if>
+            <if test="deptIds != null">#{deptIds},</if>
+            <if test="deptId != null">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFTemplate" parameterType="FTemplate">
+        update f_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="templateType != null">template_type = #{templateType},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="shareType != null">share_type = #{shareType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="templateCategoryId != null">template_category_id = #{templateCategoryId},</if>
+            <if test="deptIds != null">dept_ids = #{deptIds},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where template_id = #{templateId}
+    </update>
+
+    <delete id="deleteFTemplateByTemplateId" parameterType="Long">
+        delete from f_template where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteFTemplateByTemplateIds" parameterType="String">
+        delete from f_template where template_id in 
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFTemplateByTempIds" parameterType="String">
+        update f_template set is_deleted = 1 where template_id in
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+
+    <update id="updateDelFlagByTemplateIds" parameterType="String">
+        update f_template set is_deleted = '1' where template_id in
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </update>
+
+
+    <select id="selectDeptFTemplateList" parameterType="com.dchealth.template.domain.FTemplate" resultMap="FTemplateResult">
+        SELECT
+            t.template_id,
+            t.template_name,
+            t.template_type,
+            t.is_deleted,
+            t.share_type,
+            t.create_time,
+            t.create_by,
+            t.create_id,
+            t.update_time,
+            t.update_by,
+            t.sort_num,
+            fdct.template_category_id,
+            t.dept_ids,
+            t.dept_id,
+            ( SELECT count( 1 ) FROM f_template_form WHERE template_id = t.template_id AND parent_id = 0 ) form_num,
+            ( SELECT count( 1 ) FROM f_template_property WHERE template_id = t.template_id ) property_num
+            <if test="deptId != null and deptId!='100'.toString() ">, 1 as isShowRemove</if>
+            <if test="deptId != null and deptId =='100'.toString() ">, 0 as isShowRemove</if>
+        FROM
+            f_dept_crf_template fdct
+                LEFT JOIN f_template t ON fdct.template_id = t.template_id
+        <where>
+            <if test="templateName != null  and templateName != ''"> and t.template_name like concat('%', #{templateName}, '%')</if>
+            <if test="templateType != null  and templateType != ''"> and t.template_type = #{templateType}</if>
+            <if test="isDeleted != null  and isDeleted != ''"> and t.is_deleted = #{isDeleted}</if>
+            <if test="shareType != null  and shareType != ''"> and t.share_type = #{shareType}</if>
+            <if test="templateCategoryId != null "> and fdct.template_category_id = #{templateCategoryId}</if>
+            <if test="deptIds != null  and deptIds != ''"> and t.dept_ids = #{deptIds}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and fdct.dept_id = #{deptId}</if>
+            and is_deleted='0'
+        </where>
+        order by create_time desc
+
+    </select>
+
+</mapper>

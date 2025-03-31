@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.account.mapper.UserImagesLogMapper">
+    
+    <resultMap type="com.dchealth.cro.account.domain.UserImagesLog" id="UserImagesLogResult">
+        <result property="id"    column="id"    />
+        <result property="userImagesId"    column="user_images_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="type"    column="type"    />
+        <result property="sort"    column="sort"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createByTime"    column="create_by_time"    />
+        <result property="updateByTime"    column="update_by_time"    />
+    </resultMap>
+
+    <sql id="selectUserImagesLogVo">
+        select id, user_images_id, user_id, image_url, type, sort, create_time, create_by, update_by, create_by_time, update_by_time from user_images_log
+    </sql>
+
+    <select id="selectUserImagesLogList" parameterType="com.dchealth.cro.account.domain.UserImagesLog" resultMap="UserImagesLogResult">
+        <include refid="selectUserImagesLogVo"/>
+        <where>  
+            <if test="userImagesId != null "> and user_images_id = #{userImagesId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="createByTime != null "> and create_by_time = #{createByTime}</if>
+            <if test="updateByTime != null "> and update_by_time = #{updateByTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserImagesLogById" parameterType="Long" resultMap="UserImagesLogResult">
+        <include refid="selectUserImagesLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUserImagesLog" parameterType="com.dchealth.cro.account.domain.UserImagesLog" useGeneratedKeys="true" keyProperty="id">
+        insert into user_images_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userImagesId != null">user_images_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="type != null">type,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createByTime != null">create_by_time,</if>
+            <if test="updateByTime != null">update_by_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userImagesId != null">#{userImagesId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="type != null">#{type},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createByTime != null">#{createByTime},</if>
+            <if test="updateByTime != null">#{updateByTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserImagesLog" parameterType="com.dchealth.cro.account.domain.UserImagesLog">
+        update user_images_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userImagesId != null">user_images_id = #{userImagesId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createByTime != null">create_by_time = #{createByTime},</if>
+            <if test="updateByTime != null">update_by_time = #{updateByTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserImagesLogById" parameterType="Long">
+        delete from user_images_log where id = #{id}
+    </delete>
+
+    <delete id="deleteUserImagesLogByIds" parameterType="String">
+        delete from user_images_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

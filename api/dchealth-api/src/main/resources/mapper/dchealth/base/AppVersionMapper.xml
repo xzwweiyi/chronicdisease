@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.base.mapper.AppVersionMapper">
+    
+    <resultMap type="com.dchealth.cro.base.domain.AppVersion" id="AppVersionResult">
+        <result property="id"    column="id"    />
+        <result property="appType"    column="app_type"    />
+        <result property="appVersion"    column="app_version"    />
+        <result property="remark"    column="remark"    />
+        <result property="downloadUrl"    column="download_url"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="versionCode"    column="version_code"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="positionType"    column="position_type"    />
+        
+    </resultMap>
+
+    <sql id="selectAppVersionVo">
+        select id, app_type, app_version,version_code,tenant_id, remark,position_type, download_url, status, create_time, update_time, update_by, create_by from app_version
+    </sql>
+
+    <select id="selectAppVersionList" parameterType="com.dchealth.cro.base.domain.AppVersion" resultMap="AppVersionResult">
+        <include refid="selectAppVersionVo"/>
+        <where>  
+            <if test="appType != null  and appType != ''"> and app_type = #{appType}</if>
+            <if test="appVersion != null  and appVersion != ''"> and app_version = #{appVersion}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="downloadUrl != null  and downloadUrl != ''"> and download_url = #{downloadUrl}</if>
+            <if test="status != null and status != ''"> and status = #{status}</if>
+            <if test="positionType != null and positionType != ''"> and position_type = #{positionType}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppVersionById" parameterType="Integer" resultMap="AppVersionResult">
+        <include refid="selectAppVersionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAppVersion" parameterType="com.dchealth.cro.base.domain.AppVersion" useGeneratedKeys="true" keyProperty="id">
+        insert into app_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appType != null  and appType != ''">app_type,</if>
+            <if test="appVersion != null  and appVersion != ''">app_version,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="downloadUrl != null  and downloadUrl != ''">download_url,</if>
+            <if test="status != null ">status,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="versionCode != null ">version_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appType != null  and appType != ''">#{appType},</if>
+            <if test="appVersion != null  and appVersion != ''">#{appVersion},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="downloadUrl != null  and downloadUrl != ''">#{downloadUrl},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="versionCode != null ">#{versionCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppVersion" parameterType="com.dchealth.cro.base.domain.AppVersion">
+        update app_version
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="appType != null  and appType != ''">app_type = #{appType},</if>
+            <if test="appVersion != null  and appVersion != ''">app_version = #{appVersion},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="downloadUrl != null  and downloadUrl != ''">download_url = #{downloadUrl},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="versionCode != null ">version_code = #{versionCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppVersionById" parameterType="Integer">
+        delete from app_version where id = #{id}
+    </delete>
+
+    <delete id="deleteAppVersionByIds" parameterType="String">
+        delete from app_version where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+     <select id="selectAppLastVersion" resultType="com.dchealth.cro.account.vo.AppVersionVO">
+		SELECT app_version as appVersion,download_url as downloadUrl ,status, remark,version_code as versionCode from app_version where  app_type = #{appType}  and tenant_id = #{tenantId}  and  position_type =#{positionType} ORDER BY  create_time DESC LIMIT 0,1
+	</select>
+    
+</mapper>

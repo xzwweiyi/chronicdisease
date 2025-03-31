@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpPersonMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpPerson" id="MpPersonResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="personName"    column="person_name"    />
+        <result property="genderSourceValue"    column="gender_source_value"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="cardType"    column="card_type"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="locationId"    column="location_id"    />
+        <result property="address"    column="address"    />
+        <result property="contactsName"    column="contacts_name"    />
+        <result property="contactsPhone"    column="contacts_phone"    />
+        <result property="personCareer"    column="person_career"    />
+        <result property="maritalStatus"    column="marital_status"    />
+        <result property="degreeOfEducation"    column="degree_of_education"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="accountId"    column="account_id"    />
+    </resultMap>
+
+    <sql id="selectMpPersonVo">
+        select id, care_site_id, person_id, person_name, gender_source_value, card_id, card_type, phone_number, location_id, address, contacts_name, contacts_phone, person_career, marital_status, degree_of_education, create_time, update_time from mp_person
+    </sql>
+
+    
+    <select id="selectMpPersonByPersonIdCardId"  resultMap="MpPersonResult">
+        <include refid="selectMpPersonVo"/>
+        where person_id = #{personId}  and card_id = #{cardId}
+    </select>
+
+    <select id="selectMpPersonByCardId"  resultMap="MpPersonResult">
+        <include refid="selectMpPersonVo"/>
+        where card_id = #{cardId} and phone_number = #{mobile}
+    </select>
+        
+    
+    
+    <select id="selectPersonByAccountId"  resultMap="MpPersonResult"  parameterType="Long">
+     select p.id, p.care_site_id, p.person_id,p.sex, p.person_name, p.gender_source_value, p.card_id, p.card_type, p.phone_number, p.location_id, p.address, p.contacts_name, 
+     p.contacts_phone, p.person_career, p.marital_status, p.degree_of_education from mp_person p,mp_patient_account a where p.person_id = a.person_id and a.account_id = #{accountId} 
+    
+    </select>
+    <select id="selectPersonByPersonId"  resultMap="MpPersonResult"  parameterType="java.lang.String">
+     select p.id, p.care_site_id, p.person_id,p.sex,  p.person_name, p.gender_source_value, p.card_id, p.card_type, p.phone_number, p.location_id, p.address, p.contacts_name, 
+     p.contacts_phone, p.person_career, p.marital_status, p.degree_of_education from mp_person p,mp_patient_account a where p.person_id = a.person_id and a.person_id = #{personId} 
+    
+    </select>
+
+    <select id="getPersonByPersonId"  resultMap="MpPersonResult"  parameterType="java.lang.String">
+        select p.id, p.care_site_id, p.person_id,p.sex,  p.person_name, p.gender_source_value, p.card_id, p.card_type, p.phone_number, p.location_id, p.address, p.contacts_name,
+        p.contacts_phone, p.person_career, p.marital_status, p.degree_of_education from mp_person p where p.person_id = #{personId}
+    </select>
+
+    <insert id="insertMpPerson" parameterType="com.dchealth.cro.health.domain.MpPerson" useGeneratedKeys="true" keyProperty="id">
+        insert into mp_person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="careSiteId != null">care_site_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="personName != null">person_name,</if>
+            <if test="genderSourceValue != null">gender_source_value,</if>
+            <if test="cardId != null">card_id,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="locationId != null">location_id,</if>
+            <if test="address != null">address,</if>
+            <if test="contactsName != null">contacts_name,</if>
+            <if test="contactsPhone != null">contacts_phone,</if>
+            <if test="personCareer != null">person_career,</if>
+            <if test="maritalStatus != null">marital_status,</if>
+            <if test="degreeOfEducation != null">degree_of_education,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="careSiteId != null">#{careSiteId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="personName != null">#{personName},</if>
+            <if test="genderSourceValue != null">#{genderSourceValue},</if>
+            <if test="cardId != null">#{cardId},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="locationId != null">#{locationId},</if>
+            <if test="address != null">#{address},</if>
+            <if test="contactsName != null">#{contactsName},</if>
+            <if test="contactsPhone != null">#{contactsPhone},</if>
+            <if test="personCareer != null">#{personCareer},</if>
+            <if test="maritalStatus != null">#{maritalStatus},</if>
+            <if test="degreeOfEducation != null">#{degreeOfEducation},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMobile">
+        update mp_person set phone_number = #{mobile} where person_id = #{personId}
+    </update>
+</mapper>

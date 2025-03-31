@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.ExamReportMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.ExamReport" id="ExamReportMap">
+        <result property="examNo" column="EXAM_NO" jdbcType="VARCHAR"/>
+        <result property="examPara" column="EXAM_PARA" jdbcType="VARCHAR"/>
+        <result property="description" column="DESCRIPTION" jdbcType="VARCHAR"/>
+        <result property="impression" column="IMPRESSION" jdbcType="VARCHAR"/>
+        <result property="recommendation" column="RECOMMENDATION" jdbcType="VARCHAR"/>
+        <result property="isAbnormal" column="IS_ABNORMAL" jdbcType="VARCHAR"/>
+        <result property="device" column="DEVICE" jdbcType="VARCHAR"/>
+        <result property="useImage" column="USE_IMAGE" jdbcType="VARCHAR"/>
+        <result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+        <result property="reportname" column="REPORTNAME" jdbcType="VARCHAR"/>
+
+        <result property="examClass" column="exam_class" jdbcType="VARCHAR"/>
+        <result property="examSubClass" column="exam_sub_class" jdbcType="VARCHAR"/>
+        <result property="examDateTime" column="exam_date_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ExamReportMap">
+        select
+          EXAM_NO, EXAM_PARA, DESCRIPTION, IMPRESSION, RECOMMENDATION, IS_ABNORMAL, DEVICE, USE_IMAGE, MEMO, REPORTNAME
+        from exam_report
+        where EXAM_NO = #{examNo}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ExamReportMap">
+        select
+          EXAM_NO, EXAM_PARA, DESCRIPTION, IMPRESSION, RECOMMENDATION, IS_ABNORMAL, DEVICE, USE_IMAGE, MEMO, REPORTNAME
+        from exam_report
+        <where>
+            <if test="examNo != null and examNo != ''">
+                and EXAM_NO = #{examNo}
+            </if>
+            <if test="examPara != null and examPara != ''">
+                and EXAM_PARA = #{examPara}
+            </if>
+            <if test="description != null and description != ''">
+                and DESCRIPTION = #{description}
+            </if>
+            <if test="impression != null and impression != ''">
+                and IMPRESSION = #{impression}
+            </if>
+            <if test="recommendation != null and recommendation != ''">
+                and RECOMMENDATION = #{recommendation}
+            </if>
+            <if test="isAbnormal != null and isAbnormal != ''">
+                and IS_ABNORMAL = #{isAbnormal}
+            </if>
+            <if test="device != null and device != ''">
+                and DEVICE = #{device}
+            </if>
+            <if test="useImage != null and useImage != ''">
+                and USE_IMAGE = #{useImage}
+            </if>
+            <if test="memo != null and memo != ''">
+                and MEMO = #{memo}
+            </if>
+            <if test="reportname != null and reportname != ''">
+                and REPORTNAME = #{reportname}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from exam_report
+        <where>
+            <if test="examNo != null and examNo != ''">
+                and EXAM_NO = #{examNo}
+            </if>
+            <if test="examPara != null and examPara != ''">
+                and EXAM_PARA = #{examPara}
+            </if>
+            <if test="description != null and description != ''">
+                and DESCRIPTION = #{description}
+            </if>
+            <if test="impression != null and impression != ''">
+                and IMPRESSION = #{impression}
+            </if>
+            <if test="recommendation != null and recommendation != ''">
+                and RECOMMENDATION = #{recommendation}
+            </if>
+            <if test="isAbnormal != null and isAbnormal != ''">
+                and IS_ABNORMAL = #{isAbnormal}
+            </if>
+            <if test="device != null and device != ''">
+                and DEVICE = #{device}
+            </if>
+            <if test="useImage != null and useImage != ''">
+                and USE_IMAGE = #{useImage}
+            </if>
+            <if test="memo != null and memo != ''">
+                and MEMO = #{memo}
+            </if>
+            <if test="reportname != null and reportname != ''">
+                and REPORTNAME = #{reportname}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+        select count(1)
+        from exam_report er
+        inner join exam_master em on er.EXAM_NO = em.exam_no
+        <where>
+
+            <if test="params.recordingDate != null">
+                and date_format(em.exam_date_time,'%Y-%m-%d') =#{params.recordingDate}
+            </if>
+        </where>
+
+    </select>
+    <select id="querySyncInfoByPage" resultMap="ExamReportMap">
+        select
+        er.EXAM_NO,
+        er.EXAM_PARA,
+        er.DESCRIPTION,
+        er.IMPRESSION,
+        er.IS_ABNORMAL,
+        em.exam_class,
+        em.exam_sub_class,
+        em.exam_date_time
+        from
+        exam_report er
+        inner join exam_master em on er.EXAM_NO = em.exam_no
+        <where>
+            <if test="examReport.params.recordingDate != null">
+                and date_format(em.exam_date_time,'%Y-%m-%d') =#{examReport.params.recordingDate}
+            </if>
+        </where>
+        order by em.exam_date_time asc
+        limit #{pageable.offset}, #{pageable.pageSize}
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="examNo" useGeneratedKeys="true">
+        insert into exam_report(EXAM_PARA, DESCRIPTION, IMPRESSION, RECOMMENDATION, IS_ABNORMAL, DEVICE, USE_IMAGE, MEMO, REPORTNAME)
+        values (#{examPara}, #{description}, #{impression}, #{recommendation}, #{isAbnormal}, #{device}, #{useImage}, #{memo}, #{reportname})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="examNo" useGeneratedKeys="true">
+        insert into exam_report(EXAM_PARA, DESCRIPTION, IMPRESSION, RECOMMENDATION, IS_ABNORMAL, DEVICE, USE_IMAGE, MEMO, REPORTNAME)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.examPara}, #{entity.description}, #{entity.impression}, #{entity.recommendation}, #{entity.isAbnormal}, #{entity.device}, #{entity.useImage}, #{entity.memo}, #{entity.reportname})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="examNo" useGeneratedKeys="true">
+        insert into exam_report(EXAM_PARA, DESCRIPTION, IMPRESSION, RECOMMENDATION, IS_ABNORMAL, DEVICE, USE_IMAGE, MEMO, REPORTNAME)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.examPara}, #{entity.description}, #{entity.impression}, #{entity.recommendation}, #{entity.isAbnormal}, #{entity.device}, #{entity.useImage}, #{entity.memo}, #{entity.reportname})
+        </foreach>
+        on duplicate key update
+        EXAM_PARA = values(EXAM_PARA),
+        DESCRIPTION = values(DESCRIPTION),
+        IMPRESSION = values(IMPRESSION),
+        RECOMMENDATION = values(RECOMMENDATION),
+        IS_ABNORMAL = values(IS_ABNORMAL),
+        DEVICE = values(DEVICE),
+        USE_IMAGE = values(USE_IMAGE),
+        MEMO = values(MEMO),
+        REPORTNAME = values(REPORTNAME)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update exam_report
+        <set>
+            <if test="examPara != null and examPara != ''">
+                EXAM_PARA = #{examPara},
+            </if>
+            <if test="description != null and description != ''">
+                DESCRIPTION = #{description},
+            </if>
+            <if test="impression != null and impression != ''">
+                IMPRESSION = #{impression},
+            </if>
+            <if test="recommendation != null and recommendation != ''">
+                RECOMMENDATION = #{recommendation},
+            </if>
+            <if test="isAbnormal != null and isAbnormal != ''">
+                IS_ABNORMAL = #{isAbnormal},
+            </if>
+            <if test="device != null and device != ''">
+                DEVICE = #{device},
+            </if>
+            <if test="useImage != null and useImage != ''">
+                USE_IMAGE = #{useImage},
+            </if>
+            <if test="memo != null and memo != ''">
+                MEMO = #{memo},
+            </if>
+            <if test="reportname != null and reportname != ''">
+                REPORTNAME = #{reportname},
+            </if>
+        </set>
+        where EXAM_NO = #{examNo}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from exam_report where EXAM_NO = #{examNo}
+    </delete>
+
+</mapper>
+

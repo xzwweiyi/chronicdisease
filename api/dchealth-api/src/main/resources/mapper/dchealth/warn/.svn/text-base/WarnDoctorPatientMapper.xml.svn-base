@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.medical.mapper.WarnDoctorPatientMapper">
+
+    <resultMap type="com.dchealth.cro.medical.domain.WarnDoctorPatient" id="WarnDoctorPatientMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="doctorId" column="doctor_id" jdbcType="INTEGER"/>
+        <result property="patientId" column="patient_id" jdbcType="INTEGER"/>
+        <result property="researchId" column="research_id" jdbcType="INTEGER"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="isFirstDoctor" column="is_first_doctor" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="WarnDoctorPatientMap">
+        select
+          id, doctor_id, patient_id, research_id, is_delete, is_first_doctor, create_time, update_time
+        from warn_doctor_patient
+        where id = #{id}
+    </select>
+
+    <select id="selectWarnDoctorPatient" resultMap="WarnDoctorPatientMap">
+        select
+        id, doctor_id, patient_id, research_id, is_delete, is_first_doctor, create_time, update_time
+        from warn_doctor_patient
+        <where>
+            <if test="researchId != null ">and research_id = #{researchId}</if>
+            <if test="patientId != null ">and patient_id = #{patientId}</if>
+            <if test="doctorId != null ">and doctor_id = #{doctorId}</if>
+        </where>
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="WarnDoctorPatientMap">
+        select
+          id, doctor_id, patient_id, research_id, is_delete, is_first_doctor, create_time, update_time
+        from warn_doctor_patient
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="doctorId != null">
+                and doctor_id = #{doctorId}
+            </if>
+            <if test="patientId != null">
+                and patient_id = #{patientId}
+            </if>
+            <if test="researchId != null">
+                and research_id = #{researchId}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="isFirstDoctor != null">
+                and is_first_doctor = #{isFirstDoctor}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from warn_doctor_patient
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="doctorId != null">
+                and doctor_id = #{doctorId}
+            </if>
+            <if test="patientId != null">
+                and patient_id = #{patientId}
+            </if>
+            <if test="researchId != null">
+                and research_id = #{researchId}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="isFirstDoctor != null">
+                and is_first_doctor = #{isFirstDoctor}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into warn_doctor_patient(doctor_id, patient_id, research_id, is_delete, is_first_doctor, create_time, update_time)
+        values (#{doctorId}, #{patientId}, #{researchId}, #{isDelete}, #{isFirstDoctor}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into warn_doctor_patient(doctor_id, patient_id, research_id, is_delete, is_first_doctor, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.doctorId}, #{entity.patientId}, #{entity.researchId}, #{entity.isDelete}, #{entity.isFirstDoctor}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into warn_doctor_patient(doctor_id, patient_id, research_id, is_delete, is_first_doctor, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.doctorId}, #{entity.patientId}, #{entity.researchId}, #{entity.isDelete}, #{entity.isFirstDoctor}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        doctor_id = values(doctor_id),
+        patient_id = values(patient_id),
+        research_id = values(research_id),
+        is_delete = values(is_delete),
+        is_first_doctor = values(is_first_doctor),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update warn_doctor_patient
+        <set>
+            <if test="doctorId != null">
+                doctor_id = #{doctorId},
+            </if>
+            <if test="patientId != null">
+                patient_id = #{patientId},
+            </if>
+            <if test="researchId != null">
+                research_id = #{researchId},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="isFirstDoctor != null">
+                is_first_doctor = #{isFirstDoctor},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateWarnDockerPatient">
+        update warn_doctor_patient
+        <set>
+            <if test="doctorId != null">
+                doctor_id = #{doctorId},
+            </if>
+            <if test="patientId != null">
+                patient_id = #{patientId},
+            </if>
+            <if test="researchId != null">
+                research_id = #{researchId},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="isFirstDoctor != null">
+                is_first_doctor = #{isFirstDoctor},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where doctor_id = #{doctorId} and patient_id = #{patientId} and research_id = #{researchId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from warn_doctor_patient where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/api/dchealth-api/src/main/java/com/dchealth/cro/account/constant
+svn://xiaoshiguang.top
+
+
+
+2023-04-19T02:41:46.176652Z
+11164
+cuitao
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+AccountContants.java
+file
+
+
+
+
+2024-09-03T07:48:14.866000Z
+ae2ba653fe65ec4d618184da61a6ba1c
+2022-06-16T03:45:17.677136Z
+7602
+guanmi
+
+BaseConstant.java
+file
+
+
+
+
+2024-09-03T07:48:14.866000Z
+e869eb36b6e42bc268ddb50dfc049229
+2023-04-19T02:41:46.176652Z
+11164
+cuitao
+

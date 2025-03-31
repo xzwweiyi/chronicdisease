@@ -1,0 +1,122 @@
+package com.dchealth.cro.common.interceptor;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Enumeration;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.alibaba.fastjson2.JSON;
+
+
+/**
+ */
+@Aspect
+@Component
+public class ControllerInterceptor {
+    private static final Logger log = LoggerFactory.getLogger(ControllerInterceptor.class);
+    private static ThreadLocal<String> key = new ThreadLocal<String>();
+    /**
+     * 定义拦截规则：拦截com.dchealth.cro.controller..*(..))包下面的所有类中，有@RequestMapping注解的方法
+     */
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    public void controllerMethodPointcut() {
+    }
+
+    /**
+     * 请求方法前打印内容
+     *
+     * @param joinPoint
+     */
+    @Before("controllerMethodPointcut()")
+    public void doBefore(JoinPoint joinPoint) {
+        RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes sra = (ServletRequestAttributes) ra;
+        HttpServletRequest request = sra.getRequest();
+        // 获取请求头
+        Enumeration<String> enumeration = request.getHeaderNames();
+        StringBuffer headers = new StringBuffer();
+        while (enumeration.hasMoreElements()) {
+            String name = enumeration.nextElement();
+            String value = request.getHeader(name);
+            headers.append(name + ":" + value).append(",");
+        }
+        String uri = UUID.randomUUID() + "|" + request.getRequestURI();
+
+        String method = request.getMethod();
+        StringBuffer params = new StringBuffer();
+        if (HttpMethod.GET.toString().equals(method)) {// get请求
+            String queryString = request.getQueryString();
+            if (StringUtils.isNotBlank(queryString)) {
+                try {
+					params.append(URLDecoder.decode(queryString, "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+            }
+        } else {//其他请求
+            Object[] paramsArray = joinPoint.getArgs();
+            if (paramsArray != null && paramsArray.length > 0) {
+                for (int i = 0; i < paramsArray.length; i++) {
+                    if (paramsArray[i] instanceof Serializable) {
+                        params.append(paramsArray[i].toString()).append(",");
+                    } 
+//                    else {
+//                        //使用json系列化 反射等等方法 反系列化会影响请求性能建议重写tostring方法实现系列化接口
+//                        try {
+//                            String param= JSON.toJSONString(paramsArray[i]);
+//                            if(StringUtils.isNotBlank(param))
+//                            params.append(param).append(",");
+//                        } catch (Exception e) {
+//                            log.error("异常信息 obj={},msg={}",paramsArray[i],e);
+//                        }
+//                    }
+                }
+            }
+        }
+        key.set(uri);
+        log.info("请求路由_{}", request.getRequestURI());
+        log.info("请求参数》路径={},method={},params={},headers={}", uri, method, params, headers);
+    }
+
+    /**
+     * 在方法执行后打印返回内容
+     *
+     * @param obj
+     */
+    @AfterReturning(returning = "obj", pointcut = "controllerMethodPointcut()")
+    public void doAfterReturing(Object obj) {
+        String uri = key.get();
+        key.remove();
+        String result= null;
+        if(obj instanceof Serializable){
+            result =  obj.toString();
+        }else {
+            if(obj != null) {
+                try {
+                    result = JSON.toJSONString(obj);
+                } catch (Exception e) {
+                    log.error("doAfterReturing obj to json exception obj={},msg={}",obj,e);
+                }
+            }
+        }
+        log.info("响应结果》请求路径={},响应结果={}", uri, result);
+    }
+}
+

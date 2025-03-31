@@ -1,0 +1,84 @@
+eureka:
+  instance:
+    hostname: localhost
+  server:
+    enableSelfPreservation: true
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+  
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+      location: /usr/local/server/mirco-server/upload_temp
+  redis:
+    host: 172.100.45.34
+    password: dchealth2023*#6
+    port: 6379
+    database: 2
+  datasource:
+     druid:
+        # 主库数据源
+        primary:
+          url: jdbc:mysql://172.100.45.31:3306/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: Ajs&1Hjs(&8hs
+        # 读取数据源
+        second:
+          url: jdbc:oracle:thin:@10.10.83.41:1521/hrac
+          username: jkglk
+          password: jkglk231010
+          driver-class-name: oracle.jdbc.driver.OracleDriver
+        # 初始连接数
+        initialSize: 5
+        # 最小连接池数量
+        minIdle: 10
+        # 最大连接池数量
+        maxActive: 1500
+        # 配置获取连接等待超时的时间
+        maxWait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 300000
+        # 配置一个连接在池中最大生存的时间，单位是毫秒
+        maxEvictableIdleTimeMillis: 900000
+        # 配置检测连接是否有效
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        webStatFilter: 
+            enabled: true
+        filter:
+            stat:
+                enabled: true
+                # 慢SQL记录
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: true
+            wall:
+                config:
+                    multi-statement-allow: true  
+
+ #数据库密码加密盐值
+jasypt:
+  encryptor:
+    password: dchealth   
+# Logging config
+logging:
+  config: classpath:logback-prod.xml
+  level:
+    root: WARN
+    com:
+      cloud:
+        edc: INFO
+  path:
+    ~/projects/logs
+
+
+# 讯飞服务请求域名
+xunfei:
+  requestUrl: https://td.dchealthclinical.com/xfapi/

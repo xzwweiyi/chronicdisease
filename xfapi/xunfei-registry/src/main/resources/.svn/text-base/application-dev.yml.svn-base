@@ -1,0 +1,8 @@
+# Logging config
+logging:
+  config: classpath:logback-dev.xml
+  level:
+    root: WARN
+    com:
+      qkltong:
+        wallet: INFO

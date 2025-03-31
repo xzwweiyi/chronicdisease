@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.core.mapper.SysAreaMapper">
+    
+    <resultMap type="com.dchealth.cro.core.domain.SysArea" id="SysAreaResult">
+        <result property="areaId"    column="area_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="areaCode"    column="area_code"    />
+        <result property="areaName"    column="area_name"    />
+        <result property="level"    column="level"    />
+        <result property="cityCode"    column="city_code"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysAreaVo">
+        select area_id, ancestors, area_code, area_name, level, city_code, longitude, latitude, parent_id, order_num, del_flag, status, create_by, create_time, update_by, update_time from sys_area
+    </sql>
+
+    <select id="selectSysAreaList" parameterType="com.dchealth.cro.core.domain.SysArea" resultMap="SysAreaResult">
+        <include refid="selectSysAreaVo"/>
+        <where>  
+            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
+            <if test="areaCode != null  and areaCode != ''"> and area_code = #{areaCode}</if>
+            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="level != null "> and level = #{level}</if>
+            <if test="cityCode != null  and cityCode != ''"> and city_code = #{cityCode}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysAreaById" parameterType="Integer" resultMap="SysAreaResult">
+        <include refid="selectSysAreaVo"/>
+        where area_id = #{areaId}
+    </select>
+        
+    <insert id="insertSysArea" parameterType="com.dchealth.cro.core.domain.SysArea" useGeneratedKeys="true" keyProperty="areaId">
+        insert into sys_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ancestors != null  and ancestors != ''">ancestors,</if>
+            <if test="areaCode != null  and areaCode != ''">area_code,</if>
+            <if test="areaName != null  and areaName != ''">area_name,</if>
+            <if test="level != null ">level,</if>
+            <if test="cityCode != null  and cityCode != ''">city_code,</if>
+            <if test="longitude != null  and longitude != ''">longitude,</if>
+            <if test="latitude != null  and latitude != ''">latitude,</if>
+            <if test="parentId != null ">parent_id,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ancestors != null  and ancestors != ''">#{ancestors},</if>
+            <if test="areaCode != null  and areaCode != ''">#{areaCode},</if>
+            <if test="areaName != null  and areaName != ''">#{areaName},</if>
+            <if test="level != null ">#{level},</if>
+            <if test="cityCode != null  and cityCode != ''">#{cityCode},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysArea" parameterType="com.dchealth.cro.core.domain.SysArea">
+        update sys_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ancestors != null  and ancestors != ''">ancestors = #{ancestors},</if>
+            <if test="areaCode != null  and areaCode != ''">area_code = #{areaCode},</if>
+            <if test="areaName != null  and areaName != ''">area_name = #{areaName},</if>
+            <if test="level != null ">level = #{level},</if>
+            <if test="cityCode != null  and cityCode != ''">city_code = #{cityCode},</if>
+            <if test="longitude != null  and longitude != ''">longitude = #{longitude},</if>
+            <if test="latitude != null  and latitude != ''">latitude = #{latitude},</if>
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where area_id = #{areaId}
+    </update>
+
+    <delete id="deleteSysAreaById" parameterType="Integer">
+        delete from sys_area where area_id = #{areaId}
+    </delete>
+
+    <delete id="deleteSysAreaByIds" parameterType="String">
+        delete from sys_area where area_id in 
+        <foreach item="areaId" collection="array" open="(" separator="," close=")">
+            #{areaId}
+        </foreach>
+    </delete>
+    
+</mapper>

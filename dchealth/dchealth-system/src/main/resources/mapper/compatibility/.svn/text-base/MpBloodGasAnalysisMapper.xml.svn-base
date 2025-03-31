@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpBloodGasAnalysisMapper">
+    
+    <resultMap type="MpBloodGasAnalysis" id="MpBloodGasAnalysisResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="bloodPh"    column="blood_ph"    />
+        <result property="bloodPco2"    column="blood_pco2"    />
+        <result property="bloodPo2"    column="blood_po2"    />
+        <result property="bloodHct"    column="blood_hct"    />
+        <result property="bloodHb"    column="blood_hb"    />
+        <result property="bloodBe"    column="blood_be"    />
+        <result property="bloodSb"    column="blood_sb"    />
+        <result property="bloodAb"    column="blood_ab"    />
+        <result property="bloodTco2"    column="blood_tco2"    />
+        <result property="bloodPo2P50"    column="blood_po2_p50"    />
+        <result property="bloodSato2"    column="blood_sato2"    />
+        <result property="bloodTo2"    column="blood_to2"    />
+        <result property="bloodO2Cap"    column="blood_o2_cap"    />
+    </resultMap>
+
+    <sql id="selectMpBloodGasAnalysisVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, blood_ph, blood_pco2, blood_po2, blood_hct, blood_hb, blood_be, blood_sb, blood_ab, blood_tco2, blood_po2_p50, blood_sato2, blood_to2, blood_o2_cap from mp_blood_gas_analysis
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpBloodGasAnalysisResult">
+        <include refid="selectMpBloodGasAnalysisVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpBloodGasAnalysisResult">
+        <include refid="selectMpBloodGasAnalysisVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+    
+
+</mapper>

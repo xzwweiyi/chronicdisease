@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FLibraryFormSetEvaluationMapper">
+    
+    <resultMap type="FLibraryFormSetEvaluation" id="FLibraryFormSetEvaluationResult">
+        <result property="id"    column="id"    />
+        <result property="libraryId"    column="library_id"    />
+        <result property="minValue"    column="min_value"    />
+        <result property="maxValue"    column="max_value"    />
+        <result property="evaluationResult"    column="evaluation_result"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectFLibraryFormSetEvaluationVo">
+        select id, library_id, min_value, max_value, evaluation_result, create_by, create_time from f_library_form_set_evaluation
+    </sql>
+
+    <select id="selectFLibraryFormSetEvaluationList" parameterType="FLibraryFormSetEvaluation" resultMap="FLibraryFormSetEvaluationResult">
+        <include refid="selectFLibraryFormSetEvaluationVo"/>
+        <where>  
+            <if test="libraryId != null "> and library_id = #{libraryId}</if>
+            <if test="minValue != null "> and min_value = #{minValue}</if>
+            <if test="maxValue != null "> and max_value = #{maxValue}</if>
+            <if test="evaluationResult != null  and evaluationResult != ''"> and evaluation_result = #{evaluationResult}</if>
+        </where>
+    </select>
+    
+    <select id="selectFLibraryFormSetEvaluationById" parameterType="Long" resultMap="FLibraryFormSetEvaluationResult">
+        <include refid="selectFLibraryFormSetEvaluationVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFLibraryFormSetEvaluation" parameterType="FLibraryFormSetEvaluation" useGeneratedKeys="true" keyProperty="id">
+        insert into f_library_form_set_evaluation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="libraryId != null">library_id,</if>
+            <if test="minValue != null">min_value,</if>
+            <if test="maxValue != null">max_value,</if>
+            <if test="evaluationResult != null">evaluation_result,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="libraryId != null">#{libraryId},</if>
+            <if test="minValue != null">#{minValue},</if>
+            <if test="maxValue != null">#{maxValue},</if>
+            <if test="evaluationResult != null">#{evaluationResult},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFLibraryFormSetEvaluation" parameterType="FLibraryFormSetEvaluation">
+        update f_library_form_set_evaluation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="libraryId != null">library_id = #{libraryId},</if>
+            <if test="minValue != null">min_value = #{minValue},</if>
+            <if test="maxValue != null">max_value = #{maxValue},</if>
+            <if test="evaluationResult != null">evaluation_result = #{evaluationResult},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFLibraryFormSetEvaluationById" parameterType="Long">
+        delete from f_library_form_set_evaluation where id = #{id}
+    </delete>
+
+    <delete id="deleteFLibraryFormSetEvaluationByIds" parameterType="String">
+        delete from f_library_form_set_evaluation where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

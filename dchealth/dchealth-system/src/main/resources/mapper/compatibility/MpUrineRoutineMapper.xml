@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpUrineRoutineMapper">
+    
+    <resultMap type="MpUrineRoutine" id="MpUrineRoutineResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="urineSg"    column="urine_sg"    />
+        <result property="urinePh"    column="urine_ph"    />
+        <result property="urineWbcCount"    column="urine_wbc_count"    />
+        <result property="urineRbcCount"    column="urine_rbc_count"    />
+        <result property="urineNit"    column="urine_nit"    />
+        <result property="urinePro"    column="urine_pro"    />
+        <result property="urineGlu"    column="urine_glu"    />
+        <result property="urineKet"    column="urine_ket"    />
+        <result property="urineUro"    column="urine_uro"    />
+        <result property="urineBil"    column="urine_bil"    />
+        <result property="urineBlo"    column="urine_blo"    />
+    </resultMap>
+
+    <sql id="selectMpUrineRoutineVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, urine_sg, urine_ph, urine_wbc_count, urine_rbc_count, urine_nit, urine_pro, urine_glu, urine_ket, urine_uro, urine_bil, urine_blo from mp_urine_routine
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpUrineRoutineResult">
+        <include refid="selectMpUrineRoutineVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpUrineRoutineResult">
+        <include refid="selectMpUrineRoutineVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+
+</mapper>

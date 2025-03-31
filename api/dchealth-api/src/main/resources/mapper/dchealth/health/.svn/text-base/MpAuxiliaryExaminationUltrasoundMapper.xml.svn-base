@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpAuxiliaryExaminationUltrasoundMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpAuxiliaryExaminationUltrasound" id="MpAuxiliaryExaminationUltrasoundResult">
+        <result property="id"    column="id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="examNo"    column="exam_no"    />
+        <result property="testNo"    column="test_no"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="cr"    column="cr"    />
+        <result property="crOther"    column="cr_other"    />
+        <result property="cardiacUltrasound"    column="cardiac_ultrasound"    />
+        <result property="abdominalUltrasound"    column="abdominal_ultrasound"    />
+        <result property="specializedUltrasoundMale"    column="specialized_ultrasound_male"    />
+        <result property="specializedUltrasoundFemale"    column="specialized_ultrasound_female"    />
+        <result property="thyroidUltrasound"    column="thyroid_ultrasound"    />
+        <result property="carotidUltrasound"    column="carotid_ultrasound"    />
+        <result property="vascularDopplerUltrasound"    column="vascular_doppler_ultrasound"    />
+        <result property="biRads"    column="bi_rads"    />
+        <result property="tvs"    column="tvs"    />
+        <result property="uterineAppendagesUltrasound"    column="uterine_appendages_ultrasound"    />
+        <result property="lgps"    column="lgps"    />
+        <result property="lgpsk"    column="lgpsk"    />
+        <result property="lgpskpb"    column="lgpskpb"    />
+        <result property="lgpskua"    column="lgpskua"    />
+        <result property="bilateralMammaryGland"    column="bilateral_mammary_gland"    />
+        <result property="cervicalSpine"    column="cervical_spine"    />
+        <result property="cervicalLateralFilm"    column="cervical_lateral_film"    />
+        <result property="lumbarSpine"    column="lumbar_spine"    />
+        <result property="lumbarSpineFilm"    column="lumbar_spine_film"    />
+        <result property="chestXray"    column="chest_xray"    />
+        <result property="leftKneeJointAp"    column="left_knee_joint_ap"    />
+        <result property="lkjlp"    column="lkjlp"    />
+        <result property="rightKneeJointAp"    column="right_knee_joint_ap"    />
+        <result property="rkjlp"    column="rkjlp"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="technologyGroup"    column="technology_group"    />
+        <result property="positionSctid"    column="position_sctid"    />
+        <result property="position"    column="position"    />
+        <result property="testMethod"    column="test_method"    />
+        <result property="subjectiveHints"    column="subjective_hints"    />
+        <result property="relevantClinicDiagnosis"    column="relevant_clinic_diagnosis"    />
+        <result property="reportType"    column="report_type"    />
+    </resultMap>
+
+    <sql id="selectMpAuxiliaryExaminationUltrasoundVo">
+        select id, visit_occurrence_id, person_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound, bi_rads, tvs, uterine_appendages_ultrasound, lgps, lgpsk, lgpskpb, lgpskua, bilateral_mammary_gland, cervical_spine, cervical_lateral_film, lumbar_spine, lumbar_spine_film, chest_xray, left_knee_joint_ap, lkjlp, right_knee_joint_ap, rkjlp, care_site_id, technology_group, position_sctid, position, test_method, subjective_hints, relevant_clinic_diagnosis, report_type from mp_auxiliary_examination_ultrasound
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpAuxiliaryExaminationUltrasoundResult">
+        <include refid="selectMpAuxiliaryExaminationUltrasoundVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+
+</mapper>

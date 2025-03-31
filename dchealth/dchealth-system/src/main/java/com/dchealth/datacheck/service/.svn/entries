@@ -1,0 +1,55 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-system/src/main/java/com/dchealth/datacheck/service
+svn://xiaoshiguang.top
+
+
+
+2024-05-14T03:37:20.903125Z
+18778
+liqianfeng
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+ISysCheckConfigService.java
+file
+
+
+
+
+2024-09-03T07:48:07.845000Z
+6fa1458945018c6a64ca3fa83f98729e
+2024-05-14T03:37:20.903125Z
+18778
+liqianfeng
+
+ISysDataCheckService.java
+file
+
+
+
+
+2024-09-03T07:48:07.845000Z
+66ea43a855fea0cee84258fbe0af8499
+2024-05-14T03:37:20.903125Z
+18778
+liqianfeng
+
+impl
+dir
+

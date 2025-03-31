@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.dict.mapper.FormDictTypeMapper">
+    
+    <resultMap type="FormDictType" id="FormDictTypeResult">
+        <result property="dictId"    column="dict_id"    />
+        <result property="dictName"    column="dict_name"    />
+        <result property="dictType"    column="dict_type"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectFormDictTypeVo">
+        select dict_id, dict_name, dict_type, status, create_by, create_time, update_by, update_time, remark from form_dict_type
+    </sql>
+
+    <select id="selectFormDictTypeList" parameterType="FormDictType" resultMap="FormDictTypeResult">
+        <include refid="selectFormDictTypeVo"/>
+        <where>  
+            <if test="dictName != null  and dictName != ''"> and dict_name like concat('%', #{dictName}, '%')</if>
+            <if test="dictType != null  and dictType != ''"> and dict_type = #{dictType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectFormDictTypeByDictId" parameterType="Long" resultMap="FormDictTypeResult">
+        <include refid="selectFormDictTypeVo"/>
+        where dict_id = #{dictId}
+    </select>
+        
+    <insert id="insertFormDictType" parameterType="FormDictType" useGeneratedKeys="true" keyProperty="dictId">
+        insert into form_dict_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dictName != null">dict_name,</if>
+            <if test="dictType != null">dict_type,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dictName != null">#{dictName},</if>
+            <if test="dictType != null">#{dictType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFormDictType" parameterType="FormDictType">
+        update form_dict_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dictName != null">dict_name = #{dictName},</if>
+            <if test="dictType != null">dict_type = #{dictType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where dict_id = #{dictId}
+    </update>
+
+    <delete id="deleteFormDictTypeByDictId" parameterType="Long">
+        delete from form_dict_type where dict_id = #{dictId}
+    </delete>
+
+    <delete id="deleteFormDictTypeByDictIds" parameterType="String">
+        delete from form_dict_type where dict_id in 
+        <foreach item="dictId" collection="array" open="(" separator="," close=")">
+            #{dictId}
+        </foreach>
+    </delete>
+</mapper>

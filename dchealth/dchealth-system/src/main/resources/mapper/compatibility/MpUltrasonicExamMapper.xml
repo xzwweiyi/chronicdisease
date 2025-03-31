@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpUltrasonicExamMapper">
+    
+    <resultMap type="com.dchealth.compatibility.domain.MpUltrasonicExam" id="MpUltrasonicExamResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="technologyName"    column="TECHNOLOGY_NAME"    />
+        <result property="sctPosition"    column="SCT_POSITION"    />
+        <result property="level1Position"    column="level_1_POSITION"    />
+        <result property="level2Position"    column="level_2_POSITION"    />
+        <result property="technologyDate"    column="TECHNOLOGY_DATE"    />
+        <result property="reportDate"    column="REPORT_DATE"    />
+        <result property="objectiveView"    column="OBJECTIVE_VIEW"    />
+        <result property="subjectiveHints"    column="SUBJECTIVE_HINTS"    />
+        <result property="isAbnormal"    column="IS_ABNORMAL"    />
+        <result property="relevantClinicDiagnosis"    column="RELEVANT_CLINIC_DIAGNOSIS"    />
+        <result property="physSign"    column="PHYS_SIGN"    />
+        <result property="exeDepartment"    column="EXE_DEPARTMENT"    />
+        <result property="departmentName"    column="DEPARTMENT_NAME"    />
+        <result property="testMethod"    column="TEST_METHOD"    />
+        <result property="technologySourceName"    column="TECHNOLOGY_SOURCE_NAME"    />
+        <result property="technologySourceNameId"    column="technology_source_name_id"    />
+        <result property="technologyGroupSource"    column="TECHNOLOGY_GROUP_SOURCE"    />
+        <result property="position"    column="POSITION"    />
+        <result property="checkSourceType"    column="check_source_type"    />
+        <result property="testNo"    column="test_no"    />
+    </resultMap>
+
+<!--   新增字段, 医院原始字段 `TECHNOLOGY_SOURCE_NAME` VARCHAR(255) NULL DEFAULT NULL COMMENT '医院检查项目名称' COLLATE 'utf8mb4_0900_ai_ci',-->
+<!--    `technology_source_name_id` VARCHAR(255) NULL DEFAULT NULL COMMENT '检查项目原始名称ID' COLLATE 'utf8mb4_0900_ai_ci',-->
+<!--    `TECHNOLOGY_GROUP_SOURCE` VARCHAR(255) NULL DEFAULT NULL COMMENT '检查类别名称' COLLATE 'utf8mb4_0900_ai_ci',-->
+<!--    `POSITION` VARCHAR(255) NULL DEFAULT NULL COMMENT '检查部位名称' COLLATE 'utf8mb4_0900_ai_ci',-->
+<!--    `USE_IMAGE` VARCHAR(255) NULL DEFAULT NULL COMMENT '报告中图象编号' COLLATE 'utf8mb4_0900_ai_ci',-->
+
+    <sql id="selectMpUltrasonicExamVo">
+        select id, care_site_id, person_id, visit_type, visit_occurrence_id, TECHNOLOGY_NAME, SCT_POSITION, level_1_POSITION, level_2_POSITION,
+               TECHNOLOGY_DATE, REPORT_DATE, OBJECTIVE_VIEW, SUBJECTIVE_HINTS, IS_ABNORMAL, RELEVANT_CLINIC_DIAGNOSIS, PHYS_SIGN, EXE_DEPARTMENT,
+               DEPARTMENT_NAME, TEST_METHOD,TECHNOLOGY_SOURCE_NAME,technology_source_name_id,TECHNOLOGY_GROUP_SOURCE,POSITION,test_no,check_source_type from mp_ultrasonic_exam
+    </sql>
+
+    <select id="selectMpUltrasonicExamList" resultMap="MpUltrasonicExamResult">
+        <include refid="selectMpUltrasonicExamVo"/>
+        <where>  
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="visitType != null  and visitType != ''"> and visit_type = #{visitType}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and visit_occurrence_id = #{visitOccurrenceId}</if>
+        </where>
+        order by REPORT_DATE desc
+    </select>
+    
+    <select id="selectMpUltrasonicExamById" parameterType="Long" resultMap="MpUltrasonicExamResult">
+        <include refid="selectMpUltrasonicExamVo"/>
+        where id = #{id}
+    </select>
+
+</mapper>

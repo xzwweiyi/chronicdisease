@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.warn.mapper.WarnConfigMapper">
+    
+    <resultMap type="com.dchealth.cro.warn.domain.WarnConfig" id="WarnConfigResult">
+        <result property="id"    column="id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="standardValue"    column="standard_value"    />
+        <result property="warnFormulaTitle"    column="warn_formula_title"    />
+        <result property="warnFormula"    column="warn_formula"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="medicalPropertyCode"    column="medical_property_code"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+    </resultMap>
+
+    <sql id="selectWarnConfigVo">
+        select id, follow_id, research_id, standard_value, warn_formula_title, warn_formula, create_time, update_time, create_by, update_by, medical_property_code, medical_form_id from warn_config
+    </sql>
+
+    <select id="selectWarnConfigList" parameterType="com.dchealth.cro.warn.domain.WarnConfig" resultMap="WarnConfigResult">
+        <include refid="selectWarnConfigVo"/>
+        <where>  
+            <if test="followId != null "> and follow_id = #{followId}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="standardValue != null  and standardValue != ''"> and standard_value = #{standardValue}</if>
+            <if test="warnFormulaTitle != null  and warnFormulaTitle != ''"> and warn_formula_title = #{warnFormulaTitle}</if>
+            <if test="warnFormula != null  and warnFormula != ''"> and warn_formula = #{warnFormula}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnConfigById" parameterType="Long" resultMap="WarnConfigResult">
+        <include refid="selectWarnConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectWarnConfigByFollowId" parameterType="Long" resultMap="WarnConfigResult">
+        <include refid="selectWarnConfigVo"/>
+        where follow_id = #{followId}
+    </select>
+        
+    <insert id="insertWarnConfig" parameterType="com.dchealth.cro.warn.domain.WarnConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into warn_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="followId != null">follow_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="standardValue != null">standard_value,</if>
+            <if test="warnFormulaTitle != null">warn_formula_title,</if>
+            <if test="warnFormula != null">warn_formula,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="medicalPropertyCode != null">medical_property_code,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="followId != null">#{followId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="standardValue != null">#{standardValue},</if>
+            <if test="warnFormulaTitle != null">#{warnFormulaTitle},</if>
+            <if test="warnFormula != null">#{warnFormula},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="medicalPropertyCode != null">#{medicalPropertyCode},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+         </trim>
+    </insert>
+
+    <insert id="BachInsertWarnConfig">
+        insert into research_role_source(follow_id,research_id,standard_value,warn_formula_title,warn_formula,create_time,update_time,create_by,update_by,medical_property_code,medical_form_id) values
+        <foreach item="item" index="index" collection="warnConfigs" separator=",">
+            (#{followId},#{researchId},#{standardValue},#{warnFormulaTitle},#{warnFormula},#{createTime},#{updateTime},#{createBy},#{updateBy},#{medicalPropertyCode},#{medicalFormId})
+        </foreach>
+    </insert>
+
+    <update id="updateWarnConfig" parameterType="com.dchealth.cro.warn.domain.WarnConfig">
+        update warn_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="followId != null">follow_id = #{followId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="standardValue != null">standard_value = #{standardValue},</if>
+            <if test="warnFormulaTitle != null">warn_formula_title = #{warnFormulaTitle},</if>
+            <if test="warnFormula != null">warn_formula = #{warnFormula},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWarnConfigById" parameterType="Long">
+        delete from warn_config where id = #{id}
+    </delete>
+
+    <delete id="deleteWarnConfigByIds" parameterType="String">
+        delete from warn_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

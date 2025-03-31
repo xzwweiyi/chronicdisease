@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdDrugPrescMasterMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdDrugPrescMaster" id="TdDrugPrescMasterMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="prescDate" column="presc_date" jdbcType="TIMESTAMP"/>
+        <result property="prescNo" column="presc_no" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="prescType" column="presc_type" jdbcType="INTEGER"/>
+        <result property="prescSource" column="presc_source" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdDrugPrescMasterMap">
+        select
+          id, presc_date, presc_no, patient_id, presc_type, presc_source
+        from td_drug_presc_master
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdDrugPrescMasterMap">
+        select
+          id, presc_date, presc_no, patient_id, presc_type, presc_source
+        from td_drug_presc_master
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="prescDate != null">
+                and presc_date = #{prescDate}
+            </if>
+            <if test="prescNo != null and prescNo != ''">
+                and presc_no = #{prescNo}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="prescType != null">
+                and presc_type = #{prescType}
+            </if>
+            <if test="prescSource != null">
+                and presc_source = #{prescSource}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_drug_presc_master
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="prescDate != null">
+                and presc_date = #{prescDate}
+            </if>
+            <if test="prescNo != null and prescNo != ''">
+                and presc_no = #{prescNo}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="prescType != null">
+                and presc_type = #{prescType}
+            </if>
+            <if test="prescSource != null">
+                and presc_source = #{prescSource}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_drug_presc_master(presc_date, presc_no, patient_id, presc_type, presc_source)
+        values (#{prescDate}, #{prescNo}, #{patientId}, #{prescType}, #{prescSource})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_drug_presc_master(presc_date, presc_no, patient_id, presc_type, presc_source)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.prescDate}, #{entity.prescNo}, #{entity.patientId}, #{entity.prescType}, #{entity.prescSource})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_drug_presc_master(presc_date, presc_no, patient_id, presc_type, presc_source)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.prescDate}, #{entity.prescNo}, #{entity.patientId}, #{entity.prescType}, #{entity.prescSource})
+        </foreach>
+        on duplicate key update
+        presc_date = values(presc_date),
+        presc_no = values(presc_no),
+        patient_id = values(patient_id),
+        presc_type = values(presc_type),
+        presc_source = values(presc_source)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_drug_presc_master
+        <set>
+            <if test="prescDate != null">
+                presc_date = #{prescDate},
+            </if>
+            <if test="prescNo != null and prescNo != ''">
+                presc_no = #{prescNo},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="prescType != null">
+                presc_type = #{prescType},
+            </if>
+            <if test="prescSource != null">
+                presc_source = #{prescSource},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_drug_presc_master where id = #{id}
+    </delete>
+
+</mapper>
+

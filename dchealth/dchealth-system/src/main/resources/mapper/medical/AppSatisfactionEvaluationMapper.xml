@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.AppSatisfactionEvaluationMapper">
+
+    <resultMap type="com.dchealth.medical.domain.AppSatisfactionEvaluation" id="AppSatisfactionEvaluationMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="evaluationScores" column="evaluation_scores" jdbcType="INTEGER"/>
+        <result property="evaluationDesc" column="evaluation_desc" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AppSatisfactionEvaluationMap">
+        select
+          id, type, user_id, name, evaluation_scores, evaluation_desc, create_time
+        from app_satisfaction_evaluation
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AppSatisfactionEvaluationMap">
+        select
+          id, type, user_id, name, evaluation_scores, evaluation_desc, create_time
+        from app_satisfaction_evaluation
+        <where>
+            <if test="appSatisfactionEvaluation.id != null">
+                and id = #{appSatisfactionEvaluation.id}
+            </if>
+            <if test="appSatisfactionEvaluation.type != null and appSatisfactionEvaluation.type != ''">
+                and type = #{appSatisfactionEvaluation.type}
+            </if>
+            <if test="appSatisfactionEvaluation.userId != null">
+                and user_id = #{appSatisfactionEvaluation.userId}
+            </if>
+            <if test="appSatisfactionEvaluation.name != null and appSatisfactionEvaluation.name != ''">
+                and name = #{appSatisfactionEvaluation.name}
+            </if>
+            <if test="appSatisfactionEvaluation.evaluationScores != null">
+                and evaluation_scores = #{appSatisfactionEvaluation.evaluationScores}
+            </if>
+            <if test="appSatisfactionEvaluation.evaluationDesc != null and appSatisfactionEvaluation.evaluationDesc != ''">
+                and evaluation_desc = #{appSatisfactionEvaluation.evaluationDesc}
+            </if>
+            <if test="appSatisfactionEvaluation.createTime != null">
+                and create_time = #{appSatisfactionEvaluation.createTime}
+            </if>
+        </where>
+        order by id desc
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from app_satisfaction_evaluation
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="evaluationScores != null">
+                and evaluation_scores = #{evaluationScores}
+            </if>
+            <if test="evaluationDesc != null and evaluationDesc != ''">
+                and evaluation_desc = #{evaluationDesc}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+    <select id="selectEvaluationList" resultMap="AppSatisfactionEvaluationMap">
+        select ase.id,ase.`type`,ase.user_id,ase.evaluation_scores,ase.evaluation_desc,ase.create_time,
+            su.user_id,su.user_name name,sd.dept_name
+        from app_satisfaction_evaluation ase
+        left join sys_user su on ase.user_id = su.user_id
+        left join sys_dept sd on sd.dept_id = su.dept_id
+        <where>
+
+            <if test="name != null and name != ''">
+                and su.user_name like '${name}%'
+            </if>
+            <if test="evaluationScores != null">
+                and ase.evaluation_scores = #{evaluationScores}
+            </if>
+            <if test="deptIds != null and deptIds != ''">
+                and su.dept_id in (${deptIds})
+            </if>
+
+        </where>
+        order by id desc
+    </select>
+    <select id="queryEvaluation" resultType="java.util.Map">
+        select
+        IFNULL(CAST(AVG(ase.evaluation_scores) AS DECIMAL(10,2)),0) avgScores
+        from app_satisfaction_evaluation ase
+        left join sys_user su on ase.user_id = su.user_id
+        left join sys_dept sd on sd.dept_id = su.dept_id
+        <where>
+            <if test="name != null and name != ''">
+                and su.user_name like '${name}%'
+            </if>
+            <if test="evaluationScores != null">
+                and ase.evaluation_scores = #{evaluationScores}
+            </if>
+            <if test="deptIds != null and deptIds != ''">
+                and su.dept_id in (${deptIds})
+            </if>
+
+        </where>
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into app_satisfaction_evaluation(type, user_id, name, evaluation_scores, evaluation_desc, create_time)
+        values (#{type}, #{userId}, #{name}, #{evaluationScores}, #{evaluationDesc}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into app_satisfaction_evaluation(type, user_id, name, evaluation_scores, evaluation_desc, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.type}, #{entity.userId}, #{entity.name}, #{entity.evaluationScores}, #{entity.evaluationDesc}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into app_satisfaction_evaluation(type, user_id, name, evaluation_scores, evaluation_desc, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.type}, #{entity.userId}, #{entity.name}, #{entity.evaluationScores}, #{entity.evaluationDesc}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        type = values(type),
+        user_id = values(user_id),
+        name = values(name),
+        evaluation_scores = values(evaluation_scores),
+        evaluation_desc = values(evaluation_desc),
+        create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update app_satisfaction_evaluation
+        <set>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="evaluationScores != null">
+                evaluation_scores = #{evaluationScores},
+            </if>
+            <if test="evaluationDesc != null and evaluationDesc != ''">
+                evaluation_desc = #{evaluationDesc},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from app_satisfaction_evaluation where id = #{id}
+    </delete>
+
+</mapper>
+

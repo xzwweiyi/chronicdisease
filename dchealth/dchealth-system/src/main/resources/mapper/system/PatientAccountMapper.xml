@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.system.mapper.PatientAccountMapper">
+
+    <resultMap type="PatientAccount" id="PatientAccountResult">
+        <result property="accountId"    column="account_id"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="registrySigns"    column="registry_signs"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="bindStatus"    column="bind_status"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectPatientAccountVo">
+        select account_id, mobile, status, create_time, registry_signs, id_card, bind_status from patient_account
+    </sql>
+
+    <select id="selectPatientAccountList" parameterType="PatientAccount" resultMap="PatientAccountResult">
+        select pa.account_id, pa.mobile, pa.status, pa.create_time, pa.registry_signs, pa.id_card, pa.bind_status,
+               ba.name,ba.sex,ba.id
+        from patient_account pa left join patient_base_info ba on  pa.account_id = ba.account_id
+        <where>
+            <if test="mobile != null  and mobile != ''"> and pa.mobile  like concat('%', #{mobile}, '%')</if>
+            <if test="name != null  and name != ''"> and ba.name  like concat('%', #{name}, '%')</if>
+            <if test="status != null  and status != ''"> and pa.status = #{status}</if>
+            <if test="registrySigns != null  and registrySigns != ''"> and pa.registry_signs = #{registrySigns}</if>
+            <if test="idCard != null  and idCard != ''"> and pa.id_card = #{idCard}</if>
+            <if test="bindStatus != null  and bindStatus != ''"> and pa.bind_status = #{bindStatus}</if>
+            <if test="deptIds != null and deptIds.length >0">
+                and ba.admission_hospital_department in
+                <foreach item="deptId" collection="deptIds" open="(" separator="," close=")">
+                    #{deptId}
+                </foreach>
+            </if>
+        </where>
+            order by pa.create_time desc
+    </select>
+
+    <select id="selectPatientAccountByAccountId" parameterType="Long" resultMap="PatientAccountResult">
+        <include refid="selectPatientAccountVo"/>
+        where account_id = #{accountId}
+    </select>
+
+    <insert id="insertPatientAccount" parameterType="PatientAccount" useGeneratedKeys="true" keyProperty="accountId">
+        insert into patient_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mobile != null and mobile != ''">mobile,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="registrySigns != null">registry_signs,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="bindStatus != null">bind_status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mobile != null and mobile != ''">#{mobile},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="registrySigns != null">#{registrySigns},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="bindStatus != null">#{bindStatus},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientAccount" parameterType="PatientAccount">
+        update patient_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="registrySigns != null">registry_signs = #{registrySigns},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="bindStatus != null">bind_status = #{bindStatus},</if>
+        </trim>
+        where account_id = #{accountId}
+    </update>
+
+    <delete id="deletePatientAccountByAccountId" parameterType="Long">
+        delete from patient_account where account_id = #{accountId}
+    </delete>
+
+    <delete id="deletePatientAccountByAccountIds" parameterType="String">
+        delete from patient_account where account_id in
+        <foreach item="accountId" collection="array" open="(" separator="," close=")">
+            #{accountId}
+        </foreach>
+    </delete>
+</mapper>

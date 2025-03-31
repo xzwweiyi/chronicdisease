@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdAuxiliaryExaminationUltrasoundMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdAuxiliaryExaminationUltrasound" id="TdAuxiliaryExaminationUltrasoundMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="cr" column="cr" jdbcType="VARCHAR"/>
+        <result property="crOther" column="cr_other" jdbcType="VARCHAR"/>
+        <result property="cardiacUltrasound" column="cardiac_ultrasound" jdbcType="VARCHAR"/>
+        <result property="abdominalUltrasound" column="abdominal_ultrasound" jdbcType="VARCHAR"/>
+        <result property="specializedUltrasoundMale" column="specialized_ultrasound_male" jdbcType="VARCHAR"/>
+        <result property="specializedUltrasoundFemale" column="specialized_ultrasound_female" jdbcType="VARCHAR"/>
+        <result property="thyroidUltrasound" column="thyroid_ultrasound" jdbcType="VARCHAR"/>
+        <result property="carotidUltrasound" column="carotid_ultrasound" jdbcType="VARCHAR"/>
+        <result property="vascularDopplerUltrasound" column="vascular_doppler_ultrasound" jdbcType="VARCHAR"/>
+        <result property="biRads" column="bi_rads" jdbcType="VARCHAR"/>
+        <result property="tvs" column="tvs" jdbcType="VARCHAR"/>
+        <result property="uterineAppendagesUltrasound" column="uterine_appendages_ultrasound" jdbcType="VARCHAR"/>
+        <result property="lgps" column="lgps" jdbcType="VARCHAR"/>
+        <result property="lgpsk" column="lgpsk" jdbcType="VARCHAR"/>
+        <result property="lgpskpb" column="lgpskpb" jdbcType="VARCHAR"/>
+        <result property="lgpskua" column="lgpskua" jdbcType="VARCHAR"/>
+        <result property="bilateralMammaryGland" column="bilateral_mammary_gland" jdbcType="VARCHAR"/>
+        <result property="cervicalSpine" column="cervical_spine" jdbcType="VARCHAR"/>
+        <result property="cervicalLateralFilm" column="cervical_lateral_film" jdbcType="VARCHAR"/>
+        <result property="lumbarSpine" column="lumbar_spine" jdbcType="VARCHAR"/>
+        <result property="lumbarSpineFilm" column="lumbar_spine_film" jdbcType="VARCHAR"/>
+        <result property="chestXray" column="chest_xray" jdbcType="VARCHAR"/>
+        <result property="leftKneeJointAp" column="left_knee_joint_ap" jdbcType="VARCHAR"/>
+        <result property="lkjlp" column="lkjlp" jdbcType="VARCHAR"/>
+        <result property="rightKneeJointAp" column="right_knee_joint_ap" jdbcType="VARCHAR"/>
+        <result property="rkjlp" column="rkjlp" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdAuxiliaryExaminationUltrasoundMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound
+        from td_auxiliary_examination_ultrasound
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdAuxiliaryExaminationUltrasoundMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound
+        from td_auxiliary_examination_ultrasound
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="cr != null and cr != ''">
+                and cr = #{cr}
+            </if>
+            <if test="crOther != null and crOther != ''">
+                and cr_other = #{crOther}
+            </if>
+            <if test="cardiacUltrasound != null and cardiacUltrasound != ''">
+                and cardiac_ultrasound = #{cardiacUltrasound}
+            </if>
+            <if test="abdominalUltrasound != null and abdominalUltrasound != ''">
+                and abdominal_ultrasound = #{abdominalUltrasound}
+            </if>
+            <if test="specializedUltrasoundMale != null and specializedUltrasoundMale != ''">
+                and specialized_ultrasound_male = #{specializedUltrasoundMale}
+            </if>
+            <if test="specializedUltrasoundFemale != null and specializedUltrasoundFemale != ''">
+                and specialized_ultrasound_female = #{specializedUltrasoundFemale}
+            </if>
+            <if test="thyroidUltrasound != null and thyroidUltrasound != ''">
+                and thyroid_ultrasound = #{thyroidUltrasound}
+            </if>
+            <if test="carotidUltrasound != null and carotidUltrasound != ''">
+                and carotid_ultrasound = #{carotidUltrasound}
+            </if>
+            <if test="vascularDopplerUltrasound != null and vascularDopplerUltrasound != ''">
+                and vascular_doppler_ultrasound = #{vascularDopplerUltrasound}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_auxiliary_examination_ultrasound
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="cr != null and cr != ''">
+                and cr = #{cr}
+            </if>
+            <if test="crOther != null and crOther != ''">
+                and cr_other = #{crOther}
+            </if>
+            <if test="cardiacUltrasound != null and cardiacUltrasound != ''">
+                and cardiac_ultrasound = #{cardiacUltrasound}
+            </if>
+            <if test="abdominalUltrasound != null and abdominalUltrasound != ''">
+                and abdominal_ultrasound = #{abdominalUltrasound}
+            </if>
+            <if test="specializedUltrasoundMale != null and specializedUltrasoundMale != ''">
+                and specialized_ultrasound_male = #{specializedUltrasoundMale}
+            </if>
+            <if test="specializedUltrasoundFemale != null and specializedUltrasoundFemale != ''">
+                and specialized_ultrasound_female = #{specializedUltrasoundFemale}
+            </if>
+            <if test="thyroidUltrasound != null and thyroidUltrasound != ''">
+                and thyroid_ultrasound = #{thyroidUltrasound}
+            </if>
+            <if test="carotidUltrasound != null and carotidUltrasound != ''">
+                and carotid_ultrasound = #{carotidUltrasound}
+            </if>
+            <if test="vascularDopplerUltrasound != null and vascularDopplerUltrasound != ''">
+                and vascular_doppler_ultrasound = #{vascularDopplerUltrasound}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_auxiliary_examination_ultrasound(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{cr}, #{crOther}, #{cardiacUltrasound}, #{abdominalUltrasound}, #{specializedUltrasoundMale}, #{specializedUltrasoundFemale}, #{thyroidUltrasound}, #{carotidUltrasound}, #{vascularDopplerUltrasound})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_auxiliary_examination_ultrasound(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound, bi_rads, tvs, uterine_appendages_ultrasound, lgps, lgpsk, lgpskpb, lgpskua, bilateral_mammary_gland, cervical_spine, cervical_lateral_film, lumbar_spine, lumbar_spine_film, chest_xray, left_knee_joint_ap, lkjlp, right_knee_joint_ap, rkjlp)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.cr}, #{entity.crOther}, #{entity.cardiacUltrasound}, #{entity.abdominalUltrasound}, #{entity.specializedUltrasoundMale}, #{entity.specializedUltrasoundFemale}, #{entity.thyroidUltrasound}, #{entity.carotidUltrasound}, #{entity.vascularDopplerUltrasound}, #{entity.biRads}, #{entity.tvs}, #{entity.uterineAppendagesUltrasound}, #{entity.lgps}, #{entity.lgpsk}, #{entity.lgpskpb}, #{entity.lgpskua}, #{entity.bilateralMammaryGland}, #{entity.cervicalSpine}, #{entity.cervicalLateralFilm}, #{entity.lumbarSpine}, #{entity.lumbarSpineFilm}, #{entity.chestXray}, #{entity.leftKneeJointAp}, #{entity.lkjlp}, #{entity.rightKneeJointAp}, #{entity.rkjlp})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_auxiliary_examination_ultrasound(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound, bi_rads, tvs, uterine_appendages_ultrasound, lgps, lgpsk, lgpskpb, lgpskua, bilateral_mammary_gland, cervical_spine, cervical_lateral_film, lumbar_spine, lumbar_spine_film, chest_xray, left_knee_joint_ap, lkjlp, right_knee_joint_ap, rkjlp)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.cr}, #{entity.crOther}, #{entity.cardiacUltrasound}, #{entity.abdominalUltrasound}, #{entity.specializedUltrasoundMale}, #{entity.specializedUltrasoundFemale}, #{entity.thyroidUltrasound}, #{entity.carotidUltrasound}, #{entity.vascularDopplerUltrasound}, #{entity.biRads}, #{entity.tvs}, #{entity.uterineAppendagesUltrasound}, #{entity.lgps}, #{entity.lgpsk}, #{entity.lgpskpb}, #{entity.lgpskua}, #{entity.bilateralMammaryGland}, #{entity.cervicalSpine}, #{entity.cervicalLateralFilm}, #{entity.lumbarSpine}, #{entity.lumbarSpineFilm}, #{entity.chestXray}, #{entity.leftKneeJointAp}, #{entity.lkjlp}, #{entity.rightKneeJointAp}, #{entity.rkjlp})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        cr = values(cr),
+        cr_other = values(cr_other),
+        cardiac_ultrasound = values(cardiac_ultrasound),
+        abdominal_ultrasound = values(abdominal_ultrasound),
+        specialized_ultrasound_male = values(specialized_ultrasound_male),
+        specialized_ultrasound_female = values(specialized_ultrasound_female),
+        thyroid_ultrasound = values(thyroid_ultrasound),
+        carotid_ultrasound = values(carotid_ultrasound),
+        vascular_doppler_ultrasound = values(vascular_doppler_ultrasound),
+        bi_rads = values(bi_rads),
+        tvs = values(tvs),
+        uterine_appendages_ultrasound = values(uterine_appendages_ultrasound),
+        lgps = values(lgps),
+        lgpsk = values(lgpsk),
+        lgpskpb = values(lgpskpb),
+        lgpskua = values(lgpskua),
+        bilateral_mammary_gland = values(bilateral_mammary_gland),
+        cervical_spine = values(cervical_spine),
+        cervical_lateral_film = values(cervical_lateral_film),
+        lumbar_spine = values(lumbar_spine),
+        lumbar_spine_film = values(lumbar_spine_film),
+        chest_xray = values(chest_xray),
+        left_knee_joint_ap = values(left_knee_joint_ap),
+        lkjlp = values(lkjlp),
+        right_knee_joint_ap = values(right_knee_joint_ap),
+        rkjlp = values(rkjlp)
+    </insert>
+
+    <insert id="insertBatchByMaps">
+        insert into td_auxiliary_examination_ultrasound(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, cr, cr_other, cardiac_ultrasound, abdominal_ultrasound, specialized_ultrasound_male, specialized_ultrasound_female, thyroid_ultrasound, carotid_ultrasound, vascular_doppler_ultrasound, bi_rads, tvs, uterine_appendages_ultrasound, lgps, lgpsk, lgpskpb, lgpskua, bilateral_mammary_gland, cervical_spine, cervical_lateral_film, lumbar_spine, lumbar_spine_film, chest_xray, left_knee_joint_ap, lkjlp, right_knee_joint_ap, rkjlp)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.cr}, #{entity.crOther}, #{entity.cardiacUltrasound}, #{entity.abdominalUltrasound}, #{entity.specializedUltrasoundMale}, #{entity.specializedUltrasoundFemale}, #{entity.thyroidUltrasound}, #{entity.carotidUltrasound}, #{entity.vascularDopplerUltrasound}, #{entity.biRads}, #{entity.tvs}, #{entity.uterineAppendagesUltrasound}, #{entity.lgps}, #{entity.lgpsk}, #{entity.lgpskpb}, #{entity.lgpskua}, #{entity.bilateralMammaryGland}, #{entity.cervicalSpine}, #{entity.cervicalLateralFilm}, #{entity.lumbarSpine}, #{entity.lumbarSpineFilm}, #{entity.chestXray}, #{entity.leftKneeJointAp}, #{entity.lkjlp}, #{entity.rightKneeJointAp}, #{entity.rkjlp})
+        </foreach>
+
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_auxiliary_examination_ultrasound
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="cr != null and cr != ''">
+                cr = #{cr},
+            </if>
+            <if test="crOther != null and crOther != ''">
+                cr_other = #{crOther},
+            </if>
+            <if test="cardiacUltrasound != null and cardiacUltrasound != ''">
+                cardiac_ultrasound = #{cardiacUltrasound},
+            </if>
+            <if test="abdominalUltrasound != null and abdominalUltrasound != ''">
+                abdominal_ultrasound = #{abdominalUltrasound},
+            </if>
+            <if test="specializedUltrasoundMale != null and specializedUltrasoundMale != ''">
+                specialized_ultrasound_male = #{specializedUltrasoundMale},
+            </if>
+            <if test="specializedUltrasoundFemale != null and specializedUltrasoundFemale != ''">
+                specialized_ultrasound_female = #{specializedUltrasoundFemale},
+            </if>
+            <if test="thyroidUltrasound != null and thyroidUltrasound != ''">
+                thyroid_ultrasound = #{thyroidUltrasound},
+            </if>
+            <if test="carotidUltrasound != null and carotidUltrasound != ''">
+                carotid_ultrasound = #{carotidUltrasound},
+            </if>
+            <if test="vascularDopplerUltrasound != null and vascularDopplerUltrasound != ''">
+                vascular_doppler_ultrasound = #{vascularDopplerUltrasound},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_auxiliary_examination_ultrasound where id = #{id}
+    </delete>
+
+</mapper>
+

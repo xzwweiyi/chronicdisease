@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.researchPatient.mapper.MyQueueMapper">
+
+    <select id="findListByPersonId" resultType="com.dchealth.cro.researchPatient.domain.MyQueue">
+        SELECT
+            ri.id as queueId, ri.project_name as queueName, ri.research_status as queueStatus,
+            pi.patient_status as patientStatus,
+            (select count(*) from quit_record qr where qr.research_id = ri.id and qr.person_id = pi.person_id and is_agree is null) as noAuditCount,
+            (select count(*) from quit_record qr where qr.research_id = ri.id and qr.person_id = pi.person_id and is_agree = 1) as agreeCount
+        FROM patient_info pi
+        left join research_info ri on ri.id = pi.research_id
+        where
+            ri.research_status != 0
+            and pi.enrollment_status = 1 and pi.person_id = #{personId} and pi.enrollment_handler_status = 3
+            order by ri.create_time desc
+    </select>
+
+
+
+    
+</mapper>

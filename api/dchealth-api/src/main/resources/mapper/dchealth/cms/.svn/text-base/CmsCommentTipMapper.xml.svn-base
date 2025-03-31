@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.cms.mapper.CmsCommentTipMapper">
+    
+    <resultMap type="com.dchealth.cro.cms.domain.CmsCommentTip" id="CmsCommentTipResult">
+        <result property="id"    column="id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="commentId"    column="comment_id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="content"    column="content"    />
+        <result property="tipType"    column="tip_type"    />
+        <result property="authStatus"    column="auth_status"    />
+        <result property="authSuggest"    column="auth_suggest"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectCmsCommentTipVo">
+        select id, article_id, comment_id, tenant_id, account_id, content, tip_type, auth_status, auth_suggest, create_time, del_flag from cms_comment_tip
+    </sql>
+
+    <select id="selectCmsCommentTipList" parameterType="com.dchealth.cro.cms.domain.CmsCommentTip" resultMap="CmsCommentTipResult">
+        <include refid="selectCmsCommentTipVo"/>
+        <where>  
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="commentId != null "> and comment_id = #{commentId}</if>
+            <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="tipType != null  and tipType != ''"> and tip_type = #{tipType}</if>
+            <if test="authStatus != null  and authStatus != ''"> and auth_status = #{authStatus}</if>
+            <if test="authSuggest != null  and authSuggest != ''"> and auth_suggest = #{authSuggest}</if>
+        </where>
+    </select>
+    
+    <select id="selectCmsCommentTipById" parameterType="Long" resultMap="CmsCommentTipResult">
+        <include refid="selectCmsCommentTipVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCmsCommentTip" parameterType="com.dchealth.cro.cms.domain.CmsCommentTip" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_comment_tip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">article_id,</if>
+            <if test="commentId != null ">comment_id,</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="accountId != null ">account_id,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="tipType != null  and tipType != ''">tip_type,</if>
+            <if test="authStatus != null  and authStatus != ''">auth_status,</if>
+            <if test="authSuggest != null  and authSuggest != ''">auth_suggest,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">#{articleId},</if>
+            <if test="commentId != null ">#{commentId},</if>
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="accountId != null ">#{accountId},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="tipType != null  and tipType != ''">#{tipType},</if>
+            <if test="authStatus != null  and authStatus != ''">#{authStatus},</if>
+            <if test="authSuggest != null  and authSuggest != ''">#{authSuggest},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsCommentTip" parameterType="com.dchealth.cro.cms.domain.CmsCommentTip">
+        update cms_comment_tip
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null ">article_id = #{articleId},</if>
+            <if test="commentId != null ">comment_id = #{commentId},</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="accountId != null ">account_id = #{accountId},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="tipType != null  and tipType != ''">tip_type = #{tipType},</if>
+            <if test="authStatus != null  and authStatus != ''">auth_status = #{authStatus},</if>
+            <if test="authSuggest != null  and authSuggest != ''">auth_suggest = #{authSuggest},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsCommentTipById" parameterType="Long">
+        delete from cms_comment_tip where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsCommentTipByIds" parameterType="String">
+        delete from cms_comment_tip where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

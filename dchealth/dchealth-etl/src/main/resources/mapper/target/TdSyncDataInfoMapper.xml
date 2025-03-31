@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdSyncDataInfoMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdSyncDataInfo" id="TdSyncDataInfoMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="tableName" column="table_name" jdbcType="VARCHAR"/>
+        <result property="dataRecords" column="data_records" jdbcType="VARCHAR"/>
+        <result property="recordDate" column="record_date" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdSyncDataInfoMap">
+        select
+          id, table_name, data_records, record_date, create_time, update_time
+        from td_sync_data_info
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdSyncDataInfoMap">
+        select
+          id, table_name, data_records, record_date, create_time, update_time
+        from td_sync_data_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="tableName != null and tableName != ''">
+                and table_name = #{tableName}
+            </if>
+            <if test="dataRecords != null and dataRecords != ''">
+                and data_records = #{dataRecords}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_sync_data_info
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="tableName != null and tableName != ''">
+                and table_name = #{tableName}
+            </if>
+            <if test="dataRecords != null and dataRecords != ''">
+                and data_records = #{dataRecords}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_sync_data_info(table_name, data_records, record_date, create_time, update_time)
+        values (#{tableName}, #{dataRecords},#{recordDate}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_sync_data_info(table_name, data_records, record_date, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.tableName}, #{entity.dataRecords},#{entity.recordDate}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_sync_data_info(table_name, data_records, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.tableName}, #{entity.dataRecords}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        table_name = values(table_name),
+        data_records = values(data_records),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_sync_data_info
+        <set>
+            <if test="tableName != null and tableName != ''">
+                table_name = #{tableName},
+            </if>
+            <if test="dataRecords != null and dataRecords != ''">
+                data_records = #{dataRecords},
+            </if>
+            <if test="recordDate != null">
+                record_date = #{recordDate},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_sync_data_info where id = #{id}
+    </delete>
+
+    <!--查询单个-->
+    <select id="queryByTableName" resultMap="TdSyncDataInfoMap">
+        select
+          id, table_name, data_records, record_date, create_time, update_time
+        from td_sync_data_info
+        where table_name = #{tableName}
+    </select>
+
+</mapper>
+

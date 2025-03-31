@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.ViewHybMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.ViewHyb" id="ViewHybMap">
+        <result property="studyid" column="studyid" jdbcType="VARCHAR"/>
+        <result property="checkdate" column="checkdate" jdbcType="TIMESTAMP"/>
+        <result property="resultdate" column="resultdate" jdbcType="TIMESTAMP"/>
+        <result property="zlxmdm" column="zlxmdm" jdbcType="VARCHAR"/>
+        <result property="zlxmmc" column="zlxmmc" jdbcType="VARCHAR"/>
+        <result property="xxdm" column="xxdm" jdbcType="VARCHAR"/>
+        <result property="xxmc" column="xxmc" jdbcType="VARCHAR"/>
+        <result property="checktime" column="checktime" jdbcType="TIMESTAMP"/>
+        <result property="itemresult" column="itemresult" jdbcType="VARCHAR"/>
+        <result property="itemunit" column="itemunit" jdbcType="VARCHAR"/>
+        <result property="sampleno" column="SampleNO" jdbcType="VARCHAR"/>
+        <result property="flag" column="flag" jdbcType="VARCHAR"/>
+        <result property="defvalue" column="defvalue" jdbcType="VARCHAR"/>
+        <result property="doctor" column="doctor" jdbcType="VARCHAR"/>
+        <result property="ordercode" column="ordercode" jdbcType="VARCHAR"/>
+        <result property="sendflag" column="sendflag" jdbcType="VARCHAR"/>
+        <result property="shdoctor" column="shdoctor" jdbcType="VARCHAR"/>
+        <result property="checkmethod" column="checkmethod" jdbcType="VARCHAR"/>
+        <result property="checkstuff" column="checkstuff" jdbcType="VARCHAR"/>
+        <result property="bz" column="bz" jdbcType="VARCHAR"/>
+        <result property="deptcode" column="deptcode" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ViewHybMap">
+        select
+          studyid, checkdate, resultdate, zlxmdm, zlxmmc, xxdm, xxmc, checktime, itemresult, itemunit, SampleNO, flag, defvalue, doctor, ordercode, sendflag, shdoctor, checkmethod, checkstuff, bz, deptcode
+        from view_hyb
+        where studyid = #{studyid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ViewHybMap">
+        select
+          studyid, checkdate, resultdate, zlxmdm, zlxmmc, xxdm, xxmc, checktime, itemresult, itemunit, SampleNO, flag, defvalue, doctor, ordercode, sendflag, shdoctor, checkmethod, checkstuff, bz, deptcode
+        from view_hyb
+        <where>
+            <if test="studyid != null and studyid != ''">
+                and studyid = #{studyid}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="resultdate != null">
+                and resultdate = #{resultdate}
+            </if>
+            <if test="zlxmdm != null and zlxmdm != ''">
+                and zlxmdm = #{zlxmdm}
+            </if>
+            <if test="zlxmmc != null and zlxmmc != ''">
+                and zlxmmc = #{zlxmmc}
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                and xxdm = #{xxdm}
+            </if>
+            <if test="xxmc != null and xxmc != ''">
+                and xxmc = #{xxmc}
+            </if>
+            <if test="checktime != null">
+                and checktime = #{checktime}
+            </if>
+            <if test="itemresult != null and itemresult != ''">
+                and itemresult = #{itemresult}
+            </if>
+            <if test="itemunit != null and itemunit != ''">
+                and itemunit = #{itemunit}
+            </if>
+            <if test="sampleno != null and sampleno != ''">
+                and SampleNO = #{sampleno}
+            </if>
+            <if test="flag != null and flag != ''">
+                and flag = #{flag}
+            </if>
+            <if test="defvalue != null and defvalue != ''">
+                and defvalue = #{defvalue}
+            </if>
+            <if test="doctor != null and doctor != ''">
+                and doctor = #{doctor}
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                and ordercode = #{ordercode}
+            </if>
+            <if test="sendflag != null and sendflag != ''">
+                and sendflag = #{sendflag}
+            </if>
+            <if test="shdoctor != null and shdoctor != ''">
+                and shdoctor = #{shdoctor}
+            </if>
+            <if test="checkmethod != null and checkmethod != ''">
+                and checkmethod = #{checkmethod}
+            </if>
+            <if test="checkstuff != null and checkstuff != ''">
+                and checkstuff = #{checkstuff}
+            </if>
+            <if test="bz != null and bz != ''">
+                and bz = #{bz}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and deptcode = #{deptcode}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from view_hyb
+        <where>
+            <if test="studyid != null and studyid != ''">
+                and studyid = #{studyid}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="resultdate != null">
+                and resultdate = #{resultdate}
+            </if>
+            <if test="zlxmdm != null and zlxmdm != ''">
+                and zlxmdm = #{zlxmdm}
+            </if>
+            <if test="zlxmmc != null and zlxmmc != ''">
+                and zlxmmc = #{zlxmmc}
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                and xxdm = #{xxdm}
+            </if>
+            <if test="xxmc != null and xxmc != ''">
+                and xxmc = #{xxmc}
+            </if>
+            <if test="checktime != null">
+                and checktime = #{checktime}
+            </if>
+            <if test="itemresult != null and itemresult != ''">
+                and itemresult = #{itemresult}
+            </if>
+            <if test="itemunit != null and itemunit != ''">
+                and itemunit = #{itemunit}
+            </if>
+            <if test="sampleno != null and sampleno != ''">
+                and SampleNO = #{sampleno}
+            </if>
+            <if test="flag != null and flag != ''">
+                and flag = #{flag}
+            </if>
+            <if test="defvalue != null and defvalue != ''">
+                and defvalue = #{defvalue}
+            </if>
+            <if test="doctor != null and doctor != ''">
+                and doctor = #{doctor}
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                and ordercode = #{ordercode}
+            </if>
+            <if test="sendflag != null and sendflag != ''">
+                and sendflag = #{sendflag}
+            </if>
+            <if test="shdoctor != null and shdoctor != ''">
+                and shdoctor = #{shdoctor}
+            </if>
+            <if test="checkmethod != null and checkmethod != ''">
+                and checkmethod = #{checkmethod}
+            </if>
+            <if test="checkstuff != null and checkstuff != ''">
+                and checkstuff = #{checkstuff}
+            </if>
+            <if test="bz != null and bz != ''">
+                and bz = #{bz}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and deptcode = #{deptcode}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySyncInfoCount" resultType="java.lang.Long">
+        select count(*)
+        from 检验结果
+        <where>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and 结论日期 = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySyncInfoByPage" resultMap="ViewHybMap">
+        select
+        预约id studyid,检查日期 checkdate,结论日期 resultdate,诊疗项目代码 zlxmdm,诊疗项目名称 zlxmmc,细项代码 xxdm,细项名称 xxmc,
+        检查时间 checktime,检查结果 itemresult,单位 itemunit, SampleNO,高低标记 flag,参考范围 defvalue,检查医生 doctor, ordercode, sendflag,审核医生 shdoctor, checkmethod, checkstuff, bz, deptcode
+        from 检验结果
+        <where>
+            <if test="hyb.params.recordingDate != null and hyb.params.recordingDate != ''">
+                and 结论日期 = #{hyb.params.recordingDate}
+            </if>
+        </where>
+        order by 预约id
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="studyid" useGeneratedKeys="true">
+        insert into view_hyb(checkdate, resultdate, zlxmdm, zlxmmc, xxdm, xxmc, checktime, itemresult, itemunit, SampleNO, flag, defvalue, doctor, ordercode, sendflag, shdoctor, checkmethod, checkstuff, bz, deptcode)
+        values (#{checkdate}, #{resultdate}, #{zlxmdm}, #{zlxmmc}, #{xxdm}, #{xxmc}, #{checktime}, #{itemresult}, #{itemunit}, #{sampleno}, #{flag}, #{defvalue}, #{doctor}, #{ordercode}, #{sendflag}, #{shdoctor}, #{checkmethod}, #{checkstuff}, #{bz}, #{deptcode})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="studyid" useGeneratedKeys="true">
+        insert into view_hyb(checkdate, resultdate, zlxmdm, zlxmmc, xxdm, xxmc, checktime, itemresult, itemunit, SampleNO, flag, defvalue, doctor, ordercode, sendflag, shdoctor, checkmethod, checkstuff, bz, deptcode)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.checkdate}, #{entity.resultdate}, #{entity.zlxmdm}, #{entity.zlxmmc}, #{entity.xxdm}, #{entity.xxmc}, #{entity.checktime}, #{entity.itemresult}, #{entity.itemunit}, #{entity.sampleno}, #{entity.flag}, #{entity.defvalue}, #{entity.doctor}, #{entity.ordercode}, #{entity.sendflag}, #{entity.shdoctor}, #{entity.checkmethod}, #{entity.checkstuff}, #{entity.bz}, #{entity.deptcode})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="studyid" useGeneratedKeys="true">
+        insert into view_hyb(checkdate, resultdate, zlxmdm, zlxmmc, xxdm, xxmc, checktime, itemresult, itemunit, SampleNO, flag, defvalue, doctor, ordercode, sendflag, shdoctor, checkmethod, checkstuff, bz, deptcode)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.checkdate}, #{entity.resultdate}, #{entity.zlxmdm}, #{entity.zlxmmc}, #{entity.xxdm}, #{entity.xxmc}, #{entity.checktime}, #{entity.itemresult}, #{entity.itemunit}, #{entity.sampleno}, #{entity.flag}, #{entity.defvalue}, #{entity.doctor}, #{entity.ordercode}, #{entity.sendflag}, #{entity.shdoctor}, #{entity.checkmethod}, #{entity.checkstuff}, #{entity.bz}, #{entity.deptcode})
+        </foreach>
+        on duplicate key update
+        checkdate = values(checkdate),
+        resultdate = values(resultdate),
+        zlxmdm = values(zlxmdm),
+        zlxmmc = values(zlxmmc),
+        xxdm = values(xxdm),
+        xxmc = values(xxmc),
+        checktime = values(checktime),
+        itemresult = values(itemresult),
+        itemunit = values(itemunit),
+        SampleNO = values(SampleNO),
+        flag = values(flag),
+        defvalue = values(defvalue),
+        doctor = values(doctor),
+        ordercode = values(ordercode),
+        sendflag = values(sendflag),
+        shdoctor = values(shdoctor),
+        checkmethod = values(checkmethod),
+        checkstuff = values(checkstuff),
+        bz = values(bz),
+        deptcode = values(deptcode)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update view_hyb
+        <set>
+            <if test="checkdate != null">
+                checkdate = #{checkdate},
+            </if>
+            <if test="resultdate != null">
+                resultdate = #{resultdate},
+            </if>
+            <if test="zlxmdm != null and zlxmdm != ''">
+                zlxmdm = #{zlxmdm},
+            </if>
+            <if test="zlxmmc != null and zlxmmc != ''">
+                zlxmmc = #{zlxmmc},
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                xxdm = #{xxdm},
+            </if>
+            <if test="xxmc != null and xxmc != ''">
+                xxmc = #{xxmc},
+            </if>
+            <if test="checktime != null">
+                checktime = #{checktime},
+            </if>
+            <if test="itemresult != null and itemresult != ''">
+                itemresult = #{itemresult},
+            </if>
+            <if test="itemunit != null and itemunit != ''">
+                itemunit = #{itemunit},
+            </if>
+            <if test="sampleno != null and sampleno != ''">
+                SampleNO = #{sampleno},
+            </if>
+            <if test="flag != null and flag != ''">
+                flag = #{flag},
+            </if>
+            <if test="defvalue != null and defvalue != ''">
+                defvalue = #{defvalue},
+            </if>
+            <if test="doctor != null and doctor != ''">
+                doctor = #{doctor},
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                ordercode = #{ordercode},
+            </if>
+            <if test="sendflag != null and sendflag != ''">
+                sendflag = #{sendflag},
+            </if>
+            <if test="shdoctor != null and shdoctor != ''">
+                shdoctor = #{shdoctor},
+            </if>
+            <if test="checkmethod != null and checkmethod != ''">
+                checkmethod = #{checkmethod},
+            </if>
+            <if test="checkstuff != null and checkstuff != ''">
+                checkstuff = #{checkstuff},
+            </if>
+            <if test="bz != null and bz != ''">
+                bz = #{bz},
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                deptcode = #{deptcode},
+            </if>
+        </set>
+        where studyid = #{studyid}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from view_hyb where studyid = #{studyid}
+    </delete>
+
+</mapper>
+

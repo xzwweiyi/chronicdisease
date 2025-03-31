@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dchealth.cro.account.mapper.AccountNoticeMapper">
+
+	<resultMap type="com.dchealth.cro.account.domain.AccountNotice" id="AccountNoticeResult">
+		<result property="id" column="id" />
+		<result property="accountId" column="account_id" />
+		<result property="recordId" column="record_id" />
+		<result property="title" column="title" />
+		<result property="type" column="type" />
+		<result property="isRead" column="is_read" />
+		<result property="content" column="content" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+		<result property="tenantId" column="tenant_id" />
+		<result property="extendJson"    column="extend_json"    />
+		<result property="isSendPush"    column="is_send_push"    />
+
+		<result property="name"    column="name"    />
+		<result property="followTipStatus"    column="follow_tip_status"    />
+		<result property="visitTime"    column="visit_time"    />
+		<result property="recordCreateTime"    column="record_create_time"    />
+		<result property="sex"    column="sex"    />
+		<result property="warnStatus"    column="warn_status"    />
+		<result property="patientId"    column="patient_id"    />
+		<result property="researchId"    column="research_id"    />
+	</resultMap>
+
+	<sql id="selectAccountNoticeVo">
+		select id, account_id, record_id, title, type, is_read, content, update_time, create_time, is_send_push,
+		tenant_id, extend_json from account_notice
+	</sql>
+
+	<select id="selectAccountNoticeList" parameterType="com.dchealth.cro.account.domain.AccountNotice" resultMap="AccountNoticeResult">
+		<include refid="selectAccountNoticeVo" />
+		<where>
+			<if test="accountId != null "> and account_id = #{accountId}</if>
+			<if test="recordId != null "> and record_id = #{recordId}</if>
+			<if test="title != null  and title != ''"> and title = #{title}</if>
+			<if test="type != null  and type != ''"> and type = #{type}</if>
+			<if test="isRead != null  and isRead != ''"> and is_read = #{isRead}</if>
+			<if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+			<if test="isSendPush != null  and isSendPush != ''"> and is_send_push = #{isSendPush}</if>
+			<if test="createTimeStr != null  and createTimeStr != ''"> and TO_DAYS(create_time) = TO_DAYS(#{createTimeStr})</if>
+			<if test="typeMin != null  and typeMin != ''"> and type &gt;= #{typeMin}</if>
+			<if test="typeMax != null  and typeMax != ''"> and type &lt;= #{typeMax}</if>
+		</where>
+	</select>
+
+	<select id="selectAccountNoticeById" parameterType="Long"
+		resultMap="AccountNoticeResult">
+		<include refid="selectAccountNoticeVo" />
+		where id = #{id}
+	</select>
+
+	<insert id="insertAccountNotice" parameterType="com.dchealth.cro.account.domain.AccountNotice"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into account_notice
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="accountId != null ">account_id,</if>
+			<if test="recordId != null ">record_id,</if>
+			<if test="title != null">title,</if>
+			<if test="type != null  and type != ''">type,</if>
+			<if test="isRead != null  and isRead != ''">is_read,</if>
+			<if test="content != null  and content != ''">content,</if>
+			<if test="updateTime != null ">update_time,</if>
+			<if test="createTime != null ">create_time,</if>
+			<if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+			<if test="extendJson != null">extend_json,</if>
+			<if test="isSendPush != null">is_send_push,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="accountId != null ">#{accountId},</if>
+			<if test="recordId != null ">#{recordId},</if>
+			<if test="title != null">#{title},</if>
+			<if test="type != null  and type != ''">#{type},</if>
+			<if test="isRead != null  and isRead != ''">#{isRead},</if>
+			<if test="content != null  and content != ''">#{content},</if>
+			<if test="updateTime != null ">#{updateTime},</if>
+			<if test="createTime != null ">#{createTime},</if>
+			<if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+			<if test="extendJson != null">#{extendJson},</if>
+			<if test="isSendPush != null">#{isSendPush},</if>
+		</trim>
+	</insert>
+
+	<update id="updateAccountNotice" parameterType="com.dchealth.cro.account.domain.AccountNotice">
+		update account_notice
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="accountId != null ">account_id = #{accountId},</if>
+			<if test="recordId != null ">record_id = #{recordId},</if>
+			<if test="title != null">title = #{title},</if>
+			<if test="type != null  and type != ''">type = #{type},</if>
+			<if test="isRead != null  and isRead != ''">is_read = #{isRead},</if>
+			<if test="content != null  and content != ''">content = #{content},</if>
+			<if test="updateTime != null ">update_time = #{updateTime},</if>
+			<if test="createTime != null ">create_time = #{createTime},</if>
+			<if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+			<if test="extendJson != null">extend_json = #{extendJson},</if>
+			<if test="isSendPush != null">is_send_push = #{isSendPush},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteAccountNoticeById" parameterType="Long">
+		delete from account_notice where id = #{id}
+	</delete>
+
+	<delete id="deleteAccountNoticeByIds" parameterType="String">
+		delete from account_notice where id in
+		<foreach item="id" collection="array" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="selectAccountMessage"  resultMap="AccountNoticeResult" parameterType="com.dchealth.cro.account.form.MessageSearchForm">
+		select a.id,a.account_id,a.record_id,a.is_read,a.title,a.type,a.content,a.create_time
+		from account_notice a
+		where  a.account_id =#{accountId}
+		ORDER BY a.create_time
+		desc LIMIT ${(pageNo-1)*pageSize},${pageSize}
+	</select>
+
+	<select id="selectAccountMessageNew"  resultMap="AccountNoticeResult" parameterType="com.dchealth.cro.account.form.MessageSearchForm">
+		select a.id,a.account_id,a.record_id,a.is_read,a.title,a.type,a.content,a.create_time,
+			   pr.name,pr.follow_tip_status,pr.visit_time,pr.create_time record_create_time,pr.warn_status
+				,pr.patient_id,pr.research_id
+		from account_notice a
+		left JOIN patient_record pr on a.record_id=pr.record_id
+		left join patient_info pi on pr.patient_id=pi.patient_id
+		left JOIN mp_person mp on pi.person_id=mp.person_id
+		where  a.account_id =#{accountId}
+		<if test="isDoctor != null  and isDoctor != ''"> and a.type &gt;=15 </if>
+		<if test="isPatient != null  and isPatient != ''"> and ((a.type &gt;=6 and a.type &lt;=14)or type=19 or type=20 or type=21) </if>
+		ORDER BY a.create_time
+		desc LIMIT ${(pageNo-1)*pageSize},${pageSize}
+	</select>
+	
+	 <update id="batchUpdateMessageStatus" >
+       update  account_notice  set is_read='Y'   where id in 
+		  <foreach collection="list" item="item"  open="("  separator="," close=")">
+	      #{item}
+	      </foreach>
+     </update>
+
+	<update id="updateReadById" parameterType="Long">
+		update  account_notice  set is_read='Y'   where id = #{id}
+	</update>
+
+	<select id="getDoctorPersonalCenterRedDotVoNum" resultType="java.lang.Integer">
+         select count(1) from account_notice where type &gt;=15 and account_id =#{accountId} and is_read='N'
+	</select>
+
+
+	<select id="getPatientPersonalCenterRedDotVoNum" resultType="java.lang.Integer">
+		select count(1) from account_notice where type &gt;=6 and type &lt;=14 and account_id =#{accountId} and is_read='N'
+	</select>
+
+	<select id="getPatientPersonalCenterRedDotVoNum2" resultType="java.lang.Integer">
+		select count(1) from account_notice where type &gt;=19 and type &lt;=21 and account_id =#{accountId} and is_read='N'
+	</select>
+
+</mapper>

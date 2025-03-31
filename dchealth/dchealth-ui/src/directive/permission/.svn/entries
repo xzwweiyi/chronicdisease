@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-ui/src/directive/permission
+svn://xiaoshiguang.top
+
+
+
+2022-03-15T07:29:36.958608Z
+6250
+guanmi
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+hasPermi.js
+file
+
+
+
+
+2024-09-03T07:48:04.580000Z
+8d77c43816a4934441d23267a0f783b8
+2022-03-15T07:29:36.958608Z
+6250
+guanmi
+
+hasRole.js
+file
+
+
+
+
+2024-09-03T07:48:04.580000Z
+bd667696df84febb9bc100fba440d0d1
+2022-03-15T07:29:36.958608Z
+6250
+guanmi
+

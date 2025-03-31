@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdOrdersMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdOrders" id="TdOrdersMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="visitId" column="visit_id" jdbcType="VARCHAR"/>
+        <result property="orderNo" column="order_no" jdbcType="INTEGER"/>
+        <result property="orderSubNo" column="order_sub_no" jdbcType="INTEGER"/>
+        <result property="repeatIndicator" column="repeat_indicator" jdbcType="INTEGER"/>
+        <result property="orderClass" column="order_class" jdbcType="VARCHAR"/>
+        <result property="orderText" column="order_text" jdbcType="VARCHAR"/>
+        <result property="enterDateTime" column="enter_date_time" jdbcType="TIMESTAMP"/>
+        <result property="startDateTime" column="start_date_time" jdbcType="TIMESTAMP"/>
+        <result property="stopDateTime" column="stop_date_time" jdbcType="TIMESTAMP"/>
+        <result property="ordersDate" column="orders_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdOrdersMap">
+        select
+          id, patient_id, visit_id, order_no, order_sub_no, repeat_indicator, order_class, order_text, start_date_time, stop_date_time
+        from td_orders
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdOrdersMap">
+        select
+          id, patient_id, visit_id, order_no, order_sub_no, repeat_indicator, order_class, order_text, start_date_time, stop_date_time
+        from td_orders
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and visit_id = #{visitId}
+            </if>
+            <if test="orderNo != null">
+                and order_no = #{orderNo}
+            </if>
+            <if test="orderSubNo != null">
+                and order_sub_no = #{orderSubNo}
+            </if>
+            <if test="repeatIndicator != null">
+                and repeat_indicator = #{repeatIndicator}
+            </if>
+            <if test="orderClass != null and orderClass != ''">
+                and order_class = #{orderClass}
+            </if>
+            <if test="orderText != null and orderText != ''">
+                and order_text = #{orderText}
+            </if>
+            <if test="startDateTime != null">
+                and start_date_time = #{startDateTime}
+            </if>
+            <if test="stopDateTime != null">
+                and stop_date_time = #{stopDateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_orders
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and visit_id = #{visitId}
+            </if>
+            <if test="orderNo != null">
+                and order_no = #{orderNo}
+            </if>
+            <if test="orderSubNo != null">
+                and order_sub_no = #{orderSubNo}
+            </if>
+            <if test="repeatIndicator != null">
+                and repeat_indicator = #{repeatIndicator}
+            </if>
+            <if test="orderClass != null and orderClass != ''">
+                and order_class = #{orderClass}
+            </if>
+            <if test="orderText != null and orderText != ''">
+                and order_text = #{orderText}
+            </if>
+            <if test="startDateTime != null">
+                and start_date_time = #{startDateTime}
+            </if>
+            <if test="stopDateTime != null">
+                and stop_date_time = #{stopDateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_orders(patient_id, visit_id, order_no, order_sub_no, repeat_indicator, order_class, order_text, start_date_time, stop_date_time)
+        values (#{patientId}, #{visitId}, #{orderNo}, #{orderSubNo}, #{repeatIndicator}, #{orderClass}, #{orderText}, #{startDateTime}, #{stopDateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_orders(patient_id, visit_id, order_no, order_sub_no, repeat_indicator, order_class, order_text, start_date_time, stop_date_time,enter_date_time,orders_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.visitId}, #{entity.orderNo}, #{entity.orderSubNo}, #{entity.repeatIndicator}, #{entity.orderClass}, #{entity.orderText}, #{entity.startDateTime}, #{entity.stopDateTime}, #{entity.enterDateTime}, #{entity.ordersDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_orders(patient_id, visit_id, order_no, order_sub_no, repeat_indicator, order_class, order_text, start_date_time, stop_date_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.visitId}, #{entity.orderNo}, #{entity.orderSubNo}, #{entity.repeatIndicator}, #{entity.orderClass}, #{entity.orderText}, #{entity.startDateTime}, #{entity.stopDateTime})
+        </foreach>
+        on duplicate key update
+        patient_id = values(patient_id),
+        visit_id = values(visit_id),
+        order_no = values(order_no),
+        order_sub_no = values(order_sub_no),
+        repeat_indicator = values(repeat_indicator),
+        order_class = values(order_class),
+        order_text = values(order_text),
+        start_date_time = values(start_date_time),
+        stop_date_time = values(stop_date_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_orders
+        <set>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="visitId != null and visitId != ''">
+                visit_id = #{visitId},
+            </if>
+            <if test="orderNo != null">
+                order_no = #{orderNo},
+            </if>
+            <if test="orderSubNo != null">
+                order_sub_no = #{orderSubNo},
+            </if>
+            <if test="repeatIndicator != null">
+                repeat_indicator = #{repeatIndicator},
+            </if>
+            <if test="orderClass != null and orderClass != ''">
+                order_class = #{orderClass},
+            </if>
+            <if test="orderText != null and orderText != ''">
+                order_text = #{orderText},
+            </if>
+            <if test="startDateTime != null">
+                start_date_time = #{startDateTime},
+            </if>
+            <if test="stopDateTime != null">
+                stop_date_time = #{stopDateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_orders where id = #{id}
+    </delete>
+
+</mapper>
+

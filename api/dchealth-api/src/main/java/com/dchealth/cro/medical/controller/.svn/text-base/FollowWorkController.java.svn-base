@@ -1,0 +1,412 @@
+package com.dchealth.cro.medical.controller;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.StringUtils;
+import com.dchealth.cro.common.utils.http.HttpClientUtil;
+import com.dchealth.cro.core.config.CroCoreConfig;
+import com.dchealth.cro.medical.form.*;
+import com.dchealth.cro.medical.service.FollowWorkService;
+import com.dchealth.cro.medical.service.MedicalPatientService;
+import com.dchealth.cro.question.form.QuestionQuickForm;
+import com.dchealth.cro.warn.form.WarnLeaveMessageForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 随访工作站
+ */
+@RestController
+@RequestMapping("/follow/work")
+public class FollowWorkController extends ApiBaseController {
+
+    private static final Logger L = LoggerFactory.getLogger(FollowWorkController.class);
+
+    @Autowired
+    private MedicalPatientService medicalPatientService;
+    @Autowired
+    private FollowWorkService followWorkService;
+    @Autowired
+    private CroCoreConfig croCoreConfig;
+    /**
+     *
+     * @param recordId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "patientRecordDetail", method = RequestMethod.POST)
+    public String patientRecordDetail(Long recordId, @RequestParam(value = "detailType", defaultValue = "1") String detailType,HttpServletRequest request) {
+        try {
+            if (recordId == null) {
+                return buildErrorParamMView();
+            }
+            return buildSuccessMView(medicalPatientService.patientRecordDetail(recordId,detailType,request));
+        } catch (Exception e) {
+            L.info("患者档案详情异常{}", JSON.toJSONString(recordId), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 1随访2超窗3预警 任务树
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "tree", method = RequestMethod.POST)
+    public String tree(String reqType,Long doctorId)
+    {
+        try {
+            Boolean  b = notEmpty(reqType);
+            if (!b) {
+                return buildErrorParamMView();
+            }
+            return buildSuccessMView(followWorkService.tree(reqType,doctorId));
+        } catch (Exception e) {
+            L.info("任务树异常", e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    /**
+     * 入组列表
+     * @return
+     */
+/*    @GetMapping("/enrollment/list")
+    public TableDataInfo enrollmentList(FollowWorkListForm followWorkListForm)
+    {
+        startPage();
+        return getDataTable(followWorkService.enrollmentList(followWorkListForm));
+    }*/
+
+    /**
+     * 处理列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/handle/list", method = RequestMethod.POST)
+    public String handleList(FollowWorkListForm followWorkListForm)
+    {
+        try {
+            L.info("随访列表参数{}", JSON.toJSONString(followWorkListForm));
+            return buildSuccessMView(followWorkService.handleList(followWorkListForm));
+        } catch (Exception e) {
+            L.info("随访列表异常{}", JSON.toJSONString(followWorkListForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 超窗列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/over/list", method = RequestMethod.POST)
+    public String overList(FollowWorkListForm followWorkListForm)
+    {
+        L.info("超窗列表参数:{}",JSON.toJSONString(followWorkListForm));
+        try {
+            return buildSuccessMView(followWorkService.overList(followWorkListForm));
+        } catch (Exception e) {
+            L.info("超窗列表异常{}", JSON.toJSONString(followWorkListForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 预警列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/warn/list", method = RequestMethod.POST)
+    public String warnList(FollowWorkListForm followWorkListForm)
+    {
+            L.info("预警列表参数:{}" ,followWorkListForm);
+        try {
+            return buildSuccessMView(followWorkService.warnList(followWorkListForm));
+        } catch (Exception e) {
+            L.info("预警列表异常{}", JSON.toJSONString(followWorkListForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 患者端预警列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/warn/patientList", method = RequestMethod.POST)
+    public String warnpatientList(FollowWorkListForm followWorkListForm)
+    {
+        L.info("followWorkListForm:{}",followWorkListForm);
+        try {
+            return buildSuccessMView(followWorkService.warnPatientList(followWorkListForm));
+        } catch (Exception e) {
+            L.info("预警列表异常{}", JSON.toJSONString(followWorkListForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 待分配患者列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/allocated/list", method = RequestMethod.POST)
+    public String allocatedList(FollowWorkListForm followWorkListForm)
+    {
+
+        try {
+            return buildSuccessMView(followWorkService.allocatedList(followWorkListForm));
+        } catch (Exception e) {
+            L.info("待分配列表异常{}", JSON.toJSONString(followWorkListForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+
+    /**
+     * 确认入组/修改入组/待分配入组
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/enrollment/handle", method = RequestMethod.POST)
+    public String enrollmentHandle(FollowWorkEnrollmentHandleForm workEnrollmentHandleForm)
+    {
+        try {
+            return buildSuccessMView(followWorkService.enrollmentHandle(workEnrollmentHandleForm));
+        } catch (Exception e) {
+            L.info("入组操作异常{}", JSON.toJSONString(workEnrollmentHandleForm), e);
+            return buildErrorParamMView(e);
+        }
+
+    }
+
+    /**
+     * 待分配入组操作
+     * @param workEnrollmentHandleForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/allocated/handle", method = RequestMethod.POST)
+    public String allocatedHandle(FollowWorkEnrollmentHandleForm workEnrollmentHandleForm)
+    {
+        try {
+            return buildSuccessMView(followWorkService.allocatedHandle(workEnrollmentHandleForm));
+        } catch (Exception e) {
+            L.info("待分配入组操作异常{}", JSON.toJSONString(workEnrollmentHandleForm), e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    /**
+     * 病种及队列联动下拉框
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/diseases/select", method = RequestMethod.POST)
+    public String diseasesResearchSelect(Long researchId)
+    {
+        try {
+            return buildSuccessMView(followWorkService.diseasesResearchSelect(researchId));
+        } catch (Exception e) {
+            L.info("病种及队列联动下拉框异常", e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/diseases/selectByUserId", method = RequestMethod.POST)
+    public String selectByUserId(@RequestParam(value = "researchId", required = true)Long researchId,@RequestParam(value = "userId", required = true)Long userId)
+    {
+        try {
+            return buildSuccessMView(followWorkService.diseasesResearchSelectNew(researchId,userId));
+        } catch (Exception e) {
+            L.info("病种及队列联动下拉框异常", e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    /**
+     * 超窗处理
+     * @param followOverTimeHandleForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/over/time/handle", method = RequestMethod.POST)
+    public String visitTimeHandle(FollowOverTimeHandleForm followOverTimeHandleForm)
+    {
+        try {
+            return buildSuccessMView(followWorkService.visitTimeHandle(followOverTimeHandleForm));
+        } catch (Exception e) {
+            L.info("超窗处理操作异常{}", JSON.toJSONString(followOverTimeHandleForm), e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    /**
+     * 提交意见
+     * @param followWorkHandleForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/submit/opinion/handle", method = RequestMethod.POST)
+    public String submitOpinionHandle(FollowWorkHandleForm followWorkHandleForm)
+    {
+        L.info("followWorkHandleForm:{}",followWorkHandleForm);
+        try {
+            return buildSuccessMView(followWorkService.submitOpinionHandle(followWorkHandleForm));
+        } catch (Exception e) {
+            L.info("提交意见操作异常{}", JSON.toJSONString(followWorkHandleForm), e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    /**
+     * 提交质疑
+     * @param followWorkQuestionForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/submit/question", method = RequestMethod.POST)
+    public String submitQuestion(FollowWorkQuestionForm followWorkQuestionForm)
+    {
+        try {
+            return buildSuccessMView(followWorkService.submitQuestion(followWorkQuestionForm));
+        } catch (Exception e) {
+            L.info("提交质疑操作异常{}", JSON.toJSONString(followWorkQuestionForm), e);
+            return buildExceptionMView();
+        }
+
+    }
+    /**
+     * 快捷保存
+     * @param questionQuickForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/submit/questionQuick", method = RequestMethod.POST)
+    public String submitquestionQuick(QuestionQuickForm questionQuickForm)
+    {
+        try {
+            return buildSuccessMView(followWorkService.submitquestionQuick(questionQuickForm));
+        } catch (Exception e) {
+            L.info("快捷保存操作异常{}", JSON.toJSONString(questionQuickForm), e);
+            return buildExceptionMView();
+        }
+
+    }
+    /**
+     * 快捷回复队列
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/questionQuick/list", method = RequestMethod.POST)
+    public String questionQuickList(QuestionQuickForm questionQuickForm)
+    {
+        try {
+            return buildSuccessMView(followWorkService.questionQuickList(questionQuickForm));
+        } catch (Exception e) {
+            L.info("快捷回复队列列表异常{}", JSON.toJSONString(questionQuickForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 患者保存随访评价
+     * @param infoForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "savePatientRecordEvaluation", method = RequestMethod.POST)
+    public String savePatientRecordEvaluation(@Validated PatientRecordDetailForm infoForm) {
+        try {
+            return buildSuccessMView(followWorkService.savePatientRecordEvaluation(infoForm));
+        } catch (Exception e) {
+            L.info("患者保存随访评价异常{}", JSON.toJSONString(infoForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 保存预警指导
+     */
+    @ResponseBody
+    @RequestMapping(value = "savePatientWarnLeaveMessage", method = RequestMethod.POST)
+    public String savePatientWarnLeaveMessage(@Validated WarnLeaveMessageForm infoForm,MultipartHttpServletRequest request) {
+        try {
+        	if("2" .equals(infoForm.getContentType())) {
+            List<MultipartFile> imagesFiles = request.getFiles("imageFiles");
+            if(imagesFiles!=null) {
+                List<String> imagesArr = new ArrayList<String>();
+                String httpUrl = croCoreConfig.getFastPath() + "ngupload/singleFiles";
+                String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, imagesFiles);
+                if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
+                    JSONObject jsonObject = JSON.parseObject(result);
+                    if (jsonObject != null && jsonObject.get("code") != null) {
+                        int  code = jsonObject.getInteger("code");
+                        if(code ==1000) {
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            for (Object url : jsonArray) {
+                                imagesArr.add(String.valueOf(url));
+                            }
+                            infoForm.setImageList(imagesArr);
+                        }
+                    }
+                }
+            }
+            }
+            return buildSuccessMView(followWorkService.savePatientWarnLeaveMessage(infoForm));
+        } catch (Exception e) {
+            L.info("保存预警指导异常{}", JSON.toJSONString(infoForm), e);
+            return buildExceptionMView();
+        }
+    }
+
+    /**
+     * 结束预警
+     */
+    @ResponseBody
+    @RequestMapping(value = "endWarn", method = RequestMethod.POST)
+    public String endWarn(@RequestParam(value = "recordId", required = true) Long recordId,@RequestParam(value = "accountId", required = true) Long accountId ) {
+        try {
+            return buildSuccessMView(followWorkService.endWarn(recordId,accountId));
+        } catch (Exception e) {
+            L.info("删除指导意见异常{}", e);
+            return buildExceptionMView();
+        }
+
+    }
+
+    /**
+     * 更新随访时间
+     * @param infoForm
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "updatePatientRecordOver", method = RequestMethod.POST)
+    public String updatePatientRecordOver(@Validated PatientRecordDetailForm infoForm) {
+        try {
+            return buildSuccessMView(followWorkService.updatePatientRecordTime(infoForm));
+        } catch (Exception e) {
+            L.info("更新随访时间异常{}", JSON.toJSONString(infoForm), e);
+            return buildExceptionMView();
+        }
+    }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpStomatologyExamMapper">
+    
+    <resultMap type="MpStomatologyExam" id="MpStomatologyExamResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="dentalTissue"    column="dental_tissue"    />
+        <result property="dentalPeriTissue"    column="dental_peri_tissue"    />
+        <result property="oralMucosa"    column="oral_mucosa"    />
+        <result property="oralMaxillofacial"    column="oral_maxillofacial"    />
+        <result property="prosthodontics"    column="prosthodontics"    />
+        <result property="orthodontics"    column="orthodontics"    />
+        <result property="healthExamDate"    column="health_exam_date"    />
+        <result property="resultDate"    column="result_date"    />
+    </resultMap>
+
+    <sql id="selectMpStomatologyExamVo">
+        select id, care_site_id, person_id, visit_occurrence_id, dental_tissue, dental_peri_tissue, oral_mucosa, oral_maxillofacial, prosthodontics, orthodontics, health_exam_date, result_date from mp_stomatology_exam
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpStomatologyExamResult">
+        <include refid="selectMpStomatologyExamVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+
+</mapper>

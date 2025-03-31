@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.base.mapper.AppManageMapper">
+
+    <resultMap type="AppManage" id="AppManageResult">
+        <result property="id"    column="id"    />
+        <result property="appId"    column="app_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectAppManageVo">
+        select id, app_id, research_id, create_time, create_by, update_time, update_by from app_manage
+    </sql>
+
+    <select id="selectAppManageList" parameterType="AppManage" resultMap="AppManageResult">
+        <include refid="selectAppManageVo"/>
+        <where>
+            <if test="appId != null "> and app_id = #{appId}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+        </where>
+    </select>
+
+    <select id="selectAppManageById" parameterType="Long" resultMap="AppManageResult">
+        <include refid="selectAppManageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAppManage" parameterType="AppManage" useGeneratedKeys="true" keyProperty="id">
+        insert into app_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appId != null">app_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appId != null">#{appId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAppManage" parameterType="AppManage">
+        update app_manage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppManageById" parameterType="Long">
+        delete from app_manage where id = #{id}
+    </delete>
+
+    <delete id="deleteAppManageByIds" parameterType="String">
+        delete from app_manage where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

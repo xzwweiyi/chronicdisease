@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.warn.mapper.WarnEarlyRecordMapper">
+    
+    <resultMap type="com.dchealth.cro.warn.domain.WarnEarlyRecord" id="WarnEarlyRecordResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="warnMedicalEarlyConditionId"    column="warn_medical_early_condition_id"    />
+        <result property="warnDesc"    column="warn_desc"    />
+        <result property="propertyValue"    column="property_value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+
+        <result property="earlyWarnLevel"    column="early_warn_level"    />
+        <result property="propertyName"    column="property_name"    />
+    </resultMap>
+
+    <resultMap type="com.dchealth.cro.warn.vo.WarnConditionValueVO" id="WarnConditionAndValueResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="warnDesc"    column="warn_desc"    />
+        <result property="propertyValue"    column="property_value"    />
+        <result property="earlyWarnLevel"    column="early_warn_level"    />
+        <result property="sexCondition"    column="sex_condition"    />
+        <result property="ageConditionType"    column="age_condition_type"    />
+        <result property="ageEarlyWarnValue"    column="age_early_warn_value"    />
+        <result property="ageEarlyWarnStart"    column="age_early_warn_start"    />
+        <result property="ageEarlyWarnEnd"    column="age_early_warn_end"    />
+        <result property="conditionType"    column="condition_type"    />
+        <result property="earlyWarnValue"    column="early_warn_value"    />
+        <result property="earlyWarnStart"    column="early_warn_start"    />
+        <result property="earlyWarnEnd"    column="early_warn_end"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="parentId"    column="parent_id"    />
+    </resultMap>
+
+    <sql id="selectWarnEarlyRecordVo">
+        select id, record_id, warn_medical_early_condition_id, warn_desc, property_value, create_time, update_time, update_by from warn_early_record
+    </sql>
+
+    <select id="selectWarnEarlyRecordList" parameterType="com.dchealth.cro.warn.domain.WarnEarlyRecord" resultMap="WarnEarlyRecordResult">
+        <include refid="selectWarnEarlyRecordVo"/>
+        <where>
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="warnMedicalEarlyConditionId != null "> and warn_medical_early_condition_id = #{warnMedicalEarlyConditionId}</if>
+            <if test="warnDesc != null  and warnDesc != ''"> and warn_desc = #{warnDesc}</if>
+            <if test="propertyValue != null  and propertyValue != ''"> and property_value = #{propertyValue}</if>
+        </where>
+    </select>
+
+    <select id="selectWarnLeaveMessageByRecordIds" parameterType="list" resultMap="WarnEarlyRecordResult">
+        <include refid="selectWarnEarlyRecordVo"/>
+        where record_id = in
+        <foreach collection="recordIds" item="recordId" open="(" close=")" separator=",">
+            #{recordId}
+        </foreach>
+        order by create_time
+    </select>
+
+    <select id="selectListByRecordId" parameterType="com.dchealth.cro.warn.domain.WarnEarlyRecord" resultMap="WarnEarlyRecordResult">
+        select g.id, g.record_id, g.warn_medical_early_condition_id, g.warn_desc, g.property_value, g.create_time, g.update_time, g.update_by,
+        fmp.property_name,wmec.early_warn_level
+        from warn_early_record g
+        INNER JOIN warn_medical_early_condition wmec on g.warn_medical_early_condition_id=wmec.id
+        INNER JOIN warn_medical_early wme on wmec.medical_early_warn_id=wme.id
+        INNER JOIN f_medical_property fmp on wme.property_id=fmp.id
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="warnMedicalEarlyConditionId != null "> and g.warn_medical_early_condition_id = #{warnMedicalEarlyConditionId}</if>
+            <if test="warnDesc != null  and warnDesc != ''"> and g.warn_desc = #{warnDesc}</if>
+            <if test="propertyValue != null  and propertyValue != ''"> and g.property_value = #{propertyValue}</if>
+        </where>
+    </select>
+
+    <select id="selectWarnEarlyRecordListByRecordId" parameterType="long" resultMap="WarnEarlyRecordResult">
+        select id,
+               record_id,
+               warn_medical_early_condition_id,
+               warn_desc,
+               property_value,
+               create_time,
+               update_time,
+               update_by
+        from warn_early_record
+        WHERE record_id = #{recordId}
+    </select>
+
+    <select id="selectWarnEarlyRecordById" parameterType="Long" resultMap="WarnEarlyRecordResult">
+        <include refid="selectWarnEarlyRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWarnEarlyRecord" parameterType="com.dchealth.cro.warn.domain.WarnEarlyRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into warn_early_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="warnMedicalEarlyConditionId != null">warn_medical_early_condition_id,</if>
+            <if test="warnDesc != null">warn_desc,</if>
+            <if test="propertyValue != null">property_value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="warnMedicalEarlyConditionId != null">#{warnMedicalEarlyConditionId},</if>
+            <if test="warnDesc != null">#{warnDesc},</if>
+            <if test="propertyValue != null">#{propertyValue},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnEarlyRecord" parameterType="com.dchealth.cro.warn.domain.WarnEarlyRecord">
+        update warn_early_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="warnMedicalEarlyConditionId != null">warn_medical_early_condition_id = #{warnMedicalEarlyConditionId},</if>
+            <if test="warnDesc != null">warn_desc = #{warnDesc},</if>
+            <if test="propertyValue != null">property_value = #{propertyValue},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWarnEarlyRecordById" parameterType="Long">
+        delete from warn_early_record where id = #{id}
+    </delete>
+
+    <delete id="deleteWarnEarlyRecordByIds" parameterType="String">
+        delete from warn_early_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByRecordId" parameterType="Long">
+        delete from warn_early_record where record_id = #{recordId}
+    </delete>
+
+    <insert id="batchInsert">
+        insert into warn_early_record(record_id,warn_medical_early_condition_id,warn_desc,property_value,create_time,update_time,update_by) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.recordId},#{item.warnMedicalEarlyConditionId},#{item.warnDesc},#{item.propertyValue},#{item.createTime},#{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+    <select id="selectConditionAndValueByRecordId" resultMap="WarnConditionAndValueResult">
+        SELECT fmp.medical_form_id,wer.record_id,wer.warn_desc,wer.property_value,wmec.early_warn_level,wmec.sex_condition,
+               wmec.age_condition_type,wmec.age_early_warn_value,wmec.age_early_warn_start,wmec.age_early_warn_end,
+               wmec.condition_type,wmec.early_warn_value,wmec.early_warn_start,wmec.early_warn_end
+        FROM warn_early_record wer
+                 inner join warn_medical_early_condition wmec on wer.warn_medical_early_condition_id = wmec.id
+                 left join f_medical_property fmp on fmp.id = wmec.property_id
+        WHERE wer.record_id = #{recordId};
+    </select>
+</mapper>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cms.mapper.CmsCategoryMapper">
+    
+    <resultMap type="CmsCategory" id="CmsCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="parentIds"    column="parent_ids"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="module"    column="module"    />
+        <result property="name"    column="name"    />
+        <result property="image"    column="image"    />
+        <result property="description"    column="description"    />
+        <result property="keywords"    column="keywords"    />
+        <result property="isShow"    column="is_show"    />
+        <result property="sort"    column="sort"    />
+        <result property="patientSort"    column="patient_sort"    />
+        <result property="minSort"    column="min_sort"    />
+        <result property="allowComment"    column="allow_comment"    />
+        <result property="isAudit"    column="is_audit"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createId"    column="create_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="positionType"    column="position_type"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptIds"    column="dept_ids"    />
+    </resultMap>
+
+    <sql id="selectCmsCategoryVo">
+        select id, parent_id, parent_ids, tenant_id, module, name, image, description, keywords, is_show, sort, patient_sort, min_sort,
+            allow_comment, is_audit, create_by, create_id, create_time, update_by, update_time, remark, del_flag, position_type, dept_id, dept_ids
+        from cms_category
+    </sql>
+
+    <select id="selectCmsCategoryList" parameterType="CmsCategory" resultMap="CmsCategoryResult">
+        <include refid="selectCmsCategoryVo"/>
+        <where>
+            del_flag = 'N'
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="parentIds != null  and parentIds != ''"> and parent_ids = #{parentIds}</if>
+            <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+            <if test="module != null  and module != ''"> and module = #{module}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="keywords != null  and keywords != ''"> and keywords = #{keywords}</if>
+            <if test="isShow != null  and isShow != ''"> and is_show = #{isShow}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="patientSort != null "> and patient_sort = #{patientSort}</if>
+            <if test="minSort != null "> and min_sort = #{minSort}</if>
+            <if test="allowComment != null  and allowComment != ''"> and allow_comment = #{allowComment}</if>
+            <if test="isAudit != null  and isAudit != ''"> and is_audit = #{isAudit}</if>
+            <if test="positionType != null  and positionType != ''"> and position_type = #{positionType}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and dept_id = #{deptId}</if>
+            <if test="deptIds != null  and deptIds != ''"> and dept_ids = #{deptIds}</if>
+            <if test="commonFlag != null"> and common_flag = #{commonFlag}</if>
+            <if test="ids != null">
+                and id in
+                <foreach item="id" collection="ids" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+             </if>
+        </where>
+    </select>
+
+    <select id="selectCmsCategoryStatistics"  resultMap="CmsCategoryResult">
+        SELECT ccId               AS id,
+               NAME               AS NAME,
+               count(category_id) AS articleCount,
+               parent_id,
+               parent_ids
+        FROM (SELECT cc.NAME,
+                     cc.id AS ccId,
+                     cc.parent_id,
+                     cc.parent_ids,
+                     ca.*
+              FROM cms_category cc
+                       LEFT JOIN (SELECT *
+                                  FROM cms_article
+                                  WHERE article_type = 1
+                                    AND del_flag = 'N'
+                                    AND position_type = 2) ca
+                                 ON cc.id = ca.category_id
+              WHERE cc.del_flag = 'N'
+                AND cc.common_flag = #{commonFlag}) s
+        GROUP BY ccId,
+                 NAME,
+                 parent_id,
+                 parent_ids
+    </select>
+
+    <select id="selectCmsDeptCategoryStatistics"  resultMap="CmsCategoryResult">
+        SELECT
+            ccId AS id,
+            NAME AS NAME,
+            count( category_id ) AS articleCount,
+            parent_id,
+            parent_ids
+        FROM
+            (
+                SELECT
+                    cc.NAME,
+                    cc.id AS ccId,
+                    cc.parent_id,
+                    cc.parent_ids,
+                    ca.*
+                FROM
+                    cms_category cc
+                        LEFT JOIN ( SELECT * FROM cms_dept_article where del_flag = 'N'
+        <if test="deptId != null and deptId!='100'.toString() "> and dept_id = #{deptId}</if> ) ca
+                                  ON cc.id = ca.category_id
+                WHERE
+                    cc.del_flag = 'N'
+                  AND cc.common_flag = 0
+            ) s
+        GROUP BY
+            ccId,
+            NAME,
+            parent_id,
+            parent_ids
+    </select>
+
+    
+    <select id="selectCmsCategoryById" parameterType="Long" resultMap="CmsCategoryResult">
+        <include refid="selectCmsCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCmsCategory" parameterType="CmsCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="parentIds != null and parentIds != ''">parent_ids,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="module != null">module,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="image != null">image,</if>
+            <if test="description != null">description,</if>
+            <if test="keywords != null">keywords,</if>
+            <if test="isShow != null">is_show,</if>
+            <if test="sort != null">sort,</if>
+            <if test="patientSort != null">patient_sort,</if>
+            <if test="minSort != null">min_sort,</if>
+            <if test="allowComment != null">allow_comment,</if>
+            <if test="isAudit != null">is_audit,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="positionType != null">position_type,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="deptIds != null">dept_ids,</if>
+            <if test="commonFlag != null">common_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="parentIds != null and parentIds != ''">#{parentIds},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="module != null">#{module},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="image != null">#{image},</if>
+            <if test="description != null">#{description},</if>
+            <if test="keywords != null">#{keywords},</if>
+            <if test="isShow != null">#{isShow},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="patientSort != null">#{patientSort},</if>
+            <if test="minSort != null">#{minSort},</if>
+            <if test="allowComment != null">#{allowComment},</if>
+            <if test="isAudit != null">#{isAudit},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="positionType != null">#{positionType},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="deptIds != null">#{deptIds},</if>
+            <if test="commonFlag != null">#{commonFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsCategory" parameterType="CmsCategory">
+        update cms_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="parentIds != null and parentIds != ''">parent_ids = #{parentIds},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="module != null">module = #{module},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="keywords != null">keywords = #{keywords},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="patientSort != null">patient_sort = #{patientSort},</if>
+            <if test="minSort != null">min_sort = #{minSort},</if>
+            <if test="allowComment != null">allow_comment = #{allowComment},</if>
+            <if test="isAudit != null">is_audit = #{isAudit},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="positionType != null">position_type = #{positionType},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="deptIds != null">dept_ids = #{deptIds},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsCategoryById" parameterType="Long">
+        delete from cms_category where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsCategoryByIds" parameterType="String">
+        delete from cms_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateCmsCategoryDelById" parameterType="Long">
+        update cms_category set del_flag = 'Y' where id = #{id}
+    </update>
+
+    <select id="selectCmsCategoryByDeptId" parameterType="Long" resultMap="CmsCategoryResult">
+        <include refid="selectCmsCategoryVo"/>
+        where dept_id = #{deptId}
+    </select>
+
+
+    <select id="selectAllChildCategoryById" parameterType="Long" resultMap="CmsCategoryResult">
+        <include refid="selectCmsCategoryVo"/>
+        where  LOCATE(',${id},',CONCAT(parent_ids,',')) or id = #{id}
+    </select>
+
+</mapper>

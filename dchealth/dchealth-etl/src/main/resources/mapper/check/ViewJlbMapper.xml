@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.ViewJlbMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.ViewJlb" id="ViewJlbMap">
+        <result property="studyid" column="studyid" jdbcType="VARCHAR"/>
+        <result property="checkdate" column="checkdate" jdbcType="TIMESTAMP"/>
+        <result property="jlrq" column="jlrq" jdbcType="TIMESTAMP"/>
+        <result property="jcjg" column="jcjg" jdbcType="VARCHAR"/>
+        <result property="zjjl" column="zjjl" jdbcType="VARCHAR"/>
+        <result property="jlys" column="jlys" jdbcType="VARCHAR"/>
+        <result property="tsjy" column="tsjy" jdbcType="VARCHAR"/>
+        <result property="ylbj" column="ylbj" jdbcType="VARCHAR"/>
+        <result property="jcys" column="jcys" jdbcType="VARCHAR"/>
+        <result property="tydl" column="tydl" jdbcType="VARCHAR"/>
+        <result property="zljy" column="zljy" jdbcType="VARCHAR"/>
+        <result property="zjys" column="zjys" jdbcType="VARCHAR"/>
+        <result property="zjrq" column="zjrq" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ViewJlbMap">
+        select
+          studyid, checkdate, jlrq, jcjg, zjjl, jlys, tsjy, ylbj, jcys, tydl, zljy, zjys, zjrq
+        from view_jlb
+        where studyid = #{studyid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ViewJlbMap">
+        select
+          studyid, checkdate, jlrq, jcjg, zjjl, jlys, tsjy, ylbj, jcys, tydl, zljy, zjys, zjrq
+        from view_jlb
+        <where>
+            <if test="studyid != null and studyid != ''">
+                and studyid = #{studyid}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="jlrq != null">
+                and jlrq = #{jlrq}
+            </if>
+            <if test="jcjg != null and jcjg != ''">
+                and jcjg = #{jcjg}
+            </if>
+            <if test="zjjl != null and zjjl != ''">
+                and zjjl = #{zjjl}
+            </if>
+            <if test="jlys != null and jlys != ''">
+                and jlys = #{jlys}
+            </if>
+            <if test="tsjy != null and tsjy != ''">
+                and tsjy = #{tsjy}
+            </if>
+            <if test="ylbj != null and ylbj != ''">
+                and ylbj = #{ylbj}
+            </if>
+            <if test="jcys != null and jcys != ''">
+                and jcys = #{jcys}
+            </if>
+            <if test="tydl != null and tydl != ''">
+                and tydl = #{tydl}
+            </if>
+            <if test="zljy != null and zljy != ''">
+                and zljy = #{zljy}
+            </if>
+            <if test="zjys != null and zjys != ''">
+                and zjys = #{zjys}
+            </if>
+            <if test="zjrq != null and zjrq != ''">
+                and zjrq = #{zjrq}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from view_jlb
+        <where>
+            <if test="studyid != null and studyid != ''">
+                and studyid = #{studyid}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="jlrq != null">
+                and jlrq = #{jlrq}
+            </if>
+            <if test="jcjg != null and jcjg != ''">
+                and jcjg = #{jcjg}
+            </if>
+            <if test="zjjl != null and zjjl != ''">
+                and zjjl = #{zjjl}
+            </if>
+            <if test="jlys != null and jlys != ''">
+                and jlys = #{jlys}
+            </if>
+            <if test="tsjy != null and tsjy != ''">
+                and tsjy = #{tsjy}
+            </if>
+            <if test="ylbj != null and ylbj != ''">
+                and ylbj = #{ylbj}
+            </if>
+            <if test="jcys != null and jcys != ''">
+                and jcys = #{jcys}
+            </if>
+            <if test="tydl != null and tydl != ''">
+                and tydl = #{tydl}
+            </if>
+            <if test="zljy != null and zljy != ''">
+                and zljy = #{zljy}
+            </if>
+            <if test="zjys != null and zjys != ''">
+                and zjys = #{zjys}
+            </if>
+            <if test="zjrq != null and zjrq != ''">
+                and zjrq = #{zjrq}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySyncInfoCount" resultType="java.lang.Long">
+        select count(*)
+        from 体检结论
+        <where>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and date_format(jlrq,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="ViewJlbMap">
+        select
+        预约id studyid,终检日期 checkdate,结论日期 jlrq,检查结果 jcjg,终检结论 zjjl,结论医生 jlys,提示建议 tsjy,'' ylbj,'' jcys,'' tydl,'' zljy,终检医生 zjys,终检日期 zjrq
+        from 体检结论
+        <where>
+            <if test="jlb.params.recordingDate != null and jlb.params.recordingDate != ''">
+                and date_format(结论日期,'%Y-%m-%d') = #{jlb.params.recordingDate}
+            </if>
+        </where>
+        order by 结论日期
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="studyid" useGeneratedKeys="true">
+        insert into view_jlb(checkdate, jlrq, jcjg, zjjl, jlys, tsjy, ylbj, jcys, tydl, zljy, zjys, zjrq)
+        values (#{checkdate}, #{jlrq}, #{jcjg}, #{zjjl}, #{jlys}, #{tsjy}, #{ylbj}, #{jcys}, #{tydl}, #{zljy}, #{zjys}, #{zjrq})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="studyid" useGeneratedKeys="true">
+        insert into view_jlb(checkdate, jlrq, jcjg, zjjl, jlys, tsjy, ylbj, jcys, tydl, zljy, zjys, zjrq)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.checkdate}, #{entity.jlrq}, #{entity.jcjg}, #{entity.zjjl}, #{entity.jlys}, #{entity.tsjy}, #{entity.ylbj}, #{entity.jcys}, #{entity.tydl}, #{entity.zljy}, #{entity.zjys}, #{entity.zjrq})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="studyid" useGeneratedKeys="true">
+        insert into view_jlb(checkdate, jlrq, jcjg, zjjl, jlys, tsjy, ylbj, jcys, tydl, zljy, zjys, zjrq)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.checkdate}, #{entity.jlrq}, #{entity.jcjg}, #{entity.zjjl}, #{entity.jlys}, #{entity.tsjy}, #{entity.ylbj}, #{entity.jcys}, #{entity.tydl}, #{entity.zljy}, #{entity.zjys}, #{entity.zjrq})
+        </foreach>
+        on duplicate key update
+        checkdate = values(checkdate),
+        jlrq = values(jlrq),
+        jcjg = values(jcjg),
+        zjjl = values(zjjl),
+        jlys = values(jlys),
+        tsjy = values(tsjy),
+        ylbj = values(ylbj),
+        jcys = values(jcys),
+        tydl = values(tydl),
+        zljy = values(zljy),
+        zjys = values(zjys),
+        zjrq = values(zjrq)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update view_jlb
+        <set>
+            <if test="checkdate != null">
+                checkdate = #{checkdate},
+            </if>
+            <if test="jlrq != null">
+                jlrq = #{jlrq},
+            </if>
+            <if test="jcjg != null and jcjg != ''">
+                jcjg = #{jcjg},
+            </if>
+            <if test="zjjl != null and zjjl != ''">
+                zjjl = #{zjjl},
+            </if>
+            <if test="jlys != null and jlys != ''">
+                jlys = #{jlys},
+            </if>
+            <if test="tsjy != null and tsjy != ''">
+                tsjy = #{tsjy},
+            </if>
+            <if test="ylbj != null and ylbj != ''">
+                ylbj = #{ylbj},
+            </if>
+            <if test="jcys != null and jcys != ''">
+                jcys = #{jcys},
+            </if>
+            <if test="tydl != null and tydl != ''">
+                tydl = #{tydl},
+            </if>
+            <if test="zljy != null and zljy != ''">
+                zljy = #{zljy},
+            </if>
+            <if test="zjys != null and zjys != ''">
+                zjys = #{zjys},
+            </if>
+            <if test="zjrq != null and zjrq != ''">
+                zjrq = #{zjrq},
+            </if>
+        </set>
+        where studyid = #{studyid}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from view_jlb where studyid = #{studyid}
+    </delete>
+
+</mapper>
+

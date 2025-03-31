@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.cms.mapper.CmsGuestbookMapper">
+    
+    <resultMap type="com.dchealth.cro.cms.domain.CmsGuestbook" id="CmsGuestbookResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="userName"    column="user_name"    />
+        <result property="email"    column="email"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectCmsGuestbookVo">
+        select id,  content, user_name, email, mobile, tenant_id, account_id, create_time,  del_flag from cms_guestbook
+    </sql>
+
+    <select id="selectCmsGuestbookList" parameterType="com.dchealth.cro.cms.domain.CmsGuestbook" resultMap="CmsGuestbookResult">
+        <include refid="selectCmsGuestbookVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="mobile != null  and mobile != ''"> and mobile like concat('%', #{mobile}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCmsGuestbookById" parameterType="Long" resultMap="CmsGuestbookResult">
+        <include refid="selectCmsGuestbookVo"/>
+        where id = #{id} and del_flag ='N'
+    </select>
+        
+    <insert id="insertCmsGuestbook" parameterType="com.dchealth.cro.cms.domain.CmsGuestbook" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_guestbook
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null  and content != ''">content,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="mobile != null  and mobile != ''">mobile,</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+            <if test="accountId != null ">account_id,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="mobile != null  and mobile != ''">#{mobile},</if>
+            <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+            <if test="accountId != null ">#{accountId},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsGuestbook" parameterType="com.dchealth.cro.cms.domain.CmsGuestbook">
+        update cms_guestbook
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="mobile != null  and mobile != ''">mobile = #{mobile},</if>
+            <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="accountId != null  ">account_id = #{accountId},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsGuestbookById" parameterType="Long">
+        delete from cms_guestbook where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsGuestbookByIds" parameterType="String">
+        delete from cms_guestbook where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,87 @@
+eureka:
+  instance:
+    hostname: localhost
+  server:
+    enableSelfPreservation: true
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+  
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+      location: /usr/local/server/mirco-server/upload_temp
+  redis:
+    host: 60.205.202.222
+    password: ENC(PvrtuyWawLp5QqkhAtQQ/uhKlQ7DxPBXnfoewA5CM6o=)
+    port: 6379
+    database: 2
+  datasource:
+     druid:
+        # 主库数据源
+        primary:
+          url: jdbc:mysql://39.105.140.245:3306/dchealth_td_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: Ab123456!
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        # 读取数据源
+        second:
+          url: jdbc:mysql://39.105.140.245:3306/dchealth_td_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: Ab123456!
+          driver-class-name: com.mysql.cj.jdbc.Driver
+
+        # 初始连接数
+        initialSize: 5
+        # 最小连接池数量
+        minIdle: 10
+        # 最大连接池数量
+        maxActive: 20
+        # 配置获取连接等待超时的时间
+        maxWait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 300000
+        # 配置一个连接在池中最大生存的时间，单位是毫秒
+        maxEvictableIdleTimeMillis: 900000
+        # 配置检测连接是否有效
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        webStatFilter: 
+            enabled: true
+        filter:
+            stat:
+                enabled: true
+                # 慢SQL记录
+                log-slow-sql: true
+                slow-sql-millis: 1000
+                merge-sql: true
+            wall:
+                config:
+                    multi-statement-allow: true  
+ #数据库密码加密盐值
+jasypt:
+  encryptor:
+    password: dchealth   
+medical:
+  delay: 85400
+# Logging config
+logging:
+  config: classpath:logback-prod.xml
+  level:
+    root: WARN
+    com:
+      cloud:
+        edc: INFO
+  path:
+    ~/projects/logs
+
+
+# 讯飞服务请求域名
+xunfei:
+  requestUrl: https://test.giantcro.com/xfapi/

@@ -1,0 +1,1220 @@
+package com.dchealth.medical.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.dchealth.account.domain.AccountNotice;
+import com.dchealth.account.mapper.AccountNoticeMapper;
+import com.dchealth.base.service.TencentService;
+import com.dchealth.common.DynamicSql;
+import com.dchealth.common.constant.FollowTipStatusConstants;
+import com.dchealth.common.core.domain.entity.SysUser;
+import com.dchealth.common.exception.ServiceException;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.bean.BeanUtils;
+import com.dchealth.dynamic.mapper.DynamicCommonMapper;
+import com.dchealth.medical.domain.*;
+import com.dchealth.medical.domain.form.*;
+import com.dchealth.medical.domain.vo.*;
+import com.dchealth.medical.mapper.*;
+import com.dchealth.medical.service.IFollowWorkService;
+import com.dchealth.medical.service.common.CommonService;
+import com.dchealth.question.domain.QuestionRecordForm;
+import com.dchealth.question.mapper.QuestionRecordFormMapper;
+import com.dchealth.research.domain.ResearchDiseases;
+import com.dchealth.research.domain.ResearchInfo;
+import com.dchealth.research.domain.ResearchOutbound;
+import com.dchealth.research.domain.SysPopNotice;
+import com.dchealth.research.domain.constant.PropertyType;
+import com.dchealth.research.domain.constant.ResearchContants;
+import com.dchealth.research.mapper.ResearchDiseasesMapper;
+import com.dchealth.research.mapper.ResearchInfoMapper;
+import com.dchealth.research.mapper.ResearchOutboundMapper;
+import com.dchealth.research.service.ISysPopNoticeService;
+import com.dchealth.system.mapper.SysUserMapper;
+import com.dchealth.template.domain.FMedicalExamSubject;
+import com.dchealth.template.domain.FMedicalForm;
+import com.dchealth.template.domain.FMedicalProperty;
+import com.dchealth.template.mapper.FMedicalExamSubjectMapper;
+import com.dchealth.template.mapper.FMedicalFormMapper;
+import com.dchealth.template.mapper.FMedicalPropertyMapper;
+import com.dchealth.warn.domain.WarnEarlyRecord;
+import com.dchealth.warn.domain.vo.WarnConditionValueVO;
+import com.dchealth.warn.mapper.WarnEarlyRecordMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+@Service
+public class FollowWorkServiceImpl extends CommonService implements IFollowWorkService {
+
+    private static final Logger log = LoggerFactory.getLogger(FollowWorkServiceImpl.class);
+
+    @Autowired
+    private ResearchDiseasesMapper researchDiseasesMapper;
+    @Autowired
+    private ResearchInfoMapper researchInfoMapper;
+    @Autowired
+    private PatientInfoMapper patientInfoMapper;
+    @Autowired
+    private PatientRecordMapper patientRecordMapper;
+    @Autowired
+    private PatientRecordTemplateMapper patientRecordTemplateMapper;
+    @Autowired
+    private PatientRecordFilesMapper patientRecordFilesMapper;
+    @Autowired
+    private DynamicCommonMapper dynamicCommonMapper;
+    @Autowired
+    private DynamicSql dynamicSql;
+    @Autowired
+    private FMedicalFormMapper fMedicalFormMapper;
+    @Autowired
+    private FMedicalPropertyMapper fMedicalPropertyMapper;
+    @Autowired
+    private QuestionRecordFormMapper questionRecordFormMapper;
+    @Autowired
+    private WarnEarlyRecordMapper warnEarlyRecordMapper;
+    @Autowired
+    private PatientRecordOperLogMapper patientRecordOperLogMapper;
+    @Autowired
+    private FMedicalExamSubjectMapper fMedicalExamSubjectMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
+    @Autowired
+    private PatientRecordOutboundMapper patientRecordOutboundMapper;
+
+    @Autowired
+    private AccountNoticeMapper accountNoticeMapper;
+//    @Autowired
+//    private UmpushService umpushService;
+
+    @Autowired
+    private ResearchPatientMapper researchPatientMapper;
+
+    @Autowired
+    private ResearchOutboundMapper researchOutboundMapper;
+
+//    @Autowired
+//    private TencentSmsSevice tencentSmsSevice;
+
+    @Autowired
+    private ISysPopNoticeService sysPopNoticeService;
+
+    @Autowired
+    private TencentService tencentService;
+
+    ExecutorService executorService = new ThreadPoolExecutor(0, 6,
+            60L, TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>());
+
+
+    @Override
+    public PatientDetailVO details(FollowWorkDetailsForm followWorkDetailsForm) {
+        PatientDetailVO patientDetailVO = new PatientDetailVO();
+        patientBaseInfo(followWorkDetailsForm.getPatientId(),patientDetailVO,x->{});
+
+        if(followWorkDetailsForm.getRecordId()==null){
+            PatientRecord pr = patientRecordMapper.selectOldByPatientId(followWorkDetailsForm.getPatientId());
+            followWorkDetailsForm.setRecordId(pr.getRecordId());
+        }
+
+        PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(followWorkDetailsForm.getRecordId());
+        if("3".equals(followWorkDetailsForm.getDetailType()) && "1".equals(patientRecord.getOverTimeStatus())){
+            //超窗查看详情且是待处理，需要修改成进行中
+            patientRecord.setOverTimeStatus("2");
+            patientRecordMapper.updatePatientRecord(patientRecord);
+        }
+        patientDetailVO.setFollowOpinion(patientRecord.getFollowOpinion());
+        //app随访评价
+        patientDetailVO.setEvaluateStatus(patientRecord.getEvaluateStatus());
+        patientDetailVO.setEvaluatePrescription(patientRecord.getEvaluatePrescription());
+        patientDetailVO.setEvaluateQuality(patientRecord.getEvaluateQuality());
+        patientDetailVO.setEvaluateReply(patientRecord.getEvaluateReply());
+        //后台质效评价
+        //随访
+        patientDetailVO.setEvaluateStatusBack(patientRecord.getEvaluateStatusBack());
+        patientDetailVO.setEvaluatePrescriptionBack(patientRecord.getEvaluatePrescriptionBack());
+        patientDetailVO.setEvaluateQualityBack(patientRecord.getEvaluateQualityBack());
+        patientDetailVO.setEvaluateReplyBack(patientRecord.getEvaluateReplyBack());
+        //超窗
+        patientDetailVO.setOverEvaluateStatusBack(patientRecord.getOverEvaluateStatusBack());
+        patientDetailVO.setOverEvaluatePrescriptionBack(patientRecord.getOverEvaluatePrescriptionBack());
+        patientDetailVO.setOverEvaluateQualityBack(patientRecord.getOverEvaluateQualityBack());
+        patientDetailVO.setOverEvaluateReplyBack(patientRecord.getOverEvaluateReplyBack());
+        //告警
+        patientDetailVO.setWarnEvaluateStatusBack(patientRecord.getWarnEvaluateStatusBack());
+        patientDetailVO.setWarnEvaluatePrescriptionBack(patientRecord.getWarnEvaluatePrescriptionBack());
+        patientDetailVO.setWarnEvaluateQualityBack(patientRecord.getWarnEvaluateQualityBack());
+        patientDetailVO.setWarnEvaluateReplyBack(patientRecord.getWarnEvaluateReplyBack());
+
+        patientDetailVO.setPatientId(patientRecord.getPatientId());
+        patientDetailVO.setIgnoreType(patientRecord.getIgnoreType());
+        patientDetailVO.setOverTimeHandleStatus(patientRecord.getOverTimeHandleStatus());
+        if("3".equals(patientRecord.getOverTimeHandleStatus())){
+            PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
+            patientDetailVO.setLossCause(patientInfo.getLossCause());
+            patientDetailVO.setLossCauseOther(patientInfo.getLossCauseOther());
+        }
+
+
+        List<PatientRecordFiles> patientRecordFiles = patientRecordFilesMapper.selectPatientRecordFilesByRecordId(followWorkDetailsForm.getRecordId());
+        Map<Long, List<String>> filesMap = null;
+        if (patientRecordFiles != null && !patientRecordFiles.isEmpty()){
+            filesMap = patientRecordFiles.stream()
+                    .filter(f-> f.getPropertyId() != null)
+                    .collect(Collectors.groupingBy(PatientRecordFiles :: getPropertyId,
+                            Collectors.mapping(PatientRecordFiles :: getImageUrl, Collectors.toList())));
+        }
+
+        List<FMedicalForm> formList =fMedicalFormMapper.selectFMedicalFormByMedicalFollowId2(patientRecord.getFollowId());
+        List<MedicalFormVO> medicalFormVOS = BeanUtils.copyList(formList, MedicalFormVO :: new);
+
+        List<MedicalFormVO> medicalFormVOSResult = new ArrayList<>();
+        List<MedicalFormVO> medicalFormExamVOSResult = new ArrayList<>();
+        //判断是否存在组的情况
+        Map<Long,List<MedicalFormVO>> medicalFormMap = new HashMap<>();
+        if (medicalFormVOS != null && !medicalFormVOS.isEmpty()){
+            medicalFormMap = medicalFormVOS.stream().filter( x-> x.getParentId()>0).collect(Collectors.groupingBy(MedicalFormVO::getParentId));
+        }
+
+        List<FMedicalProperty> properties = fMedicalPropertyMapper.selectFMedicalPropertyByFollowId(patientRecord.getFollowId());
+        List<MedicalPropertyVO> medicalPropertyVOS = BeanUtils.copyList(properties, MedicalPropertyVO :: new);
+
+        //查询所有的问卷
+        List<FMedicalExamSubject> examSubjects = fMedicalExamSubjectMapper.selectFMedicalExamSubjectByFollowId(patientRecord.getFollowId());
+        List<MedicalPropertyVO> medicalPropertyExamVOS = BeanUtils.copyList(examSubjects, MedicalPropertyVO :: new);
+
+
+        if (medicalFormVOS != null && !medicalFormVOS.isEmpty()){
+            Map<Long,List<MedicalPropertyVO>> map = null;
+            if (medicalPropertyVOS != null && !medicalPropertyVOS.isEmpty()){
+                map = medicalPropertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO :: getMedicalFormId));
+            }
+
+            Map<Long,List<MedicalPropertyVO>> exaMap = new HashMap<>();
+            if (medicalPropertyExamVOS != null && !medicalPropertyExamVOS.isEmpty()){
+                exaMap = medicalPropertyExamVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO :: getMedicalFormId));
+            }
+
+            QuestionRecordForm questionRecordForm = new QuestionRecordForm();
+            questionRecordForm.setRecordId(followWorkDetailsForm.getRecordId());
+            List<QuestionRecordForm> forms = questionRecordFormMapper.selectQuestionRecordFormList(questionRecordForm);
+            Map<Long,List<QuestionRecordForm>> formMap = new HashMap<>();
+            if (forms != null && !forms.isEmpty()){
+                formMap = forms.stream().collect(Collectors.groupingBy(QuestionRecordForm :: getMedicalFormId));
+            }
+            for (MedicalFormVO x : medicalFormVOS) {
+                if(x.getParentId()>0){
+                    continue;
+                }
+                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getOpenMultiple())){
+                    x.setPropertyVOS(map.get(x.getMedicalFormId()));
+                }
+                if (exaMap != null && exaMap.containsKey(x.getMedicalFormId()) && !"1".equals(x.getOpenMultiple())){
+                    x.setPropertyExamVOS(exaMap.get(x.getMedicalFormId()));
+                }
+                if(medicalFormMap.containsKey(x.getMedicalFormId())){
+                    List<MedicalFormVO> voList = medicalFormMap.get(x.getMedicalFormId());
+                    if(voList.size()>0){
+                        for(MedicalFormVO v:voList){
+                            if (map != null && map.containsKey(v.getMedicalFormId()) ){
+                                v.setPropertyVOS(map.get(v.getMedicalFormId()));
+                            }
+                            if(exaMap!=null && exaMap.containsKey(v.getMedicalFormId())){
+                                v.setPropertyExamVOS(exaMap.get(v.getMedicalFormId()));
+                            }
+                        }
+                        x.setChildMedicalFormVOS(voList);
+                    }
+                }
+
+                if("3".equals(x.getFormType())){
+                    medicalFormExamVOSResult.add(x);
+                } else{
+                    medicalFormVOSResult.add(x);
+                }
+
+
+                //随访工作站详情页面判断模板id是否默认选中
+                if(formMap.containsKey(x.getMedicalFormId())){
+                    x.setChecked("true");
+                }
+            }
+        }
+
+        // 处理预警源
+        dealWarnSource(followWorkDetailsForm.getRecordId(), medicalFormVOSResult);
+
+        List<DynamicCommonProperty> t = new ArrayList<>();
+        DynamicForm dynamicForm = new DynamicForm();
+        dynamicForm.setRecordId(followWorkDetailsForm.getRecordId());
+        dynamicForm.setType("1");
+        //大文本
+        dynamicForm.setSql(dynamicSql.buildSelectLargeText(patientRecord.getResearchId()));
+        List<DynamicCommonProperty> largeTextList = dynamicCommonMapper.selectBySql(dynamicForm);
+        if (largeTextList != null && !largeTextList.isEmpty()){
+            t.addAll(largeTextList);
+        }
+        //小文本
+        dynamicForm.setSql(dynamicSql.buildSelectText(patientRecord.getResearchId()));
+        List<DynamicCommonProperty> textList = dynamicCommonMapper.selectBySql(dynamicForm);
+        if (textList != null && !textList.isEmpty()){
+            t.addAll(textList);
+        }
+        //动态
+        dynamicForm.setSql(dynamicSql.buildSelectDynamic(patientRecord.getResearchId()));
+        List<DynamicCommonProperty> dynaicList = dynamicCommonMapper.selectBySql(dynamicForm);
+        if (dynaicList != null && !dynaicList.isEmpty()){
+            t.addAll(dynaicList);
+        }
+         t= new ArrayList<>(t.stream().collect(
+                 Collectors.collectingAndThen(Collectors.toCollection(() -> new
+                         TreeSet<>(Comparator.comparing(DynamicCommonProperty::getPropertyId))), ArrayList::new)));
+
+        Map<Long, DynamicCommonProperty> dp = t.stream().collect(Collectors.toMap(DynamicCommonProperty :: getPropertyId, item -> item));
+        if (medicalPropertyVOS != null && !medicalPropertyVOS.isEmpty()){
+            for (MedicalPropertyVO p : medicalPropertyVOS) {
+                if (PropertyType.eq(p.getPropertyType(), PropertyType.UPLOAD)){
+                    if (filesMap != null && !filesMap.isEmpty() && filesMap.containsKey(p.getId())){
+                        p.setImageUrls(filesMap.get(p.getId()));
+                    }
+                }else{
+                    if (dp != null && !dp.isEmpty() && dp.containsKey(p.getId())){
+                        DynamicCommonProperty propertyVO = dp.get(p.getId());
+                        if (propertyVO != null){
+                            p.setPropertyValue(propertyVO.getPropertyValue());
+                            p.setOther(propertyVO.getOther());
+                        }
+                    }
+                }
+            }
+        }
+        //问卷值
+        if (medicalPropertyExamVOS != null && !medicalPropertyExamVOS.isEmpty()){
+            for (MedicalPropertyVO p : medicalPropertyExamVOS) {
+                if (PropertyType.eq(p.getPropertyType(), PropertyType.UPLOAD)){
+                    if (filesMap != null && !filesMap.isEmpty() && filesMap.containsKey(p.getId())){
+                        p.setImageUrls(filesMap.get(p.getId()));
+                    }
+                }else{
+                    if (dp != null && !dp.isEmpty() && dp.containsKey(p.getId())){
+                        DynamicCommonProperty propertyVO = dp.get(p.getId());
+                        if (propertyVO != null){
+                            p.setPropertyValue(propertyVO.getPropertyValue());
+                            p.setOther(propertyVO.getOther());
+                        }
+                    }
+                }
+            }
+        }
+
+
+        WarnEarlyRecord warnEarlyRecord = new WarnEarlyRecord();
+        warnEarlyRecord.setRecordId(followWorkDetailsForm.getRecordId());
+        List<WarnEarlyRecord> warnEarlyRecordList = warnEarlyRecordMapper.selectListByRecordId(warnEarlyRecord);
+        patientDetailVO.setWarnEarlyRecordList(warnEarlyRecordList);
+        patientDetailVO.setMedicalFormVOS(medicalFormVOSResult);
+        patientDetailVO.setMedicalFormExamVOS(medicalFormExamVOSResult);
+        return patientDetailVO;
+    }
+
+    private void dealWarnSource(Long recordId, List<MedicalFormVO> medicalFormVOSResult) {
+        try {
+            // 查询预警信息
+            List<WarnConditionValueVO> warnConditionValueVOS = warnEarlyRecordMapper.selectConditionAndValueByRecordId(recordId);
+            Set<Long> collect = warnConditionValueVOS.stream().map(WarnConditionValueVO::getMedicalFormId).collect(Collectors.toSet());
+
+            // 标记 预警源
+            if (!CollectionUtils.isEmpty(warnConditionValueVOS)) {
+                for (MedicalFormVO x : medicalFormVOSResult) {
+                    if(!x.getFormType().equals("4")){ // 4：预警填报
+                        continue;
+                    }
+                    List<MedicalFormVO> childMedicalFormVOS = x.getChildMedicalFormVOS();
+                    boolean isWarnSource = false;
+                    if(!CollectionUtils.isEmpty(childMedicalFormVOS)){
+                        isWarnSource = markWarnSource(collect, x, childMedicalFormVOS);
+                    }else {
+                        List<MedicalPropertyVO> propertyVOS = x.getPropertyVOS();
+                        for(MedicalPropertyVO medicalPropertyVO : propertyVOS){
+                            if(collect.contains(medicalPropertyVO.getMedicalFormId().longValue())){
+                                isWarnSource = true;
+                            }
+                        }
+                    }
+                    x.setWarnSource(isWarnSource);
+                }
+            }
+        } catch (Exception e) {
+            log.error("pc dealWarnSource error, recordId = {}, error is {}", recordId, e.getMessage());
+        }
+    }
+
+    private boolean markWarnSource(Set<Long> collect, MedicalFormVO x, List<MedicalFormVO> childMedicalFormVOS) throws Exception{
+        for (MedicalFormVO y : childMedicalFormVOS) {
+            List<MedicalFormVO> yChildMedicalFormVOS = y.getChildMedicalFormVOS();
+            if(!CollectionUtils.isEmpty(yChildMedicalFormVOS)){
+                markWarnSource(collect, y, yChildMedicalFormVOS);
+            }else {
+                List<MedicalPropertyVO> propertyVOS = y.getPropertyVOS();
+                for(MedicalPropertyVO medicalPropertyVO : propertyVOS){
+                    if(collect.contains(medicalPropertyVO.getMedicalFormId().longValue())){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public FollowWorkTree tree(Long userId) {
+        try {
+            log.info("加载用户{}的随访树", userId);
+            long startTime = System.currentTimeMillis();
+            SysUser sysUser = sysUserMapper.selectUserById(userId);
+            List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
+            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+            } else {
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+            }
+
+            List<ResearchInfo> researchInfos = new ArrayList<>();
+            TreeForm treeForm = new TreeForm();
+            treeForm.setType("1");
+            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+                treeForm.setDeptId(sysUser.getDeptId());
+                researchInfos = researchInfoMapper.selectResearchInfoByAuth(treeForm);
+            } else {
+                treeForm.setUserId(userId);
+                researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
+            }
+            log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+
+            Future<List<FollowWorkListVO>> submit = executorService.submit(() -> {
+                log.info(Thread.currentThread().getName());
+                //患者入组审核-待处理
+                FollowWorkListForm followWorkListForm = new FollowWorkListForm();
+                followWorkListForm.setEnrollmentHandlerStatus(1);
+                followWorkListForm.setAllocatedStatus(0);//待分配
+                List<FollowWorkListVO> follow = patientInfoMapper.enrollmentListNew(followWorkListForm);
+                log.info("1-到待处理患者查询完, count: {}条 cost time: {}ms", follow.size(), (System.currentTimeMillis() - startTime));
+                return follow;
+            });
+
+            Future<List<FollowWorkListVO>> submit1 = executorService.submit(() -> {
+                log.info(Thread.currentThread().getName());
+                List<FollowWorkListVO> all = selectFollowWorkPatientRecordListNew();
+                log.info("2-到查询所有档案完, count: {}条, cost time: {}ms", all.size(), (System.currentTimeMillis() - startTime));
+                return all;
+            });
+
+            Future<List<FollowWorkListVO>> submit2 = executorService.submit(() -> {
+                        log.info(Thread.currentThread().getName());
+                        FollowWorkListForm form = new FollowWorkListForm();
+                        form.setAllocatedHandlerStatus("1");
+                        form.setDeptId(sysUser.getDeptId());
+                        List<FollowWorkListVO> allocated = patientInfoMapper.allocatedList(form);
+                        log.info("3-到查入组状态待处理完, count: {}条,cost time: {}ms", allocated.size(), (System.currentTimeMillis() - startTime));
+                        return allocated;
+                    }
+            );
+
+            List<FollowWorkListVO> handle = new ArrayList<>();
+            List<FollowWorkListVO> over = new ArrayList<>();
+            List<FollowWorkListVO> warn = new ArrayList<>();
+            List<FollowWorkListVO> all = submit1.get();
+            for (FollowWorkListVO followWorkListVO : all) {
+                if ("1".equals(followWorkListVO.getFollowStatus())) {
+                    handle.add(followWorkListVO);
+                }
+                if ("1".equals(followWorkListVO.getOverTimeStatus())) {
+                    over.add(followWorkListVO);
+                }
+                if ("1".equals(followWorkListVO.getWarnStatus())) {
+                    warn.add(followWorkListVO);
+                }
+            }
+            List<FollowWorkListVO> follow = submit.get();
+            List<FollowWorkListVO> allocateds = submit2.get();
+            int len = allocateds.size() + all.size() + follow.size();
+            Map<String, List<FollowWorkListVO>> map = new HashMap<String, List<FollowWorkListVO>>(len / 2);
+            map.put("follow", follow);
+            map.put("handle", handle);
+            map.put("over", over);
+            map.put("warn", warn);
+            map.put("allocated", allocateds);
+            log.info("to map handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+
+            FollowWorkTree followWorkTree = new FollowWorkTree(researchDiseasesList, researchInfos, map);
+            log.info("to generate tree over cost time (all time): {}ms", (System.currentTimeMillis() - startTime));
+            return followWorkTree;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<FollowWorkListVO> selectFollowWorkPatientRecordListNew(){
+        FollowWorkListForm followWorkListForm = new FollowWorkListForm();
+        followWorkListForm.setFollowStatus(1);
+        followWorkListForm.setOverTimeStatus(1);
+        followWorkListForm.setWarnStatus(1);
+        return patientRecordMapper.selectFollowWorkPatientRecordListNew(followWorkListForm);
+    }
+
+    public List<FollowWorkListVO> selectFollowWorkPatientRecordList(String type){
+        FollowWorkListForm followWorkListForm = new FollowWorkListForm();
+        switch (type) {
+            case "1" :
+                followWorkListForm.setFollowStatus(1);
+                break;
+            case "2" :
+                followWorkListForm.setOverTimeStatus(1);
+                break;
+            case "3" :
+                followWorkListForm.setWarnStatus(1);
+                break;
+        }
+        return patientRecordMapper.selectFollowWorkPatientRecordList2(followWorkListForm);
+    }
+
+    @Override
+    public EvaluateTree evaluateTree(String type,Long userId) {
+        SysUser sysUser = sysUserMapper.selectUserById(userId);
+        List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
+        if("1".equals(sysUser.getIsAlldeptResearch())){
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+        }else{
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+        }
+        
+        
+        TreeForm treeForm = new TreeForm();
+        treeForm.setType("2");
+        treeForm.setUserId(userId);
+        List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
+        List<ResearchInfo>  result =  dealFollowTreeData( researchInfos);
+        return new EvaluateTree(researchDiseasesList, result,type);
+    }
+    
+    
+	 /**
+     * 对统计数据进行合并
+     * @param type
+     * @param researchInfos
+     * @return
+     */
+    private    List<ResearchInfo>  dealFollowTreeData(List<ResearchInfo> researchInfos){
+    
+	    	 List<ResearchInfo>  result   = new ArrayList<>();
+		    // 需要对researhInfos 进行二次处理
+		    if(researchInfos != null &&  researchInfos.size() > 0) {
+		     Map<Long, List<ResearchInfo>> groupedResearch= researchInfos.stream().collect(Collectors.groupingBy(ResearchInfo::getId));
+		     for (Map.Entry<Long, List<ResearchInfo>> researchGruopKey : groupedResearch.entrySet()) {
+		    	Long researchId =  researchGruopKey.getKey();
+		    	List<ResearchInfo> researchInfoList = researchGruopKey.getValue();
+		    	ResearchInfo  researchInfo = new ResearchInfo();
+		    	researchInfo.setId(researchId);
+		    	if(researchInfoList != null &&  researchInfoList.size() > 0) {
+		    		ResearchInfo  research0 = researchInfoList.get(0);
+		    		researchInfo.setDiseaseTypeId(research0.getDiseaseTypeId());
+		    		researchInfo.setProjectName(research0.getProjectName());
+		    	   int evaluateBackPendingNum = 0;//后台质效待评价数量
+		    	   int evaluateBackCompletedNum = 0;//后台质效完成数量
+		    	   int warnEvaluateBackPendingNum = 0;//后台预警质效待评价数量
+		    	   int warnEvaluateBackCompletedNum = 0;//后台预警质效完成数量
+		    	   int overEvaluateBackPendingNum = 0;//后台超窗质效待评价数量
+		    	   int overEvaluateBackCompletedNum = 0;//后台超窗质效完成数量
+		    	   int evaluatePendingNum = 0;
+		    	   int evaluateCompletedNum = 0;
+		    		for (ResearchInfo researchDb : researchInfoList) {
+						if(ResearchContants.FOLLOW_STATUS_3.equals(researchDb.getFollowStatus()) && ResearchContants.EVALUATE_STATUS_BACK_1.equals(researchDb.getEvaluateStatusBack())) {
+						  ++ evaluateBackPendingNum ;	
+						}
+						if(ResearchContants.FOLLOW_STATUS_4.equals(researchDb.getFollowStatus()) && ResearchContants.EVALUATE_STATUS_BACK_2.equals(researchDb.getEvaluateStatusBack())) {
+							++ evaluateBackCompletedNum ;	
+						}
+						if(ResearchContants.WARN_STATUS_3.equals(researchDb.getWarnStatus()) && ResearchContants.WARN_EVALUATE_STATUS_BACK_1.equals(researchDb.getWarnEvaluateStatusBack())) {
+							++ warnEvaluateBackPendingNum ;	
+						}
+						if(ResearchContants.WARN_STATUS_4.equals(researchDb.getWarnStatus()) && ResearchContants.WARN_EVALUATE_STATUS_BACK_2.equals(researchDb.getWarnEvaluateStatusBack())) {
+							++ warnEvaluateBackCompletedNum ;	
+						}
+						if(ResearchContants.OVER_TIME_STATUS_3.equals(researchDb.getOverTimeStatus()) && ResearchContants.OVER_EVALUATE_STATUS_BACK_1.equals(researchDb.getOverEvaluateStatusBack())) {
+							++ overEvaluateBackPendingNum ;	
+						}
+						if(ResearchContants.OVER_TIME_STATUS_4.equals(researchDb.getOverTimeStatus()) && ResearchContants.OVER_EVALUATE_STATUS_BACK_2.equals(researchDb.getOverEvaluateStatusBack())) {
+							++ overEvaluateBackCompletedNum ;	
+						}
+						
+						if(ResearchContants.FOLLOW_STATUS_3.equals(researchDb.getFollowStatus()) && ResearchContants.EVALUATE_STATUS_1.equals(researchDb.getEvaluateStatus())) {
+							  ++ evaluatePendingNum ;	
+							}
+						if(ResearchContants.FOLLOW_STATUS_3.equals(researchDb.getFollowStatus()) && ResearchContants.EVALUATE_STATUS_2.equals(researchDb.getEvaluateStatus())) {
+							  ++ evaluateCompletedNum ;	
+							}
+					}
+		    		researchInfo.setEvaluateBackPendingNum(evaluateBackPendingNum);
+		    		
+		    		researchInfo.setEvaluateBackPendingNum( evaluateBackPendingNum);//后台质效待评价数量
+		    		researchInfo.setEvaluateBackCompletedNum(evaluateBackCompletedNum);//后台质效完成数量
+		    		researchInfo.setWarnEvaluateBackPendingNum(warnEvaluateBackPendingNum );//后台预警质效待评价数量
+		    		researchInfo.setWarnEvaluateBackCompletedNum(warnEvaluateBackCompletedNum);//后台预警质效完成数量
+		    		researchInfo.setOverEvaluateBackPendingNum(overEvaluateBackPendingNum);//后台超窗质效待评价数量
+		    		researchInfo.setOverEvaluateBackCompletedNum(overEvaluateBackCompletedNum);//后台超窗质效完成数量
+		    		researchInfo.setEvaluatePendingNum(evaluatePendingNum);
+		    		researchInfo.setEvaluateCompletedNum(evaluateCompletedNum);
+		    		
+		    		
+		    	}
+		    	
+		    	result.add(researchInfo);
+			} 
+		    }
+		    return result;
+    }
+
+    
+
+    @Override
+    public List<EvaluateVO> evaluateList(EvaluateForm evaluateForm) {
+        return patientRecordMapper.selectEvaluateList(evaluateForm);
+    }
+
+    @Override
+    public int evaluateWork(EvaluateWorkForm evaluateWorkForm) {
+        String belongType = evaluateWorkForm.getBelongType() == null ? "1" : evaluateWorkForm.getBelongType();
+        PatientRecord record = new PatientRecord();
+        record.setRecordId(evaluateWorkForm.getRecordId());
+        record.setUpdateBy(evaluateWorkForm.getUpdateBy());
+        if (belongType.equals("1")){
+            record.setEvaluatePrescriptionBack(evaluateWorkForm.getEvaluatePrescriptionBack());
+            record.setEvaluateQualityBack(evaluateWorkForm.getEvaluateQualityBack());
+            record.setEvaluateReplyBack(evaluateWorkForm.getEvaluateReplyBack());
+            record.setEvaluateStatusBack("2");
+            record.setEvaluateReplyBackTime(DateUtils.getNowDate());
+            record.setFollowStatus("4");
+        }else if (belongType.equals("3")){
+            record.setOverEvaluatePrescriptionBack(evaluateWorkForm.getOverEvaluatePrescriptionBack());
+            record.setOverEvaluateQualityBack(evaluateWorkForm.getOverEvaluateQualityBack());
+            record.setOverEvaluateReplyBack(evaluateWorkForm.getOverEvaluateReplyBack());
+            record.setOverEvaluateStatusBack("2");
+            record.setOverEvaluateReplyBackTime(DateUtils.getNowDate());
+            record.setOverTimeStatus("4");
+        }else if (belongType.equals("4")){
+            record.setWarnEvaluatePrescriptionBack(evaluateWorkForm.getWarnEvaluatePrescriptionBack());
+            record.setWarnEvaluateQualityBack(evaluateWorkForm.getWarnEvaluateQualityBack());
+            record.setWarnEvaluateReplyBack(evaluateWorkForm.getWarnEvaluateReplyBack());
+            record.setWarnEvaluateStatusBack("2");
+            record.setWarnEvaluateReplyBackTime(DateUtils.getNowDate());
+            record.setWarnStatus("4");
+        }
+
+        if(Objects.equals(record.getFollowTipStatus(),FollowTipStatusConstants.FOLLOW_UP_OPINION_REMINDER)){
+            record.setFollowTipStatus(FollowTipStatusConstants.NO_STATUS);
+            record.setEvaluateStatus("1");
+        }
+        return patientRecordMapper.updatePatientRecord(record);
+    }
+
+    @Override
+    public List<FollowWorkListVO> enrollmentList(FollowWorkListForm followWorkListForm) {
+        if(Integer.valueOf(0).equals(followWorkListForm.getEnrollmentHandlerStatus())){
+            followWorkListForm.setEnrollmentHandlerStatus(1);
+        }
+        followWorkListForm.setAllocatedStatus(0);
+
+        List<FollowWorkListVO> list = patientInfoMapper.enrollmentList2(followWorkListForm);
+        if(list.size()>0){
+            for(FollowWorkListVO f:list){
+                f.setHaveSubmitted(Boolean.FALSE);
+                //是否提交
+                PatientRecordVo query = new PatientRecordVo();
+                query.setResearchId(f.getResearchId());
+                query.setPatientId(f.getPatientId());
+                List<PatientRecordVo> patientRecordVos = patientRecordMapper.selectEcdPatientRecordVoList(query);
+                if (CollectionUtils.isEmpty(patientRecordVos)) {
+                    f.setHaveSubmitted(Boolean.FALSE);
+                }
+                List<PatientRecordVo> collect = patientRecordVos.stream().filter(x -> !"0".equals(x.getFollowStatus())).collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(collect)) {
+                    f.setHaveSubmitted(Boolean.TRUE);
+                }
+                if(f.getMobile()==null){
+                    f.setMobile(f.getBaseMobile());
+                }
+                f.setBaseMobile(null);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<FollowWorkListVO> handleList(FollowWorkListForm followWorkListForm) {
+        if(Integer.valueOf(0).equals(followWorkListForm.getFollowStatus())){
+            followWorkListForm.setFollowStatus(1);
+        }
+        List<FollowWorkListVO> listVOS = patientRecordMapper.selectFollowWorkPatientRecordList(followWorkListForm);
+        if(listVOS.size()>0){
+            //随访工作站为提前提醒，PatientRecordOutbound的stage_num为需要生产记录的
+            for(FollowWorkListVO f:listVOS){
+                PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+                patientRecordOutbound.setResearchId(followWorkListForm.getResearchId());
+                patientRecordOutbound.setOutboundType("1");//1智能外呼2短信提醒3app站内信
+                patientRecordOutbound.setRemindType("1");//1随访2超窗3预警
+                patientRecordOutbound.setPatientId(f.getPatientId());
+                patientRecordOutbound.setStageNum(f.getStageAddNum());
+                PatientRecordOutbound p = patientRecordOutboundMapper.selectOneId(patientRecordOutbound);
+                if(p!=null){
+                    f.setOutboundId(p.getId());
+                }
+            }
+        }
+        return listVOS;
+    }
+
+    @Override
+    public List<FollowWorkListVO> overList(FollowWorkListForm followWorkListForm) {
+        if(Integer.valueOf(0).equals(followWorkListForm.getOverTimeStatus())){
+            followWorkListForm.setOverTimeStatus(1);
+        }
+        List<FollowWorkListVO> listVOS = patientRecordMapper.selectFollowWorkPatientRecordList(followWorkListForm);
+        if(listVOS.size()>0){
+            for(FollowWorkListVO f:listVOS){
+                PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+                patientRecordOutbound.setResearchId(followWorkListForm.getResearchId());
+                patientRecordOutbound.setOutboundType("1");//1智能外呼2短信提醒3app站内信
+                patientRecordOutbound.setRemindType("2");//1随访2超窗3预警
+                patientRecordOutbound.setRecordId(f.getRecordId());
+                PatientRecordOutbound p = patientRecordOutboundMapper.selectOneId(patientRecordOutbound);
+                if(p!=null){
+                    f.setOutboundId(p.getId());
+                }
+            }
+        }
+        return listVOS;
+    }
+
+    @Override
+    public List<FollowWorkListVO> warnList(FollowWorkListForm followWorkListForm) {
+        if(Integer.valueOf(0).equals(followWorkListForm.getWarnStatus())){
+            followWorkListForm.setWarnStatus(1);
+        }
+        List<FollowWorkListVO> listVOS = patientRecordMapper.selectFollowWorkPatientRecordList(followWorkListForm);
+        if(listVOS.size()>0){
+            for(FollowWorkListVO f:listVOS){
+                PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+                patientRecordOutbound.setResearchId(followWorkListForm.getResearchId());
+                patientRecordOutbound.setOutboundType("1");//1智能外呼2短信提醒3app站内信
+                patientRecordOutbound.setRemindType("3");//1随访2超窗3预警
+                patientRecordOutbound.setRecordId(f.getRecordId());
+                PatientRecordOutbound p = patientRecordOutboundMapper.selectOneId(patientRecordOutbound);
+                if(p!=null){
+                    f.setOutboundId(p.getId());
+                }
+
+                WarnEarlyRecord warnEarlyRecord = warnEarlyRecordMapper.selectOldOneByRecordId(f.getRecordId());
+                if(warnEarlyRecord!=null){
+                    f.setCreateTime(warnEarlyRecord.getCreateTime());
+                }
+            }
+        }
+        return listVOS;
+    }
+
+    @Override
+    public List<FollowWorkListVO> allocatedList(FollowWorkListForm followWorkListForm) {
+        return patientInfoMapper.allocatedList(followWorkListForm);
+    }
+
+    @Override
+    @Transactional
+    public int enrollmentHandle(FollowWorkEnrollmentHandleForm workEnrollmentHandleForm) {
+        PatientInfo patientInfo = new PatientInfo();
+        patientInfo.setPatientId(workEnrollmentHandleForm.getPatientId());
+        patientInfo.setEnrollmentResult(workEnrollmentHandleForm.getHandleType());
+        patientInfo.setEnrollmentHandlerStatus(workEnrollmentHandleForm.getHandleType());
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(workEnrollmentHandleForm.getResearchId());
+        //1待分配2变更3确认入组
+        if ("1".equals(workEnrollmentHandleForm.getHandleType())){
+            patientInfo.setEnrollmentResultContent("待分配");
+            patientInfo.setAllocatedStatus("1");
+            patientInfo.setAllocatedHandlerStatus("1");
+            patientInfoMapper.updatePatientInfo(patientInfo);
+        }else if ("2".equals(workEnrollmentHandleForm.getHandleType())){
+
+            patientInfo.setEnrollmentStatus("1");
+            patientInfo.setEnrollmentTime(new Date());
+            patientInfo.setResearchId(workEnrollmentHandleForm.getResearchId());
+            if (researchInfo != null){
+                patientInfo.setEnrollmentResultContent("入组变更到"+researchInfo.getProjectName());
+            }
+
+            PatientInfo piOld = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+            if("1".equals(piOld.getAllocatedStatus())){
+                //是待分配的患者
+                patientInfo.setAllocatedHandlerStatus("3");
+                patientInfo.setEnrollmentHandlerStatus("3");
+                generateUpdateBaseRecord(patientInfo);
+                patientInfoMapper.updatePatientInfo(patientInfo);
+            }else{
+
+                patientInfo.setEnrollmentHandlerStatus("3");
+                patientInfo.setPlanResearchId(workEnrollmentHandleForm.getResearchId());
+                patientInfo.setIsEndCreateRecord("1");
+                patientInfo.setResearchId(null);
+                patientInfo.setIsShowApp("0");
+                patientInfoMapper.updatePatientInfo(patientInfo);
+
+                PatientInfo newPatientInfo = new PatientInfo(piOld, researchInfo, workEnrollmentHandleForm.getUpdateBy());
+                newPatientInfo.setOldPatientId(piOld.getPatientId());
+                newPatientInfo.setChannelType(piOld.getChannelType());
+                //患者审核后修改入组直接已入组
+                newPatientInfo.setEnrollmentHandlerStatus("3");
+                newPatientInfo.setDeptId(researchInfo.getDeptId());
+                patientInfoMapper.insertPatientInfo(newPatientInfo);
+                //新队列记录初始化
+                generateBaseRecord(newPatientInfo);
+
+                ResearchPatient researchPatient = new ResearchPatient();
+                researchPatient.setResearchId(newPatientInfo.getResearchId());
+                researchPatient.setPersonId(newPatientInfo.getPersonId());
+                researchPatient.setPatientId(newPatientInfo.getPatientId());
+                researchPatient.setCreateTime(DateUtils.getNowDate());
+                researchPatientMapper.insertResearchPatient(researchPatient);
+            }
+        } else if ("3".equals(workEnrollmentHandleForm.getHandleType())) {
+            //3.pc端确认入组, pc自己发起的需要app端去确认; app发起的, pc端此处操作直接入组
+            PatientInfo patientInfoDO = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+            /*渠道来源是app端, 则直接处理完毕, 入组, 否则入组进行中*/
+            //处理状态是3, 则不走此项入组 (重入组逻辑)!!!, 已完成的重入组不走此项
+            /**
+             * 排列组合状态, col_1 来源渠道(1后台,2扫码) | col_2 处理状态 (1待处理,2进行中,3已完成), col_3 入组状态(0待分配,1已入组)
+             * 1,1 发起邀请 1,2 入组中,0
+             * 1,2 取消入组
+             * 1,3 重新入组
+             * 2,1 审核确认, 审核拒绝
+             * 2,2
+             * 2,3 重新入组
+              */
+
+            if ("2".equals(patientInfoDO.getChannelType()) && !"3".equals(patientInfoDO.getEnrollmentHandlerStatus())) { //app端
+                /*扫码入组*/
+                patientInfo.setEnrollmentStatus("1");
+                patientInfo.setEnrollmentHandlerStatus("3");
+                patientInfo.setEnrollmentTime(new Date());
+                patientInfo.setUpdateTime(new Date());
+                patientInfo.setResearchId(workEnrollmentHandleForm.getResearchId());
+                patientInfo.setEnrollmentResultContent("确认入组");
+//            generateBaseRecord(patientInfo);
+                patientInfo.setDeptId(researchInfo.getDeptId());
+                patientInfoMapper.updatePatientInfo(patientInfo);
+
+                PatientRecord prd = patientRecordMapper.selectOldByPatientId(workEnrollmentHandleForm.getPatientId());
+                prd.setVisitTime(DateUtils.getNowDate());
+                prd.setLockVisitTime(DateUtils.getNowDate());
+                patientRecordMapper.updatePatientRecord(prd);
+
+                PatientInfo pio = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+                prd.setAccountId(pio.getAccountId());
+                String msgContent = "您已加入随访队列，可查看队列详情";
+                AccountNotice accountNotice = new AccountNotice(prd, msgContent, "11");
+                accountNoticeMapper.insertAccountNotice(accountNotice);
+            } else /*来源渠道后台,pc发起入组邀请*/ {
+                PatientInfo pio = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+                if ("2".equals(pio.getEnrollmentHandlerStatus())) {
+                    throw new ServiceException("您已重新入组,请稍后!");
+                }
+                //进行中
+                patientInfo.setEnrollmentStatus("0");
+                patientInfo.setEnrollmentHandlerStatus("2");
+                patientInfo.setEnrollmentTime(new Date());
+                patientInfo.setResearchId(workEnrollmentHandleForm.getResearchId());
+                patientInfo.setEnrollmentResultContent("入组确认中");
+                patientInfo.setUpdateTime(new Date());
+//            generateBaseRecord(patientInfo);
+                patientInfo.setDeptId(researchInfo.getDeptId());
+//                Long userId = SecurityUtils.getUserId();
+//                patientInfo.setDoctorId(userId);
+                if ("3".equals(patientInfoDO.getEnrollmentHandlerStatus())){
+                    /*重新入组*/
+                    patientInfo.setChannelType("1");
+                    patientInfo.setSmsSendCount(0);
+                }
+                patientInfoMapper.updatePatientInfo(patientInfo);
+                clearFollowRecord(patientInfo);
+                PatientRecord prd = patientRecordMapper.selectOldByPatientId(workEnrollmentHandleForm.getPatientId());
+                prd.setVisitTime(DateUtils.getNowDate());
+                prd.setLockVisitTime(DateUtils.getNowDate());
+                patientRecordMapper.updatePatientRecord(prd);
+
+                //未绑定发送短信
+                if (patientInfoDO.getAccountId() == null || patientInfoDO.getAccountId() == 0) {
+                    patientInfoDO.setProjectName(researchInfo.getProjectName());
+                    tencentService.asyncSendSms(patientInfoDO);
+                }
+                //消息和推送
+                prd.setAccountId(patientInfoDO.getAccountId());
+                String msgContent = "您被邀请加入随访队列";
+                AccountNotice accountNotice = new AccountNotice(prd, msgContent, "19");
+                Map<String, Object> extjson = new HashMap<>();
+                extjson.put("researchId", researchInfo.getId());
+                extjson.put("type", "19");
+                extjson.put("patientId", String.valueOf(patientInfoDO.getPatientId()));
+                extjson.put("recordId", prd.getRecordId());
+                extjson.put("researchName", researchInfo.getProjectName());
+                extjson.put("researchDescription", researchInfo.getResearchSynopsis());
+                accountNotice.setExtendJson(JSON.toJSONString(extjson));
+                //用于消息推送
+                accountNoticeMapper.insertAccountNotice(accountNotice);
+
+                //用于主动查询 弹框消息
+                createPopNotice(researchInfo, String.valueOf(patientInfoDO.getPatientId()));
+            }
+        } else if ("4".equals(workEnrollmentHandleForm.getHandleType())) {
+
+            checkCancelResearch(workEnrollmentHandleForm);
+            //4.pc端取消入组, pc端发起的直接取消入组, 患者端主动扫码的, pc端不让入组
+            PatientInfo patientInfoDO = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+            PatientRecord prd = patientRecordMapper.selectOldByPatientId(workEnrollmentHandleForm.getPatientId());
+
+            if ("2".equals(patientInfoDO.getChannelType())) {
+                /*来源于app端,pc端不让患者*/
+                //取消入组, 新加状态还是置为未处理
+                patientInfo.setEnrollmentStatus("0");
+                patientInfo.setEnrollmentHandlerStatus("3"); //处理了, 但是入组结果还是0, 也就是没有入
+                patientInfo.setEnrollmentTime(new Date());
+                patientInfo.setResearchId(workEnrollmentHandleForm.getResearchId());
+                patientInfo.setEnrollmentResultContent("取消入组");
+                String refuseCode = workEnrollmentHandleForm.getRefuseCode();
+                String refuseMsg = workEnrollmentHandleForm.getRefuseReason();
+                log.info("取消入组原因code:{}", refuseCode);
+                log.info("取消入组原因refuseMsg:{}", refuseMsg);
+//            generateBaseRecord(patientInfo);
+                patientInfo.setDeptId(researchInfo.getDeptId());
+                patientInfoMapper.updatePatientInfo(patientInfo);
+
+                prd.setVisitTime(DateUtils.getNowDate());
+                prd.setLockVisitTime(DateUtils.getNowDate());
+                patientRecordMapper.updatePatientRecord(prd);
+
+                PatientInfo pio = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+                prd.setAccountId(pio.getAccountId());
+                String msgContent = "您申请加入队列审核未通过,"+refuseMsg;
+
+                AccountNotice accountNotice = new AccountNotice(prd, msgContent, "20");//20
+
+                accountNoticeMapper.insertAccountNotice(accountNotice);
+            } else {
+                /*来源于pc端邀请,pc端取消入组*/
+                //            todo 能否取消判断一下, 若是已完成(3), 则判断下是否填写了, 没填写可以取消
+                //取消入组, 新加状态还是置为未处理 todo
+                patientInfo.setEnrollmentStatus("0");
+                patientInfo.setEnrollmentHandlerStatus("3");
+                patientInfo.setEnrollmentTime(new Date());
+                patientInfo.setResearchId(workEnrollmentHandleForm.getResearchId());
+                patientInfo.setEnrollmentResultContent("取消入组");
+                //todo 取消入组原因
+                String refuseCode = workEnrollmentHandleForm.getRefuseCode();
+                String refuseMsg = workEnrollmentHandleForm.getRefuseReason();
+                log.info("取消入组原因code:{}", refuseCode);
+                log.info("取消入组原因refuseMsg:{}", refuseMsg);
+//            generateBaseRecord(patientInfo);
+                patientInfo.setDeptId(researchInfo.getDeptId());
+                patientInfoMapper.updatePatientInfo(patientInfo);
+
+                prd.setVisitTime(DateUtils.getNowDate());
+                prd.setLockVisitTime(DateUtils.getNowDate());
+                patientRecordMapper.updatePatientRecord(prd);
+
+                PatientInfo pio = patientInfoMapper.selectPatientInfoByPatientId(workEnrollmentHandleForm.getPatientId());
+                prd.setAccountId(pio.getAccountId());
+                String msgContent = "您被取消邀请加入随访队列,"+refuseMsg;
+
+                AccountNotice accountNotice = new AccountNotice(prd, msgContent, "20");//20
+                accountNoticeMapper.insertAccountNotice(accountNotice);
+
+                cancelPopNotice(researchInfo, String.valueOf(patientInfoDO.getPatientId()));
+            }
+        }
+        PatientRecord patientRecord = patientRecordMapper.selectOldByPatientId(workEnrollmentHandleForm.getPatientId());
+        if (patientRecord != null) {
+            patientRecordOperLogMapper.insertPatientRecordOperLog(new PatientRecordOperLog(workEnrollmentHandleForm.getUserId(), patientRecord.getRecordId(), "1", DateUtils.getNowDate()));
+        }
+        return 1;
+    }
+
+    /**.
+     * 清理随访
+     *
+     * @param patientInfo
+     */
+    private void clearFollowRecord(PatientInfo patientInfo) {
+        List<PatientRecordTemplate> patientRecordTemplates =
+                patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(patientInfo.getResearchId());
+        if (patientRecordTemplates != null && !patientRecordTemplates.isEmpty()) {
+            for (PatientRecordTemplate patientRecordTemplate : patientRecordTemplates) {
+                if (patientRecordTemplate.getFollowNum() != 0) {
+                    FollowWorkListCmdForm followWorkListCmdForm = new FollowWorkListCmdForm();
+                    followWorkListCmdForm.setFollowId(patientRecordTemplate.getFollowId());
+                    followWorkListCmdForm.setResearchId(patientRecordTemplate.getResearchId());
+                    followWorkListCmdForm.setPatientId(patientInfo.getPatientId());
+                    if (followWorkListCmdForm.getFollowId()!=null
+                            && followWorkListCmdForm.getResearchId()!=null
+                            && followWorkListCmdForm.getPatientId()!=null){
+                        patientRecordMapper.deletePatientRecord(followWorkListCmdForm);
+                    }
+                }
+            }
+
+        }
+    }
+
+    private void checkCancelResearch(FollowWorkEnrollmentHandleForm workEnrollmentHandleForm) {
+        PatientRecordVo query = new PatientRecordVo();
+        query.setResearchId(workEnrollmentHandleForm.getResearchId());
+        query.setPatientId(workEnrollmentHandleForm.getPatientId());
+        List<PatientRecordVo> patientRecordVos = patientRecordMapper.selectEcdPatientRecordVoList(query);
+        if (CollectionUtils.isEmpty(patientRecordVos)) {
+            throw new ServiceException("该患者没有入组记录");
+        }
+        List<PatientRecordVo> collect = patientRecordVos.stream().filter(x -> !"0".equals(x.getFollowStatus())).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(collect)) {
+            throw new ServiceException("该患者已经提交数据, 不能取消");
+        }
+    }
+
+    private void cancelPopNotice(ResearchInfo researchInfo, String patientId) {
+        SysPopNotice query = new SysPopNotice();
+        query.setResearchId(researchInfo.getId());
+        query.setUserId(patientId);
+        List<SysPopNotice> sysPopNotices = sysPopNoticeService.selectSysPopNoticeList(query);
+        if (CollectionUtils.isEmpty(sysPopNotices)) {
+            return;
+        }
+        sysPopNotices.forEach(x -> {
+            x.setIsread(1);
+            sysPopNoticeService.updateSysPopNotice(x);
+        });
+    }
+
+    private void createPopNotice(ResearchInfo researchInfo, String patientId) {
+        SysPopNotice sysPopNotice = new SysPopNotice();
+        sysPopNotice.setResearchName(researchInfo.getProjectName());
+        sysPopNotice.setUserId(patientId);
+        sysPopNotice.setResearchId(researchInfo.getId());
+        sysPopNotice.setIsread(0);
+        sysPopNotice.setResearchDescription(researchInfo.getResearchSynopsis());
+        sysPopNoticeService.insertSysPopNotice(sysPopNotice);
+    }
+
+    @Override
+    public String isCall(Long recordId) {
+        PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(recordId);
+        ResearchOutbound researchOutbound = researchOutboundMapper.selectByResearchIdAndType(patientRecord.getResearchId(),"1");
+        if(researchOutbound!=null){
+            PatientRecordTemplate patientRecordTemplate = patientRecordTemplateMapper.selectByResearchIdAndNum(patientRecord.getResearchId(), 1);
+            if(patientRecordTemplate!=null){
+                if(patientRecordTemplate.getFollowInterval()==1){
+                    //间隔1天，说明需要提示
+                    Calendar calendar = Calendar.getInstance();
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public int allocatedHandle(FollowWorkEnrollmentHandleForm workEnrollmentHandleForm) {
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(workEnrollmentHandleForm.getResearchId());
+        PatientInfo patientInfo = new PatientInfo();
+        patientInfo.setPatientId(workEnrollmentHandleForm.getPatientId());
+        patientInfo.setEnrollmentStatus("1");
+        patientInfo.setEnrollmentTime(new Date());
+        patientInfo.setResearchId(workEnrollmentHandleForm.getResearchId());
+        patientInfo.setAllocatedHandlerStatus("3");
+        if (researchInfo != null){
+            patientInfo.setEnrollmentResultContent("入组变更到"+researchInfo.getProjectName());
+        }
+        generateBaseRecord(patientInfo);
+        patientInfoMapper.updatePatientInfo(patientInfo);
+        return 1;
+    }
+
+    @Override
+    public List<ResearchDiseasesSelect> diseasesResearchSelect(Long userId) {
+        SysUser sysUser = sysUserMapper.selectUserById(userId);
+        List<ResearchDiseases> researchDiseases = new ArrayList<>();
+        if("1".equals(sysUser.getIsAlldeptResearch())){
+            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+        }else{
+            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+        }
+
+        if (researchDiseases == null || researchDiseases.isEmpty()){
+            return new ArrayList<>();
+        }
+        TreeForm tf = new TreeForm();
+//        tf.setDeptId(sysUser.getDeptId());
+        tf.setUserId(userId);
+        List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByUserId(tf);
+        Map<Long, List<ResearchInfo>> researchMap = null;
+        if (researchInfos != null && !researchInfos.isEmpty()){
+            researchMap = researchInfos.stream().collect(Collectors.groupingBy(ResearchInfo :: getDiseaseTypeId));
+        }
+        Map<Long, List<ResearchInfo>> finalResearchMap = researchMap;
+        return researchDiseases.stream().map(x->new ResearchDiseasesSelect(x,
+                finalResearchMap != null && !finalResearchMap.isEmpty()
+                        ? (finalResearchMap.containsKey(x.getDiseaseId()) ? finalResearchMap.get(x.getDiseaseId()).stream().map(y->new ResearchDiseasesSelect(y)).collect(Collectors.toList()) : null)
+                        : null)).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public int visitTimeHandle(FollowOverTimeHandleForm followOverTimeHandleForm) {
+        PatientRecord patientRecord = new PatientRecord();
+        patientRecord.setRecordId(followOverTimeHandleForm.getRecordId());
+        patientRecord.setOverTimeStatus("3");
+        patientRecord.setOverEvaluateStatusBack("1");
+        patientRecord.setOverTimeHandleStatus(followOverTimeHandleForm.getHandleType());
+        patientRecord.setOverTimeHandleTime(DateUtils.getNowDate());
+        //1更新随访时间2忽略本次3失访
+        if ("1".equals(followOverTimeHandleForm.getHandleType())){
+            patientRecord.setVisitTime(followOverTimeHandleForm.getVisitTime());
+            patientRecord.setFollowTipStatus(FollowTipStatusConstants.CHANGE_OF_FOLLOW_UP_TIME_REMINDER);
+        }else if ("2".equals(followOverTimeHandleForm.getHandleType())){
+            patientRecord.setFollowTipStatus(FollowTipStatusConstants.IGNORE_THIS_FOLLOW_UP_REMINDER);
+            patientRecord.setIgnoreType(followOverTimeHandleForm.getIgnoreType());
+        }else if ("3".equals(followOverTimeHandleForm.getHandleType())){
+            PatientRecord recordDB = patientRecordMapper.selectPatientRecordByRecordId(followOverTimeHandleForm.getRecordId());
+            PatientInfo patientInfo = new PatientInfo();
+            patientInfo.setPatientId(recordDB.getPatientId());
+            patientInfo.setLossCause(followOverTimeHandleForm.getLossCause());
+            patientInfo.setLossCauseOther(followOverTimeHandleForm.getLossCauseOther());
+            patientInfo.setPatientStatus("4");//失访
+            patientInfoMapper.updatePatientInfo(patientInfo);
+            patientRecord.setFollowTipStatus(FollowTipStatusConstants.MISSING_VISIT_REMINDER);
+
+            patientRecord.setLoseType(followOverTimeHandleForm.getLossCause());
+            patientRecord.setLoseReason(followOverTimeHandleForm.getLossCauseOther());
+        }
+        patientRecordOperLogMapper.insertPatientRecordOperLog(new PatientRecordOperLog(followOverTimeHandleForm.getUserId(),followOverTimeHandleForm.getRecordId(),"3",DateUtils.getNowDate()));
+        patientRecord.setUpdateBy(followOverTimeHandleForm.getUpdateBy());
+        return patientRecordMapper.updatePatientRecord(patientRecord);
+    }
+
+    @Override
+    @Transactional
+    public int submitOpinionHandle(FollowWorkHandleForm followWorkHandleForm) {
+        PatientRecord patientRecord = new PatientRecord();
+        if ("2".equals(followWorkHandleForm.getAdjustType())){//更换队列
+            if ("2".equals(followWorkHandleForm.getAdjustType())) {
+                PatientInfo old = patientInfoMapper.selectPatientInfoByOldId(followWorkHandleForm.getPatientInfoId());
+                if (!Objects.isNull(old)) {
+                    return -1;
+                }
+            }
+
+            PatientInfo patientInfo = new PatientInfo();
+            patientInfo.setPatientId(followWorkHandleForm.getPatientInfoId());
+            patientInfo.setPatientStatus("3");
+            patientInfo.setPatientActivityStatus("2");
+            patientInfo.setAdjustType(followWorkHandleForm.getAdjustType());
+            patientInfo.setPlanResearchId(followWorkHandleForm.getResearchId());
+            patientInfo.setUpdateBy(followWorkHandleForm.getUpdateBy());
+            patientInfoMapper.updatePatientInfo(patientInfo);
+            PatientInfo old = patientInfoMapper.selectPatientInfoByPatientId(followWorkHandleForm.getPatientInfoId());
+            ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(followWorkHandleForm.getResearchId());
+            PatientInfo newPatientInfo = new PatientInfo(old, researchInfo, followWorkHandleForm.getUpdateBy());
+            newPatientInfo.setOldPatientId(old.getPatientId());
+            patientInfoMapper.insertPatientInfo(newPatientInfo);
+            //新队列记录初始化
+            generateBaseRecord(newPatientInfo);
+            ResearchPatient researchPatient = new ResearchPatient();
+            researchPatient.setResearchId(newPatientInfo.getResearchId());
+            researchPatient.setPersonId(newPatientInfo.getPersonId());
+            researchPatient.setPatientId(newPatientInfo.getPatientId());
+            researchPatient.setCreateTime(DateUtils.getNowDate());
+            researchPatientMapper.insertResearchPatient(researchPatient);
+
+            //旧队列保持原来的记录
+            patientRecord.setFollowTipStatus(FollowTipStatusConstants.CHANGE_QUEUE_ALERT);
+            patientRecord.setAccountId(old.getAccountId());
+        }else if("1".equals(followWorkHandleForm.getAdjustType())){
+            PatientInfo patientInfo = new PatientInfo();
+            patientInfo.setPatientId(followWorkHandleForm.getPatientInfoId());
+            patientInfo.setAdjustType(followWorkHandleForm.getAdjustType());
+            patientInfoMapper.updatePatientInfo(patientInfo);
+            patientInfoMapper.updatePatientInfo(patientInfo);
+            patientRecord.setFollowTipStatus(FollowTipStatusConstants.FOLLOW_UP_OPINION_REMINDER);
+
+            PatientInfo pi = patientInfoMapper.selectPatientInfoByPatientId(followWorkHandleForm.getPatientInfoId());
+            patientRecord.setAccountId(pi.getAccountId());
+        }
+        patientRecord.setRecordId(followWorkHandleForm.getRecordId());
+        patientRecord.setFollowOpinion(followWorkHandleForm.getFollowOpinion());
+        patientRecord.setFollowOpinionUserId(followWorkHandleForm.getUpdateUserId());
+        patientRecord.setEdcStatus("1");
+        patientRecord.setFollowStatus("3");
+        patientRecord.setEvaluateStatusBack("1");
+        patientRecord.setEvaluateStatus("1");
+        patientRecord.setFollowCompleteTime(DateUtils.getNowDate());
+        patientRecord.setUpdateBy(followWorkHandleForm.getUpdateBy());
+        patientRecord.setUpdateBy(followWorkHandleForm.getUpdateBy());
+        patientRecordMapper.updatePatientRecord(patientRecord);
+
+        //保存提醒消息
+        PatientRecord prd = patientRecordMapper.selectPatientRecordByRecordId(followWorkHandleForm.getRecordId());
+        patientRecord.setName(prd.getName());
+        String msgContent = "您有一条随访建议请及时查看";
+        AccountNotice accountNotice = new AccountNotice(patientRecord,msgContent,"9");
+        accountNoticeMapper.insertAccountNotice(accountNotice);
+//        umpushService.sendCustomizedcastMessage(2,String.valueOf(patientRecord.getAccountId()),msgContent,accountNotice.getExtendJson());
+
+        return 1;
+    }
+
+    /**
+     * 生成基线档案
+     */
+    private void generateBaseRecord(PatientInfo patientInfo){
+        List<PatientRecordTemplate> patientRecordTemplates = patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(patientInfo.getResearchId());
+        if (patientRecordTemplates != null && !patientRecordTemplates.isEmpty()){
+            patientRecordTemplates.sort(Comparator.comparing(PatientRecordTemplate :: getFollowNum));
+            PatientRecord patientRecord = new PatientRecord(patientInfo, patientRecordTemplates.get(0));
+            patientRecordMapper.insertPatientRecord(patientRecord);
+        }
+    }
+
+    //待分配的患者分配完队列后更新记录
+    private void generateUpdateBaseRecord(PatientInfo patientInfo){
+        List<PatientRecordTemplate> patientRecordTemplates = patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(patientInfo.getResearchId());
+        if (patientRecordTemplates != null && !patientRecordTemplates.isEmpty()){
+            PatientRecord patientRecord = patientRecordMapper.selectOldByPatientId(patientInfo.getPatientId());
+            if(patientRecord!=null){
+                patientRecord.setResearchId(patientInfo.getResearchId());
+                patientRecord.setFollowId(patientRecordTemplates.get(0).getFollowId());
+                patientRecordMapper.updatePatientRecord(patientRecord);
+            }
+        }
+    }
+
+}

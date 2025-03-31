@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cms.mapper.CmsArticleMapper">
+    
+    <resultMap type="CmsArticle" id="CmsArticleResult">
+        <result property="id"    column="id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="title"    column="title"    />
+        <result property="link"    column="link"    />
+        <result property="uploadType"    column="upload_type"    />
+        <result property="forwardLink"    column="forward_link"    />
+        <result property="videoUrl"    column="video_url"    />
+        <result property="videoImage"    column="video_image"    />
+        <result property="image"    column="image"    />
+        <result property="keywords"    column="keywords"    />
+        <result property="description"    column="description"    />
+        <result property="listOrderNum"    column="list_order_num"    />
+        <result property="listShow"    column="list_show"    />
+        <result property="positionType"    column="position_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createId"    column="create_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptIds"    column="dept_ids"    />
+        <result property="diseaseId"    column="disease_id"    />
+        <result property="type"    column="type"    />
+        <result property="articleStatus"    column="article_status"    />
+        <result property="quesNum"    column="ques_num"    />
+        <result property="articleType"    column="article_type"    />
+        <result property="scoresTotalVal"    column="scores_total_val"    />
+    </resultMap>
+
+    <sql id="selectCmsArticleVo">
+        select id, tenant_id, category_id, title, upload_type, forward_link, link, video_url, video_image, image, keywords, description, list_order_num, list_show,
+               position_type, create_id, create_by, create_time, update_by, update_time, remark, del_flag, dept_id, dept_ids, disease_id, type, article_status,
+               ques_num, article_type ,scores_total_val from cms_article
+    </sql>
+
+    <sql id="selectCmsArticleVos">
+        select a.id, a.tenant_id, a.category_id, a.title, a.link, a.upload_type, a.forward_link, a.video_url, a.video_image, a.image, a.keywords, a.description, a.list_order_num, a.list_show, a.position_type, a.create_by, a.create_id, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag, a.dept_id, a.disease_id, a.type, c.name categoryName, a.article_status, a.ques_num
+        from cms_article a left join cms_category c on a.category_id = c.id
+    </sql>
+
+
+    <select id="selectCmsInformationList"  parameterType="CmsArticle" resultMap="CmsArticleResult">
+        select a.id, a.tenant_id, a.category_id, a.title, a.link, a.upload_type, a.forward_link, a.video_url,
+        a.video_image, a.image, a.keywords, a.description, a.list_order_num, a.list_show, a.position_type, a.create_by,
+        a.create_id, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag, a.dept_id, a.disease_id, a.type,
+        c.name categoryName, a.article_status, a.ques_num
+        from cms_article a left join cms_category c on a.category_id = c.id
+        <where>
+            a.del_flag = 'N' and c.del_flag = 'N'
+            <if test="tenantId != null  and tenantId != ''">and a.tenant_id =#{tenantId}    </if>
+            <if test="categoryId != null ">and a.category_id = #{categoryId}</if>
+            <if test="title != null  and title != ''">and a.title like concat( '%', #{title}, '%')</if>
+            <if test="link != null  and link != ''">and a.link =#{link}</if>
+            <if test="uploadType != null  and uploadType != ''"> and a.upload_type = #{uploadType}</if>
+            <if test="forwardLink != null  and forwardLink != ''"> and a.forward_link = #{forwardLink}</if>
+            <if test="videoUrl != null  and videoUrl != ''"> and a.video_url = #{videoUrl}</if>
+            <if test="videoImage != null  and videoImage != ''"> and a.video_image = #{videoImage}</if>
+            <if test="image != null  and image != ''"> and a.image = #{image}</if>
+            <if test="keywords != null  and keywords != ''"> and a.keywords  like concat('%', #{keywords}, '%')</if>
+            <if test="description != null  and description != ''">and a.description like concat('%', #{description}, '%')</if>
+            <if test="listOrderNum != null ">and a.list_order_num = #{listOrderNum}</if>
+            <if test="listShow != null  and listShow != ''">and a.list_show = #{listShow}</if>
+            <if test="positionType != null  and positionType != ''">and a.position_type = #{positionType}</if>
+            <if test="diseaseId != null ">and a.disease_id = #{diseaseId}</if>
+            <if test="categoryName != null ">and c.name = #{categoryName}</if>
+            <if test="type != null ">and a.type = #{type}</if>
+            <if test="articleStatus != null ">and a.article_status = #{articleStatus}</if>
+            <!-- <if test="createId != null "> and a.create_id = #{createId} and c.create_id = #{createId}</if> -->
+            <if test="deptId != null  and deptId != '' and deptId!='100'.toString()">and a.dept_id = #{deptId}</if>
+            <if test="articleType != null  and articleType != ''">and a.article_type = #{articleType}</if>
+            <if test="articleId != null">and a.id =#{articleId}    </if>
+            <if test="isShow != null  and isShow == '1'">and  a.id not in (
+                select g.data_id
+                from app_banner g
+                JOIN cms_article ca on  g.data_id = ca.id
+                )
+           </if>
+            <if test="categoryIdList != null ">
+                and a.category_id in
+                <foreach item="item" collection="categoryIdList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+
+            </if>
+
+            <if test="deptCategoryIdList != null ">
+                and a.id in
+                (select article_id from cms_dept_article where del_flag = 'N' and category_id in
+                <foreach item="item" collection="deptCategoryIdList" open="(" separator="," close=")">
+                    #{item}
+                </foreach>)
+
+            </if>
+        </where>
+        ORDER BY a.list_order_num asc, a.create_time DESC
+    </select>
+
+    <update id="batchUpdateCmsArticleCategory">
+        <foreach collection="list" item="item" separator=";" open="" close="">
+            update cms_article ca set
+            ca.category_id = #{item.categoryId}
+            where      ca.del_flag = 'N'
+            and ca.id = #{item.articleId}
+        </foreach>
+    </update>
+
+    <select id="selectCmsArticleList" parameterType="CmsArticle" resultType="CmsArticle">
+        select * from (
+        select a.id as id, a.tenant_id as tenantId , a.category_id AS categoryId, a.title AS title, a.link AS link, a.upload_type  AS uploadType, a.forward_link AS forwardLink, a.video_url AS videoUrl,
+        a.video_image AS videoImage, a.image AS image, a.keywords AS keywords, a.description AS description, a.list_order_num AS listOrderNum, a.list_show  AS listShow, a.position_type AS positionType, a.create_by AS createBy,
+        a.create_id AS createId, a.create_time AS createTime, a.update_by AS updateBy, a.update_time AS updateTime, a.remark AS remark, a.del_flag AS delFlag, a.dept_id AS deptId, a.disease_id AS diseaseId, a.type AS type,
+        c.name as categoryName, a.article_status AS articleStatus, a.ques_num AS quesNum, a.scores_total_val AS scoresTotalVal
+        <if test="deptId != null and deptId!='100'.toString() ">, 1 as isShowRemove</if>
+        <if test="deptId != null and deptId =='100'.toString() ">, 0 as isShowRemove</if>
+        <if test="deptId != null and deptId!='100'.toString() ">
+            ,case WHEN s.article_id is null THEN 0  else 1 END as isJoin
+        </if>
+        from cms_article a left join cms_category c on a.category_id = c.id
+        <if test="deptId != null and deptId!='100'.toString() ">
+            left JOIN
+            (select  article_id  from cms_dept_article where dept_id = #{deptId} and del_flag = 'N')s ON a.id = s.article_id
+         </if>
+        <where>
+            a.del_flag = 'N' and c.del_flag = 'N'
+            <if test="tenantId != null  and tenantId != ''">and a.tenant_id =#{tenantId}    </if>
+            <if test="categoryId != null ">and a.category_id = #{categoryId}</if>
+            <if test="title != null  and title != ''">and a.title like concat( '%', #{title}, '%')</if>
+            <if test="link != null  and link != ''">and a.link =#{link}</if>
+            <if test="uploadType != null  and uploadType != ''"> and a.upload_type = #{uploadType}</if>
+            <if test="forwardLink != null  and forwardLink != ''"> and a.forward_link = #{forwardLink}</if>
+            <if test="videoUrl != null  and videoUrl != ''"> and a.video_url = #{videoUrl}</if>
+            <if test="videoImage != null  and videoImage != ''"> and a.video_image = #{videoImage}</if>
+            <if test="image != null  and image != ''"> and a.image = #{image}</if>
+            <if test="keywords != null  and keywords != ''"> and a.keywords  like concat('%', #{keywords}, '%')</if>
+            <if test="description != null  and description != ''">and a.description like concat('%', #{description}, '%')</if>
+            <if test="listOrderNum != null ">and a.list_order_num = #{listOrderNum}</if>
+            <if test="listShow != null  and listShow != ''">and a.list_show = #{listShow}</if>
+            <if test="positionType != null  and positionType != ''">and a.position_type = #{positionType}</if>
+            <if test="diseaseId != null ">and a.disease_id = #{diseaseId}</if>
+            <if test="categoryName != null ">and c.name = #{categoryName}</if>
+            <if test="type != null ">and a.type = #{type}</if>
+            <if test="articleStatus != null ">and a.article_status = #{articleStatus}</if>
+            <!-- <if test="createId != null "> and a.create_id = #{createId} and c.create_id = #{createId}</if> -->
+            <if test="deptIds != null  and deptIds != ''">and a.dept_ids = #{deptIds}</if>
+            <if test="articleType != null  and articleType != ''">and a.article_type = #{articleType}</if>
+        </where>
+        union all
+        select a.id, null as tenantId, null as categoryId,name as title, null as link, null as uploadType, null as
+        forwardLink, null as videoUrl, null as videoImage, null as image,null as keywords, null as description, null
+        as
+        listOrderNum, null as listShow, null as positionType,null as createBy, null as createId,null as
+        createTime,null as updateBy, a.update_time as updateTime, null as remark, null as delFlag, null as deptId, null as
+        diseaseId, 4 as type,a.name as categoryName,null as articleStatus, null as quesNum ,null as scoresTotalVal
+        <if test="deptId != null and deptId!='100'.toString() ">, 1 as isShowRemove</if>
+        <if test="deptId != null and deptId =='100'.toString() ">, 0 as isShowRemove</if>
+        <if test="deptId != null and deptId!='100'.toString() ">
+            ,2 as isJoin
+        </if>
+        from cms_category a
+        <where>
+            a.del_flag = 'N'
+            <if test="categoryId != null">and a.parent_id = #{categoryId}</if>
+            <if test="commonFlag != null">and a.common_flag = #{commonFlag}</if>
+        </where>
+        ) e
+        <where>
+            <if test="title != null  and title != ''">and e.title like concat( '%', #{title}, '%')</if>
+            <if test="type != null ">and e.type = #{type}</if>
+        </where>
+         order by e.type asc,e.updateTime desc
+    </select>
+
+
+
+    <select id="selectCmsDeptArticleList"  parameterType="CmsArticle" resultType="CmsArticle">
+        select title,type,forwardLink,uploadType,updateTime,id,scoresTotalVal,deptId
+        <if test="deptId != null and deptId!='100'.toString() ">, 1 as isShowRemove</if>
+        <if test="deptId != null and deptId =='100'.toString() ">, 0 as isShowRemove</if>
+        from
+            (select ca.title as title,ca.type,ca.forward_link as forwardLink, ca.upload_type  AS uploadType,ca.update_time as updateTime,ca.id ,ca.scores_total_val scoresTotalVal,cda.dept_id as deptId
+                from cms_dept_article cda
+                left JOIN cms_article ca  on cda.article_id = ca.id
+                <where>
+                    cda.del_flag = 'N' and ca.del_flag = 'N'
+                   <if test="deptId != null  and deptId!='100'.toString()"> and cda.dept_id = #{deptId}</if>
+                   <if test="categoryId != null"> and cda.category_id = #{categoryId}</if>
+                </where>
+            union all
+             select name as title,4 as type,null as forwardLink, null as uploadType,update_time as updateTime,id ,null as scoresTotalVal,dept_id as deptId from cms_category
+                <where>
+                   del_flag = 'N'
+                    <if test="commonFlag != null">and common_flag = #{commonFlag}</if>
+                   <if test="categoryId != null"> and parent_id = #{categoryId}</if>
+                </where>
+            ) e
+        <where>
+            <if test="title != null  and title != ''">and e.title like concat( '%', #{title}, '%')</if>
+            <if test="type != null ">and e.type = #{type}</if>
+        </where>
+        ORDER BY e.type asc,e.updateTime desc
+
+    </select>
+
+
+    <select id="selectCmsDeptCategoryArticleList"  parameterType="CmsArticle" resultType="CmsArticleCateGoryVo">
+        SELECT
+        e.title AS title,
+        e.type,
+        e.update_time AS updateTime,
+        e.id,
+        e.category_id AS categoryId,
+        e.NAME AS categoryName,
+        e.parent_id AS parentId,
+        e.parent_ids AS parentIds
+        FROM
+        (
+        SELECT
+        ca.title,
+        ca.type,
+        ca.update_time,
+        ca.id,
+        cda.category_id,
+        cc.`name`,
+        cc.parent_id,
+        cc.parent_ids
+        FROM
+        cms_dept_article cda
+        LEFT JOIN cms_article ca ON cda.article_id = ca.id
+        LEFT JOIN cms_category cc ON cc.id = cda.category_id
+        <where>
+            cda.del_flag = 'N' and ca.del_flag = 'N'
+            <if test="deptId != null  and deptId!='100'.toString()"> and cda.dept_id = #{deptId}</if>
+            <if test="categoryId != null"> and cda.category_id = #{categoryId}</if>
+            <if test="title != null  and title != ''">and ca.title like concat( '%', #{title}, '%')</if>
+            <if test="type != null ">and  ca.type = #{type}</if>
+        </where>
+        ) e
+        ORDER BY
+        e.type ASC,
+        e.update_time DESC
+    </select>
+
+
+
+    <select id="selectCmsArticleRecord"  parameterType="com.dchealth.cms.domain.CmsArticleRecord" resultType="com.dchealth.cms.domain.CmsArticleRecord">
+        SELECT
+        rp.account_id AS accountId,
+        s.article_id AS articleId,
+        ca.title,
+        s.NAME AS submitor,
+        rg.disease_name AS diseaseName,
+        s.disease_id AS diseaseId,
+        s.research_id as researchId,
+        s.project_name AS projectName,
+        per.create_time AS submitTime,
+        rp.exam_record_id AS examRecordId
+        FROM
+        (
+        SELECT
+        a.article_id,
+        a.research_id,
+        d.project_name,
+        c.person_name as NAME,
+        a.disease_id,
+        mpa.account_id
+        FROM
+        research_info_article a,
+        mp_person c,
+        research_info d,
+        research_patient b,
+        mp_patient_account mpa
+        WHERE
+        a.research_id = b.research_id
+        and b.person_id = c.person_id
+        AND mpa.person_id = c.person_id
+        AND a.research_id = d.id
+        AND d.id IN ( SELECT research_id FROM research_user_role
+        <if test="userName != null  and userName = 'admin'"> WHERE user_id is not null </if>
+        <if test="userName != null  and userName != 'admin'"> WHERE user_id = #{userId} and user_id is not null </if>)
+        ) s
+        LEFT JOIN cms_article ca ON ca.id = s.article_id
+        inner JOIN research_info_article_patient rp ON S.article_id = rp.article_id AND S.research_id = rp.research_id AND s.account_id = rp.account_id
+        inner join patient_exam_record per on per.id = rp.exam_record_id
+        inner JOIN research_diseases rg ON s.disease_id = rg.disease_id
+
+        WHERE
+        ca.del_flag = 'N'
+        AND ca.type = 2
+        AND FIND_IN_SET( "2", ca.position_type )
+        AND rp.fill_status = 2
+
+
+        <if test="title != null  and title != ''"> and  ca.title like concat('%', #{title}, '%')</if>
+        <if test="submitor != null  and submitor != ''"> and  s.name like concat('%', #{submitor}, '%')</if>
+        <if test="diseaseName != null  and diseaseName != ''"> and  rg.disease_name like concat('%', #{diseaseName}, '%')</if>
+        <if test="projectName != null  and projectName != ''"> and  s.project_name like concat('%', #{projectName}, '%')</if>
+        <if test="submitTime != null">
+            and date_format(per.create_time,'%y%m%d') = date_format(#{submitTime},'%y%m%d')
+        </if>
+        order by rp.exam_record_id desc
+    </select>
+
+
+    <select id="selectCmsArticleById" parameterType="Long" resultMap="CmsArticleResult">
+        select id, tenant_id, category_id, title, upload_type, forward_link, link, video_url, video_image, image, keywords, description, list_order_num, list_show,
+               position_type, create_id, create_by, create_time, update_by, update_time, remark, del_flag, dept_id, dept_ids, disease_id, type, article_status,
+               ques_num, article_type ,scores_total_val from cms_article
+        where id = #{id}
+    </select>
+
+    <insert id="insertCmsArticle" parameterType="CmsArticle" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="link != null">link,</if>
+            <if test="uploadType != null">upload_type,</if>
+            <if test="forwardLink != null">forward_link,</if>
+            <if test="videoUrl != null">video_url,</if>
+            <if test="videoImage != null">video_image,</if>
+            <if test="image != null">image,</if>
+            <if test="keywords != null">keywords,</if>
+            <if test="description != null">description,</if>
+            <if test="listOrderNum != null">list_order_num,</if>
+            <if test="listShow != null">list_show,</if>
+            <if test="positionType != null">position_type,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="deptIds != null">dept_ids,</if>
+            <if test="diseaseId != null">disease_id,</if>
+            <if test="type != null">type,</if>
+            <if test="articleStatus != null">article_status,</if>
+            <if test="quesNum != null">ques_num,</if>
+            <if test="articleType != null">article_type,</if>
+            <if test="scoresTotalVal != null">scores_total_val,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="link != null">#{link},</if>
+            <if test="uploadType != null">#{uploadType},</if>
+            <if test="forwardLink != null">#{forwardLink},</if>
+            <if test="videoUrl != null">#{videoUrl},</if>
+            <if test="videoImage != null">#{videoImage},</if>
+            <if test="image != null">#{image},</if>
+            <if test="keywords != null">#{keywords},</if>
+            <if test="description != null">#{description},</if>
+            <if test="listOrderNum != null">#{listOrderNum},</if>
+            <if test="listShow != null">#{listShow},</if>
+            <if test="positionType != null">#{positionType},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="deptIds != null">#{deptIds},</if>
+            <if test="diseaseId != null">#{diseaseId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="articleStatus != null">#{articleStatus},</if>
+            <if test="quesNum != null">#{quesNum},</if>
+            <if test="articleType != null">#{articleType},</if>
+            <if test="scoresTotalVal != null">#{scoresTotalVal},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCmsArticle" parameterType="CmsArticle" >
+        update cms_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="link != null">link = #{link},</if>
+            <if test="uploadType != null">upload_type = #{uploadType},</if>
+            <if test="forwardLink != null">forward_link = #{forwardLink},</if>
+            <if test="videoUrl != null">video_url = #{videoUrl},</if>
+            <if test="videoImage != null">video_image = #{videoImage},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="keywords != null">keywords = #{keywords},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="listOrderNum != null">list_order_num = #{listOrderNum},</if>
+            <if test="listShow != null">list_show = #{listShow},</if>
+            <if test="positionType != null">position_type = #{positionType},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="deptIds != null">dept_ids = #{deptIds},</if>
+            <if test="diseaseId != null">disease_id = #{diseaseId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="articleStatus != null">article_status = #{articleStatus},</if>
+            <if test="quesNum != null">ques_num = #{quesNum},</if>
+            <if test="articleType != null">article_type = #{articleType},</if>
+            <if test="scoresTotalVal != null">scores_total_val = #{scoresTotalVal},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsArticleById" parameterType="Long">
+        delete from cms_article where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsArticleByIds" parameterType="String">
+        delete from cms_article where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateCmsArticleByDiseaseId" parameterType="Long">
+        update cms_article set del_flag = 'Y' where disease_id = #{diseaseId}
+    </update>
+
+    <update id="updateCmsArticleDelByCategoryId" parameterType="Long">
+        update cms_article set del_flag = 'Y' where category_id = #{id}
+    </update>
+
+    <update id="updateDelById" parameterType="Long">
+        update cms_article set del_flag = 'Y' where id = #{id}
+    </update>
+
+    <select id="selectCmsArticleByIds" parameterType="Long" resultMap="CmsArticleResult">
+        <include refid="selectCmsArticleVo"/>
+        where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectCmsArticleByAccountId" parameterType="Long" resultMap="CmsArticleResult">
+        SELECT
+            a.id, a.tenant_id, a.category_id, a.title, a.link, a.upload_type, a.forward_link, a.video_url, a.video_image, a.image, a.keywords, a.description,
+            a.list_order_num, a.list_show, a.position_type, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+            a.del_flag, a.dept_id, a.disease_id, a.type,
+            p.research_id researchId
+        FROM
+            cms_article a
+            LEFT JOIN research_info_article_patient p ON a.id = p.article_id
+            LEFT JOIN patient_account ac ON p.account_id = ac.account_id
+        WHERE
+            a.position_type = 2 and a.type = 2 and a.del_flag = 'N' and ac.account_id = #{accountId}
+    </select>
+
+    <update id="updateCmsArticleStatusById" parameterType="Long">
+        update cms_article set article_status = 1 where id = #{id}
+    </update>
+
+    <select id="selectCmsArticleMaxQuesNum" resultType="Integer">
+        select max(ques_num) from cms_article where type = 2
+    </select>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.base.mapper.AppBannerMapper">
+    
+    <resultMap type="AppBanner" id="AppBannerResult">
+        <result property="id"    column="id"    />
+        <result property="dataId"    column="data_id"    />
+        <result property="type"    column="type"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="positionType"    column="position_type"    />
+        <result property="bannerName"    column="banner_name"    />
+        <result property="link"    column="link"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectAppBannerVo">
+        select g.id, g.data_id, g.type, g.tenant_id, g.position_type, g.banner_name, g.link, g.image_url, g.order_num, g.remark, g.create_time, g.update_time
+        from app_banner g
+        JOIN cms_article ca on  g.data_id = ca.id
+    </sql>
+
+    <select id="selectAppBannerList" parameterType="AppBanner" resultMap="AppBannerResult">
+        <include refid="selectAppBannerVo"/>
+        <where>  
+            <if test="dataId != null  and dataId != ''"> and g.data_id = #{dataId}</if>
+            <if test="type != null  and type != ''"> and g.type = #{type}</if>
+            <if test="tenantId != null  and tenantId != ''"> and g.tenant_id = #{tenantId}</if>
+            <if test="positionType != null  and positionType != ''"> and g.position_type = #{positionType}</if>
+            <if test="bannerName != null  and bannerName != ''"> and g.banner_name like concat('%', #{bannerName}, '%')</if>
+            <if test="link != null  and link != ''"> and g.link = #{link}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and g.image_url = #{imageUrl}</if>
+            <if test="orderNum != null "> and g.order_num = #{orderNum}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and g.dept_id = #{deptId}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppBannerById" parameterType="String" resultMap="AppBannerResult">
+        <include refid="selectAppBannerVo"/>
+        where g.id = #{id}
+    </select>
+        
+    <insert id="insertAppBanner" parameterType="AppBanner">
+        insert into app_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="dataId != null">data_id,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="positionType != null">position_type,</if>
+            <if test="bannerName != null">banner_name,</if>
+            <if test="link != null">link,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="deptId != null">dept_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="dataId != null">#{dataId},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="positionType != null">#{positionType},</if>
+            <if test="bannerName != null">#{bannerName},</if>
+            <if test="link != null">#{link},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="deptId != null">#{deptId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppBanner" parameterType="AppBanner">
+        update app_banner
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dataId != null">data_id = #{dataId},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="positionType != null">position_type = #{positionType},</if>
+            <if test="bannerName != null">banner_name = #{bannerName},</if>
+            <if test="link != null">link = #{link},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppBannerById" parameterType="String">
+        delete from app_banner where id = #{id}
+    </delete>
+
+    <delete id="deleteAppBannerByIds" parameterType="String">
+        delete from app_banner where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

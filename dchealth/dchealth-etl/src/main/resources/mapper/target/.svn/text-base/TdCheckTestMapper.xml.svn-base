@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdCheckTestMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdCheckTest" id="TdCheckTestMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="amylase" column="amylase" jdbcType="VARCHAR"/>
+        <result property="fpg" column="fpg" jdbcType="VARCHAR"/>
+        <result property="pbg" column="pbg" jdbcType="VARCHAR"/>
+        <result property="tox" column="tox" jdbcType="VARCHAR"/>
+        <result property="cytomegalovirus" column="cytomegalovirus" jdbcType="VARCHAR"/>
+        <result property="herpesSimplexVirus" column="herpes_simplex_virus" jdbcType="VARCHAR"/>
+        <result property="rubellaVirus" column="rubella_virus" jdbcType="VARCHAR"/>
+        <result property="aso" column="aso" jdbcType="VARCHAR"/>
+        <result property="rheumatoidFactor" column="rheumatoid_factor" jdbcType="VARCHAR"/>
+        <result property="cReactiveProtein" column="c_reactive_protein" jdbcType="VARCHAR"/>
+        <result property="covid19NucleicAcid" column="covid19_nucleic_acid" jdbcType="VARCHAR"/>
+        <result property="helicobacterPylori" column="helicobacter_pylori" jdbcType="VARCHAR"/>
+        <result property="humanPapillomavirusHpv" column="human_papillomavirus_hpv" jdbcType="VARCHAR"/>
+        <result property="statinsMgTest" column="statins_mg_test" jdbcType="VARCHAR"/>
+        <result property="nitroglycerinMgTest" column="nitroglycerin_mg_test" jdbcType="VARCHAR"/>
+        <result property="folicMgTest" column="folic_mg_test" jdbcType="VARCHAR"/>
+        <result property="apoeTest" column="apoe_test" jdbcType="VARCHAR"/>
+        <result property="calcium" column="calcium" jdbcType="VARCHAR"/>
+        <result property="magnesium" column="magnesium" jdbcType="VARCHAR"/>
+        <result property="pb" column="pb" jdbcType="VARCHAR"/>
+        <result property="copper" column="copper" jdbcType="VARCHAR"/>
+        <result property="zinc" column="zinc" jdbcType="VARCHAR"/>
+        <result property="iron" column="iron" jdbcType="VARCHAR"/>
+        <result property="boneDensityAnterior" column="bone_density_anterior" jdbcType="VARCHAR"/>
+        <result property="boneDensityOfFemur" column="bone_density_of_femur" jdbcType="VARCHAR"/>
+        <result property="boneDensityForearmRadius" column="bone_density_forearm_radius" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdCheckTestMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, amylase, fpg, pbg, tox, cytomegalovirus, herpes_simplex_virus, rubella_virus, aso, rheumatoid_factor, c_reactive_protein, covid19_nucleic_acid, helicobacter_pylori, human_papillomavirus_hpv, statins_mg_test, nitroglycerin_mg_test, folic_mg_test, apoe_test, calcium, magnesium, pb, copper, zinc, iron
+        from td_check_test
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdCheckTestMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, amylase, fpg, pbg, tox, cytomegalovirus, herpes_simplex_virus, rubella_virus, aso, rheumatoid_factor, c_reactive_protein, covid19_nucleic_acid, helicobacter_pylori, human_papillomavirus_hpv, statins_mg_test, nitroglycerin_mg_test, folic_mg_test, apoe_test, calcium, magnesium, pb, copper, zinc, iron
+        from td_check_test
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="amylase != null and amylase != ''">
+                and amylase = #{amylase}
+            </if>
+            <if test="fpg != null and fpg != ''">
+                and fpg = #{fpg}
+            </if>
+            <if test="pbg != null and pbg != ''">
+                and pbg = #{pbg}
+            </if>
+            <if test="tox != null and tox != ''">
+                and tox = #{tox}
+            </if>
+            <if test="cytomegalovirus != null and cytomegalovirus != ''">
+                and cytomegalovirus = #{cytomegalovirus}
+            </if>
+            <if test="herpesSimplexVirus != null and herpesSimplexVirus != ''">
+                and herpes_simplex_virus = #{herpesSimplexVirus}
+            </if>
+            <if test="rubellaVirus != null and rubellaVirus != ''">
+                and rubella_virus = #{rubellaVirus}
+            </if>
+            <if test="aso != null and aso != ''">
+                and aso = #{aso}
+            </if>
+            <if test="rheumatoidFactor != null and rheumatoidFactor != ''">
+                and rheumatoid_factor = #{rheumatoidFactor}
+            </if>
+            <if test="cReactiveProtein != null and cReactiveProtein != ''">
+                and c_reactive_protein = #{cReactiveProtein}
+            </if>
+            <if test="covid19NucleicAcid != null and covid19NucleicAcid != ''">
+                and covid19_nucleic_acid = #{covid19NucleicAcid}
+            </if>
+            <if test="helicobacterPylori != null and helicobacterPylori != ''">
+                and helicobacter_pylori = #{helicobacterPylori}
+            </if>
+            <if test="humanPapillomavirusHpv != null and humanPapillomavirusHpv != ''">
+                and human_papillomavirus_hpv = #{humanPapillomavirusHpv}
+            </if>
+            <if test="statinsMgTest != null and statinsMgTest != ''">
+                and statins_mg_test = #{statinsMgTest}
+            </if>
+            <if test="nitroglycerinMgTest != null and nitroglycerinMgTest != ''">
+                and nitroglycerin_mg_test = #{nitroglycerinMgTest}
+            </if>
+            <if test="folicMgTest != null and folicMgTest != ''">
+                and folic_mg_test = #{folicMgTest}
+            </if>
+            <if test="apoeTest != null and apoeTest != ''">
+                and apoe_test = #{apoeTest}
+            </if>
+            <if test="calcium != null and calcium != ''">
+                and calcium = #{calcium}
+            </if>
+            <if test="magnesium != null and magnesium != ''">
+                and magnesium = #{magnesium}
+            </if>
+            <if test="pb != null and pb != ''">
+                and pb = #{pb}
+            </if>
+            <if test="copper != null and copper != ''">
+                and copper = #{copper}
+            </if>
+            <if test="zinc != null and zinc != ''">
+                and zinc = #{zinc}
+            </if>
+            <if test="iron != null and iron != ''">
+                and iron = #{iron}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_check_test
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="amylase != null and amylase != ''">
+                and amylase = #{amylase}
+            </if>
+            <if test="fpg != null and fpg != ''">
+                and fpg = #{fpg}
+            </if>
+            <if test="pbg != null and pbg != ''">
+                and pbg = #{pbg}
+            </if>
+            <if test="tox != null and tox != ''">
+                and tox = #{tox}
+            </if>
+            <if test="cytomegalovirus != null and cytomegalovirus != ''">
+                and cytomegalovirus = #{cytomegalovirus}
+            </if>
+            <if test="herpesSimplexVirus != null and herpesSimplexVirus != ''">
+                and herpes_simplex_virus = #{herpesSimplexVirus}
+            </if>
+            <if test="rubellaVirus != null and rubellaVirus != ''">
+                and rubella_virus = #{rubellaVirus}
+            </if>
+            <if test="aso != null and aso != ''">
+                and aso = #{aso}
+            </if>
+            <if test="rheumatoidFactor != null and rheumatoidFactor != ''">
+                and rheumatoid_factor = #{rheumatoidFactor}
+            </if>
+            <if test="cReactiveProtein != null and cReactiveProtein != ''">
+                and c_reactive_protein = #{cReactiveProtein}
+            </if>
+            <if test="covid19NucleicAcid != null and covid19NucleicAcid != ''">
+                and covid19_nucleic_acid = #{covid19NucleicAcid}
+            </if>
+            <if test="helicobacterPylori != null and helicobacterPylori != ''">
+                and helicobacter_pylori = #{helicobacterPylori}
+            </if>
+            <if test="humanPapillomavirusHpv != null and humanPapillomavirusHpv != ''">
+                and human_papillomavirus_hpv = #{humanPapillomavirusHpv}
+            </if>
+            <if test="statinsMgTest != null and statinsMgTest != ''">
+                and statins_mg_test = #{statinsMgTest}
+            </if>
+            <if test="nitroglycerinMgTest != null and nitroglycerinMgTest != ''">
+                and nitroglycerin_mg_test = #{nitroglycerinMgTest}
+            </if>
+            <if test="folicMgTest != null and folicMgTest != ''">
+                and folic_mg_test = #{folicMgTest}
+            </if>
+            <if test="apoeTest != null and apoeTest != ''">
+                and apoe_test = #{apoeTest}
+            </if>
+            <if test="calcium != null and calcium != ''">
+                and calcium = #{calcium}
+            </if>
+            <if test="magnesium != null and magnesium != ''">
+                and magnesium = #{magnesium}
+            </if>
+            <if test="pb != null and pb != ''">
+                and pb = #{pb}
+            </if>
+            <if test="copper != null and copper != ''">
+                and copper = #{copper}
+            </if>
+            <if test="zinc != null and zinc != ''">
+                and zinc = #{zinc}
+            </if>
+            <if test="iron != null and iron != ''">
+                and iron = #{iron}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_check_test(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, amylase, fpg, pbg, tox, cytomegalovirus, herpes_simplex_virus, rubella_virus, aso, rheumatoid_factor, c_reactive_protein, covid19_nucleic_acid, helicobacter_pylori, human_papillomavirus_hpv, statins_mg_test, nitroglycerin_mg_test, folic_mg_test, apoe_test, calcium, magnesium, pb, copper, zinc, iron)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{amylase}, #{fpg}, #{pbg}, #{tox}, #{cytomegalovirus}, #{herpesSimplexVirus}, #{rubellaVirus}, #{aso}, #{rheumatoidFactor}, #{cReactiveProtein}, #{covid19NucleicAcid}, #{helicobacterPylori}, #{humanPapillomavirusHpv}, #{statinsMgTest}, #{nitroglycerinMgTest}, #{folicMgTest}, #{apoeTest}, #{calcium}, #{magnesium}, #{pb}, #{copper}, #{zinc}, #{iron})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_check_test(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, amylase, fpg, pbg, tox, cytomegalovirus, herpes_simplex_virus, rubella_virus, aso, rheumatoid_factor, c_reactive_protein, covid19_nucleic_acid, helicobacter_pylori, human_papillomavirus_hpv, statins_mg_test, nitroglycerin_mg_test, folic_mg_test, apoe_test, calcium, magnesium, pb, copper, zinc, iron,bone_density_anterior,bone_density_of_femur,bone_density_forearm_radius)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.amylase}, #{entity.fpg}, #{entity.pbg}, #{entity.tox}, #{entity.cytomegalovirus}, #{entity.herpesSimplexVirus}, #{entity.rubellaVirus}, #{entity.aso}, #{entity.rheumatoidFactor}, #{entity.cReactiveProtein}, #{entity.covid19NucleicAcid}, #{entity.helicobacterPylori}, #{entity.humanPapillomavirusHpv}, #{entity.statinsMgTest}, #{entity.nitroglycerinMgTest}, #{entity.folicMgTest}, #{entity.apoeTest}, #{entity.calcium}, #{entity.magnesium}, #{entity.pb}, #{entity.copper}, #{entity.zinc}, #{entity.iron}, #{entity.boneDensityAnterior}, #{entity.boneDensityOfFemur}, #{entity.boneDensityForearmRadius})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_check_test(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, amylase, fpg, pbg, tox, cytomegalovirus, herpes_simplex_virus, rubella_virus, aso, rheumatoid_factor, c_reactive_protein, covid19_nucleic_acid, helicobacter_pylori, human_papillomavirus_hpv, statins_mg_test, nitroglycerin_mg_test, folic_mg_test, apoe_test, calcium, magnesium, pb, copper, zinc, iron,bone_density_anterior,bone_density_of_femur,bone_density_forearm_radius)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.amylase}, #{entity.fpg}, #{entity.pbg}, #{entity.tox}, #{entity.cytomegalovirus}, #{entity.herpesSimplexVirus}, #{entity.rubellaVirus}, #{entity.aso}, #{entity.rheumatoidFactor}, #{entity.cReactiveProtein}, #{entity.covid19NucleicAcid}, #{entity.helicobacterPylori}, #{entity.humanPapillomavirusHpv}, #{entity.statinsMgTest}, #{entity.nitroglycerinMgTest}, #{entity.folicMgTest}, #{entity.apoeTest}, #{entity.calcium}, #{entity.magnesium}, #{entity.pb}, #{entity.copper}, #{entity.zinc}, #{entity.iron}, #{entity.boneDensityAnterior}, #{entity.boneDensityOfFemur}, #{entity.boneDensityForearmRadius})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_check_test(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, amylase, fpg, pbg, tox, cytomegalovirus, herpes_simplex_virus, rubella_virus, aso, rheumatoid_factor, c_reactive_protein, covid19_nucleic_acid, helicobacter_pylori, human_papillomavirus_hpv, statins_mg_test, nitroglycerin_mg_test, folic_mg_test, apoe_test, calcium, magnesium, pb, copper, zinc, iron)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.amylase}, #{entity.fpg}, #{entity.pbg}, #{entity.tox}, #{entity.cytomegalovirus}, #{entity.herpesSimplexVirus}, #{entity.rubellaVirus}, #{entity.aso}, #{entity.rheumatoidFactor}, #{entity.cReactiveProtein}, #{entity.covid19NucleicAcid}, #{entity.helicobacterPylori}, #{entity.humanPapillomavirusHpv}, #{entity.statinsMgTest}, #{entity.nitroglycerinMgTest}, #{entity.folicMgTest}, #{entity.apoeTest}, #{entity.calcium}, #{entity.magnesium}, #{entity.pb}, #{entity.copper}, #{entity.zinc}, #{entity.iron})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        amylase = values(amylase),
+        fpg = values(fpg),
+        pbg = values(pbg),
+        tox = values(tox),
+        cytomegalovirus = values(cytomegalovirus),
+        herpes_simplex_virus = values(herpes_simplex_virus),
+        rubella_virus = values(rubella_virus),
+        aso = values(aso),
+        rheumatoid_factor = values(rheumatoid_factor),
+        c_reactive_protein = values(c_reactive_protein),
+        covid19_nucleic_acid = values(covid19_nucleic_acid),
+        helicobacter_pylori = values(helicobacter_pylori),
+        human_papillomavirus_hpv = values(human_papillomavirus_hpv),
+        statins_mg_test = values(statins_mg_test),
+        nitroglycerin_mg_test = values(nitroglycerin_mg_test),
+        folic_mg_test = values(folic_mg_test),
+        apoe_test = values(apoe_test),
+        calcium = values(calcium),
+        magnesium = values(magnesium),
+        pb = values(pb),
+        copper = values(copper),
+        zinc = values(zinc),
+        iron = values(iron)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_check_test
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="amylase != null and amylase != ''">
+                amylase = #{amylase},
+            </if>
+            <if test="fpg != null and fpg != ''">
+                fpg = #{fpg},
+            </if>
+            <if test="pbg != null and pbg != ''">
+                pbg = #{pbg},
+            </if>
+            <if test="tox != null and tox != ''">
+                tox = #{tox},
+            </if>
+            <if test="cytomegalovirus != null and cytomegalovirus != ''">
+                cytomegalovirus = #{cytomegalovirus},
+            </if>
+            <if test="herpesSimplexVirus != null and herpesSimplexVirus != ''">
+                herpes_simplex_virus = #{herpesSimplexVirus},
+            </if>
+            <if test="rubellaVirus != null and rubellaVirus != ''">
+                rubella_virus = #{rubellaVirus},
+            </if>
+            <if test="aso != null and aso != ''">
+                aso = #{aso},
+            </if>
+            <if test="rheumatoidFactor != null and rheumatoidFactor != ''">
+                rheumatoid_factor = #{rheumatoidFactor},
+            </if>
+            <if test="cReactiveProtein != null and cReactiveProtein != ''">
+                c_reactive_protein = #{cReactiveProtein},
+            </if>
+            <if test="covid19NucleicAcid != null and covid19NucleicAcid != ''">
+                covid19_nucleic_acid = #{covid19NucleicAcid},
+            </if>
+            <if test="helicobacterPylori != null and helicobacterPylori != ''">
+                helicobacter_pylori = #{helicobacterPylori},
+            </if>
+            <if test="humanPapillomavirusHpv != null and humanPapillomavirusHpv != ''">
+                human_papillomavirus_hpv = #{humanPapillomavirusHpv},
+            </if>
+            <if test="statinsMgTest != null and statinsMgTest != ''">
+                statins_mg_test = #{statinsMgTest},
+            </if>
+            <if test="nitroglycerinMgTest != null and nitroglycerinMgTest != ''">
+                nitroglycerin_mg_test = #{nitroglycerinMgTest},
+            </if>
+            <if test="folicMgTest != null and folicMgTest != ''">
+                folic_mg_test = #{folicMgTest},
+            </if>
+            <if test="apoeTest != null and apoeTest != ''">
+                apoe_test = #{apoeTest},
+            </if>
+            <if test="calcium != null and calcium != ''">
+                calcium = #{calcium},
+            </if>
+            <if test="magnesium != null and magnesium != ''">
+                magnesium = #{magnesium},
+            </if>
+            <if test="pb != null and pb != ''">
+                pb = #{pb},
+            </if>
+            <if test="copper != null and copper != ''">
+                copper = #{copper},
+            </if>
+            <if test="zinc != null and zinc != ''">
+                zinc = #{zinc},
+            </if>
+            <if test="iron != null and iron != ''">
+                iron = #{iron},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_check_test where id = #{id}
+    </delete>
+
+</mapper>
+

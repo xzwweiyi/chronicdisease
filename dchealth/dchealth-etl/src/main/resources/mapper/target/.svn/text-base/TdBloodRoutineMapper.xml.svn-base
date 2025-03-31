@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdBloodRoutineMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdBloodRoutine" id="TdBloodRoutineMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="whiteCellCount" column="white_cell_count" jdbcType="VARCHAR"/>
+        <result property="redCellCount" column="red_cell_count" jdbcType="VARCHAR"/>
+        <result property="hemoglobin" column="hemoglobin" jdbcType="VARCHAR"/>
+        <result property="hematocrit" column="hematocrit" jdbcType="VARCHAR"/>
+        <result property="meanCorpusVolume" column="mean_corpus_volume" jdbcType="VARCHAR"/>
+        <result property="meanCorpusHemoglobin" column="mean_corpus_hemoglobin" jdbcType="VARCHAR"/>
+        <result property="meanCorpusHemConcent" column="mean_corpus_hem_concent" jdbcType="VARCHAR"/>
+        <result property="redCellDisWidthVariation" column="red_cell_dis_width_variation" jdbcType="VARCHAR"/>
+        <result property="plateletCount" column="platelet_count" jdbcType="VARCHAR"/>
+        <result property="meanPlateletVolume" column="mean_platelet_volume" jdbcType="VARCHAR"/>
+        <result property="plateletDisWidth" column="platelet_dis_width" jdbcType="VARCHAR"/>
+        <result property="lymphocytePercentage" column="lymphocyte_percentage" jdbcType="VARCHAR"/>
+        <result property="neutrophilPercentage" column="neutrophil_percentage" jdbcType="VARCHAR"/>
+        <result property="absLymphocyteCount" column="abs_lymphocyte_count" jdbcType="VARCHAR"/>
+        <result property="absNeutrophilCount" column="abs_neutrophil_count" jdbcType="VARCHAR"/>
+        <result property="redCellDisDeviation" column="red_cell_dis_deviation" jdbcType="VARCHAR"/>
+        <result property="plateletcrit" column="plateletcrit" jdbcType="VARCHAR"/>
+        <result property="monocytePercentage" column="monocyte_percentage" jdbcType="VARCHAR"/>
+        <result property="absMonocyteCount" column="abs_monocyte_count" jdbcType="VARCHAR"/>
+        <result property="eosinophilPercentage" column="eosinophil_percentage" jdbcType="VARCHAR"/>
+        <result property="absEosinophilCount" column="abs_eosinophil_count" jdbcType="VARCHAR"/>
+        <result property="basophilPercentage" column="basophil_percentage" jdbcType="VARCHAR"/>
+        <result property="absBasophilCount" column="abs_basophil_count" jdbcType="VARCHAR"/>
+        <result property="largePlateletRatio" column="large_platelet_ratio" jdbcType="VARCHAR"/>
+        <result property="plateletSpecificVolume" column="platelet_specific_volume" jdbcType="VARCHAR"/>
+        <result property="aboBlood" column="abo_blood" jdbcType="VARCHAR"/>
+        <result property="rhBlood" column="rh_blood" jdbcType="VARCHAR"/>
+        <result property="esr" column="esr" jdbcType="VARCHAR"/>
+        <result property="determinationElectCalcium" column="determination_elect_calcium" jdbcType="VARCHAR"/>
+        <result property="amylaseAssay" column="amylase_assay" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdBloodRoutineMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, result_time, white_cell_count, red_cell_count, hemoglobin, hematocrit, mean_corpus_volume, mean_corpus_hemoglobin, mean_corpus_hem_concent, red_cell_dis_width_variation, platelet_count, mean_platelet_volume, platelet_dis_width, lymphocyte_percentage, neutrophil_percentage, abs_lymphocyte_count, abs_neutrophil_count, red_cell_dis_deviation, plateletcrit, monocyte_percentage, abs_monocyte_count, eosinophil_percentage, abs_eosinophil_count, basophil_percentage, abs_basophil_count, large_platelet_ratio, platelet_specific_volume, abo_blood, rh_blood, esr
+        from td_blood_routine
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdBloodRoutineMap">
+        select
+          id, study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, result_time, white_cell_count, red_cell_count, hemoglobin, hematocrit, mean_corpus_volume, mean_corpus_hemoglobin, mean_corpus_hem_concent, red_cell_dis_width_variation, platelet_count, mean_platelet_volume, platelet_dis_width, lymphocyte_percentage, neutrophil_percentage, abs_lymphocyte_count, abs_neutrophil_count, red_cell_dis_deviation, plateletcrit, monocyte_percentage, abs_monocyte_count, eosinophil_percentage, abs_eosinophil_count, basophil_percentage, abs_basophil_count, large_platelet_ratio, platelet_specific_volume, abo_blood, rh_blood, esr
+        from td_blood_routine
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="whiteCellCount != null and whiteCellCount != ''">
+                and white_cell_count = #{whiteCellCount}
+            </if>
+            <if test="redCellCount != null and redCellCount != ''">
+                and red_cell_count = #{redCellCount}
+            </if>
+            <if test="hemoglobin != null and hemoglobin != ''">
+                and hemoglobin = #{hemoglobin}
+            </if>
+            <if test="hematocrit != null and hematocrit != ''">
+                and hematocrit = #{hematocrit}
+            </if>
+            <if test="meanCorpusVolume != null and meanCorpusVolume != ''">
+                and mean_corpus_volume = #{meanCorpusVolume}
+            </if>
+            <if test="meanCorpusHemoglobin != null and meanCorpusHemoglobin != ''">
+                and mean_corpus_hemoglobin = #{meanCorpusHemoglobin}
+            </if>
+            <if test="meanCorpusHemConcent != null and meanCorpusHemConcent != ''">
+                and mean_corpus_hem_concent = #{meanCorpusHemConcent}
+            </if>
+            <if test="redCellDisWidthVariation != null and redCellDisWidthVariation != ''">
+                and red_cell_dis_width_variation = #{redCellDisWidthVariation}
+            </if>
+            <if test="plateletCount != null and plateletCount != ''">
+                and platelet_count = #{plateletCount}
+            </if>
+            <if test="meanPlateletVolume != null and meanPlateletVolume != ''">
+                and mean_platelet_volume = #{meanPlateletVolume}
+            </if>
+            <if test="plateletDisWidth != null and plateletDisWidth != ''">
+                and platelet_dis_width = #{plateletDisWidth}
+            </if>
+            <if test="lymphocytePercentage != null and lymphocytePercentage != ''">
+                and lymphocyte_percentage = #{lymphocytePercentage}
+            </if>
+            <if test="neutrophilPercentage != null and neutrophilPercentage != ''">
+                and neutrophil_percentage = #{neutrophilPercentage}
+            </if>
+            <if test="absLymphocyteCount != null and absLymphocyteCount != ''">
+                and abs_lymphocyte_count = #{absLymphocyteCount}
+            </if>
+            <if test="absNeutrophilCount != null and absNeutrophilCount != ''">
+                and abs_neutrophil_count = #{absNeutrophilCount}
+            </if>
+            <if test="redCellDisDeviation != null and redCellDisDeviation != ''">
+                and red_cell_dis_deviation = #{redCellDisDeviation}
+            </if>
+            <if test="plateletcrit != null and plateletcrit != ''">
+                and plateletcrit = #{plateletcrit}
+            </if>
+            <if test="monocytePercentage != null and monocytePercentage != ''">
+                and monocyte_percentage = #{monocytePercentage}
+            </if>
+            <if test="absMonocyteCount != null and absMonocyteCount != ''">
+                and abs_monocyte_count = #{absMonocyteCount}
+            </if>
+            <if test="eosinophilPercentage != null and eosinophilPercentage != ''">
+                and eosinophil_percentage = #{eosinophilPercentage}
+            </if>
+            <if test="absEosinophilCount != null and absEosinophilCount != ''">
+                and abs_eosinophil_count = #{absEosinophilCount}
+            </if>
+            <if test="basophilPercentage != null and basophilPercentage != ''">
+                and basophil_percentage = #{basophilPercentage}
+            </if>
+            <if test="absBasophilCount != null and absBasophilCount != ''">
+                and abs_basophil_count = #{absBasophilCount}
+            </if>
+            <if test="largePlateletRatio != null and largePlateletRatio != ''">
+                and large_platelet_ratio = #{largePlateletRatio}
+            </if>
+            <if test="plateletSpecificVolume != null and plateletSpecificVolume != ''">
+                and platelet_specific_volume = #{plateletSpecificVolume}
+            </if>
+            <if test="aboBlood != null and aboBlood != ''">
+                and abo_blood = #{aboBlood}
+            </if>
+            <if test="rhBlood != null and rhBlood != ''">
+                and rh_blood = #{rhBlood}
+            </if>
+            <if test="esr != null and esr != ''">
+                and esr = #{esr}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_blood_routine
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="whiteCellCount != null and whiteCellCount != ''">
+                and white_cell_count = #{whiteCellCount}
+            </if>
+            <if test="redCellCount != null and redCellCount != ''">
+                and red_cell_count = #{redCellCount}
+            </if>
+            <if test="hemoglobin != null and hemoglobin != ''">
+                and hemoglobin = #{hemoglobin}
+            </if>
+            <if test="hematocrit != null and hematocrit != ''">
+                and hematocrit = #{hematocrit}
+            </if>
+            <if test="meanCorpusVolume != null and meanCorpusVolume != ''">
+                and mean_corpus_volume = #{meanCorpusVolume}
+            </if>
+            <if test="meanCorpusHemoglobin != null and meanCorpusHemoglobin != ''">
+                and mean_corpus_hemoglobin = #{meanCorpusHemoglobin}
+            </if>
+            <if test="meanCorpusHemConcent != null and meanCorpusHemConcent != ''">
+                and mean_corpus_hem_concent = #{meanCorpusHemConcent}
+            </if>
+            <if test="redCellDisWidthVariation != null and redCellDisWidthVariation != ''">
+                and red_cell_dis_width_variation = #{redCellDisWidthVariation}
+            </if>
+            <if test="plateletCount != null and plateletCount != ''">
+                and platelet_count = #{plateletCount}
+            </if>
+            <if test="meanPlateletVolume != null and meanPlateletVolume != ''">
+                and mean_platelet_volume = #{meanPlateletVolume}
+            </if>
+            <if test="plateletDisWidth != null and plateletDisWidth != ''">
+                and platelet_dis_width = #{plateletDisWidth}
+            </if>
+            <if test="lymphocytePercentage != null and lymphocytePercentage != ''">
+                and lymphocyte_percentage = #{lymphocytePercentage}
+            </if>
+            <if test="neutrophilPercentage != null and neutrophilPercentage != ''">
+                and neutrophil_percentage = #{neutrophilPercentage}
+            </if>
+            <if test="absLymphocyteCount != null and absLymphocyteCount != ''">
+                and abs_lymphocyte_count = #{absLymphocyteCount}
+            </if>
+            <if test="absNeutrophilCount != null and absNeutrophilCount != ''">
+                and abs_neutrophil_count = #{absNeutrophilCount}
+            </if>
+            <if test="redCellDisDeviation != null and redCellDisDeviation != ''">
+                and red_cell_dis_deviation = #{redCellDisDeviation}
+            </if>
+            <if test="plateletcrit != null and plateletcrit != ''">
+                and plateletcrit = #{plateletcrit}
+            </if>
+            <if test="monocytePercentage != null and monocytePercentage != ''">
+                and monocyte_percentage = #{monocytePercentage}
+            </if>
+            <if test="absMonocyteCount != null and absMonocyteCount != ''">
+                and abs_monocyte_count = #{absMonocyteCount}
+            </if>
+            <if test="eosinophilPercentage != null and eosinophilPercentage != ''">
+                and eosinophil_percentage = #{eosinophilPercentage}
+            </if>
+            <if test="absEosinophilCount != null and absEosinophilCount != ''">
+                and abs_eosinophil_count = #{absEosinophilCount}
+            </if>
+            <if test="basophilPercentage != null and basophilPercentage != ''">
+                and basophil_percentage = #{basophilPercentage}
+            </if>
+            <if test="absBasophilCount != null and absBasophilCount != ''">
+                and abs_basophil_count = #{absBasophilCount}
+            </if>
+            <if test="largePlateletRatio != null and largePlateletRatio != ''">
+                and large_platelet_ratio = #{largePlateletRatio}
+            </if>
+            <if test="plateletSpecificVolume != null and plateletSpecificVolume != ''">
+                and platelet_specific_volume = #{plateletSpecificVolume}
+            </if>
+            <if test="aboBlood != null and aboBlood != ''">
+                and abo_blood = #{aboBlood}
+            </if>
+            <if test="rhBlood != null and rhBlood != ''">
+                and rh_blood = #{rhBlood}
+            </if>
+            <if test="esr != null and esr != ''">
+                and esr = #{esr}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, result_time, white_cell_count, red_cell_count, hemoglobin, hematocrit, mean_corpus_volume, mean_corpus_hemoglobin, mean_corpus_hem_concent, red_cell_dis_width_variation, platelet_count, mean_platelet_volume, platelet_dis_width, lymphocyte_percentage, neutrophil_percentage, abs_lymphocyte_count, abs_neutrophil_count, red_cell_dis_deviation, plateletcrit, monocyte_percentage, abs_monocyte_count, eosinophil_percentage, abs_eosinophil_count, basophil_percentage, abs_basophil_count, large_platelet_ratio, platelet_specific_volume, abo_blood, rh_blood, esr)
+        values (#{studyId}, #{examNo}, #{testNo}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{createTime}, #{updateTime}, #{resultTime}, #{whiteCellCount}, #{redCellCount}, #{hemoglobin}, #{hematocrit}, #{meanCorpusVolume}, #{meanCorpusHemoglobin}, #{meanCorpusHemConcent}, #{redCellDisWidthVariation}, #{plateletCount}, #{meanPlateletVolume}, #{plateletDisWidth}, #{lymphocytePercentage}, #{neutrophilPercentage}, #{absLymphocyteCount}, #{absNeutrophilCount}, #{redCellDisDeviation}, #{plateletcrit}, #{monocytePercentage}, #{absMonocyteCount}, #{eosinophilPercentage}, #{absEosinophilCount}, #{basophilPercentage}, #{absBasophilCount}, #{largePlateletRatio}, #{plateletSpecificVolume}, #{aboBlood}, #{rhBlood}, #{esr})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, result_time, white_cell_count, red_cell_count, hemoglobin, hematocrit, mean_corpus_volume, mean_corpus_hemoglobin, mean_corpus_hem_concent, red_cell_dis_width_variation, platelet_count, mean_platelet_volume, platelet_dis_width, lymphocyte_percentage, neutrophil_percentage, abs_lymphocyte_count, abs_neutrophil_count, red_cell_dis_deviation, plateletcrit, monocyte_percentage, abs_monocyte_count, eosinophil_percentage, abs_eosinophil_count, basophil_percentage, abs_basophil_count, large_platelet_ratio, platelet_specific_volume, abo_blood, rh_blood, esr,determination_elect_calcium,amylase_assay)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.whiteCellCount}, #{entity.redCellCount}, #{entity.hemoglobin}, #{entity.hematocrit}, #{entity.meanCorpusVolume}, #{entity.meanCorpusHemoglobin}, #{entity.meanCorpusHemConcent}, #{entity.redCellDisWidthVariation}, #{entity.plateletCount}, #{entity.meanPlateletVolume}, #{entity.plateletDisWidth}, #{entity.lymphocytePercentage}, #{entity.neutrophilPercentage}, #{entity.absLymphocyteCount}, #{entity.absNeutrophilCount}, #{entity.redCellDisDeviation}, #{entity.plateletcrit}, #{entity.monocytePercentage}, #{entity.absMonocyteCount}, #{entity.eosinophilPercentage}, #{entity.absEosinophilCount}, #{entity.basophilPercentage}, #{entity.absBasophilCount}, #{entity.largePlateletRatio}, #{entity.plateletSpecificVolume}, #{entity.aboBlood}, #{entity.rhBlood}, #{entity.esr}, #{entity.determinationElectCalcium}, #{entity.amylaseAssay})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, result_time, white_cell_count, red_cell_count, hemoglobin, hematocrit, mean_corpus_volume, mean_corpus_hemoglobin, mean_corpus_hem_concent, red_cell_dis_width_variation, platelet_count, mean_platelet_volume, platelet_dis_width, lymphocyte_percentage, neutrophil_percentage, abs_lymphocyte_count, abs_neutrophil_count, red_cell_dis_deviation, plateletcrit, monocyte_percentage, abs_monocyte_count, eosinophil_percentage, abs_eosinophil_count, basophil_percentage, abs_basophil_count, large_platelet_ratio, platelet_specific_volume, abo_blood, rh_blood, esr,determination_elect_calcium,amylase_assay)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.whiteCellCount}, #{entity.redCellCount}, #{entity.hemoglobin}, #{entity.hematocrit}, #{entity.meanCorpusVolume}, #{entity.meanCorpusHemoglobin}, #{entity.meanCorpusHemConcent}, #{entity.redCellDisWidthVariation}, #{entity.plateletCount}, #{entity.meanPlateletVolume}, #{entity.plateletDisWidth}, #{entity.lymphocytePercentage}, #{entity.neutrophilPercentage}, #{entity.absLymphocyteCount}, #{entity.absNeutrophilCount}, #{entity.redCellDisDeviation}, #{entity.plateletcrit}, #{entity.monocytePercentage}, #{entity.absMonocyteCount}, #{entity.eosinophilPercentage}, #{entity.absEosinophilCount}, #{entity.basophilPercentage}, #{entity.absBasophilCount}, #{entity.largePlateletRatio}, #{entity.plateletSpecificVolume}, #{entity.aboBlood}, #{entity.rhBlood}, #{entity.esr}, #{entity.determinationElectCalcium}, #{entity.amylaseAssay})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_blood_routine(study_id, exam_no, test_no, abnormal_indicator_high, abnormal_indicator_low, create_time, update_time, result_time, white_cell_count, red_cell_count, hemoglobin, hematocrit, mean_corpus_volume, mean_corpus_hemoglobin, mean_corpus_hem_concent, red_cell_dis_width_variation, platelet_count, mean_platelet_volume, platelet_dis_width, lymphocyte_percentage, neutrophil_percentage, abs_lymphocyte_count, abs_neutrophil_count, red_cell_dis_deviation, plateletcrit, monocyte_percentage, abs_monocyte_count, eosinophil_percentage, abs_eosinophil_count, basophil_percentage, abs_basophil_count, large_platelet_ratio, platelet_specific_volume, abo_blood, rh_blood, esr)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.examNo}, #{entity.testNo}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.whiteCellCount}, #{entity.redCellCount}, #{entity.hemoglobin}, #{entity.hematocrit}, #{entity.meanCorpusVolume}, #{entity.meanCorpusHemoglobin}, #{entity.meanCorpusHemConcent}, #{entity.redCellDisWidthVariation}, #{entity.plateletCount}, #{entity.meanPlateletVolume}, #{entity.plateletDisWidth}, #{entity.lymphocytePercentage}, #{entity.neutrophilPercentage}, #{entity.absLymphocyteCount}, #{entity.absNeutrophilCount}, #{entity.redCellDisDeviation}, #{entity.plateletcrit}, #{entity.monocytePercentage}, #{entity.absMonocyteCount}, #{entity.eosinophilPercentage}, #{entity.absEosinophilCount}, #{entity.basophilPercentage}, #{entity.absBasophilCount}, #{entity.largePlateletRatio}, #{entity.plateletSpecificVolume}, #{entity.aboBlood}, #{entity.rhBlood}, #{entity.esr})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        white_cell_count = values(white_cell_count),
+        red_cell_count = values(red_cell_count),
+        hemoglobin = values(hemoglobin),
+        hematocrit = values(hematocrit),
+        mean_corpus_volume = values(mean_corpus_volume),
+        mean_corpus_hemoglobin = values(mean_corpus_hemoglobin),
+        mean_corpus_hem_concent = values(mean_corpus_hem_concent),
+        red_cell_dis_width_variation = values(red_cell_dis_width_variation),
+        platelet_count = values(platelet_count),
+        mean_platelet_volume = values(mean_platelet_volume),
+        platelet_dis_width = values(platelet_dis_width),
+        lymphocyte_percentage = values(lymphocyte_percentage),
+        neutrophil_percentage = values(neutrophil_percentage),
+        abs_lymphocyte_count = values(abs_lymphocyte_count),
+        abs_neutrophil_count = values(abs_neutrophil_count),
+        red_cell_dis_deviation = values(red_cell_dis_deviation),
+        plateletcrit = values(plateletcrit),
+        monocyte_percentage = values(monocyte_percentage),
+        abs_monocyte_count = values(abs_monocyte_count),
+        eosinophil_percentage = values(eosinophil_percentage),
+        abs_eosinophil_count = values(abs_eosinophil_count),
+        basophil_percentage = values(basophil_percentage),
+        abs_basophil_count = values(abs_basophil_count),
+        large_platelet_ratio = values(large_platelet_ratio),
+        platelet_specific_volume = values(platelet_specific_volume),
+        abo_blood = values(abo_blood),
+        rh_blood = values(rh_blood),
+        esr = values(esr)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_blood_routine
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="whiteCellCount != null and whiteCellCount != ''">
+                white_cell_count = #{whiteCellCount},
+            </if>
+            <if test="redCellCount != null and redCellCount != ''">
+                red_cell_count = #{redCellCount},
+            </if>
+            <if test="hemoglobin != null and hemoglobin != ''">
+                hemoglobin = #{hemoglobin},
+            </if>
+            <if test="hematocrit != null and hematocrit != ''">
+                hematocrit = #{hematocrit},
+            </if>
+            <if test="meanCorpusVolume != null and meanCorpusVolume != ''">
+                mean_corpus_volume = #{meanCorpusVolume},
+            </if>
+            <if test="meanCorpusHemoglobin != null and meanCorpusHemoglobin != ''">
+                mean_corpus_hemoglobin = #{meanCorpusHemoglobin},
+            </if>
+            <if test="meanCorpusHemConcent != null and meanCorpusHemConcent != ''">
+                mean_corpus_hem_concent = #{meanCorpusHemConcent},
+            </if>
+            <if test="redCellDisWidthVariation != null and redCellDisWidthVariation != ''">
+                red_cell_dis_width_variation = #{redCellDisWidthVariation},
+            </if>
+            <if test="plateletCount != null and plateletCount != ''">
+                platelet_count = #{plateletCount},
+            </if>
+            <if test="meanPlateletVolume != null and meanPlateletVolume != ''">
+                mean_platelet_volume = #{meanPlateletVolume},
+            </if>
+            <if test="plateletDisWidth != null and plateletDisWidth != ''">
+                platelet_dis_width = #{plateletDisWidth},
+            </if>
+            <if test="lymphocytePercentage != null and lymphocytePercentage != ''">
+                lymphocyte_percentage = #{lymphocytePercentage},
+            </if>
+            <if test="neutrophilPercentage != null and neutrophilPercentage != ''">
+                neutrophil_percentage = #{neutrophilPercentage},
+            </if>
+            <if test="absLymphocyteCount != null and absLymphocyteCount != ''">
+                abs_lymphocyte_count = #{absLymphocyteCount},
+            </if>
+            <if test="absNeutrophilCount != null and absNeutrophilCount != ''">
+                abs_neutrophil_count = #{absNeutrophilCount},
+            </if>
+            <if test="redCellDisDeviation != null and redCellDisDeviation != ''">
+                red_cell_dis_deviation = #{redCellDisDeviation},
+            </if>
+            <if test="plateletcrit != null and plateletcrit != ''">
+                plateletcrit = #{plateletcrit},
+            </if>
+            <if test="monocytePercentage != null and monocytePercentage != ''">
+                monocyte_percentage = #{monocytePercentage},
+            </if>
+            <if test="absMonocyteCount != null and absMonocyteCount != ''">
+                abs_monocyte_count = #{absMonocyteCount},
+            </if>
+            <if test="eosinophilPercentage != null and eosinophilPercentage != ''">
+                eosinophil_percentage = #{eosinophilPercentage},
+            </if>
+            <if test="absEosinophilCount != null and absEosinophilCount != ''">
+                abs_eosinophil_count = #{absEosinophilCount},
+            </if>
+            <if test="basophilPercentage != null and basophilPercentage != ''">
+                basophil_percentage = #{basophilPercentage},
+            </if>
+            <if test="absBasophilCount != null and absBasophilCount != ''">
+                abs_basophil_count = #{absBasophilCount},
+            </if>
+            <if test="largePlateletRatio != null and largePlateletRatio != ''">
+                large_platelet_ratio = #{largePlateletRatio},
+            </if>
+            <if test="plateletSpecificVolume != null and plateletSpecificVolume != ''">
+                platelet_specific_volume = #{plateletSpecificVolume},
+            </if>
+            <if test="aboBlood != null and aboBlood != ''">
+                abo_blood = #{aboBlood},
+            </if>
+            <if test="rhBlood != null and rhBlood != ''">
+                rh_blood = #{rhBlood},
+            </if>
+            <if test="esr != null and esr != ''">
+                esr = #{esr},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_blood_routine where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdESDataQueryMapper">
+
+    <resultMap type="com.dchealth.etl.domain.TdHealthIndex" id="TdHealthIndexMap">
+        <result property="esDataType" column="esDataType" jdbcType="VARCHAR"/>
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="baseId" column="baseId" jdbcType="VARCHAR"/>
+        <result property="accountId" column="account_id" jdbcType="VARCHAR"/>
+        <result property="registrySigns" column="registry_signs" jdbcType="VARCHAR"/>
+        <result property="medicalRecordNo" column="medical_record_no" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="birthday" column="birthday" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="maritalStatus" column="marital_status" jdbcType="VARCHAR"/>
+        <result property="profession" column="profession" jdbcType="VARCHAR"/>
+        <result property="nation" column="nation" jdbcType="VARCHAR"/>
+        <result property="nationality" column="nationality" jdbcType="VARCHAR"/>
+        <result property="idCard" column="id_card" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="presentAddress" column="present_address" jdbcType="VARCHAR"/>
+        <result property="admissionHospitalDate" column="admission_hospital_date" jdbcType="TIMESTAMP"/>
+        <result property="admissionHospitalDepartment" column="admission_hospital_department" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="deptDischargeFrom" column="dept_discharge_from" jdbcType="VARCHAR"/>
+        <result property="dischargeDate" column="discharge_date" jdbcType="TIMESTAMP"/>
+        <result property="lastVisitDate" column="last_visit_date" jdbcType="TIMESTAMP"/>
+        <result property="patientClinicTime" column="patient_clinic_time" jdbcType="TIMESTAMP"/>
+        <!-- 一般检查 -->
+        <result property="generalInspectionDate" column="recording_date" jdbcType="TIMESTAMP"/>
+        <result property="height" column="height" jdbcType="NUMERIC"/>
+        <result property="weight" column="weight" jdbcType="NUMERIC"/>
+        <result property="waistline" column="waistline" jdbcType="NUMERIC"/>
+        <result property="pulse" column="pulse" jdbcType="NUMERIC"/>
+        <result property="bmi" column="bmi" jdbcType="VARCHAR"/>
+        <result property="respiratoryRate" column="respiratory_rate" jdbcType="VARCHAR"/>
+        <result property="pulseRate" column="pulse_rate" jdbcType="NUMERIC"/>
+        <result property="systolicBloodPressure" column="systolic_blood_pressure" jdbcType="NUMERIC"/>
+        <result property="diastolicBloodPressure" column="diastolic_blood_pressure" jdbcType="NUMERIC"/>
+        <result property="bodyTemperature" column="body_temperature" jdbcType="NUMERIC"/>
+        <!-- 诊断记录 -->
+        <result property="diagnosisType" column="diagnosis_type" jdbcType="VARCHAR"/>
+        <result property="diagnosisNo" column="diagnosis_no" jdbcType="INTEGER"/>
+        <result property="diagnosisDesc" column="diagnosis_desc" jdbcType="VARCHAR"/>
+        <result property="diagnosisDate" column="diagnosis_date" jdbcType="TIMESTAMP"/>
+        <result property="finalCheckDoctor" column="final_check_doctor" jdbcType="VARCHAR"/>
+        <result property="checkDesc" column="check_desc" jdbcType="VARCHAR"/>
+        <result property="checkDoctor" column="check_doctor" jdbcType="VARCHAR"/>
+        <result property="checkDate" column="check_date" jdbcType="TIMESTAMP"/>
+        <result property="healthAdvice" column="health_advice" jdbcType="VARCHAR"/>
+        <result property="dietaryAdvice" column="dietary_advice" jdbcType="VARCHAR"/>
+        <result property="sportsAdvice" column="sports_advice" jdbcType="VARCHAR"/>
+        <result property="treatmentRecommendations" column="treatment_recommendations" jdbcType="VARCHAR"/>
+        <!-- 辅助检查 -->
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="examResultTime" column="exam_date_time" jdbcType="TIMESTAMP"/>
+        <result property="ct" column="ct" jdbcType="VARCHAR"/>
+        <result property="petCt" column="pet_ct" jdbcType="VARCHAR"/>
+        <result property="mri" column="mri" jdbcType="VARCHAR"/>
+        <result property="cr" column="cr" jdbcType="VARCHAR"/>
+        <result property="crOther" column="cr_other" jdbcType="VARCHAR"/>
+        <result property="cardiacUltrasound" column="cardiac_ultrasound" jdbcType="VARCHAR"/>
+        <result property="abdominalUltrasound" column="abdominal_ultrasound" jdbcType="VARCHAR"/>
+        <result property="specializedUltrasoundMale" column="specialized_ultrasound_male" jdbcType="VARCHAR"/>
+        <result property="specializedUltrasoundFemale" column="specialized_ultrasound_female" jdbcType="VARCHAR"/>
+        <result property="thyroidUltrasound" column="thyroid_ultrasound" jdbcType="VARCHAR"/>
+        <result property="carotidUltrasound" column="carotid_ultrasound" jdbcType="VARCHAR"/>
+        <result property="vascularDopplerUltrasound" column="vascular_doppler_ultrasound" jdbcType="VARCHAR"/>
+        <result property="ecg" column="ecg" jdbcType="VARCHAR"/>
+        <!-- 检验 血常规-->
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="testResultTime" column="test_date_time" jdbcType="TIMESTAMP"/>
+        <result property="whiteCellCount" column="white_cell_count" jdbcType="VARCHAR"/>
+        <result property="redCellCount" column="red_cell_count" jdbcType="VARCHAR"/>
+        <result property="hemoglobin" column="hemoglobin" jdbcType="VARCHAR"/>
+        <result property="hematocrit" column="hematocrit" jdbcType="VARCHAR"/>
+        <result property="meanCorpusVolume" column="mean_corpus_volume" jdbcType="VARCHAR"/>
+        <result property="meanCorpusHemoglobin" column="mean_corpus_hemoglobin" jdbcType="VARCHAR"/>
+        <result property="meanCorpusHemConcent" column="mean_corpus_hem_concent" jdbcType="VARCHAR"/>
+        <result property="redCellDisWidthVariation" column="red_cell_dis_width_variation" jdbcType="VARCHAR"/>
+        <result property="plateletCount" column="platelet_count" jdbcType="VARCHAR"/>
+        <result property="meanPlateletVolume" column="mean_platelet_volume" jdbcType="VARCHAR"/>
+        <result property="plateletDisWidth" column="platelet_dis_width" jdbcType="VARCHAR"/>
+        <result property="lymphocytePercentage" column="lymphocyte_percentage" jdbcType="VARCHAR"/>
+        <result property="neutrophilPercentage" column="neutrophil_percentage" jdbcType="VARCHAR"/>
+        <result property="absLymphocyteCount" column="abs_lymphocyte_count" jdbcType="VARCHAR"/>
+        <result property="absNeutrophilCount" column="abs_neutrophil_count" jdbcType="VARCHAR"/>
+        <result property="redCellDisDeviation" column="red_cell_dis_deviation" jdbcType="VARCHAR"/>
+        <result property="plateletcrit" column="plateletcrit" jdbcType="VARCHAR"/>
+        <result property="monocytePercentage" column="monocyte_percentage" jdbcType="VARCHAR"/>
+        <result property="absMonocyteCount" column="abs_monocyte_count" jdbcType="VARCHAR"/>
+        <result property="eosinophilPercentage" column="eosinophil_percentage" jdbcType="VARCHAR"/>
+        <result property="absEosinophilCount" column="abs_eosinophil_count" jdbcType="VARCHAR"/>
+        <result property="basophilPercentage" column="basophil_percentage" jdbcType="VARCHAR"/>
+        <result property="absBasophilCount" column="abs_basophil_count" jdbcType="VARCHAR"/>
+        <!-- 检验 血液生化-->
+        <result property="totalProtein" column="total_protein" jdbcType="VARCHAR"/>
+        <result property="albumin" column="albumin" jdbcType="VARCHAR"/>
+        <result property="globulin" column="globulin" jdbcType="VARCHAR"/>
+        <result property="albuminGlobulinRatio" column="albumin_globulin_ratio" jdbcType="VARCHAR"/>
+        <result property="aspartateAminotransferase" column="aspartate_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="alanineAminotransferase" column="alanine_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="astAltRatio" column="ast_alt_ratio" jdbcType="VARCHAR"/>
+        <result property="totalBileAcid" column="total_bile_acid" jdbcType="VARCHAR"/>
+        <result property="totalBilirubin" column="total_bilirubin" jdbcType="VARCHAR"/>
+        <result property="directBilirubin" column="direct_bilirubin" jdbcType="VARCHAR"/>
+        <result property="indirectBilirubin" column="indirect_bilirubin" jdbcType="VARCHAR"/>
+        <result property="alkalinePhosphatase" column="alkaline_phosphatase" jdbcType="VARCHAR"/>
+        <result property="glutamicPyruvicTransaminase" column="glutamic_pyruvic_transaminase" jdbcType="VARCHAR"/>
+        <result property="cholinesterase" column="cholinesterase" jdbcType="VARCHAR"/>
+        <result property="lactateDehydrogenase" column="lactate_dehydrogenase" jdbcType="VARCHAR"/>
+        <result property="alphaHbDehydrogenase" column="alpha_hb_dehydrogenase" jdbcType="VARCHAR"/>
+        <result property="creatineKinase" column="creatine_kinase" jdbcType="VARCHAR"/>
+        <result property="creatineKinaseIsoenzyme" column="creatine_kinase_isoenzyme" jdbcType="VARCHAR"/>
+        <result property="bloodUreaNitrogen" column="blood_urea_nitrogen" jdbcType="VARCHAR"/>
+        <result property="creatinine" column="creatinine" jdbcType="VARCHAR"/>
+        <result property="uricAcid" column="uric_acid" jdbcType="VARCHAR"/>
+        <result property="fastingBloodGlucose" column="fasting_blood_glucose" jdbcType="VARCHAR"/>
+        <result property="potassium" column="potassium" jdbcType="VARCHAR"/>
+        <result property="sodium" column="sodium" jdbcType="VARCHAR"/>
+        <result property="chloride" column="chloride" jdbcType="VARCHAR"/>
+        <result property="calcium" column="calcium" jdbcType="VARCHAR"/>
+        <result property="phosphorus" column="phosphorus" jdbcType="VARCHAR"/>
+        <result property="magnesium" column="magnesium" jdbcType="VARCHAR"/>
+        <result property="carbonDioxide" column="carbon_dioxide" jdbcType="VARCHAR"/>
+        <result property="triglycerides" column="triglycerides" jdbcType="VARCHAR"/>
+        <result property="totalCholesterol" column="total_cholesterol" jdbcType="VARCHAR"/>
+        <result property="hdlCholesterol" column="hdl_cholesterol" jdbcType="VARCHAR"/>
+        <result property="ldlCholesterol" column="ldl_cholesterol" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinA1" column="apolipoprotein_a1" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinB" column="apolipoprotein_b" jdbcType="VARCHAR"/>
+        <result property="apolipoproteinA1bRatio" column="apolipoprotein_a1b_ratio" jdbcType="VARCHAR"/>
+        <result property="whiteBallRatio" column="white_ball_ratio" jdbcType="VARCHAR"/>
+        <result property="serumCystatinC" column="serum_cystatin_c" jdbcType="VARCHAR"/>
+        <result property="bloodSugar" column="blood_sugar" jdbcType="VARCHAR"/>
+        <result property="prothrombinTime" column="prothrombin_time" jdbcType="VARCHAR"/>
+        <result property="aptt" column="aptt" jdbcType="VARCHAR"/>
+        <result property="fibrinogen" column="fibrinogen" jdbcType="VARCHAR"/>
+        <result property="fdp" column="fdp" jdbcType="VARCHAR"/>
+        <result property="internationalNormRatio" column="international_norm_ratio" jdbcType="VARCHAR"/>
+        <result property="prothrombinActivity" column="prothrombin_activity" jdbcType="VARCHAR"/>
+        <result property="bloodGlucose2h" column="blood_glucose2h" jdbcType="VARCHAR"/>
+        <result property="glycosylatedHemoglobin" column="glycosylated_hemoglobin" jdbcType="VARCHAR"/>
+        <result property="ogttBloodGlucose" column="ogtt_blood_glucose" jdbcType="VARCHAR"/>
+        <result property="homocysteine" column="homocysteine" jdbcType="VARCHAR"/>
+        <!-- 检验 尿常规-->
+        <result property="specificGravityUrine" column="specific_gravity_urine" jdbcType="VARCHAR"/>
+        <result property="urinePh" column="urine_ph" jdbcType="VARCHAR"/>
+        <result property="urineWhiteCells" column="urine_white_cells" jdbcType="VARCHAR"/>
+        <result property="urineNitrite" column="urine_nitrite" jdbcType="VARCHAR"/>
+        <result property="urineProtein" column="urine_protein" jdbcType="VARCHAR"/>
+        <result property="urineGlucose" column="urine_glucose" jdbcType="VARCHAR"/>
+        <result property="urineKetone" column="urine_ketone" jdbcType="VARCHAR"/>
+        <result property="urineUrobilinogen" column="urine_urobilinogen" jdbcType="VARCHAR"/>
+        <result property="urineBilirubin" column="urine_bilirubin" jdbcType="VARCHAR"/>
+        <result property="urineOccultBlood" column="urine_occult_blood" jdbcType="VARCHAR"/>
+        <!-- 检验 便常规-->
+        <result property="stoolColor" column="stool_color" jdbcType="VARCHAR"/>
+        <result property="stoolConsistency" column="stool_consistency" jdbcType="VARCHAR"/>
+        <result property="stoolRedCells" column="stool_red_cells" jdbcType="VARCHAR"/>
+        <result property="stoolWhiteCells" column="stool_white_cells" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEgg" column="stool_parasite_egg" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEggB" column="stool_parasite_egg_b" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEggR" column="stool_parasite_egg_r" jdbcType="VARCHAR"/>
+        <result property="stoolParasiteEggT" column="stool_parasite_egg_t" jdbcType="VARCHAR"/>
+        <!-- 检验 心肌酶-->
+        <result property="serumLactateDehydrogenase" column="serum_lactate_dehydrogenase" jdbcType="VARCHAR"/>
+        <result property="aspartateAminotransferase" column="aspartate_aminotransferase" jdbcType="VARCHAR"/>
+        <result property="serumCreatineKinaseMbAssay" column="serum_creatine_kinase_mb_assay" jdbcType="VARCHAR"/>
+        <result property="serumCreatineKinaseAssay" column="serum_creatine_kinase_assay" jdbcType="VARCHAR"/>
+        <!-- 检验 肿瘤-->
+        <result property="alphaFetoprotein" column="alpha_fetoprotein" jdbcType="VARCHAR"/>
+        <result property="carcinoembryonicAntigen" column="carcinoembryonic_antigen" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen199" column="carbohydrate_antigen199" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen125" column="carbohydrate_antigen125" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen242" column="carbohydrate_antigen242" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen153" column="carbohydrate_antigen153" jdbcType="VARCHAR"/>
+        <result property="neuronSpecificEnolase" column="neuron_specific_enolase" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen724" column="carbohydrate_antigen724" jdbcType="VARCHAR"/>
+        <result property="cytokeratin19Fragment" column="cytokeratin19_fragment" jdbcType="VARCHAR"/>
+        <result property="carbohydrateAntigen50" column="carbohydrate_antigen50" jdbcType="VARCHAR"/>
+        <result property="freePsmAntigen" column="free_psm_antigen" jdbcType="VARCHAR"/>
+        <result property="psmAntigen" column="psm_antigen" jdbcType="VARCHAR"/>
+        <!-- 检验 甲功八项-->
+        <result property="triiodothyronine" column="triiodothyronine" jdbcType="VARCHAR"/>
+        <result property="thyroxine" column="thyroxine" jdbcType="VARCHAR"/>
+        <result property="thyroidStimulatingHormone" column="thyroid_stimulating_hormone" jdbcType="VARCHAR"/>
+        <result property="freeTriiodothyronine" column="free_triiodothyronine" jdbcType="VARCHAR"/>
+        <result property="freeThyroxine" column="free_thyroxine" jdbcType="VARCHAR"/>
+        <result property="antithyroidMicrosomeAntibody" column="antithyroid_microsome_antibody" jdbcType="VARCHAR"/>
+        <result property="thyroglobulin" column="thyroglobulin" jdbcType="VARCHAR"/>
+        <result property="ft3" column="ft3" jdbcType="VARCHAR"/>
+        <!-- 检验 激素六项-->
+        <result property="follicleStimulatingHormone" column="follicle_stimulating_hormone" jdbcType="VARCHAR"/>
+        <result property="luteinizingHormone" column="luteinizing_hormone" jdbcType="VARCHAR"/>
+        <result property="estradiol" column="estradiol" jdbcType="VARCHAR"/>
+        <result property="progesterone" column="progesterone" jdbcType="VARCHAR"/>
+        <result property="testosterone" column="testosterone" jdbcType="VARCHAR"/>
+        <result property="prolactin" column="prolactin" jdbcType="VARCHAR"/>
+        <!-- 检验 凝血六项-->
+        <result property="prothrombinTime" column="prothrombin_time" jdbcType="VARCHAR"/>
+        <result property="aptt" column="aptt" jdbcType="VARCHAR"/>
+        <result property="thrombinTime" column="thrombin_time" jdbcType="VARCHAR"/>
+        <result property="fibrinogen" column="fibrinogen" jdbcType="VARCHAR"/>
+        <result property="dDimerQuantitativeTest" column="d_dimer_quantitative_test" jdbcType="VARCHAR"/>
+        <result property="internationalNormRatio" column="international_norm_ratio" jdbcType="VARCHAR"/>
+        <!-- 检验 血气分析-->
+        <result property="bloodGasPh" column="blood_gas_ph" jdbcType="VARCHAR"/>
+        <result property="pco2" column="pco2" jdbcType="VARCHAR"/>
+        <result property="po2" column="po2" jdbcType="VARCHAR"/>
+        <result property="hct" column="hct" jdbcType="VARCHAR"/>
+        <result property="hb" column="hb" jdbcType="VARCHAR"/>
+        <result property="be" column="be" jdbcType="VARCHAR"/>
+        <result property="chco3" column="chco3" jdbcType="VARCHAR"/>
+        <result property="actco3" column="actco3" jdbcType="VARCHAR"/>
+        <result property="tco2" column="tco2" jdbcType="VARCHAR"/>
+        <result property="p50act" column="p50act" jdbcType="VARCHAR"/>
+        <result property="so2" column="so2" jdbcType="VARCHAR"/>
+        <result property="cto2" column="cto2" jdbcType="VARCHAR"/>
+        <result property="bo2" column="bo2" jdbcType="VARCHAR"/>
+        <!-- 医嘱-->
+        <result property="orderVisitId" column="visit_id" jdbcType="VARCHAR"/>
+        <result property="orderNo" column="order_no" jdbcType="INTEGER"/>
+        <result property="orderSubNo" column="order_sub_no" jdbcType="INTEGER"/>
+        <result property="repeatIndicator" column="repeat_indicator" jdbcType="INTEGER"/>
+        <result property="orderClass" column="order_class" jdbcType="VARCHAR"/>
+        <result property="orderText" column="order_text" jdbcType="VARCHAR"/>
+        <result property="enterDateTime" column="enter_date_time" jdbcType="TIMESTAMP"/>
+        <!-- 处方-->
+        <result property="prescDate" column="presc_date" jdbcType="TIMESTAMP"/>
+        <result property="prescNo" column="presc_no" jdbcType="VARCHAR"/>
+        <result property="itemNo" column="item_no" jdbcType="INTEGER"/>
+        <result property="drugCode" column="drug_code" jdbcType="VARCHAR"/>
+        <result property="drugSpec" column="drug_spec" jdbcType="VARCHAR"/>
+        <result property="drugName" column="drug_name" jdbcType="VARCHAR"/>
+        <!-- 个人史、家族史-->
+        <result property="personalHistory" column="personal_history" jdbcType="VARCHAR"/>
+        <result property="familyHistory" column="family_history" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryDiagnosisInfosCount" resultType="integer">
+        select count(td.id)
+        from patient_base_info pbi
+        inner join td_diagnosis td on pbi.patient_id = td.patient_id
+        where td.result_date = #{startDate}
+    </select>
+
+    <select id="queryDiagnosisInfos" resultMap="TdHealthIndexMap">
+        select pbi.id baseId,pbi.patient_id ,pbi.account_id ,pbi.registry_signs ,pbi.medical_record_no ,pbi.name ,pbi.birthday ,pbi.age ,pbi.sex ,pbi.marital_status ,
+        pbi.nation ,pbi.id_card ,pbi.mobile ,pbi.present_address ,pbi.admission_hospital_date ,pbi.admission_hospital_date ,
+        pbi.discharge_hospital_date ,pbi.dept_discharge_from ,pbi.last_visit_date ,pbi.patient_clinic_time,
+        td.diagnosis_type ,td.diagnosis_no ,td.diagnosis_desc ,td.diagnosis_date,td.id,'1' esDataType
+        from patient_base_info pbi
+        inner join td_diagnosis td on pbi.patient_id = td.patient_id
+        where td.result_date = #{startDate}
+        order by td.id asc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="queryGeneralInspectionsCount" resultType="integer">
+        select count(tgi.id)
+        from td_general_inspection tgi
+        inner join patient_base_info pbi on tgi.patient_id = pbi.patient_id
+        where tgi.result_date = '2021-01-01'
+    </select>
+
+    <select id="queryGeneralInspectionInfos" resultMap="TdHealthIndexMap">
+        select pbi.id baseId,'2' esDataType,pbi.patient_id ,pbi.account_id ,pbi.registry_signs ,pbi.medical_record_no ,pbi.name ,pbi.birthday ,pbi.age ,pbi.sex ,pbi.marital_status ,
+        pbi.nation ,pbi.id_card ,pbi.mobile ,pbi.present_address ,pbi.admission_hospital_date ,pbi.admission_hospital_date ,
+        pbi.discharge_hospital_date ,pbi.dept_discharge_from ,pbi.last_visit_date ,pbi.patient_clinic_time,
+        tgi.id,tgi.recording_date ,tgi.height ,tgi.weight,tgi.waistline,tgi.pulse,tgi.bmi,tgi.pulse_rate,
+        tgi.systolic_blood_pressure,tgi.diastolic_blood_pressure,tgi.body_temperature,tgi.respiratory_rate
+        from td_general_inspection tgi
+        inner join patient_base_info pbi on tgi.patient_id = pbi.patient_id
+        where tgi.result_date = #{startDate}
+        order by tgi.id asc
+        limit #{offset}, #{pageSize}
+    </select>
+    <select id="queryExamInfoCount" resultType="java.lang.Integer">
+        select count(tem.id)
+        from patient_base_info pbi
+        inner join td_exam_master tem on pbi.patient_id = tem.patient_id
+        left join td_auxiliary_examination_ct taec on tem.exam_no = taec.exam_no
+        left join td_auxiliary_examination_nmr taen on tem.exam_no = taen.exam_no
+        left join td_auxiliary_examination_ultrasound taeu on tem.exam_no = taeu.exam_no
+        left join td_auxiliary_examination_other taeo on tem.exam_no = taeo.exam_no
+        where tem.exam_date = #{startDate}
+    </select>
+    <select id="queryExamInfoInfos" resultMap="TdHealthIndexMap">
+        select pbi.id baseId,'3' esDataType,pbi.patient_id ,pbi.account_id ,pbi.registry_signs ,pbi.medical_record_no ,pbi.name ,pbi.birthday ,pbi.age ,pbi.sex ,pbi.marital_status ,
+        pbi.nation ,pbi.id_card ,pbi.mobile ,pbi.present_address ,pbi.admission_hospital_date ,pbi.admission_hospital_date ,
+        pbi.discharge_hospital_date ,pbi.dept_discharge_from ,pbi.last_visit_date ,pbi.patient_clinic_time,
+        tem.id,tem.exam_no,tem.exam_date_time,
+        taec.ct,taec.pet_ct,
+        taen.mri,
+        taeu.cr,taeu.cr_other,taeu.cardiac_ultrasound,taeu.abdominal_ultrasound,taeu.specialized_ultrasound_male,taeu.specialized_ultrasound_female,
+        taeu.thyroid_ultrasound,taeu.carotid_ultrasound,taeu.vascular_doppler_ultrasound,
+        taeo.ecg
+        from patient_base_info pbi
+        inner join td_exam_master tem on pbi.patient_id = tem.patient_id
+        left join td_auxiliary_examination_ct taec on tem.exam_no = taec.exam_no
+        left join td_auxiliary_examination_nmr taen on tem.exam_no = taen.exam_no
+        left join td_auxiliary_examination_ultrasound taeu on tem.exam_no = taeu.exam_no
+        left join td_auxiliary_examination_other taeo on tem.exam_no = taeo.exam_no
+        where tem.exam_date = #{startDate}
+        order by tem.id asc
+    </select>
+    <select id="queryTestInfoCount" resultType="java.lang.Integer">
+        select count(ttm.id)
+        from patient_base_info pbi
+        inner join td_test_master ttm on pbi.patient_id = ttm.patient_id
+        left join td_blood_routine tbr on ttm.test_no = tbr.test_no
+        left join td_blood_biochemistry tbb on ttm.test_no = tbb.test_no
+        left join td_urine_routine tur on ttm.test_no = tur.test_no
+        left join td_stool_routine tsr on ttm.test_no = tsr.test_no
+        left join td_myocardia_enzyme tme on ttm.test_no = tme.test_no
+        left join td_tumor_screening_items ttsi on ttm.test_no = ttsi.test_no
+        left join td_thyroid_function_items ttfi on ttm.test_no = ttfi.test_no
+        left join td_hormone_items thi  on ttm.test_no = thi.test_no
+        left join td_coagulation_items tci on ttm.test_no = tci.test_no
+        left join td_blood_gas_analysis tbga on ttm.test_no = tbga.test_no
+        where ttm.test_date = #{startDate}
+    </select>
+    <select id="queryTestInfoInfos" resultMap="TdHealthIndexMap">
+        select pbi.id baseId,'4' esDataType,pbi.patient_id ,pbi.account_id ,pbi.registry_signs ,pbi.medical_record_no ,pbi.name ,pbi.birthday ,pbi.age ,pbi.sex ,pbi.marital_status ,
+        pbi.nation ,pbi.id_card ,pbi.mobile ,pbi.present_address ,pbi.admission_hospital_date ,pbi.admission_hospital_date,
+        pbi.discharge_hospital_date ,pbi.dept_discharge_from ,pbi.last_visit_date ,pbi.patient_clinic_time,
+        ttm.id,ttm.test_no ,ttm.test_date_time,
+        tbr.white_cell_count,tbr.red_cell_count,tbr.hemoglobin,tbr.hematocrit,tbr.mean_corpus_volume,tbr.mean_corpus_hemoglobin,tbr.mean_corpus_hem_concent,
+        tbr.red_cell_dis_width_variation,tbr.platelet_count,tbr.mean_platelet_volume,tbr.platelet_dis_width,tbr.lymphocyte_percentage,tbr.neutrophil_percentage,
+        tbr.abs_lymphocyte_count,tbr.abs_neutrophil_count,tbr.red_cell_dis_deviation,tbr.plateletcrit,tbr.monocyte_percentage,tbr.abs_monocyte_count,tbr.eosinophil_percentage,
+        tbr.abs_eosinophil_count,tbr.basophil_percentage,tbr.abs_basophil_count,
+        tbb.total_protein,tbb.albumin,tbb.globulin,tbb.albumin_globulin_ratio,tbb.aspartate_aminotransferase,
+        tbb.alanine_aminotransferase,tbb.ast_alt_ratio,tbb.total_bile_acid,tbb.total_bilirubin,tbb.direct_bilirubin,
+        tbb.indirect_bilirubin,tbb.alkaline_phosphatase,tbb.glutamic_pyruvic_transaminase,tbb.cholinesterase,
+        tbb.lactate_dehydrogenase,tbb.alpha_hb_dehydrogenase,tbb.creatine_kinase,tbb.creatine_kinase_isoenzyme,
+        tbb.blood_urea_nitrogen,tbb.creatinine,tbb.uric_acid,tbb.fasting_blood_glucose,tbb.potassium,
+        tbb.sodium,tbb.chloride,tbb.calcium,tbb.phosphorus,tbb.magnesium,tbb.carbon_dioxide,tbb.triglycerides,
+        tbb.total_cholesterol,tbb.hdl_cholesterol,tbb.ldl_cholesterol,tbb.apolipoprotein_a1,tbb.apolipoprotein_b,
+        tbb.apolipoprotein_a1b_ratio,tbb.white_ball_ratio,tbb.serum_cystatin_c,tbb.blood_sugar,tbb.prothrombin_time,
+        tbb.aptt,tbb.fibrinogen,tbb.fdp,tbb.international_norm_ratio,tbb.prothrombin_activity,tbb.blood_glucose2h,
+        tbb.glycosylated_hemoglobin,tbb.ogtt_blood_glucose,tbb.homocysteine,
+        tur.specific_gravity_urine,tur.urine_ph,tur.urine_white_cells,tur.urine_nitrite,tur.urine_protein,
+        tur.urine_glucose,tur.urine_ketone,tur.urine_urobilinogen,tur.urine_bilirubin,tur.urine_occult_blood,
+        tsr.stool_color,tsr.stool_consistency,tsr.stool_red_cells,tsr.stool_white_cells,tsr.stool_parasite_egg,tsr.stool_parasite_egg_b,tsr.stool_parasite_egg_r,tsr.stool_parasite_egg_t,
+        tme.serum_lactate_dehydrogenase,tme.aspartate_aminotransferase,tme.serum_creatine_kinase_mb_assay,tme.serum_creatine_kinase_assay,
+        ttsi.alpha_fetoprotein,ttsi.carcinoembryonic_antigen,ttsi.carbohydrate_antigen199,ttsi.carbohydrate_antigen125,ttsi.carbohydrate_antigen242,ttsi.carbohydrate_antigen153,
+        ttsi.neuron_specific_enolase,ttsi.carbohydrate_antigen724,ttsi.cytokeratin19_fragment,ttsi.carbohydrate_antigen50,ttsi.free_psm_antigen,ttsi.psm_antigen,
+        ttfi.triiodothyronine,ttfi.thyroxine,ttfi.thyroid_stimulating_hormone,ttfi.free_triiodothyronine,
+        ttfi.free_thyroxine,ttfi.antithyroid_microsome_antibody,ttfi.thyroglobulin,ttfi.ft3,
+        thi.follicle_stimulating_hormone,thi.luteinizing_hormone,thi.estradiol,thi.progesterone,thi.testosterone,thi.prolactin,
+        tci.prothrombin_time,tci.aptt,tci.thrombin_time,tci.fibrinogen,tci.d_dimer_quantitative_test,tci.international_norm_ratio,
+        tbga.blood_gas_ph,tbga.pco2,tbga.po2,tbga.hct,tbga.hb,tbga.be,
+        tbga.chco3,tbga.actco3,tbga.tco2,tbga.p50act,tbga.so2,tbga.cto2,tbga.bo2
+        from patient_base_info pbi
+        inner join td_test_master ttm on pbi.patient_id = ttm.patient_id
+        left join td_blood_routine tbr on ttm.test_no = tbr.test_no
+        left join td_blood_biochemistry tbb on ttm.test_no = tbb.test_no
+        left join td_urine_routine tur on ttm.test_no = tur.test_no
+        left join td_stool_routine tsr on ttm.test_no = tsr.test_no
+        left join td_myocardia_enzyme tme on ttm.test_no = tme.test_no
+        left join td_tumor_screening_items ttsi on ttm.test_no = ttsi.test_no
+        left join td_thyroid_function_items ttfi on ttm.test_no = ttfi.test_no
+        left join td_hormone_items thi  on ttm.test_no = thi.test_no
+        left join td_coagulation_items tci on ttm.test_no = tci.test_no
+        left join td_blood_gas_analysis tbga on ttm.test_no = tbga.test_no
+        where ttm.test_date = #{startDate}
+        order by ttm.id asc
+    </select>
+    <select id="queryOrdersInfoCount" resultType="java.lang.Integer">
+        select count(od.id)
+        from patient_base_info pbi
+        inner join td_orders od on pbi.patient_id = od.patient_id
+        where od.order_class ='E'
+        and od.orders_date = #{startDate}
+    </select>
+    <select id="queryOrdersInfos" resultMap="TdHealthIndexMap">
+        select pbi.id baseId,'5' esDataType,pbi.patient_id ,pbi.account_id ,pbi.registry_signs ,pbi.medical_record_no ,pbi.name ,pbi.birthday ,pbi.age ,pbi.sex ,pbi.marital_status ,
+        pbi.nation ,pbi.id_card ,pbi.mobile ,pbi.present_address ,pbi.admission_hospital_date ,pbi.admission_hospital_date ,
+        pbi.discharge_hospital_date ,pbi.dept_discharge_from ,pbi.last_visit_date ,pbi.patient_clinic_time,
+        od.id,od.visit_id,od.order_no,od.order_sub_no,od.repeat_indicator,od.order_class,od.order_text,od.ENTER_DATE_TIME
+        from patient_base_info pbi
+        inner join td_orders od on pbi.patient_id = od.patient_id
+        where od.order_class ='E'
+        and od.orders_date = #{startDate}
+        order by od.id asc
+    </select>
+    <select id="queryDrugPrescInfoCount" resultType="java.lang.Integer">
+        select count(tdpd.id)
+        from patient_base_info pbi
+        inner join td_drug_presc_master tdpm on pbi.patient_id = tdpm.patient_id
+        inner join td_drug_presc_detail tdpd on tdpm.presc_date = tdpd.presc_date and tdpm.presc_no = tdpd.presc_no
+        where tdpm.presc_date = #{startDate}
+    </select>
+    <select id="queryDrugPrescInfos" resultMap="TdHealthIndexMap">
+        select pbi.id baseId,'6' esDataType,pbi.patient_id ,pbi.account_id ,pbi.registry_signs ,pbi.medical_record_no ,pbi.name ,pbi.birthday ,pbi.age ,pbi.sex ,pbi.marital_status ,
+        pbi.nation ,pbi.id_card ,pbi.mobile ,pbi.present_address ,pbi.admission_hospital_date ,pbi.admission_hospital_date ,
+        pbi.discharge_hospital_date ,pbi.dept_discharge_from ,pbi.last_visit_date ,pbi.patient_clinic_time,
+        tdpd.id,tdpd.presc_date,tdpd.presc_no,tdpd.item_no,tdpd.drug_code,tdpd.drug_spec,tdpd.drug_name
+        from patient_base_info pbi
+        inner join td_drug_presc_master tdpm on pbi.patient_id = tdpm.patient_id
+        inner join td_drug_presc_detail tdpd on tdpm.presc_date = tdpd.presc_date and tdpm.presc_no = tdpd.presc_no
+        where tdpm.presc_date = #{startDate}
+        order by tdpd.id asc
+    </select>
+
+
+</mapper>

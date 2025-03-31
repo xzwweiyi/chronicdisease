@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdDiagnosisMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdDiagnosis" id="TdDiagnosisMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="diagnosisType" column="diagnosis_type" jdbcType="VARCHAR"/>
+        <result property="diagnosisNo" column="diagnosis_no" jdbcType="INTEGER"/>
+        <result property="diagnosisDesc" column="diagnosis_desc" jdbcType="VARCHAR"/>
+        <result property="diagnosisDate" column="diagnosis_date" jdbcType="TIMESTAMP"/>
+        <result property="finalCheckDoctor" column="final_check_doctor" jdbcType="VARCHAR"/>
+        <result property="checkDesc" column="check_desc" jdbcType="VARCHAR"/>
+        <result property="checkDoctor" column="check_doctor" jdbcType="VARCHAR"/>
+        <result property="checkDate" column="check_date" jdbcType="TIMESTAMP"/>
+        <result property="healthAdvice" column="health_advice" jdbcType="VARCHAR"/>
+        <result property="dietaryAdvice" column="dietary_advice" jdbcType="VARCHAR"/>
+        <result property="sportsAdvice" column="sports_advice" jdbcType="VARCHAR"/>
+        <result property="treatmentRecommendations" column="treatment_recommendations" jdbcType="VARCHAR"/>
+        <result property="resultDate" column="result_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdDiagnosisMap">
+        select
+          id, patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations
+        from td_diagnosis
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdDiagnosisMap">
+        select
+          id, patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations
+        from td_diagnosis
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="diagnosisType != null and diagnosisType != ''">
+                and diagnosis_type = #{diagnosisType}
+            </if>
+            <if test="diagnosisNo != null">
+                and diagnosis_no = #{diagnosisNo}
+            </if>
+            <if test="diagnosisDesc != null and diagnosisDesc != ''">
+                and diagnosis_desc = #{diagnosisDesc}
+            </if>
+            <if test="diagnosisDate != null">
+                and diagnosis_date = #{diagnosisDate}
+            </if>
+            <if test="finalCheckDoctor != null and finalCheckDoctor != ''">
+                and final_check_doctor = #{finalCheckDoctor}
+            </if>
+            <if test="checkDesc != null and checkDesc != ''">
+                and check_desc = #{checkDesc}
+            </if>
+            <if test="checkDoctor != null and checkDoctor != ''">
+                and check_doctor = #{checkDoctor}
+            </if>
+            <if test="checkDate != null">
+                and check_date = #{checkDate}
+            </if>
+            <if test="healthAdvice != null and healthAdvice != ''">
+                and health_advice = #{healthAdvice}
+            </if>
+            <if test="dietaryAdvice != null and dietaryAdvice != ''">
+                and dietary_advice = #{dietaryAdvice}
+            </if>
+            <if test="sportsAdvice != null and sportsAdvice != ''">
+                and sports_advice = #{sportsAdvice}
+            </if>
+            <if test="treatmentRecommendations != null and treatmentRecommendations != ''">
+                and treatment_recommendations = #{treatmentRecommendations}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_diagnosis
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="diagnosisType != null and diagnosisType != ''">
+                and diagnosis_type = #{diagnosisType}
+            </if>
+            <if test="diagnosisNo != null">
+                and diagnosis_no = #{diagnosisNo}
+            </if>
+            <if test="diagnosisDesc != null and diagnosisDesc != ''">
+                and diagnosis_desc = #{diagnosisDesc}
+            </if>
+            <if test="diagnosisDate != null">
+                and diagnosis_date = #{diagnosisDate}
+            </if>
+            <if test="finalCheckDoctor != null and finalCheckDoctor != ''">
+                and final_check_doctor = #{finalCheckDoctor}
+            </if>
+            <if test="checkDesc != null and checkDesc != ''">
+                and check_desc = #{checkDesc}
+            </if>
+            <if test="checkDoctor != null and checkDoctor != ''">
+                and check_doctor = #{checkDoctor}
+            </if>
+            <if test="checkDate != null">
+                and check_date = #{checkDate}
+            </if>
+            <if test="healthAdvice != null and healthAdvice != ''">
+                and health_advice = #{healthAdvice}
+            </if>
+            <if test="dietaryAdvice != null and dietaryAdvice != ''">
+                and dietary_advice = #{dietaryAdvice}
+            </if>
+            <if test="sportsAdvice != null and sportsAdvice != ''">
+                and sports_advice = #{sportsAdvice}
+            </if>
+            <if test="treatmentRecommendations != null and treatmentRecommendations != ''">
+                and treatment_recommendations = #{treatmentRecommendations}
+            </if>
+        </where>
+    </select>
+    <select id="queryByPage" resultMap="TdDiagnosisMap">
+        select
+        id, patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations,result_date
+        from td_diagnosis
+        <where>
+            <if test="id != null">
+                and id > #{id}
+            </if>
+            and study_id is null
+        </where>
+        order by id
+        limit  #{params.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_diagnosis(patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations)
+        values (#{patientId}, #{studyId}, #{createTime}, #{updateTime}, #{diagnosisType}, #{diagnosisNo}, #{diagnosisDesc}, #{diagnosisDate}, #{finalCheckDoctor}, #{checkDesc}, #{checkDoctor}, #{checkDate}, #{healthAdvice}, #{dietaryAdvice}, #{sportsAdvice}, #{treatmentRecommendations})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_diagnosis(patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations,result_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.studyId}, #{entity.createTime}, #{entity.updateTime}, #{entity.diagnosisType}, #{entity.diagnosisNo}, #{entity.diagnosisDesc}, #{entity.diagnosisDate}, #{entity.finalCheckDoctor}, #{entity.checkDesc}, #{entity.checkDoctor}, #{entity.checkDate}, #{entity.healthAdvice}, #{entity.dietaryAdvice}, #{entity.sportsAdvice}, #{entity.treatmentRecommendations},#{entity.resultDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_diagnosis(patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations,result_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.studyId}, #{entity.createTime}, #{entity.updateTime}, #{entity.diagnosisType}, #{entity.diagnosisNo}, #{entity.diagnosisDesc}, #{entity.diagnosisDate}, #{entity.finalCheckDoctor}, #{entity.checkDesc}, #{entity.checkDoctor}, #{entity.checkDate}, #{entity.healthAdvice}, #{entity.dietaryAdvice}, #{entity.sportsAdvice}, #{entity.treatmentRecommendations},#{entity.resultDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_diagnosis(patient_id, study_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date, health_advice, dietary_advice, sports_advice, treatment_recommendations)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.studyId}, #{entity.createTime}, #{entity.updateTime}, #{entity.diagnosisType}, #{entity.diagnosisNo}, #{entity.diagnosisDesc}, #{entity.diagnosisDate}, #{entity.finalCheckDoctor}, #{entity.checkDesc}, #{entity.checkDoctor}, #{entity.checkDate}, #{entity.healthAdvice}, #{entity.dietaryAdvice}, #{entity.sportsAdvice}, #{entity.treatmentRecommendations})
+        </foreach>
+        on duplicate key update
+        patient_id = values(patient_id),
+        study_id = values(study_id),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        diagnosis_type = values(diagnosis_type),
+        diagnosis_no = values(diagnosis_no),
+        diagnosis_desc = values(diagnosis_desc),
+        diagnosis_date = values(diagnosis_date),
+        final_check_doctor = values(final_check_doctor),
+        check_desc = values(check_desc),
+        check_doctor = values(check_doctor),
+        check_date = values(check_date),
+        health_advice = values(health_advice),
+        dietary_advice = values(dietary_advice),
+        sports_advice = values(sports_advice),
+        treatment_recommendations = values(treatment_recommendations)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_diagnosis
+        <set>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="diagnosisType != null and diagnosisType != ''">
+                diagnosis_type = #{diagnosisType},
+            </if>
+            <if test="diagnosisNo != null">
+                diagnosis_no = #{diagnosisNo},
+            </if>
+            <if test="diagnosisDesc != null and diagnosisDesc != ''">
+                diagnosis_desc = #{diagnosisDesc},
+            </if>
+            <if test="diagnosisDate != null">
+                diagnosis_date = #{diagnosisDate},
+            </if>
+            <if test="finalCheckDoctor != null and finalCheckDoctor != ''">
+                final_check_doctor = #{finalCheckDoctor},
+            </if>
+            <if test="checkDesc != null and checkDesc != ''">
+                check_desc = #{checkDesc},
+            </if>
+            <if test="checkDoctor != null and checkDoctor != ''">
+                check_doctor = #{checkDoctor},
+            </if>
+            <if test="checkDate != null">
+                check_date = #{checkDate},
+            </if>
+            <if test="healthAdvice != null and healthAdvice != ''">
+                health_advice = #{healthAdvice},
+            </if>
+            <if test="dietaryAdvice != null and dietaryAdvice != ''">
+                dietary_advice = #{dietaryAdvice},
+            </if>
+            <if test="sportsAdvice != null and sportsAdvice != ''">
+                sports_advice = #{sportsAdvice},
+            </if>
+            <if test="treatmentRecommendations != null and treatmentRecommendations != ''">
+                treatment_recommendations = #{treatmentRecommendations},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_diagnosis where id = #{id}
+    </delete>
+
+</mapper>
+

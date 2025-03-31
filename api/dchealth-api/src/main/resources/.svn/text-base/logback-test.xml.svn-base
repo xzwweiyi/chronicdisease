@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- configuration file for LogBack (slf4J implementation)
+See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
+<configuration scan="true" scanPeriod="30 seconds">
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <appender name="RFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/usr/local/server/mirco-server/logs/tdapi.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/usr/local/server/mirco-server/logs/tdapi.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>300</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Specify logging levels -->
+    <logger name="org.springframework" level="warn"/>
+    <logger name="org.apache.ibatis" level="warn" />
+    <logger name="com.dchealth.cro" level="debug" />
+
+    <root level="info">
+        <appender-ref ref="RFILE" />
+    </root>
+</configuration>

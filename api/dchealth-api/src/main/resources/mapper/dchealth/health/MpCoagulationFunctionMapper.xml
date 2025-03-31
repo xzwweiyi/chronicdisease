@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpCoagulationFunctionMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpCoagulationFunction" id="MpCoagulationFunctionResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="coagulationPt"    column="coagulation_pt"    />
+        <result property="coagulationAptt"    column="coagulation_aptt"    />
+        <result property="coagulationFib"    column="coagulation_fib"    />
+        <result property="coagulationTt"    column="coagulation_tt"    />
+        <result property="coagulationFdp"    column="coagulation_fdp"    />
+        <result property="coagulationDdimer"    column="coagulation_ddimer"    />
+        <result property="coagulationInr"    column="coagulation_inr"    />
+        <result property="coagulationPta"    column="coagulation_pta"    />
+    </resultMap>
+
+    <sql id="selectMpCoagulationFunctionVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, coagulation_pt, coagulation_aptt, coagulation_fib, coagulation_tt, coagulation_fdp, coagulation_ddimer, coagulation_inr, coagulation_pta from mp_coagulation_function
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpCoagulationFunctionResult">
+        <include refid="selectMpCoagulationFunctionVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+    <select id="selectByPersonId" resultMap="MpCoagulationFunctionResult">
+        <include refid="selectMpCoagulationFunctionVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+
+
+</mapper>

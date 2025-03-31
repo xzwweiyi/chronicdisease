@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.minprogram.mapper.PatientMinInfoMapper">
+
+    <resultMap type="com.dchealth.cro.minprogram.domain.PatientMinInfo" id="PatientMininfoResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="appId"    column="app_id"    />
+        <result property="userHead"    column="user_head"    />
+        <result property="openId"    column="open_id"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPatientMinInfoVo">
+        select patient_id, app_id, user_head, open_id, update_by, create_by, create_time, update_time from patient_mininfo
+    </sql>
+
+    <select id="selectPatientMinInfoList" parameterType="com.dchealth.cro.minprogram.domain.PatientMinInfo" resultMap="PatientMininfoResult">
+        <include refid="selectPatientMinInfoVo"/>
+        <where>
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="appId != null "> and app_id = #{appId}</if>
+            <if test="userHead != null  and userHead != ''"> and user_head = #{userHead}</if>
+            <if test="openId != null  and openId != ''"> and open_id = #{openId}</if>
+        </where>
+    </select>
+
+    <select id="selectPatientMinInfoByPatientId" parameterType="Long" resultMap="PatientMininfoResult">
+        <include refid="selectPatientMinInfoVo"/>
+        where patient_id = #{patientId}
+    </select>
+
+    <select id="selectPatientMinInfoByOpenId" parameterType="Long" resultMap="PatientMininfoResult">
+        <include refid="selectPatientMinInfoVo"/>
+        where open_id = #{openId}
+    </select>
+
+    <insert id="insertPatientMinInfo" parameterType="com.dchealth.cro.minprogram.domain.PatientMinInfo" useGeneratedKeys="true" keyProperty="patientId">
+        insert into patient_mininfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appId != null">app_id,</if>
+            <if test="userHead != null">user_head,</if>
+            <if test="openId != null">open_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appId != null">#{appId},</if>
+            <if test="userHead != null">#{userHead},</if>
+            <if test="openId != null">#{openId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientMinInfo" parameterType="com.dchealth.cro.minprogram.domain.PatientMinInfo">
+        update patient_mininfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="userHead != null">user_head = #{userHead},</if>
+            <if test="openId != null">open_id = #{openId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where patient_id = #{patientId}
+    </update>
+
+    <delete id="deletePatientMinInfoByPatientId" parameterType="Long">
+        delete from patient_mininfo where patient_id = #{patientId}
+    </delete>
+
+    <delete id="deletePatientMinInfoByPatientIds" parameterType="String">
+        delete from patient_mininfo where patient_id in
+        <foreach item="patientId" collection="array" open="(" separator="," close=")">
+            #{patientId}
+        </foreach>
+    </delete>
+</mapper>

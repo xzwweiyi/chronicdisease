@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientExamRecordMapper">
+    
+    <resultMap type="PatientExamRecord" id="PatientExamRecordResult">
+        <result property="id"    column="id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="examTable"    column="exam_table"    />
+    </resultMap>
+
+    <resultMap type="FMedicalExamForm" id="FMedicalExamFormResult">
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="medicalCode"    column="medical_code"    />
+        <result property="medicalName"    column="medical_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="openImage"    column="open_image"    />
+        <result property="openProperty"    column="open_property"    />
+        <result property="openMultiple"    column="open_multiple"    />
+        <result property="attribute"    column="attribute"    />
+        <result property="versionCode"    column="version_code"    />
+        <result property="formType"    column="form_type"    />
+        <result property="dynamic"    column="dynamic"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="formSource"    column="form_source"    />
+        <result property="articleId"    column="article_id"    />
+    </resultMap>
+
+    <sql id="selectPatientExamRecordVo">
+        select id, article_id, medical_form_id, patient_id, create_by, create_time, exam_table from patient_exam_record
+    </sql>
+
+    <sql id="selectPatientExamRecordVos">
+        select re.id, re.article_id, re.medical_form_id, re.patient_id, re.create_by, re.create_time, re.exam_table, ar.title, inf.patient_name patientName from patient_exam_record re
+        left join cms_article ar on re.article_id = ar.id
+        left join patient_info inf on re.patient_id = inf.patient_id
+    </sql>
+
+    <select id="selectPatientExamRecordList" parameterType="PatientExamRecord" resultMap="PatientExamRecordResult">
+        <include refid="selectPatientExamRecordVos"/>
+        <where>  
+            <if test="articleId != null "> and re.article_id = #{articleId}</if>
+            <if test="medicalFormId != null "> and re.medical_form_id = #{medicalFormId}</if>
+            <if test="patientId != null "> and re.patient_id = #{patientId}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientExamRecordById" parameterType="Long" resultMap="PatientExamRecordResult">
+        <include refid="selectPatientExamRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientExamRecord" parameterType="PatientExamRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_exam_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">article_id,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="patientId != null">patient_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="examTable != null">exam_table,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">#{articleId},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="patientId != null">#{patientId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="examTable != null">#{examTable},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientExamRecord" parameterType="PatientExamRecord">
+        update patient_exam_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="examTable != null">exam_table = #{examTable},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientExamRecordById" parameterType="Long">
+        delete from patient_exam_record where id = #{id}
+    </delete>
+
+    <delete id="deletePatientExamRecordByIds" parameterType="String">
+        delete from patient_exam_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectFMedicalExamFormByArticleId" parameterType="Long" resultMap="FMedicalExamFormResult">
+        select medical_form_id, follow_id, medical_code, medical_name, parent_id, open_image, open_property, open_multiple, attribute, version_code, form_type, dynamic, create_time, update_time, create_by, update_by, form_source, article_id from f_medical_exam_form
+        where article_id = #{articleId}
+    </select>
+</mapper>

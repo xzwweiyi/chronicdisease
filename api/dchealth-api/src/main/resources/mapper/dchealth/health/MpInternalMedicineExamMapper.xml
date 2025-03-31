@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpInternalMedicineExamMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpInternalMedicineExam" id="MpInternalMedicineExamResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="chestShape"    column="chest_shape"    />
+        <result property="chestPalpation"    column="chest_palpation"    />
+        <result property="chestPercussion"    column="chest_percussion"    />
+        <result property="heartBorder"    column="heart_border"    />
+        <result property="lungAuscultation"    column="lung_auscultation"    />
+        <result property="heartSound"    column="heart_sound"    />
+        <result property="heartRhythm"    column="heart_rhythm"    />
+        <result property="heartNoise"    column="heart_noise"    />
+        <result property="liverPalpation"    column="liver_palpation"    />
+        <result property="spleenPalpation"    column="spleen_palpation"    />
+        <result property="abdomShape"    column="abdom_shape"    />
+        <result property="abdomPressurePain"    column="abdom_pressure_pain"    />
+        <result property="abdomPercussion"    column="abdom_percussion"    />
+        <result property="healthExamDate"    column="health_exam_date"    />
+        <result property="resultDate"    column="result_date"    />
+    </resultMap>
+
+    <sql id="selectMpInternalMedicineExamVo">
+        select id, care_site_id, person_id,visit_type, visit_occurrence_id, chest_shape, chest_palpation, chest_percussion, heart_border, lung_auscultation, heart_sound, heart_rhythm, heart_noise, liver_palpation, spleen_palpation, abdom_shape, abdom_pressure_pain, abdom_percussion, health_exam_date, result_date from mp_internal_medicine_exam
+    </sql>
+
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpInternalMedicineExamResult">
+        <include refid="selectMpInternalMedicineExamVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+    <select id="selectByPersonId" resultMap="MpInternalMedicineExamResult">
+        <include refid="selectMpInternalMedicineExamVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+    </select>
+
+
+</mapper>

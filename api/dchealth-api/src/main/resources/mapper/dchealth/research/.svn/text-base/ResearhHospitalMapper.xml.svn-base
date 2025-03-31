@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearhHospitalMapper">
+    
+    <resultMap type="com.dchealth.cro.research.domain.ResearhHospital" id="ResearhHospitalResult">
+        <result property="id"    column="id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="targetNum"    column="target_num"    />
+    </resultMap>
+
+    <sql id="selectResearhHospitalVo">
+        select id, research_id, dept_id, target_num from researh_hospital
+    </sql>
+
+    <select id="selectResearhHospitalList" parameterType="com.dchealth.cro.research.domain.ResearhHospital" resultMap="ResearhHospitalResult">
+        <include refid="selectResearhHospitalVo"/>
+        <where>  
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="targetNum != null "> and target_num = #{targetNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearhHospitalById" parameterType="Long" resultMap="ResearhHospitalResult">
+        <include refid="selectResearhHospitalVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertResearhHospital" parameterType="com.dchealth.cro.research.domain.ResearhHospital" useGeneratedKeys="true" keyProperty="id">
+        insert into researh_hospital
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="targetNum != null">target_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="targetNum != null">#{targetNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearhHospital" parameterType="com.dchealth.cro.research.domain.ResearhHospital">
+        update researh_hospital
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="targetNum != null">target_num = #{targetNum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearhHospitalById" parameterType="Long">
+        delete from researh_hospital where id = #{id}
+    </delete>
+
+    <delete id="deleteResearhHospitalByIds" parameterType="String">
+        delete from researh_hospital where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

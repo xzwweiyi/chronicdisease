@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchRoleModuleAuthMapper">
+
+
+    <resultMap type="ResearchRoleModuleAuth" id="ResearchRoleModuleAuthResult">
+        <result property="id"     column="id"      />
+        <result property="roleId"   column="role_id"    />
+        <result property="moduleId"   column="module_id"    />
+        <result property="authType"   column="auth_type"    />
+    </resultMap>
+
+    <sql id="selectResearchRoleModuleAuthVo">
+        select id, role_id, module_id ,auth_type from research_role_module_auth
+    </sql>
+
+    <select id="findRoleModuleAuthByRoleIdAndModuleId"  resultMap="ResearchRoleModuleAuthResult">
+        <include refid="selectResearchRoleModuleAuthVo"/>
+        where role_id = #{roleId} and module_id = #{moduleId}
+    </select>
+
+
+    <delete id="deleteRoleModuleAuthByRoleId" parameterType="Long">
+		delete from research_role_module_auth where role_id = #{roleId}
+	</delete>
+
+    <insert id="batchRoleModuleAuth">
+        insert into research_role_module_auth(role_id, module_id, auth_type) values
+        <foreach item="item" index="index" collection="moduleAuths" separator=",">
+            (#{item.roleId},#{item.moduleId},#{item.authType})
+        </foreach>
+    </insert>
+
+
+    <delete id="deleteRoleModuleAuthByRoleIds" parameterType="Long">
+        delete from research_role_module_auth where role_id in
+        <foreach collection="array" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+
+    <delete id="deleteRoleModuleAuthByModuleIdAndRoleIds">
+        delete from research_role_module_auth where module_id = #{moduleId} and role_id in
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+
+    <select id="findRoleModuleAuthByResearchRoleModules" parameterType="ResearchRoleModuleAuth" resultMap="ResearchRoleModuleAuthResult">
+        <include refid="selectResearchRoleModuleAuthVo"/>
+        where
+        <foreach collection="researchRoleModules" item="item" open="(" separator="," close=")">
+            role_id =  #{item.roleId} and module_id = #{item.moduleId}
+        </foreach>
+    </select>
+
+</mapper>

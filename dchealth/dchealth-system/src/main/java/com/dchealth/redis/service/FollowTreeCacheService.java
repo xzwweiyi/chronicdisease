@@ -1,0 +1,18 @@
+package com.dchealth.redis.service;
+
+/**
+ * 随访加载树缓存服务
+ */
+public interface FollowTreeCacheService {
+    /**
+     * 缓存随访
+     */
+    public Boolean cacheFollowTree();
+
+    Boolean cacheFollowTree(Long userId);
+
+    /**
+     * 清理随访
+     */
+     Boolean clearCacheFollowTree();
+}

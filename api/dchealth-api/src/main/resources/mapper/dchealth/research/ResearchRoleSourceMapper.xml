@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchRoleSourceMapper">
+    
+    <resultMap type="com.dchealth.cro.research.domain.ResearchRoleSource" id="ResearchRoleSourceResult">
+        <result property="roleId"    column="role_id"    />
+        <result property="sourceId"    column="source_id"    />
+    </resultMap>
+
+    <sql id="selectResearchRoleSourceVo">
+        select role_id, source_id from research_role_source
+    </sql>
+
+    <select id="selectResearchRoleSourceList" parameterType="com.dchealth.cro.research.domain.ResearchRoleSource" resultMap="ResearchRoleSourceResult">
+        <include refid="selectResearchRoleSourceVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectResearchRoleSourceByRoleId" parameterType="Long" resultMap="ResearchRoleSourceResult">
+        <include refid="selectResearchRoleSourceVo"/>
+        where role_id = #{roleId}
+    </select>
+        
+    <insert id="insertResearchRoleSource" parameterType="com.dchealth.cro.research.domain.ResearchRoleSource">
+        insert into research_role_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">role_id,</if>
+            <if test="sourceId != null">source_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">#{roleId},</if>
+            <if test="sourceId != null">#{sourceId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchRoleSource" parameterType="com.dchealth.cro.research.domain.ResearchRoleSource">
+        update research_role_source
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sourceId != null">source_id = #{sourceId},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteResearchRoleSourceByRoleId" parameterType="Long">
+        delete from research_role_source where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteResearchRoleSourceByRoleIds" parameterType="String">
+        delete from research_role_source where role_id in 
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+</mapper>

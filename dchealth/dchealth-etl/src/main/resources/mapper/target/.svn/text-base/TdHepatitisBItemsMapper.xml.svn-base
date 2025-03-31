@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.target.TdHepatitisBItemsMapper">
+
+    <resultMap type="com.dchealth.etl.domain.target.TdHepatitisBItems" id="TdHepatitisBItemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="studyId" column="study_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="testNo" column="test_no" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="resultTime" column="result_time" jdbcType="TIMESTAMP"/>
+        <result property="abnormalIndicatorHigh" column="abnormal_indicator_high" jdbcType="VARCHAR"/>
+        <result property="abnormalIndicatorLow" column="abnormal_indicator_low" jdbcType="VARCHAR"/>
+        <result property="hbsag" column="hbsag" jdbcType="VARCHAR"/>
+        <result property="antiHbs" column="anti_hbs" jdbcType="VARCHAR"/>
+        <result property="hbeag" column="hbeag" jdbcType="VARCHAR"/>
+        <result property="antiHbe" column="anti_hbe" jdbcType="VARCHAR"/>
+        <result property="antiHbc" column="anti_hbc" jdbcType="VARCHAR"/>
+        <result property="hbvDna" column="hbv_dna" jdbcType="VARCHAR"/>
+        <result property="hcvRna" column="hcv_rna" jdbcType="VARCHAR"/>
+        <result property="hepatitisBSurfaceAntigen" column="hepatitis_b_surface_antigen" jdbcType="VARCHAR"/>
+        <result property="hepatitisBSurfaceAntibody" column="hepatitis_b_surface_antibody" jdbcType="VARCHAR"/>
+        <result property="hepatitisBEAntigen" column="hepatitis_b_e_antigen" jdbcType="VARCHAR"/>
+        <result property="hepatitisBENtibody" column="hepatitis_b_e_ntibody" jdbcType="VARCHAR"/>
+        <result property="hepatitisBCoreAntibody" column="hepatitis_b_core_antibody" jdbcType="VARCHAR"/>
+        <result property="hepatitisCAntibody" column="hepatitis_c_antibody" jdbcType="VARCHAR"/>
+        <result property="hivAntibody" column="hiv_antibody" jdbcType="VARCHAR"/>
+        <result property="syphilisAntibody" column="syphilis_antibody" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TdHepatitisBItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, hbsag, anti_hbs, hbeag, anti_hbe, anti_hbc, hbv_dna, hcv_rna
+        from td_hepatitis_b_items
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TdHepatitisBItemsMap">
+        select
+          id, study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, hbsag, anti_hbs, hbeag, anti_hbe, anti_hbc, hbv_dna, hcv_rna
+        from td_hepatitis_b_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="hbsag != null and hbsag != ''">
+                and hbsag = #{hbsag}
+            </if>
+            <if test="antiHbs != null and antiHbs != ''">
+                and anti_hbs = #{antiHbs}
+            </if>
+            <if test="hbeag != null and hbeag != ''">
+                and hbeag = #{hbeag}
+            </if>
+            <if test="antiHbe != null and antiHbe != ''">
+                and anti_hbe = #{antiHbe}
+            </if>
+            <if test="antiHbc != null and antiHbc != ''">
+                and anti_hbc = #{antiHbc}
+            </if>
+            <if test="hbvDna != null and hbvDna != ''">
+                and hbv_dna = #{hbvDna}
+            </if>
+            <if test="hcvRna != null and hcvRna != ''">
+                and hcv_rna = #{hcvRna}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from td_hepatitis_b_items
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="studyId != null and studyId != ''">
+                and study_id = #{studyId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="testNo != null and testNo != ''">
+                and test_no = #{testNo}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="resultTime != null">
+                and result_time = #{resultTime}
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                and abnormal_indicator_high = #{abnormalIndicatorHigh}
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                and abnormal_indicator_low = #{abnormalIndicatorLow}
+            </if>
+            <if test="hbsag != null and hbsag != ''">
+                and hbsag = #{hbsag}
+            </if>
+            <if test="antiHbs != null and antiHbs != ''">
+                and anti_hbs = #{antiHbs}
+            </if>
+            <if test="hbeag != null and hbeag != ''">
+                and hbeag = #{hbeag}
+            </if>
+            <if test="antiHbe != null and antiHbe != ''">
+                and anti_hbe = #{antiHbe}
+            </if>
+            <if test="antiHbc != null and antiHbc != ''">
+                and anti_hbc = #{antiHbc}
+            </if>
+            <if test="hbvDna != null and hbvDna != ''">
+                and hbv_dna = #{hbvDna}
+            </if>
+            <if test="hcvRna != null and hcvRna != ''">
+                and hcv_rna = #{hcvRna}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into td_hepatitis_b_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, hbsag, anti_hbs, hbeag, anti_hbe, anti_hbc, hbv_dna, hcv_rna)
+        values (#{studyId}, #{patientId}, #{examNo}, #{testNo}, #{createTime}, #{updateTime}, #{resultTime}, #{abnormalIndicatorHigh}, #{abnormalIndicatorLow}, #{hbsag}, #{antiHbs}, #{hbeag}, #{antiHbe}, #{antiHbc}, #{hbvDna}, #{hcvRna})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_hepatitis_b_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, hbsag, anti_hbs, hbeag, anti_hbe, anti_hbc, hbv_dna, hcv_rna, hepatitis_b_surface_antigen,hepatitis_b_surface_antibody,hepatitis_b_e_antigen,hepatitis_b_e_ntibody,hepatitis_b_core_antibody,hepatitis_c_antibody,hiv_antibodysyphilis_antibody)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.hbsag}, #{entity.antiHbs}, #{entity.hbeag}, #{entity.antiHbe}, #{entity.antiHbc}, #{entity.hbvDna}, #{entity.hcvRna}, #{entity.hepatitisBSurfaceAntigen}, #{entity.hepatitisBSurfaceAntibody}, #{entity.hepatitisBEAntigen}, #{entity.hepatitisBENtibody},
+            #{entity.hepatitisBCoreAntibody}, #{entity.hepatitisCAntibody}, #{entity.hivAntibody},#{entity.syphilisAntibody})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchByMaps" keyProperty="id" useGeneratedKeys="true">
+        insert into td_hepatitis_b_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, hbsag, anti_hbs, hbeag, anti_hbe, anti_hbc, hbv_dna, hcv_rna, hepatitis_b_surface_antigen,hepatitis_b_surface_antibody,hepatitis_b_e_antigen,hepatitis_b_e_ntibody,hepatitis_b_core_antibody,hepatitis_c_antibody,hiv_antibodysyphilis_antibody)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.hbsag}, #{entity.antiHbs}, #{entity.hbeag}, #{entity.antiHbe}, #{entity.antiHbc}, #{entity.hbvDna}, #{entity.hcvRna}, #{entity.hepatitisBSurfaceAntigen}, #{entity.hepatitisBSurfaceAntibody}, #{entity.hepatitisBEAntigen}, #{entity.hepatitisBENtibody},
+            #{entity.hepatitisBCoreAntibody}, #{entity.hepatitisCAntibody}, #{entity.hivAntibody},#{entity.syphilisAntibody})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into td_hepatitis_b_items(study_id, patient_id, exam_no, test_no, create_time, update_time, result_time, abnormal_indicator_high, abnormal_indicator_low, hbsag, anti_hbs, hbeag, anti_hbe, anti_hbc, hbv_dna, hcv_rna)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyId}, #{entity.patientId}, #{entity.examNo}, #{entity.testNo}, #{entity.createTime}, #{entity.updateTime}, #{entity.resultTime}, #{entity.abnormalIndicatorHigh}, #{entity.abnormalIndicatorLow}, #{entity.hbsag}, #{entity.antiHbs}, #{entity.hbeag}, #{entity.antiHbe}, #{entity.antiHbc}, #{entity.hbvDna}, #{entity.hcvRna})
+        </foreach>
+        on duplicate key update
+        study_id = values(study_id),
+        patient_id = values(patient_id),
+        exam_no = values(exam_no),
+        test_no = values(test_no),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        result_time = values(result_time),
+        abnormal_indicator_high = values(abnormal_indicator_high),
+        abnormal_indicator_low = values(abnormal_indicator_low),
+        hbsag = values(hbsag),
+        anti_hbs = values(anti_hbs),
+        hbeag = values(hbeag),
+        anti_hbe = values(anti_hbe),
+        anti_hbc = values(anti_hbc),
+        hbv_dna = values(hbv_dna),
+        hcv_rna = values(hcv_rna)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update td_hepatitis_b_items
+        <set>
+            <if test="studyId != null and studyId != ''">
+                study_id = #{studyId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="examNo != null and examNo != ''">
+                exam_no = #{examNo},
+            </if>
+            <if test="testNo != null and testNo != ''">
+                test_no = #{testNo},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="resultTime != null">
+                result_time = #{resultTime},
+            </if>
+            <if test="abnormalIndicatorHigh != null and abnormalIndicatorHigh != ''">
+                abnormal_indicator_high = #{abnormalIndicatorHigh},
+            </if>
+            <if test="abnormalIndicatorLow != null and abnormalIndicatorLow != ''">
+                abnormal_indicator_low = #{abnormalIndicatorLow},
+            </if>
+            <if test="hbsag != null and hbsag != ''">
+                hbsag = #{hbsag},
+            </if>
+            <if test="antiHbs != null and antiHbs != ''">
+                anti_hbs = #{antiHbs},
+            </if>
+            <if test="hbeag != null and hbeag != ''">
+                hbeag = #{hbeag},
+            </if>
+            <if test="antiHbe != null and antiHbe != ''">
+                anti_hbe = #{antiHbe},
+            </if>
+            <if test="antiHbc != null and antiHbc != ''">
+                anti_hbc = #{antiHbc},
+            </if>
+            <if test="hbvDna != null and hbvDna != ''">
+                hbv_dna = #{hbvDna},
+            </if>
+            <if test="hcvRna != null and hcvRna != ''">
+                hcv_rna = #{hcvRna},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from td_hepatitis_b_items where id = #{id}
+    </delete>
+
+</mapper>
+

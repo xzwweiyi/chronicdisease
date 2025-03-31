@@ -1,0 +1,472 @@
+package com.dchealth.web.controller.cms;
+
+import com.dchealth.cms.domain.*;
+import com.dchealth.cms.domain.vo.CmsArticleCateGoryVo;
+import com.dchealth.cms.domain.vo.CmsArticleVo;
+import com.dchealth.cms.service.ICmsArticleDataService;
+import com.dchealth.cms.service.ICmsArticleService;
+import com.dchealth.cms.service.ICmsCategoryService;
+import com.dchealth.common.annotation.Log;
+import com.dchealth.common.core.controller.BaseController;
+import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.core.domain.entity.SysUser;
+import com.dchealth.common.core.page.TableDataInfo;
+import com.dchealth.common.enums.BusinessType;
+import com.dchealth.common.utils.poi.ExcelUtil;
+import com.dchealth.research.domain.ResearchInfoArticle;
+import com.dchealth.research.service.IResearchInfoArticleService;
+import com.dchealth.system.service.ISysUserService;
+import com.dchealth.template.domain.FMedicalExamForm;
+import com.dchealth.template.domain.vo.FMedicalInfoReq;
+import com.dchealth.template.service.IFMedicalExamFormService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 资讯管理Controller
+ *
+ * @author ruoyi
+ * @date 2022-03-16
+ */
+@RestController
+@RequestMapping("/cms/article")
+public class CmsArticleController extends BaseController {
+    @Autowired
+    private ICmsArticleService cmsArticleService;
+
+    @Autowired
+    private ICmsCategoryService cmsCategoryService;
+
+    @Autowired
+    private ICmsArticleDataService cmsArticleDataService;
+
+    @Autowired
+    private IResearchInfoArticleService researchInfoArticleService;
+
+    @Autowired
+    private IFMedicalExamFormService fMedicalExamFormService;
+
+
+    @Autowired
+    private ISysUserService sysUserService;
+
+
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+    /**
+     * 查询资讯及子文件列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(CmsArticle cmsArticleParam) {
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        cmsArticleParam.setDeptId(sysUser.getDeptId());
+        List<CmsArticle> list;
+        Integer commonFlag = cmsArticleParam.getCommonFlag() == null ? 1 : cmsArticleParam.getCommonFlag();
+        startPage();
+        if (commonFlag == 1) {
+            list = cmsArticleService.selectCmsArticleList(cmsArticleParam);
+        } else {
+            list = cmsArticleService.selectCmsDeptArticleList(cmsArticleParam);
+        }
+        TableDataInfo tableDataInfo = getDataTable(list);
+        List<CmsArticle> result = new ArrayList<CmsArticle>();
+        @SuppressWarnings("unchecked")
+        List<CmsArticle> cmsArticleList = (List<CmsArticle>) tableDataInfo.getRows();
+        if (cmsArticleList != null && cmsArticleList.size() > 0) {
+            for (CmsArticle cmsArticle : list) {
+                CmsArticleData cmsArticleData = cmsArticleDataService.selectCmsArticleDataById(cmsArticle.getId());
+                if (cmsArticleData != null) {
+                    cmsArticle.setCopyFrom(cmsArticleData.getCopyFrom());
+                    cmsArticle.setContent(cmsArticleData.getContent());
+                    cmsArticle.setRelation(cmsArticleData.getRelation());
+                    cmsArticle.setAllowComment(cmsArticleData.getAllowComment());
+                }
+                if (cmsArticle.getCategoryId() != null) {
+                    CmsCategory cmsCategory = cmsCategoryService.selectCmsCategoryById(cmsArticle.getCategoryId());
+                    if (cmsCategory != null) {
+                        cmsArticle.setCategoryName(cmsCategory.getName());
+                    }
+                }
+                cmsArticle.setUpdateTime(cmsArticle.getUpdateTime());
+                if(cmsArticle.getUpdateTime() != null){
+                    cmsArticle.setUpdateTimeStr(sdf.format(cmsArticle.getUpdateTime()));
+                }
+                if(cmsArticle.getCreateTime() != null){
+                    cmsArticle.setCreateTimeStr(sdf.format(cmsArticle.getCreateTime()));
+                }
+                result.add(cmsArticle);
+            }
+        }
+        tableDataInfo.setRows(result);
+        return tableDataInfo;
+    }
+
+
+
+    /**
+     * 查询资讯列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:information:list')")
+    @GetMapping("/informationList")
+    public TableDataInfo informationList(CmsArticle cmsArticleParam) {
+        startPage();
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+//        cmsArticleParam.setDeptId(sysUser.getDeptId());
+        List<CmsArticle> list = cmsArticleService.selectCmsInformationList(cmsArticleParam);
+        TableDataInfo tableDataInfo = getDataTable(list);
+        List<CmsArticle> result = new ArrayList<CmsArticle>();
+        @SuppressWarnings("unchecked")
+        List<CmsArticle> cmsArticleList = (List<CmsArticle>) tableDataInfo.getRows();
+        if (cmsArticleList != null && cmsArticleList.size() > 0) {
+            for (CmsArticle cmsArticle : list) {
+                CmsArticleData cmsArticleData = cmsArticleDataService.selectCmsArticleDataById(cmsArticle.getId());
+                if (cmsArticleData != null) {
+                    cmsArticle.setCopyFrom(cmsArticleData.getCopyFrom());
+                    cmsArticle.setContent(cmsArticleData.getContent());
+                    cmsArticle.setRelation(cmsArticleData.getRelation());
+                    cmsArticle.setAllowComment(cmsArticleData.getAllowComment());
+                }
+                if (cmsArticle.getCategoryId() != null) {
+                    CmsCategory cmsCategory = cmsCategoryService.selectCmsCategoryById(cmsArticle.getCategoryId());
+                    if (cmsCategory != null) {
+                        cmsArticle.setCategoryName(cmsCategory.getName());
+                    }
+                }
+                cmsArticle.setUpdateTime(cmsArticle.getUpdateTime());
+                result.add(cmsArticle);
+            }
+        }
+        tableDataInfo.setRows(result);
+        return tableDataInfo;
+    }
+
+    /**
+     * 查询科室分类资讯列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:deptArticle:list')")
+    @GetMapping("/deptArticleList")
+    public TableDataInfo deptCategoryArticleList(CmsArticle cmsArticleParam) {
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        cmsArticleParam.setDeptId(sysUser.getDeptId());
+        List<CmsArticleCateGoryVo> list = cmsArticleService.selectCmsDeptCategoryArticleList(cmsArticleParam);
+        TableDataInfo tableDataInfo = getDataTable(list);
+        return tableDataInfo;
+    }
+
+    /**
+     * 导出资讯管理列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:export')")
+    @Log(title = "资讯管理", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, CmsArticle cmsArticle) {
+        List<CmsArticle> list = cmsArticleService.selectCmsArticleList(cmsArticle);
+        ExcelUtil<CmsArticle> util = new ExcelUtil<CmsArticle>(CmsArticle.class);
+        util.exportExcel(response, list, "资讯管理数据");
+    }
+
+
+    /**
+     * 获取资讯管理详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
+        //资讯详情
+        CmsArticle cmsArticle = cmsArticleService.selectCmsArticleById(id);
+        String type = cmsArticle.getType();
+        if ("1".equals(type)) {
+            //文章信息
+            CmsArticleData cmsArticleData = cmsArticleDataService.selectCmsArticleDataById(cmsArticle.getId());
+            cmsArticle.setCopyFrom(cmsArticleData.getCopyFrom());
+            cmsArticle.setContent(cmsArticleData.getContent());
+            cmsArticle.setRelation(cmsArticleData.getRelation());
+            cmsArticle.setAllowComment(cmsArticleData.getAllowComment());
+        } else if ("2".equals(type)) {
+            //问卷信息
+            FMedicalInfoReq fMedicalInfoReq = new FMedicalInfoReq();
+            fMedicalInfoReq.setArticleId(id);
+            FMedicalExamForm fMedicalFormExamInfo = fMedicalExamFormService.getFMedicalFormExamInfo(fMedicalInfoReq);
+            if (fMedicalFormExamInfo != null) {
+                cmsArticle.setFmedicalExamForm(fMedicalFormExamInfo);
+            }
+        }
+        return AjaxResult.success(cmsArticle);
+    }
+
+    /**
+     * 新增资讯管理
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:add')")
+    @Log(title = "资讯管理", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody CmsArticle cmsArticle) {
+        String userName = getUsername();
+        cmsArticle.setCreateBy(userName);
+        cmsArticle.setCreateId(getUserId());
+        //判断是否是视频
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        cmsArticle.setDeptId(sysUser.getDeptId());
+        return toAjax(cmsArticleService.insertCmsArticle(cmsArticle));
+    }
+
+    /**
+     * 修改资讯管理
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:edit')")
+    @Log(title = "资讯管理", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody CmsArticle cmsArticle) {
+        cmsArticle.setUpdateBy(getUsername());
+        return toAjax(cmsArticleService.updateCmsArticle(cmsArticle));
+    }
+
+    /**
+     * 删除资讯管理
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:remove')")
+    @Log(title = "资讯管理", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
+        return toAjax(cmsArticleService.deleteCmsArticleByIds(ids));
+    }
+
+    /**
+     * 队列慢病选择患教列表
+     *
+     * @param vo
+     * @return
+     */
+    @GetMapping("/listEdu")
+    public AjaxResult listEdu(CmsArticle vo) {
+        vo.setPositionType("2");
+        List<CmsArticleVo> articleVo = new ArrayList<>();
+        Map<Long, List<CmsArticle>> map = new HashMap<>();
+//        if(getUserId()>1){
+//            vo.setCreateId(getUserId());
+//            String deptIds = sysRoleDeptService.getDeptIdsByUserId(getUserId());
+//            vo.setDeptIds(deptIds);
+//        }
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        vo.setDeptId(sysUser.getDeptId());
+        List<CmsArticle> list = cmsArticleService.selectCmsArticleList(vo);
+        if (list != null && list.size() > 0) {
+            for (CmsArticle cmsArticle : list) {
+                //资讯文章内容
+                CmsArticleData cmsArticleData = cmsArticleDataService.selectCmsArticleDataById(cmsArticle.getId());
+                if (cmsArticleData != null) {
+                    cmsArticle.setCopyFrom(cmsArticleData.getCopyFrom());
+                    cmsArticle.setContent(cmsArticleData.getContent());
+                    cmsArticle.setRelation(cmsArticleData.getRelation());
+                    cmsArticle.setAllowComment(cmsArticleData.getAllowComment());
+                }
+                //资讯分类
+                if (cmsArticle.getCategoryId() != null) {
+                    CmsCategory cmsCategory = cmsCategoryService.selectCmsCategoryById(cmsArticle.getCategoryId());
+                    if (cmsCategory != null) {
+                        cmsArticle.setCategoryName(cmsCategory.getName());
+                    }
+                }
+            }
+
+            //获取患教对应分类id
+            List<Long> categoryIds = list.stream().filter(art -> art.getCategoryId() != null).map(art -> art.getCategoryId()).distinct().collect(Collectors.toList());
+            //获取分类底下的患教
+            map = list.stream().filter(art -> art.getCategoryId() != null).collect(Collectors.groupingBy(CmsArticle::getCategoryId));
+            if (categoryIds != null && categoryIds.size() > 0 && map != null) {
+                for (Long categoryId : categoryIds) {
+                    CmsArticleVo cmsArticleVo = new CmsArticleVo();
+                    List<CmsArticle> cmsArticles = map.get(categoryId);
+                    cmsArticleVo.setCategoryName(cmsArticles.get(0).getCategoryName());
+                    cmsArticleVo.setArticleList(cmsArticles);
+                    //回显内容需要队列id
+                    if (vo.getResearchId() != null) {
+                        ResearchInfoArticle researchInfoArticle = new ResearchInfoArticle();
+                        researchInfoArticle.setResearchId(vo.getResearchId());
+                        researchInfoArticle.setCategoryId(categoryId);
+                        //获取病种已选择的患教数量
+                        List<ResearchInfoArticle> articleList = researchInfoArticleService.selectResearchInfoArticleList(researchInfoArticle);
+                        cmsArticleVo.setArticleNum(articleList != null ? articleList.size() : 0);
+                    } else {
+                        cmsArticleVo.setArticleNum(0);
+                    }
+                    articleVo.add(cmsArticleVo);
+                }
+            }
+
+        }
+        return AjaxResult.success(articleVo);
+    }
+
+    /**
+     * 删除病种列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:remove')")
+    @Log(title = "病种删除患教", businessType = BusinessType.DELETE)
+    @DeleteMapping("/disease/{diseaseId}")
+    public AjaxResult remove(@PathVariable Long diseaseId) {
+        return toAjax(cmsArticleService.deleteCmsArticleByDiseaseId(diseaseId));
+    }
+
+    /**
+     * 逻辑删除
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:remove')")
+    @Log(title = "逻辑删除", businessType = BusinessType.DELETE)
+    @DeleteMapping("/edu/{id}")
+    public AjaxResult updateDelById(@PathVariable Long id) {
+//        CmsDeptArticle cmsDeptArticle = cmsDeptArticleMapper.selectCmsDeptArticle(id);
+//        if (cmsDeptArticle != null){
+//            return AjaxResult.error("文章已经加入科室库,请先删除科室库内容");
+//        }
+
+        return toAjax(cmsArticleService.updateDelById(id));
+    }
+
+    /**
+     * 获取资讯管理详细信息
+     */
+    @GetMapping(value = "/eduInfo/{id}")
+    public AjaxResult getInfoEdu(@PathVariable("id") Long id) {
+        //资讯详情
+        CmsArticle cmsArticle = cmsArticleService.selectCmsArticleById(id);
+        if (cmsArticle != null) {
+            //文章信息
+            CmsArticleData cmsArticleData = cmsArticleDataService.selectCmsArticleDataById(cmsArticle.getId());
+            if (cmsArticleData != null) {
+                cmsArticle.setCopyFrom(cmsArticleData.getCopyFrom());
+                cmsArticle.setContent(cmsArticleData.getContent());
+                cmsArticle.setRelation(cmsArticleData.getRelation());
+                cmsArticle.setAllowComment(cmsArticleData.getAllowComment());
+            }
+        }
+        return AjaxResult.success(cmsArticle);
+    }
+
+
+    /**
+     * 问卷发布
+     *
+     * @param id
+     * @return
+     */
+    @Log(title = "问卷发布", businessType = BusinessType.UPDATE)
+    @GetMapping("/questionnaire/{id}")
+    public AjaxResult releaseScale(@PathVariable Long id) {
+        return toAjax(cmsArticleService.updateCmsArticleStatusById(id));
+    }
+
+
+    /**
+     * 患教问卷记录
+     */
+    @PreAuthorize("@ss.hasPermi('system:article:record')")
+    @GetMapping("/record")
+    public TableDataInfo record(CmsArticleRecord cmsArticleRecord) {
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        startPage();
+        cmsArticleRecord.setUserId(sysUser.getUserId());
+        cmsArticleRecord.setUserName(sysUser.getUserName());
+        List<CmsArticleRecord> cmsArticleRecordList = cmsArticleService.selectCmsArticleRecord(cmsArticleRecord);
+        TableDataInfo tableDataInfo = getDataTable(cmsArticleRecordList);
+        return tableDataInfo;
+    }
+
+
+    /**
+     * 问卷详情
+     *
+     * @param fMedicalExamRes
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/examFromInfo")
+    public AjaxResult examFromDetailInfo(FMedicalExamRes fMedicalExamRes) {
+        return AjaxResult.success(cmsArticleService.selectExamFromDetailInfo(fMedicalExamRes));
+    }
+
+    /**
+     * 文件移动
+     *
+     * @param cmsArticleMoveParam
+     * @return
+     */
+    @ResponseBody
+    @PreAuthorize("@ss.hasPermi('system:article:fileMove')")
+    @PostMapping(value = "/fileMove")
+    public AjaxResult fileMove(@RequestBody CmsArticleMoveParam cmsArticleMoveParam) {
+
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        Long deptId = sysUser.getDeptId();
+        if (deptId != 100){
+            return AjaxResult.error("没有操作权限，只允许唐都医院账号操作");
+        }
+
+        Long articleId = cmsArticleMoveParam.getArticleId();
+        Long categoryId = cmsArticleMoveParam.getCategoryId();
+        Long newCategoryId = cmsArticleMoveParam.getNewCategoryId();
+
+        if (Objects.isNull(newCategoryId)){
+            return AjaxResult.error("newCategoryId is empty");
+        }
+        if (Objects.isNull(categoryId) && Objects.isNull(articleId)){
+            return AjaxResult.error("categoryId or articleId is empty");
+        }
+        return AjaxResult.success(cmsArticleService.fileMove(cmsArticleMoveParam));
+
+    }
+
+
+
+    /**
+     * 获取患者资讯列表信息(即患教信息)
+     * @param patientId
+     * @return
+     */
+    /*@PreAuthorize("@ss.hasPermi('system:article:patientCmsArticle')")
+    @GetMapping(value = "/patientCmsArticle/{patientId}")
+    public AjaxResult getPatientCmsArticle(@PathVariable("patientId") Long patientId){
+        if(patientId == null){
+            return AjaxResult.error("参数异常，不能为空");
+        }
+        //获取患者信息
+        PatientInfo patientInfo = patientInfoService.selectPatientInfoByPatientId(patientId);
+        if(patientInfo != null){
+            //队列id
+            Long researchId = patientInfo.getResearchId();
+            List<ResearchInfoArticle> researchInfoArticles = researchInfoArticleService.selectResearchInfoArticleByResearchId(researchId);
+            //资讯id
+            List<Long> articleIds = researchInfoArticles.stream().map(ResearchInfoArticle::getArticleId).collect(Collectors.toList());
+            //获取资讯信息
+            List<CmsArticle> cmsArticles = cmsArticleService.selectCmsArticleByIds(articleIds);
+            //补全咨询信息
+            if (cmsArticles != null && cmsArticles.size() > 0) {
+                for (CmsArticle cmsArticle : cmsArticles) {
+                    //咨询内容
+                    CmsArticleData cmsArticleData = cmsArticleDataService.selectCmsArticleDataById(cmsArticle.getId());
+                    cmsArticle.setCopyFrom(cmsArticleData.getCopyFrom());
+                    cmsArticle.setContent(cmsArticleData.getContent());
+                    cmsArticle.setRelation(cmsArticleData.getRelation());
+                    cmsArticle.setAllowComment(cmsArticleData.getAllowComment());
+                    if (cmsArticle.getCategoryId() != null) {
+                        CmsCategory cmsCategory = cmsCategoryService.selectCmsCategoryById(cmsArticle.getCategoryId());
+                        if (cmsCategory != null) {
+                            cmsArticle.setCategoryName(cmsCategory.getName());
+                        }
+                    }
+                }
+                return AjaxResult.success(cmsArticles);
+            }
+        }
+        return AjaxResult.error("患者不存在");
+    }*/
+
+}

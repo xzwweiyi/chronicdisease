@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.medical.mapper.PatientRecordEvaluateMapper">
+    
+    <resultMap type="com.dchealth.cro.medical.domain.PatientRecordEvaluate" id="PatientRecordEvaluateResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="evaluateUserId"    column="evaluate_user_id"    />
+        <result property="replyPeriod"    column="reply_period"    />
+        <result property="replyQuality"    column="reply_quality"    />
+        <result property="replyEvaluate"    column="reply_evaluate"    />
+        <result property="evaluateTime"    column="evaluate_time"    />
+        <result property="doctorId"    column="doctor_id"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordEvaluateVo">
+        select record_id, evaluate_user_id, reply_period, reply_quality, reply_evaluate, evaluate_time, doctor_id from patient_record_evaluate
+    </sql>
+
+    <select id="selectPatientRecordEvaluateList" parameterType="com.dchealth.cro.medical.domain.PatientRecordEvaluate" resultMap="PatientRecordEvaluateResult">
+        <include refid="selectPatientRecordEvaluateVo"/>
+        <where>  
+            <if test="evaluateUserId != null "> and evaluate_user_id = #{evaluateUserId}</if>
+            <if test="replyPeriod != null "> and reply_period = #{replyPeriod}</if>
+            <if test="replyQuality != null "> and reply_quality = #{replyQuality}</if>
+            <if test="replyEvaluate != null  and replyEvaluate != ''"> and reply_evaluate = #{replyEvaluate}</if>
+            <if test="evaluateTime != null "> and evaluate_time = #{evaluateTime}</if>
+            <if test="doctorId != null "> and doctor_id = #{doctorId}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientRecordEvaluateByRecordId" parameterType="Long" resultMap="PatientRecordEvaluateResult">
+        <include refid="selectPatientRecordEvaluateVo"/>
+        where record_id = #{recordId}
+    </select>
+        
+    <insert id="insertPatientRecordEvaluate" parameterType="com.dchealth.cro.medical.domain.PatientRecordEvaluate">
+        insert into patient_record_evaluate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="evaluateUserId != null">evaluate_user_id,</if>
+            <if test="replyPeriod != null">reply_period,</if>
+            <if test="replyQuality != null">reply_quality,</if>
+            <if test="replyEvaluate != null">reply_evaluate,</if>
+            <if test="evaluateTime != null">evaluate_time,</if>
+            <if test="doctorId != null">doctor_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="evaluateUserId != null">#{evaluateUserId},</if>
+            <if test="replyPeriod != null">#{replyPeriod},</if>
+            <if test="replyQuality != null">#{replyQuality},</if>
+            <if test="replyEvaluate != null">#{replyEvaluate},</if>
+            <if test="evaluateTime != null">#{evaluateTime},</if>
+            <if test="doctorId != null">#{doctorId},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientRecordEvaluate" parameterType="com.dchealth.cro.medical.domain.PatientRecordEvaluate">
+        update patient_record_evaluate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="evaluateUserId != null">evaluate_user_id = #{evaluateUserId},</if>
+            <if test="replyPeriod != null">reply_period = #{replyPeriod},</if>
+            <if test="replyQuality != null">reply_quality = #{replyQuality},</if>
+            <if test="replyEvaluate != null">reply_evaluate = #{replyEvaluate},</if>
+            <if test="evaluateTime != null">evaluate_time = #{evaluateTime},</if>
+            <if test="doctorId != null">doctor_id = #{doctorId},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deletePatientRecordEvaluateByRecordId" parameterType="Long">
+        delete from patient_record_evaluate where record_id = #{recordId}
+    </delete>
+
+    <delete id="deletePatientRecordEvaluateByRecordIds" parameterType="String">
+        delete from patient_record_evaluate where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>

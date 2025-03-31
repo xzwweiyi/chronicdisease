@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpGeneralInspectionMapper">
+    
+    <resultMap type="MpGeneralInspection" id="MpGeneralInspectionResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="height"    column="height"    />
+        <result property="weight"    column="weight"    />
+        <result property="bodyTemperature"    column="body_temperature"    />
+        <result property="respiratoryRate"    column="respiratory_rate"    />
+        <result property="pulseRate"    column="pulse_rate"    />
+        <result property="systolicBloodPressure"    column="systolic_blood_pressure"    />
+        <result property="diastolicBloodPressure"    column="diastolic_blood_pressure"    />
+        <result property="urine"    column="urine"    />
+        <result property="resultDate"    column="result_date"    />
+        <result property="age"    column="age"    />
+        <result property="vision"    column="vision"    />
+        <result property="waist"    column="waist"    />
+    </resultMap>
+
+    <sql id="selectMpGeneralInspectionVo">
+        select id, care_site_id, person_id,vision,waist, visit_occurrence_id, visit_type, result_time, height, weight, body_temperature, respiratory_rate, pulse_rate, systolic_blood_pressure, diastolic_blood_pressure, urine, result_date from mp_general_inspection
+    </sql>
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpGeneralInspectionResult">
+        <include refid="selectMpGeneralInspectionVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonIdAndVisitList"  resultMap="MpGeneralInspectionResult">
+        <include refid="selectMpGeneralInspectionVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+    
+
+</mapper>

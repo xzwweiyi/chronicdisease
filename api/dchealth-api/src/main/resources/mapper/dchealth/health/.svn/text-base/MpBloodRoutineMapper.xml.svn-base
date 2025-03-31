@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpBloodRoutineMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpBloodRoutine" id="MpBloodRoutineResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="wbcCount"    column="wbc_count"    />
+        <result property="rbcCount"    column="rbc_count"    />
+        <result property="bloodHb"    column="blood_hb"    />
+        <result property="bloodHct"    column="blood_hct"    />
+        <result property="bloodMcv"    column="blood_mcv"    />
+        <result property="bloodMch"    column="blood_mch"    />
+        <result property="bloodMchc"    column="blood_mchc"    />
+        <result property="bloodRdwCv"    column="blood_rdw_cv"    />
+        <result property="bloodRdwSd"    column="blood_rdw_sd"    />
+        <result property="bloodPltCount"    column="blood_plt_count"    />
+        <result property="bloodMpv"    column="blood_mpv"    />
+        <result property="bloodPct"    column="blood_pct"    />
+        <result property="bloodPdw"    column="blood_pdw"    />
+        <result property="bloodLyCount"    column="blood_ly_count"    />
+        <result property="bloodLyPercentage"    column="blood_ly_percentage"    />
+        <result property="bloodNeCount"    column="blood_ne_count"    />
+        <result property="bloodNePercentage"    column="blood_ne_percentage"    />
+        <result property="bloodMoCount"    column="blood_mo_count"    />
+        <result property="bloodMoPercentage"    column="blood_mo_percentage"    />
+        <result property="bloodEoCount"    column="blood_eo_count"    />
+        <result property="bloodEoPercentage"    column="blood_eo_percentage"    />
+        <result property="bloodBaCount"    column="blood_ba_count"    />
+        <result property="bloodBaPercentage"    column="blood_ba_percentage"    />
+    </resultMap>
+
+    <sql id="selectMpBloodRoutineVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, wbc_count, rbc_count, blood_hb, blood_hct, blood_mcv, blood_mch, blood_mchc, blood_rdw_cv, blood_rdw_sd, blood_plt_count, blood_mpv, blood_pct, blood_pdw, blood_ly_count, blood_ly_percentage, blood_ne_count, blood_ne_percentage, blood_mo_count, blood_mo_percentage, blood_eo_count, blood_eo_percentage, blood_ba_count, blood_ba_percentage from mp_blood_routine
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpBloodRoutineResult">
+        <include refid="selectMpBloodRoutineVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpBloodRoutineResult">
+        <include refid="selectMpBloodRoutineVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+</mapper>

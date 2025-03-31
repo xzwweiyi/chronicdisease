@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpThyroidFunctionMapper">
+    
+    <resultMap type="MpThyroidFunction" id="MpThyroidFunctionResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="thyroidT3"    column="thyroid_t3"    />
+        <result property="thyroidT4"    column="thyroid_t4"    />
+        <result property="thyroidTsh"    column="thyroid_tsh"    />
+        <result property="thyroidFt3"    column="thyroid_ft3"    />
+        <result property="thyroidFt4"    column="thyroid_ft4"    />
+        <result property="thyroidTgab"    column="thyroid_tgab"    />
+        <result property="thyroidTpoAb"    column="thyroid_tpo_ab"    />
+        <result property="thyroidTrAb"    column="thyroid_tr_ab"    />
+        <result property="thyroidTmAb"    column="thyroid_tm_ab"    />
+        <result property="thyroidGlobulin"    column="thyroid_globulin"    />
+    </resultMap>
+
+    <sql id="selectMpThyroidFunctionVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, thyroid_t3, thyroid_t4, thyroid_tsh, thyroid_ft3, thyroid_ft4, thyroid_tgab, thyroid_tpo_ab, thyroid_tr_ab, thyroid_tm_ab, thyroid_globulin from mp_thyroid_function
+    </sql>
+
+    <select id="selectMpThyroidFunctionList" parameterType="MpThyroidFunction" resultMap="MpThyroidFunctionResult">
+        <include refid="selectMpThyroidFunctionVo"/>
+        <where>  
+            <if test="careSiteId != null "> and care_site_id = #{careSiteId}</if>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="visitType != null  and visitType != ''"> and visit_type = #{visitType}</if>
+            <if test="resultTime != null "> and result_time = #{resultTime}</if>
+            <if test="thyroidT3 != null  and thyroidT3 != ''"> and thyroid_t3 = #{thyroidT3}</if>
+            <if test="thyroidT4 != null  and thyroidT4 != ''"> and thyroid_t4 = #{thyroidT4}</if>
+            <if test="thyroidTsh != null  and thyroidTsh != ''"> and thyroid_tsh = #{thyroidTsh}</if>
+            <if test="thyroidFt3 != null  and thyroidFt3 != ''"> and thyroid_ft3 = #{thyroidFt3}</if>
+            <if test="thyroidFt4 != null  and thyroidFt4 != ''"> and thyroid_ft4 = #{thyroidFt4}</if>
+            <if test="thyroidTgab != null  and thyroidTgab != ''"> and thyroid_tgab = #{thyroidTgab}</if>
+            <if test="thyroidTpoAb != null  and thyroidTpoAb != ''"> and thyroid_tpo_ab = #{thyroidTpoAb}</if>
+            <if test="thyroidTrAb != null  and thyroidTrAb != ''"> and thyroid_tr_ab = #{thyroidTrAb}</if>
+            <if test="thyroidTmAb != null  and thyroidTmAb != ''"> and thyroid_tm_ab = #{thyroidTmAb}</if>
+            <if test="thyroidGlobulin != null  and thyroidGlobulin != ''"> and thyroid_globulin = #{thyroidGlobulin}</if>
+        </where>
+    </select>
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpThyroidFunctionResult">
+        <include refid="selectMpThyroidFunctionVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpThyroidFunctionResult">
+        <include refid="selectMpThyroidFunctionVo"/>
+        where person_id = #{personId} and visit_type='门诊'
+        order by result_time desc
+    </select>
+
+</mapper>

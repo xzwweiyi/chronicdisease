@@ -1,0 +1,366 @@
+package com.dchealth.cro.account.service;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.dchealth.cro.account.domain.AccountNotice;
+import com.dchealth.cro.account.form.ConfirmEnrollmentVo;
+import com.dchealth.cro.account.form.MenuRedDotVo;
+import com.dchealth.cro.account.form.MessageAccountNoticeVo;
+import com.dchealth.cro.account.form.MessageSearchForm;
+import com.dchealth.cro.account.form.MessageVo;
+import com.dchealth.cro.account.form.PersonalCenterRedDotVo;
+import com.dchealth.cro.account.mapper.AccountNoticeMapper;
+import com.dchealth.cro.cms.vo.AccountNoticeVO;
+import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.enums.FollowTipStatusEnum;
+import com.dchealth.cro.medical.domain.PatientInfo;
+import com.dchealth.cro.medical.domain.PatientRecord;
+import com.dchealth.cro.medical.form.FollowWorkListForm;
+import com.dchealth.cro.medical.mapper.PatientInfoMapper;
+import com.dchealth.cro.medical.mapper.PatientRecordMapper;
+import com.dchealth.cro.medical.vo.FollowWorkListVO;
+import com.dchealth.cro.research.domain.ResearchInfo;
+import com.dchealth.cro.research.domain.SysPopNotice;
+import com.dchealth.cro.research.mapper.ResearchInfoMapper;
+import com.dchealth.cro.research.service.ISysPopNoticeService;
+
+@Service
+public class MessageService {
+
+	@Autowired
+	private AccountNoticeMapper accountNoticeMapper;
+
+
+	@Autowired
+	private ResearchInfoMapper researchInfoMapper;
+	@Autowired
+	private PatientRecordMapper patientRecordMapper;
+
+	@Autowired
+	private PatientInfoMapper patientInfoMapper;
+
+	@Autowired
+	private ISysPopNoticeService sysPopNoticeService;
+
+	public DchealthCloudResponseEntity<List<AccountNoticeVO>> list(MessageSearchForm messageSearchForm,String appType) {
+		DchealthCloudResponseEntity<List<AccountNoticeVO>> result = new DchealthCloudResponseEntity<List<AccountNoticeVO>>();
+		if("1".equals(appType)){
+			//医生端
+			messageSearchForm.setIsDoctor("1");
+		}else if("2".equals(appType)){
+			//患者端
+			messageSearchForm.setIsPatient("1");
+		}
+		List<AccountNotice> list = accountNoticeMapper.selectAccountMessageNew(messageSearchForm);
+		List<AccountNoticeVO> accountNotices = new ArrayList<AccountNoticeVO>();
+		if (list != null && list.size() > 0) {
+			for (AccountNotice accountNotice : list) {
+				AccountNoticeVO accountNoticeVO = new AccountNoticeVO();
+				accountNoticeVO.setContent(accountNotice.getContent());
+				accountNoticeVO.setId(accountNotice.getId());
+				accountNoticeVO.setMessageId(accountNotice.getId());
+				accountNoticeVO.setIsRead(accountNotice.getIsRead());
+				accountNoticeVO.setTitle(accountNotice.getTitle());
+				accountNoticeVO.setType(accountNotice.getType());
+				accountNoticeVO.setResearchId(accountNotice.getResearchId());
+				if(!"15".equals(accountNotice.getType())){
+					//15为满意度调查，没有recordId
+					accountNoticeVO.setResearchId(accountNotice.getResearchId());
+					accountNoticeVO.setPatientId(accountNotice.getPatientId());
+					accountNoticeVO.setRecordId(accountNotice.getRecordId());
+				}
+				if(accountNotice.getCreateTime()!= null) {
+					accountNoticeVO.setCreateTime(DateUtils.parseDateToStrFull(accountNotice.getCreateTime()));
+					accountNoticeVO.setCreateTimeStr(DateUtils.dateTime(accountNotice.getCreateTime()));
+				}
+				if("6".equals(accountNotice.getType()) || "7".equals(accountNotice.getType())){
+					//随访
+					if(accountNotice.getVisitTime()!= null) {
+						accountNoticeVO.setVisitTime(DateUtils.parseDateToStrFull(accountNotice.getVisitTime()));
+					}
+				}else if("8".equals(accountNotice.getType())){
+					//预警
+					accountNoticeVO.setWarnStatus(accountNotice.getWarnStatus());
+				}
+				accountNotices.add(accountNoticeVO);
+			}
+//			if(ids.size() >0 ) {
+//				accountNoticeMapper.batchUpdateMessageStatus(ids);
+//			}
+		}
+		result.setData(accountNotices);
+		return result;
+	}
+
+
+	public DchealthCloudResponseEntity<PersonalCenterRedDotVo> setMessageRead(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
+		DchealthCloudResponseEntity<PersonalCenterRedDotVo> result = new DchealthCloudResponseEntity<PersonalCenterRedDotVo>();
+		 accountNoticeMapper.updateReadById(messageAccountNoticeVo.getId());
+		PersonalCenterRedDotVo personalCenterRedDotVo = getPersonalCenterRedDotVo(messageAccountNoticeVo.getAccountId(),appType);
+		result.setData(personalCenterRedDotVo);
+		return result;
+	}
+
+
+	public DchealthCloudResponseEntity<PersonalCenterRedDotVo> personalCenterRedDot(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
+		DchealthCloudResponseEntity<PersonalCenterRedDotVo> result = new DchealthCloudResponseEntity<PersonalCenterRedDotVo>();
+		PersonalCenterRedDotVo personalCenterRedDotVo = getPersonalCenterRedDotVo(messageAccountNoticeVo.getAccountId(),appType);
+		result.setData(personalCenterRedDotVo);
+		return result;
+	}
+
+
+	public PersonalCenterRedDotVo getPersonalCenterRedDotVo(Long accountId,String appType){
+		PersonalCenterRedDotVo p = new PersonalCenterRedDotVo();
+		if("1".equals(appType)){
+			//医生端
+			Integer num = accountNoticeMapper.getDoctorPersonalCenterRedDotVoNum(accountId);
+			p.setPersonalCenterRedDot(num>0 ? "1":"0");
+		}else if("2".equals(appType)){
+			Integer num = accountNoticeMapper.getPatientPersonalCenterRedDotVoNum(accountId);
+			Integer num2 = accountNoticeMapper.getPatientPersonalCenterRedDotVoNum2(accountId);
+			p.setPersonalCenterRedDot((num+num2)>0 ? "1":"0");
+		}else{
+			p.setPersonalCenterRedDot("0");
+		}
+		return p;
+	}
+
+
+	/**
+	 *
+	 * @param messageAccountNoticeVo
+	 * @param appType 3小程序患者端
+	 * @return
+	 */
+	public DchealthCloudResponseEntity<MenuRedDotVo> getMenuRedDotVo(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
+		DchealthCloudResponseEntity<MenuRedDotVo> result = new DchealthCloudResponseEntity<MenuRedDotVo>();
+		MenuRedDotVo menuRedDotVo = new MenuRedDotVo();
+		menuRedDotVo.setFollowRedDotVoNum("0");
+		menuRedDotVo.setWarnRedDotVoNum("0");
+		menuRedDotVo.setOverRedDotVoNum("0");
+
+		if("1".equals(appType)){
+			//医生端
+			List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByDoctorId(messageAccountNoticeVo.getAccountId());
+			List<ResearchInfo> distinctResearchInfos = researchInfos.stream().distinct().collect(Collectors.toList());
+			//随访未处理
+			FollowWorkListForm followWorkListForm = new FollowWorkListForm();
+			for(ResearchInfo ri:distinctResearchInfos){
+				followWorkListForm.setResearchId(ri.getId());
+				followWorkListForm.setFollowStatus("1");
+				Integer followSize = patientRecordMapper.selectFollowWorkListCount(followWorkListForm);
+				if(followSize>0){
+					menuRedDotVo.setFollowRedDotVoNum("1");
+					break;
+				}
+			}
+			for(ResearchInfo ri:distinctResearchInfos){
+				followWorkListForm.setResearchId(ri.getId());
+				followWorkListForm.setFollowStatus(null);
+				followWorkListForm.setWarnStatus("1");
+				Integer warnSize = patientRecordMapper.selectFollowWorkListCount(followWorkListForm);
+				if(warnSize>0){
+					menuRedDotVo.setWarnRedDotVoNum("1");
+					break;
+				}
+			}
+			for(ResearchInfo ri:distinctResearchInfos){
+				followWorkListForm.setResearchId(ri.getId());
+				followWorkListForm.setFollowStatus(null);
+				followWorkListForm.setWarnStatus(null);
+				followWorkListForm.setOverTimeStatus("1");
+				Integer overSize = patientRecordMapper.selectFollowWorkListCount(followWorkListForm);
+				if(overSize>0){
+					menuRedDotVo.setOverRedDotVoNum("1");
+					break;
+				}
+			}
+		}else if("2".equals(appType)||"3".equals(appType)){
+//			MpPerson  patientBaseInfo =	mpPersonMapper.selectPersonByAccountId(messageAccountNoticeVo.getAccountId());
+//			if(patientBaseInfo==null){
+//				return result;
+//			}
+			List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountId());
+			if (!CollectionUtils.isEmpty(patientInfoList)) {
+				List<SysPopNotice> sysPopNoticesAll = new ArrayList<>();
+				patientInfoList.forEach(patientInfo -> {
+					SysPopNotice sysPopNotice = new SysPopNotice();
+					sysPopNotice.setUserId(String.valueOf(patientInfo.getPatientId()));
+					//查出未读的数据
+					sysPopNotice.setIsread(0);
+					List<SysPopNotice> sysPopNotices = sysPopNoticeService.selectSysPopNoticeList(sysPopNotice);
+					sysPopNoticesAll.addAll(sysPopNotices);
+				});
+				List<ConfirmEnrollmentVo> confirmEnrollmentVoList = new ArrayList<>();
+
+				//按创建时间排序, 并写到每个对象的order字段中
+				AtomicInteger i = new AtomicInteger();
+				//todo 红点没有数据
+				sysPopNoticesAll.stream().sorted(Comparator.comparing(SysPopNotice::getCreateTime).reversed()).forEach(o -> {
+					//弹框处理
+					ConfirmEnrollmentVo confirmEnrollmentVo = new ConfirmEnrollmentVo();
+					confirmEnrollmentVo.setRemark(o.getRemark());
+					confirmEnrollmentVo.setResearchId(String.valueOf(o.getResearchId()));
+					confirmEnrollmentVo.setResearchName(o.getResearchName());
+					confirmEnrollmentVo.setResearchDescription(o.getResearchDescription());
+					confirmEnrollmentVo.setOrder(i.getAndIncrement());
+					confirmEnrollmentVo.setPatientId(o.getUserId());
+					confirmEnrollmentVo.setCreateTime(o.getCreateTime());
+					confirmEnrollmentVoList.add(confirmEnrollmentVo);
+				});
+				menuRedDotVo.setConfirmEnrollmentVoList(confirmEnrollmentVoList);
+				//查看是否有随访未处理
+				for(PatientInfo pi:patientInfoList){
+					int pendingTasksNum = getPendingTasksNum(pi);
+					if(pendingTasksNum>0){
+						menuRedDotVo.setFollowRedDotVoNum("1");
+						break;
+					}
+				}
+				//预警未处理
+				FollowWorkListForm followWorkListForm = new FollowWorkListForm();
+				followWorkListForm.setAccountId(messageAccountNoticeVo.getAccountId());
+				followWorkListForm.setWarnStatus("1");
+				List<FollowWorkListVO> warnWorkList = patientRecordMapper.selectFollowWorkWarnpatientList(followWorkListForm);
+				if(warnWorkList.size()>0){
+					menuRedDotVo.setWarnRedDotVoNum("1");
+				}
+				//超窗未处理
+				followWorkListForm.setWarnStatus(null);
+				followWorkListForm.setOverTimeStatus("1");
+				List<FollowWorkListVO> overWorkList = patientRecordMapper.selectFollowWorkWarnpatientList(followWorkListForm);
+				if(overWorkList.size()>0){
+					menuRedDotVo.setOverRedDotVoNum("1");
+				}
+			}
+		}
+		result.setData(menuRedDotVo);
+		return result;
+	}
+
+
+	private int getPendingTasksNum(PatientInfo patientInfo) {
+//        有新的随访到期，有新的随访质疑，有新的随访意见 这三个数量和
+		// 通过patientInfo.getResearchId  .patientId   -->filter( )
+		PatientRecord patientRecord = new PatientRecord();
+		patientRecord.setPatientId(patientInfo.getPatientId());
+		patientRecord.setResearchId(patientInfo.getResearchId());
+		List<PatientRecord> patientRecordList = patientRecordMapper.selectPatientRecordList(patientRecord);
+		int pendingTasksNum = patientRecordList.stream().filter(p -> {
+			return (p.getFollowTipStatus() == FollowTipStatusEnum.FOLLOW_UP_VISIT_DUE_REMINDER.getIndex() || p.getFollowTipStatus() == FollowTipStatusEnum.FOLLOW_UP_QUESTIONING_REMINDER.getIndex() || p.getFollowTipStatus() == FollowTipStatusEnum.FOLLOW_UP_OPINION_REMINDER.getIndex());
+		}).collect(Collectors.toList()).size();
+		return pendingTasksNum;
+	}
+
+	/**
+	 *
+	 * @param messageAccountNoticeVo
+	 * @param appType 3小程序患者端
+	 * @return
+	 */
+	public DchealthCloudResponseEntity<List<ConfirmEnrollmentVo>> getPopHanderInfo(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
+
+		DchealthCloudResponseEntity<List<ConfirmEnrollmentVo>> result = new DchealthCloudResponseEntity<>();
+		List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountId());
+		if (!CollectionUtils.isEmpty(patientInfoList)) {
+			List<SysPopNotice> sysPopNoticesAll = new ArrayList<>();
+			patientInfoList.forEach(patientInfo -> {
+				SysPopNotice sysPopNotice = new SysPopNotice();
+				sysPopNotice.setUserId(String.valueOf(patientInfo.getPatientId()));
+				List<SysPopNotice> sysPopNotices = sysPopNoticeService.selectSysPopNoticeList(sysPopNotice);
+				sysPopNoticesAll.addAll(sysPopNotices);
+			});
+			List<ConfirmEnrollmentVo> confirmEnrollmentVoList = new ArrayList<>();
+
+			//按创建时间排序, 并写到每个对象的order字段中
+			AtomicInteger i = new AtomicInteger();
+			//先按创建时间排序,然后按队列分组,拿出最新的一条
+			Map<Long, List<SysPopNotice>> collect = sysPopNoticesAll.stream().sorted(Comparator.comparing(SysPopNotice::getCreateTime).reversed()).collect(Collectors.groupingBy(SysPopNotice::getResearchId));
+			collect.entrySet().stream().map(entry -> entry.getValue().get(0)).forEach(o -> {
+//					//弹框处理
+				ConfirmEnrollmentVo confirmEnrollmentVo = new ConfirmEnrollmentVo();
+				confirmEnrollmentVo.setRemark(o.getRemark());
+				confirmEnrollmentVo.setResearchId(String.valueOf(o.getResearchId()));
+				confirmEnrollmentVo.setResearchName(o.getResearchName());
+				confirmEnrollmentVo.setResearchDescription(o.getResearchDescription());
+				confirmEnrollmentVo.setOrder(i.getAndIncrement());
+				confirmEnrollmentVo.setPatientId(o.getUserId());
+				confirmEnrollmentVo.setCreateTime(o.getCreateTime());
+				confirmEnrollmentVo.setIsread(o.getIsread());
+				confirmEnrollmentVoList.add(confirmEnrollmentVo);
+			});
+			result.setData(confirmEnrollmentVoList);
+			return result;
+		}
+		return null;
+	}
+
+
+	public DchealthCloudResponseEntity<MessageVo> getMessageVo(Long messageId,String appType) {
+		DchealthCloudResponseEntity<MessageVo> result = new DchealthCloudResponseEntity<MessageVo>();
+		MessageVo messageVo = new MessageVo();
+		if("2".equals(appType)||"3".equals(appType)){
+			AccountNotice accountNotice = accountNoticeMapper.selectAccountNoticeById(messageId);
+			PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(accountNotice.getRecordId());
+			PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
+			if(patientInfo!=null){
+				if("2".equals(patientInfo.getEnrollmentHandlerStatus())){
+					messageVo.setType("1");
+					List<ConfirmEnrollmentVo> confirmEnrollmentVoList = new ArrayList<>();
+					//进行中,查询弹窗
+					SysPopNotice sysPopNotice = new SysPopNotice();
+					sysPopNotice.setUserId(String.valueOf(patientInfo.getPatientId()));
+					//查出未读的数据
+					sysPopNotice.setIsread(0);
+					sysPopNotice.setResearchId(patientInfo.getResearchId());
+					List<SysPopNotice> sysPopNotices = sysPopNoticeService.selectSysPopNoticeList(sysPopNotice);
+					if(sysPopNotices!=null && sysPopNotices.size()>0){
+						for(SysPopNotice spn:sysPopNotices){
+							ConfirmEnrollmentVo confirmEnrollmentVo = new ConfirmEnrollmentVo();
+							confirmEnrollmentVo.setRemark(spn.getRemark());
+							confirmEnrollmentVo.setResearchId(String.valueOf(spn.getResearchId()));
+							confirmEnrollmentVo.setResearchName(spn.getResearchName());
+							confirmEnrollmentVo.setResearchDescription(spn.getResearchDescription());
+							confirmEnrollmentVo.setOrder(0);
+							confirmEnrollmentVo.setPatientId(spn.getUserId());
+							confirmEnrollmentVo.setCreateTime(spn.getCreateTime());
+							confirmEnrollmentVoList.add(confirmEnrollmentVo);
+						}
+						messageVo.setConfirmEnrollmentVoList(confirmEnrollmentVoList);
+					}
+				}else if("3".equals(patientInfo.getEnrollmentHandlerStatus())){
+					if("0".equals(patientInfo.getEnrollmentStatus())){
+						messageVo.setType("3");
+						if("4".equals(patientInfo.getEnrollmentResult())){
+							messageVo.setContent("医生已取消入组");
+						}else if("3".equals(patientInfo.getEnrollmentResult())){
+							messageVo.setContent("您已取消入组");
+						}else{
+							messageVo.setContent(patientInfo.getEnrollmentResultContent());
+						}
+					}else if("1".equals(patientInfo.getEnrollmentStatus())){
+						//已入组
+						messageVo.setType("2");
+						messageVo.setPatientId(patientInfo.getPatientId());
+						messageVo.setResearchId(patientInfo.getResearchId());
+					}
+				}
+			}
+		}
+		result.setData(messageVo);
+		return result;
+	}
+
+
+}

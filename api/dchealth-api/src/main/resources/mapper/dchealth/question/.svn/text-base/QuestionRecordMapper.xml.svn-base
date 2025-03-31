@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.question.mapper.QuestionRecordMapper">
+    
+    <resultMap type="com.dchealth.cro.question.domain.QuestionRecord" id="QuestionRecordResult">
+        <result property="questionId"    column="question_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="fromUserId"    column="from_user_id"    />
+        <result property="fromContent"    column="from_content"    />
+        <result property="replyUserId"    column="reply_user_id"    />
+        <result property="replyContent"    column="reply_content"    />
+        <result property="questionStatus"    column="question_status"    />
+        <result property="fromTime"    column="from_time"    />
+        <result property="replyTime"    column="reply_time"    />
+        <result property="doctorName"    column="user_name"    />
+        <result property="patientName"    column="name"    />
+    </resultMap>
+
+    <sql id="selectQuestionRecordVo">
+        select question_id, record_id, from_user_id, from_content, reply_user_id, reply_content, question_status, from_time, reply_time from question_record
+    </sql>
+
+    <select id="selectQuestionRecordList" parameterType="com.dchealth.cro.question.domain.QuestionRecord" resultMap="QuestionRecordResult">
+        <include refid="selectQuestionRecordVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="fromUserId != null "> and from_user_id = #{fromUserId}</if>
+            <if test="fromContent != null  and fromContent != ''"> and from_content = #{fromContent}</if>
+            <if test="replyUserId != null "> and reply_user_id = #{replyUserId}</if>
+            <if test="replyContent != null  and replyContent != ''"> and reply_content = #{replyContent}</if>
+            <if test="questionStatus != null  and questionStatus != ''"> and question_status = #{questionStatus}</if>
+            <if test="fromTime != null "> and from_time = #{fromTime}</if>
+            <if test="replyTime != null "> and reply_time = #{replyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuestionRecordByQuestionId" parameterType="Long" resultMap="QuestionRecordResult">
+        <include refid="selectQuestionRecordVo"/>
+        where question_id = #{questionId}
+    </select>
+
+    <select id="selectQuestionRecordByRecordId" parameterType="Long" resultMap="QuestionRecordResult">
+        select q.question_id, q.record_id, q.from_user_id, q.from_content, q.reply_user_id,
+        q.reply_content, q.question_status, q.from_time, q.reply_time, u.user_name, mp.person_name name
+        from question_record q
+        left join sys_user u on u.user_id = q.from_user_id
+        left join mp_person mp on mp.id = q.reply_user_id
+        where q.record_id=#{recordId} and q.type = '1' order by q.from_time
+    </select>
+        
+    <insert id="insertQuestionRecord" parameterType="com.dchealth.cro.question.domain.QuestionRecord" useGeneratedKeys="true" keyProperty="questionId">
+        insert into question_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="fromUserId != null">from_user_id,</if>
+            <if test="fromContent != null">from_content,</if>
+            <if test="replyUserId != null">reply_user_id,</if>
+            <if test="replyContent != null">reply_content,</if>
+            <if test="questionStatus != null and questionStatus != ''">question_status,</if>
+            <if test="fromTime != null">from_time,</if>
+            <if test="replyTime != null">reply_time,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="fromUserId != null">#{fromUserId},</if>
+            <if test="fromContent != null">#{fromContent},</if>
+            <if test="replyUserId != null">#{replyUserId},</if>
+            <if test="replyContent != null">#{replyContent},</if>
+            <if test="questionStatus != null and questionStatus != ''">#{questionStatus},</if>
+            <if test="fromTime != null">#{fromTime},</if>
+            <if test="replyTime != null">#{replyTime},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuestionRecord" parameterType="com.dchealth.cro.question.domain.QuestionRecord">
+        update question_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="fromUserId != null">from_user_id = #{fromUserId},</if>
+            <if test="fromContent != null">from_content = #{fromContent},</if>
+            <if test="replyUserId != null">reply_user_id = #{replyUserId},</if>
+            <if test="replyContent != null">reply_content = #{replyContent},</if>
+            <if test="questionStatus != null and questionStatus != ''">question_status = #{questionStatus},</if>
+            <if test="fromTime != null">from_time = #{fromTime},</if>
+            <if test="replyTime != null">reply_time = #{replyTime},</if>
+        </trim>
+        where question_id = #{questionId}
+    </update>
+
+    <delete id="deleteQuestionRecordByQuestionId" parameterType="Long">
+        delete from question_record where question_id = #{questionId}
+    </delete>
+
+    <delete id="deleteQuestionRecordByQuestionIds" parameterType="String">
+        delete from question_record where question_id in 
+        <foreach item="questionId" collection="array" open="(" separator="," close=")">
+            #{questionId}
+        </foreach>
+    </delete>
+</mapper>

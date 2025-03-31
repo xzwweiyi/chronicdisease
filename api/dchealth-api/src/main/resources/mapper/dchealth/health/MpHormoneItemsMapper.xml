@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.health.mapper.MpHormoneItemsMapper">
+    
+    <resultMap type="com.dchealth.cro.health.domain.MpHormoneItems" id="MpHormoneItemsResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="hormoneFsh"    column="hormone_fsh"    />
+        <result property="hormoneLh"    column="hormone_lh"    />
+        <result property="hormoneE2"    column="hormone_e2"    />
+        <result property="hormoneP"    column="hormone_p"    />
+        <result property="hormoneT"    column="hormone_t"    />
+        <result property="hormonePrl"    column="hormone_prl"    />
+    </resultMap>
+
+    <sql id="selectMpHormoneItemsVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, hormone_fsh, hormone_lh, hormone_e2, hormone_p, hormone_t, hormone_prl from mp_hormone_items
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpHormoneItemsResult">
+        <include refid="selectMpHormoneItemsVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+    <select id="selectByPersonId" resultMap="MpHormoneItemsResult">
+        <include refid="selectMpHormoneItemsVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+
+</mapper>

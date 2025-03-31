@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.research.mapper.ResearchPatientMapper">
+    
+    <resultMap type="com.dchealth.cro.research.domain.ResearchPatient" id="ResearchPatientResult">
+        <result property="id"    column="id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="patientId"    column="patient_id"    />
+    </resultMap>
+
+    <sql id="selectResearchPatientVo">
+        select id, person_id, research_id, create_time, create_by from research_patient
+    </sql>
+
+    <select id="selectResearchPatientList" parameterType="com.dchealth.cro.research.domain.ResearchPatient" resultMap="ResearchPatientResult">
+        <include refid="selectResearchPatientVo"/>
+        <where>  
+            <if test="personId != null "> and person_id = #{personId}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearchPatientById" parameterType="Long" resultMap="ResearchPatientResult">
+        <include refid="selectResearchPatientVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertResearchPatient" parameterType="com.dchealth.cro.research.domain.ResearchPatient" useGeneratedKeys="true" keyProperty="id">
+        insert into research_patient
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="personId != null">person_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="patientId != null">patient_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="personId != null">#{personId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="patientId != null">#{patientId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchPatient" parameterType="com.dchealth.cro.research.domain.ResearchPatient">
+        update research_patient
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchPatientById" parameterType="Long">
+        delete from research_patient where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchPatientByIds" parameterType="String">
+        delete from research_patient where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

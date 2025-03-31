@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientRecordOutboundMapper">
+
+    <resultMap type="PatientRecordOutbound" id="PatientRecordOutboundResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="outboundId"    column="outbound_id"    />
+        <result property="speechId"    column="speech_id"    />
+        <result property="name"    column="name"    />
+        <result property="stageNum"    column="stage_num"    />
+        <result property="outboundType"    column="outbound_type"    />
+        <result property="remindType"    column="remind_type"    />
+        <result property="outboundTime"    column="outbound_time"    />
+        <result property="planVisitTime"    column="plan_visit_time"    />
+        <result property="status"    column="status"    />
+        <result property="batch"    column="batch"    />
+        <result property="taskId"    column="task_Id"    />
+        <result property="xunfeiRecordId"    column="xunfei_record_id"    />
+        <result property="xunfeiSpeechId"    column="xunfei_speech_id"    />
+        <result property="xunfeiCallTime"    column="xunfei_call_time"    />
+        <result property="xunfeiTaskTime"    column="xunfei_task_time"    />
+        <result property="xunfeiPlanName"    column="xunfei_plan_name"    />
+        <result property="xunfeiSpeechName"    column="xunfei_speech_name"    />
+        <result property="xunfeiCalltimeLength"    column="xunfei_callTime_length"    />
+        <result property="xunfeiCallResult"    column="xunfei_call_result"    />
+        <result property="xunfeiResultCode"    column="xunfei_result_code"    />
+        <result property="xunfeiEndNode"    column="xunfei_end_node"    />
+        <result property="xunfeiRecordUrl"    column="xunfei_record_url"    />
+        <result property="xunfeiSmsName"    column="xunfei_sms_name"    />
+        <result property="xunfeiSmsContent"    column="xunfei_sms_content"    />
+        <result property="xunfeiDialog"    column="xunfei_dialog"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDownloadSound"    column="is_download_sound"    />
+        <result property="localRecordUrl"    column="local_record_url"    />
+
+        <result property="patientName"    column="patient_name"    />
+        <result property="patientCode"    column="patient_code"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordOutboundVo">
+        select g.id, g.record_id, g.research_id, g.outbound_id, g.speech_id, g.name, g.stage_num, g.outbound_type, g.remind_type, g.outbound_time, g.plan_visit_time,
+               g.status, g.batch, g.task_Id, g.xunfei_record_id, g.xunfei_speech_id, g.xunfei_call_time, g.xunfei_task_time, g.xunfei_plan_name, g.xunfei_speech_name,
+               g.xunfei_callTime_length, g.xunfei_call_result, g.xunfei_result_code, g.xunfei_end_node, g.xunfei_record_url, g.xunfei_sms_name, g.xunfei_sms_content,
+               g.xunfei_dialog, g.update_by, g.create_by, g.create_time, g.update_time, g.is_download_sound, g.local_record_url,
+               pi.patient_name,pi.patient_code,pi.patient_id,mp.card_id id_card,pa.mobile,ri.project_name
+        from patient_record_outbound g
+        INNER JOIN patient_record pr on g.record_id=pr.record_id
+        INNER JOIN patient_info pi on pi.patient_id=pr.patient_id
+        INNER JOIN research_info ri on pr.research_id=ri.id and ri.del_flag=0
+        INNER JOIN mp_person mp on mp.person_id=pi.person_id
+        INNER JOIN patient_account pa on pi.account_id=pa.account_id
+    </sql>
+
+    <select id="selectPatientRecordOutboundList" parameterType="PatientRecordOutbound" resultMap="PatientRecordOutboundResult">
+        <include refid="selectPatientRecordOutboundVo"/>
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="outboundId != null "> and g.outbound_id = #{outboundId}</if>
+            <if test="speechId != null "> and g.speech_id = #{speechId}</if>
+            <if test="name != null  and name != ''"> and g.name like concat('%', #{name}, '%')</if>
+            <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
+            <if test="outboundType != null  and outboundType != ''"> and g.outbound_type = #{outboundType}</if>
+            <if test="remindType != null  and remindType != ''"> and g.remind_type = #{remindType}</if>
+            <if test="outboundTime != null "> and g.outbound_time = #{outboundTime}</if>
+            <if test="planVisitTime != null "> and g.plan_visit_time = #{planVisitTime}</if>
+            <if test="status != null  and status != ''"> and g.status = #{status}</if>
+            <if test="batch != null  and batch != ''"> and g.batch = #{batch}</if>
+            <if test="taskId != null  and taskId != ''"> and g.task_Id = #{taskId}</if>
+            <if test="xunfeiRecordId != null  and xunfeiRecordId != ''"> and g.xunfei_record_id = #{xunfeiRecordId}</if>
+            <if test="outboundCreateTime != null  and outboundCreateTime != ''"> and TO_DAYS(g.create_time) = TO_DAYS(#{outboundCreateTime})</if>
+            <if test="isDownloadSound != null  and isDownloadSound != ''"> and g.is_download_sound = #{isDownloadSound}</if>
+        </where>
+    </select>
+
+    <resultMap type="com.dchealth.medical.domain.vo.OutboundWorkListVO" id="OutboundWorkListVOResult">
+        <result property="id"    column="id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="name"    column="name"    />
+        <result property="planVisitTime"    column="plan_visit_time"    />
+        <result property="outboundTime"    column="outbound_time"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="stageNum"    column="stage_num"    />
+        <result property="xunfeiCallResult"    column="xunfei_call_result"    />
+        <result property="xunfeiResultCode"    column="xunfei_result_code"    />
+        <result property="xunfeiEndNode"    column="xunfei_end_node"    />
+    </resultMap>
+
+    <select id="selectOutboundList" parameterType="PatientRecordOutbound" resultMap="OutboundWorkListVOResult">
+        select g.id,pr.patient_id,pi.patient_name,g.name,g.plan_visit_time,g.outbound_time,pr.research_id,g.record_id,g.stage_num,g.batch,g.task_Id,g.xunfei_record_id
+        ,g.xunfei_end_node,g.xunfei_result_code,g.xunfei_call_result
+        from  patient_record_outbound g
+        INNER JOIN  patient_record pr on g.record_id=pr.record_id
+        INNER JOIN	patient_info pi on pr.patient_id=pi.patient_id
+        INNER JOIN	research_info ri on pr.research_id=ri.id
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="outboundId != null "> and g.outbound_id = #{outboundId}</if>
+            <if test="speechId != null "> and g.speech_id = #{speechId}</if>
+            <if test="name != null  and name != ''"> and g.name like concat('%', #{name}, '%')</if>
+            <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
+            <if test="outboundType != null  and outboundType != ''"> and g.outbound_type = #{outboundType}</if>
+            <if test="remindType != null  and remindType != ''"> and g.remind_type = #{remindType}</if>
+            <if test="outboundTime != null "> and g.outbound_time = #{outboundTime}</if>
+            <if test="status != null  and status != ''"> and g.status = #{status}</if>
+            <if test="batch != null  and batch != ''"> and g.batch = #{batch}</if>
+            <if test="taskId != null  and taskId != ''"> and g.task_Id = #{taskId}</if>
+            <if test="isDownloadSound != null  and isDownloadSound != ''"> and g.is_download_sound = #{isDownloadSound}</if>
+
+            <if test="patientName != null  and patientName != '' "> and pi.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="patientId != null  and patientId != '' "> and pi.patient_id like concat('%', #{patientId}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectGroupResearchIdList" parameterType="PatientRecordOutbound" resultMap="PatientRecordOutboundResult">
+        select g.research_id
+        from patient_record_outbound g
+        INNER JOIN patient_record pr on g.record_id=pr.record_id
+        INNER JOIN patient_info pi on pi.patient_id=pr.patient_id
+        INNER JOIN research_info ri on pr.research_id=ri.id and ri.del_flag=0 and ri.research_status = 1
+        INNER JOIN mp_person mp on mp.person_id=pi.person_id
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="outboundId != null "> and g.outbound_id = #{outboundId}</if>
+            <if test="speechId != null "> and g.speech_id = #{speechId}</if>
+            <if test="name != null  and name != ''"> and g.name like concat('%', #{name}, '%')</if>
+            <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
+            <if test="outboundType != null  and outboundType != ''"> and g.outbound_type = #{outboundType}</if>
+            <if test="remindType != null  and remindType != ''"> and g.remind_type = #{remindType}</if>
+            <if test="outboundTime != null "> and g.outbound_time = #{outboundTime}</if>
+            <if test="planVisitTime != null "> and g.plan_visit_time = #{planVisitTime}</if>
+            <if test="status != null  and status != ''"> and g.status = #{status}</if>
+            <if test="batch != null  and batch != ''"> and g.batch = #{batch}</if>
+            <if test="taskId != null  and taskId != ''"> and g.task_Id = #{taskId}</if>
+            <if test="xunfeiRecordId != null  and xunfeiRecordId != ''"> and g.xunfei_record_id = #{xunfeiRecordId}</if>
+            <if test="isDownloadSound != null  and isDownloadSound != ''"> and g.is_download_sound = #{isDownloadSound}</if>
+            <if test="outboundCreateTime != null  and outboundCreateTime != ''"> and TO_DAYS(g.create_time) = TO_DAYS(#{outboundCreateTime})</if>
+        </where>
+        group by g.research_id
+    </select>
+
+
+    <select id="selectPatientRecordOutboundById" parameterType="Long" resultMap="PatientRecordOutboundResult">
+        <include refid="selectPatientRecordOutboundVo"/>
+        where g.id = #{id}
+    </select>
+
+    <insert id="insertPatientRecordOutbound" parameterType="PatientRecordOutbound" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_record_outbound
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="outboundId != null">outbound_id,</if>
+            <if test="speechId != null">speech_id,</if>
+            <if test="name != null">name,</if>
+            <if test="stageNum != null">stage_num,</if>
+            <if test="outboundType != null">outbound_type,</if>
+            <if test="remindType != null">remind_type,</if>
+            <if test="outboundTime != null">outbound_time,</if>
+            <if test="planVisitTime != null">plan_visit_time,</if>
+            <if test="status != null">status,</if>
+            <if test="batch != null">batch,</if>
+            <if test="taskId != null">task_Id,</if>
+            <if test="xunfeiRecordId != null">xunfei_record_id,</if>
+            <if test="xunfeiSpeechId != null">xunfei_speech_id,</if>
+            <if test="xunfeiCallTime != null">xunfei_call_time,</if>
+            <if test="xunfeiTaskTime != null">xunfei_task_time,</if>
+            <if test="xunfeiPlanName != null">xunfei_plan_name,</if>
+            <if test="xunfeiSpeechName != null">xunfei_speech_name,</if>
+            <if test="xunfeiCalltimeLength != null">xunfei_callTime_length,</if>
+            <if test="xunfeiCallResult != null">xunfei_call_result,</if>
+            <if test="xunfeiResultCode != null">xunfei_result_code,</if>
+            <if test="xunfeiEndNode != null">xunfei_end_node,</if>
+            <if test="xunfeiRecordUrl != null">xunfei_record_url,</if>
+            <if test="xunfeiSmsName != null">xunfei_sms_name,</if>
+            <if test="xunfeiSmsContent != null">xunfei_sms_content,</if>
+            <if test="xunfeiDialog != null">xunfei_dialog,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDownloadSound != null">is_download_sound,</if>
+            <if test="localRecordUrl != null">local_record_url,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="outboundId != null">#{outboundId},</if>
+            <if test="speechId != null">#{speechId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="stageNum != null">#{stageNum},</if>
+            <if test="outboundType != null">#{outboundType},</if>
+            <if test="remindType != null">#{remindType},</if>
+            <if test="outboundTime != null">#{outboundTime},</if>
+            <if test="planVisitTime != null">#{planVisitTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="batch != null">#{batch},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="xunfeiRecordId != null">#{xunfeiRecordId},</if>
+            <if test="xunfeiSpeechId != null">#{xunfeiSpeechId},</if>
+            <if test="xunfeiCallTime != null">#{xunfeiCallTime},</if>
+            <if test="xunfeiTaskTime != null">#{xunfeiTaskTime},</if>
+            <if test="xunfeiPlanName != null">#{xunfeiPlanName},</if>
+            <if test="xunfeiSpeechName != null">#{xunfeiSpeechName},</if>
+            <if test="xunfeiCalltimeLength != null">#{xunfeiCalltimeLength},</if>
+            <if test="xunfeiCallResult != null">#{xunfeiCallResult},</if>
+            <if test="xunfeiResultCode != null">#{xunfeiResultCode},</if>
+            <if test="xunfeiEndNode != null">#{xunfeiEndNode},</if>
+            <if test="xunfeiRecordUrl != null">#{xunfeiRecordUrl},</if>
+            <if test="xunfeiSmsName != null">#{xunfeiSmsName},</if>
+            <if test="xunfeiSmsContent != null">#{xunfeiSmsContent},</if>
+            <if test="xunfeiDialog != null">#{xunfeiDialog},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDownloadSound != null">#{isDownloadSound},</if>
+            <if test="localRecordUrl != null">#{localRecordUrl},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientRecordOutbound" parameterType="PatientRecordOutbound">
+        update patient_record_outbound
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="outboundId != null">outbound_id = #{outboundId},</if>
+            <if test="speechId != null">speech_id = #{speechId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="stageNum != null">stage_num = #{stageNum},</if>
+            <if test="outboundType != null">outbound_type = #{outboundType},</if>
+            <if test="remindType != null">remind_type = #{remindType},</if>
+            <if test="outboundTime != null">outbound_time = #{outboundTime},</if>
+            <if test="planVisitTime != null">plan_visit_time = #{planVisitTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="batch != null">batch = #{batch},</if>
+            <if test="taskId != null">task_Id = #{taskId},</if>
+            <if test="xunfeiRecordId != null">xunfei_record_id = #{xunfeiRecordId},</if>
+            <if test="xunfeiSpeechId != null">xunfei_speech_id = #{xunfeiSpeechId},</if>
+            <if test="xunfeiCallTime != null">xunfei_call_time = #{xunfeiCallTime},</if>
+            <if test="xunfeiTaskTime != null">xunfei_task_time = #{xunfeiTaskTime},</if>
+            <if test="xunfeiPlanName != null">xunfei_plan_name = #{xunfeiPlanName},</if>
+            <if test="xunfeiSpeechName != null">xunfei_speech_name = #{xunfeiSpeechName},</if>
+            <if test="xunfeiCalltimeLength != null">xunfei_callTime_length = #{xunfeiCalltimeLength},</if>
+            <if test="xunfeiCallResult != null">xunfei_call_result = #{xunfeiCallResult},</if>
+            <if test="xunfeiResultCode != null">xunfei_result_code = #{xunfeiResultCode},</if>
+            <if test="xunfeiEndNode != null">xunfei_end_node = #{xunfeiEndNode},</if>
+            <if test="xunfeiRecordUrl != null">xunfei_record_url = #{xunfeiRecordUrl},</if>
+            <if test="xunfeiSmsName != null">xunfei_sms_name = #{xunfeiSmsName},</if>
+            <if test="xunfeiSmsContent != null">xunfei_sms_content = #{xunfeiSmsContent},</if>
+            <if test="xunfeiDialog != null">xunfei_dialog = #{xunfeiDialog},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDownloadSound != null">is_download_sound = #{isDownloadSound},</if>
+            <if test="localRecordUrl != null">local_record_url = #{localRecordUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <insert id="batchInsertList">
+        insert into
+        patient_record_outbound(record_id,research_id,outbound_id,speech_id,name,stage_num,outbound_type,remind_type,outbound_time,plan_visit_time,status,create_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.recordId},#{item.researchId},#{item.outboundId},#{item.speechId},#{item.name},#{item.stageNum},#{item.outboundType},#{item.remindType},
+             #{item.outboundTime},#{item.planVisitTime},#{item.status},#{item.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="deletePatientRecordOutboundById" parameterType="Long">
+        delete from patient_record_outbound where id = #{id}
+    </delete>
+
+    <delete id="deletePatientRecordOutboundByIds" parameterType="String">
+        delete from patient_record_outbound where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByOutboundAndRemindType" resultMap="PatientRecordOutboundResult">
+        <include refid="selectPatientRecordOutboundVo"/>
+        where g.record_id = #{recordId} and g.outbound_type = #{outboundType} and g.remind_type = #{remindType}  limit 0,1
+    </select>
+
+
+    <select id="selectOne" parameterType="PatientRecordOutbound" resultMap="PatientRecordOutboundResult">
+        <include refid="selectPatientRecordOutboundVo"/>
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="outboundId != null "> and g.outbound_id = #{outboundId}</if>
+            <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
+            <if test="outboundType != null  and outboundType != ''"> and g.outbound_type = #{outboundType}</if>
+            <if test="remindType != null  and remindType != ''"> and g.remind_type = #{remindType}</if>
+            <if test="status != null  and status != ''"> and g.status = #{status}</if>
+            <if test="isDownloadSound != null  and isDownloadSound != ''"> and g.is_download_sound = #{isDownloadSound}</if>
+
+            <if test="patientName != null  and patientName != '' "> and pi.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="patientId != null  and patientId != '' "> and pi.patient_id like concat('%', #{patientId}, '%')</if>
+        </where>
+        limit 0,1
+    </select>
+    <select id="selectOneId" parameterType="PatientRecordOutbound" resultMap="PatientRecordOutboundResult">
+          select g.id
+        from patient_record_outbound g
+        INNER JOIN patient_record pr on g.record_id=pr.record_id
+        INNER JOIN patient_info pi on pi.patient_id=pr.patient_id
+        INNER JOIN research_info ri on pr.research_id=ri.id and ri.del_flag=0
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="outboundId != null "> and g.outbound_id = #{outboundId}</if>
+            <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
+            <if test="outboundType != null  and outboundType != ''"> and g.outbound_type = #{outboundType}</if>
+            <if test="remindType != null  and remindType != ''"> and g.remind_type = #{remindType}</if>
+            <if test="status != null  and status != ''"> and g.status = #{status}</if>
+            <if test="isDownloadSound != null  and isDownloadSound != ''"> and g.is_download_sound = #{isDownloadSound}</if>
+
+            <if test="patientName != null  and patientName != '' "> and pi.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="patientId != null  and patientId != '' "> and pi.patient_id like concat('%', #{patientId}, '%')</if>
+        </where>
+        limit 0,1
+    </select>
+
+</mapper>

@@ -1,0 +1,320 @@
+package com.dchealth.medical.domain;
+
+import com.dchealth.common.annotation.Excel;
+import com.dchealth.common.constant.FollowTipStatusConstants;
+import com.dchealth.common.core.domain.BaseEntity;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 患者档案对象 patient_record
+ * 
+ * @author lchbu
+ * @date 2022-09-15
+ */
+@Data
+public class PatientRecord extends BaseEntity{
+    private static final Logger L = LoggerFactory.getLogger(PatientRecord.class);
+    private static final long serialVersionUID = 1L;
+
+    /** 档案id */
+    private Long recordId;
+
+    /** 患者ID */
+    @Excel(name = "患者ID")
+    private Long patientId;
+
+    /** 研究项目ID */
+    @Excel(name = "研究项目ID")
+    private Long researchId;
+
+    /**
+     * 入组状态
+     */
+    private String enrollmentHandlerStatus;
+
+    /** 随访节点id */
+    @Excel(name = "随访节点id")
+    private Long followId;
+
+    /** $column.columnComment */
+    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    private String name;
+
+    /**
+     *随访次数 基线是1，随访同一个随访周期设置从1开始累加*/
+    @Excel(name = "随访次数")
+    private Integer stageNum;
+    /**
+     * 随访累计次数，基线是1，随访从1开始累加
+     */
+    private Integer stageAddNum;
+
+    /** 质疑状态0无质疑1待处理1进行中2已完成 */
+    @Excel(name = "质疑状态0无质疑1待处理1进行中2已完成")
+    private String questionStatus;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date questionTime;
+
+    /** 预警状态0无预警1待处理2进行中3已完成 */
+    @Excel(name = "预警状态0无预警1待处理2进行中3已完成")
+    private String warnStatus;
+
+    /** 超窗状态0无超窗1待处理2完成 */
+    @Excel(name = "超窗状态0无超窗1待处理2完成")
+    private String overTimeStatus;
+
+    /** 超窗处理状态0无1更新随访时间2忽略本次3失访 */
+    @Excel(name = "超窗处理状态0无1更新随访时间2忽略本次3失访")
+    private String overTimeHandleStatus;
+
+    //失访状态 0不再参与 1失联 2其他
+    private String loseType;
+
+    //失访原因
+    private String loseReason;
+
+    /** 填写时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "填写时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date fillTime;
+
+    //患者填写状态0未填写1已填写
+    private String fillStatus;
+
+    /** 随访时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "随访时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date visitTime;
+
+
+
+    /**
+     * 入组时间
+     */
+    private Date enrollmentTime;
+
+    /**
+     * 锁定的随访时间
+     */
+    private Date lockVisitTime;
+
+    /**
+     * 患者名
+     */
+    private String patientName;
+
+    /**
+     * 随访名
+     */
+    private String followName;
+
+    /**
+     * edc状态，1待提交，2待质检，3质疑待回复，4已锁库
+     */
+    private String edcStatus;
+
+    /**
+     * followTipStatus 随访状态记录
+     */
+    private Integer followTipStatus;
+
+    /**
+     * isSeeDetail 随访状态按钮状态：0置灰 1显示 2消失
+     */
+    private Integer isSeeDetail;
+
+
+    /**
+     * isSubmit 档案保存类型：0保存 1提交
+     */
+    private Integer isSubmit;
+
+    /**
+     * 随访状态0无状态1待处理2进行中3已完成
+     */
+    private String followStatus;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date followCompleteTime;
+
+    /**
+     * 随访意见
+     */
+    private String followOpinion;
+
+    //随访意见评价人id
+    private Long followOpinionUserId;
+
+
+    //后台评价状态0无状态1待评价2已完成
+    private String evaluateStatusBack;
+    //后台回复时效1-5颗星
+    private String evaluatePrescriptionBack;
+    //后台回复质量1-5颗星
+    private String evaluateQualityBack;
+    //后台回复评价
+    private String evaluateReplyBack;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date evaluateReplyBackTime;
+
+    //告警后台评价状态0无状态1待评价2已完成
+    private String warnEvaluateStatusBack;
+    //后台回复时效1-5颗星
+    private String  warnEvaluatePrescriptionBack;
+    //后台回复质量1-5颗星
+    private String  warnEvaluateQualityBack;
+    //后台回复评价
+    private String  warnEvaluateReplyBack;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date  warnEvaluateReplyBackTime;
+
+
+    //超窗后台评价状态0无状态1待评价2已完成
+    private String overEvaluateStatusBack;
+    //后台回复时效1-5颗星
+    private String  overEvaluatePrescriptionBack;
+    //后台回复质量1-5颗星
+    private String  overEvaluateQualityBack;
+    //后台回复评价
+    private String  overEvaluateReplyBack;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date  overEvaluateReplyBackTime;
+
+    /**
+     * 开始时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    //评价状态0无状态1待评价2已完成
+    private String evaluateStatus;
+
+    /**
+     * 回复时效1-5颗星
+     */
+    private String evaluatePrescription;
+
+    /**
+     * 回复质量1-5颗星
+     */
+    private String evaluateQuality;
+
+    /**
+     * 回复评价
+     */
+    private String evaluateReply;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date evaluateReplyTime;
+
+    /**
+     * 超窗生成时间
+     */
+    private Date overTimeCreateTime;
+
+    //超窗处理时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date  overTimeHandleTime;
+
+    private String ignoreType;
+
+    //随访提交时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date followSubmitTime;
+
+    private String overDay;
+
+    //查询超过7天未处理预警时时间条件
+    private String questionTimeOver;
+
+    private Long accountId;
+
+    private String edcNames;
+
+    public PatientRecord(){}
+
+    /**
+     * 生成计划随访使用
+     * @param old
+     * @param recordTemplate
+     */
+    public PatientRecord(PatientRecord old, PatientRecordTemplate recordTemplate){
+        this.researchId = old.getResearchId();
+        this.patientId = old.getPatientId();
+        this.followTipStatus = 1;
+        //当前节点是基线，模板是随访1的
+        if (old.getFollowId().longValue() != recordTemplate.getFollowId().longValue()){
+            this.stageNum = 1;
+        }else{
+            this.stageNum = old.getStageNum() + 1;
+        }
+        this.followId = recordTemplate.getFollowId();
+        //插入的是正确算出来的随访时间
+        if ("1".equals(recordTemplate.getFollowIntervalUnit())){
+            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),recordTemplate.getFollowInterval().intValue());
+        }else if ("2".equals(recordTemplate.getFollowIntervalUnit())){
+            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),recordTemplate.getFollowInterval().intValue() * 7);
+        }else if ("3".equals(recordTemplate.getFollowIntervalUnit())){
+            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),recordTemplate.getFollowInterval().intValue() * 30);
+        }
+        this.lockVisitTime = this.visitTime;
+        this.setCreateTime(new Date());
+//        String name = StringUtils.isNotBlankAndNotEmpty(recordTemplate.getFollowName()) ? recordTemplate.getFollowName() : "随访";
+        String name = "随访";
+        this.stageAddNum = old.getStageAddNum();
+        L.info("当前时间:{} stageAddNum:{} ",System.currentTimeMillis(), this.stageAddNum );
+        this.followStatus = "0";
+        this.name = name + String.format("%02d", old.getStageAddNum());
+        L.info("当前时间:{} 随访节点名称:{} ",System.currentTimeMillis(), this.name );
+    }
+
+    /**
+     * 生成基线
+     * @param patientInfo
+     * @param recordTemplate
+     */
+    public PatientRecord(PatientInfo patientInfo, PatientRecordTemplate recordTemplate){
+        this.researchId = patientInfo.getResearchId();
+        this.patientId = patientInfo.getPatientId();
+        this.stageNum = 1;
+        this.visitTime = patientInfo.getEnrollmentTime();
+        this.lockVisitTime = this.visitTime;
+        this.setCreateTime(new Date());
+        this.followId = recordTemplate.getFollowId();
+        String name = StringUtils.isNotBlankAndNotEmpty(recordTemplate.getFollowName()) ? recordTemplate.getFollowName() : "基线";
+        this.name = name;
+        this.followTipStatus= FollowTipStatusConstants.BASELINE_REMINDER;
+
+    }
+
+}

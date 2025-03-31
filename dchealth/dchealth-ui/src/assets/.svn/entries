@@ -1,0 +1,55 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-ui/src/assets
+svn://xiaoshiguang.top
+
+
+
+2024-05-15T06:27:44.408102Z
+18802
+lixiaohe
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+401_images
+dir
+
+403_images
+dir
+
+404_images
+dir
+
+editor
+dir
+
+icons
+dir
+
+images
+dir
+
+logo
+dir
+
+statistics
+dir
+
+styles
+dir
+

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.form.mapper.PatientExamRecordMapper">
+
+    <resultMap type="com.dchealth.cro.form.domain.PatientExamRecord" id="PatientExamRecordResult">
+        <result property="id"    column="id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="examTable"    column="exam_table"    />
+        <result property="fillStatus"    column="fill_status"    />
+    </resultMap>
+
+    <sql id="selectPatientExamRecordVo">
+        select id, article_id, medical_form_id, patient_id, create_by, create_time, exam_table from patient_exam_record
+    </sql>
+
+    <select id="selectPatientExamRecordList" parameterType="com.dchealth.cro.form.domain.PatientExamRecord" resultMap="PatientExamRecordResult">
+        <include refid="selectPatientExamRecordVo"/>
+        <where>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="medicalFormId != null "> and medical_form_id = #{medicalFormId}</if>
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+        </where>
+    </select>
+
+    <select id="selectPatientExamRecordById" parameterType="Long" resultMap="PatientExamRecordResult">
+        <include refid="selectPatientExamRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectPatientExamRecordByArticleId" parameterType="Long" resultMap="PatientExamRecordResult">
+        <include refid="selectPatientExamRecordVo"/>
+        where article_id = #{articleId}
+    </select>
+
+    <insert id="insertPatientExamRecord" parameterType="com.dchealth.cro.form.domain.PatientExamRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_exam_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">article_id,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="patientId != null">patient_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="examTable != null">exam_table,</if>
+            <if test="fillStatus != null and fillStatus!=''">fill_status,</if>
+            <if test="researchId != null">research_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">#{articleId},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="patientId != null">#{patientId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="examTable != null">#{examTable},</if>
+            <if test="fillStatus != null and fillStatus !=''">#{fillStatus},</if>
+            <if test="researchId != null">#{researchId},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientExamRecord" parameterType="com.dchealth.cro.form.domain.PatientExamRecord">
+        update patient_exam_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="examTable != null">exam_table = #{examTable},</if>
+            <if test="fillStatus != null">fill_status = #{fillStatus},</if>
+        </trim>
+        where id = #{medicalFormId}
+    </update>
+
+    <delete id="deletePatientExamRecordById" parameterType="Long">
+        delete from patient_exam_record where id = #{id}
+    </delete>
+
+    <delete id="deletePatientExamRecordByIds" parameterType="String">
+        delete from patient_exam_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectPatientExamRecordByArticleIdAndPatientId"  resultMap="PatientExamRecordResult">
+        select id, article_id, medical_form_id, patient_id, create_by, create_time, exam_table,fill_status from
+            patient_exam_record
+        where article_id = #{articleId} and patient_id = #{accountId}
+    </select>
+</mapper>

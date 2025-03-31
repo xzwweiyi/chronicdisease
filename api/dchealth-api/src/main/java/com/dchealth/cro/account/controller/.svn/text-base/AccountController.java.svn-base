@@ -1,0 +1,126 @@
+package com.dchealth.cro.account.controller;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.dchealth.cro.account.form.AccountForm;
+import com.dchealth.cro.account.form.UserUpdateOldPasswordForm;
+import com.dchealth.cro.account.service.AccountService;
+import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.StringUtils;
+import com.dchealth.cro.common.utils.http.HttpClientUtil;
+import com.dchealth.cro.core.config.CroCoreConfig;
+
+@Controller
+@RequestMapping(value = "/doctor")
+public class AccountController extends ApiBaseController {
+	private static final Logger L = LoggerFactory.getLogger(AccountController.class);
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private CroCoreConfig croCoreConfig;
+	/**
+	 * 更新账户信息
+	 * @param appType
+	 * @param channel
+	 * @param accountForm
+	 * @param bind
+	 * @param request
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updateAccountInfo", method = RequestMethod.POST)
+	public String updateAccountInfo(@RequestAttribute(value ="appType", required = true)String appType, @RequestAttribute("channel") String channel,
+									@Validated AccountForm accountForm, BindingResult bind, MultipartHttpServletRequest request){
+		try {
+			if (bind.hasErrors()) {
+				return buildBindErrorParamMView(bind);
+			}
+			accountForm.setTenantId(channel);
+			accountForm.setPositionType(appType);
+			accountForm = dealFile(accountForm,request);
+//			return buildSuccessMView(accountService.updateAccountInfo(accountForm));
+			return buildExceptionMView();
+		} catch (IOException e) {
+			L.info("修改账户信息异常{}", JSON.toJSONString(accountForm), e);
+			return buildExceptionMView();
+		}
+	}
+
+	private AccountForm dealFile(AccountForm accountForm,MultipartHttpServletRequest request) throws IOException {
+		//头像
+		MultipartFile headImageFile = request.getFile("headImageFile");
+		if(headImageFile!=null) {
+			String httpUrl = croCoreConfig.getFastPath() + "ngupload/single";
+			String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, headImageFile);
+			if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
+				JSONObject jsonObject = JSON.parseObject(result);
+				if (jsonObject != null) {
+					int  code = jsonObject.getInteger("code");
+					if(code ==1000) {
+						accountForm.setHeadImage(jsonObject.getString("data"));
+					}
+				}
+			}
+		}
+		return accountForm;
+	}
+	
+	
+
+	
+	/**
+	 * 个人中心
+	 */
+	@ResponseBody
+	@RequestMapping(value = "index", method = RequestMethod.POST)
+	public String index(Long accountId) {
+		Boolean  b = notEmpty(accountId);
+		if (!b) {
+			return buildErrorParamMView();
+		}
+		return buildSuccessMView(accountService.index(accountId));
+	}
+	/**
+	 * 个人中心
+	 */
+	@ResponseBody
+	@RequestMapping(value = "detail", method = RequestMethod.POST)
+	public String detail(Long accountId) {
+		Boolean  b = notEmpty(accountId);
+		if (!b) {
+			return buildErrorParamMView();
+		}
+		return buildSuccessMView(accountService.detail(accountId));
+	}
+	
+	/**
+	 * 根据账号ID 旧密码修改用户登录密码
+	 */
+	@ResponseBody
+	@RequestMapping(value = "updatePasswordByOldPassword", method = RequestMethod.POST)
+	public String updatePasswordByAccountId(@Validated UserUpdateOldPasswordForm userUpdateOldPasswordForm,@RequestAttribute("channel") String channel, BindingResult bind) {
+		if (bind.hasErrors()) {
+			return buildBindErrorParamMView(bind);
+		}
+		userUpdateOldPasswordForm.setTenantId(channel);
+		return buildSuccessMView(accountService.updatePasswordByOldPassword(userUpdateOldPasswordForm));
+	}
+
+
+	
+
+	
+
+}

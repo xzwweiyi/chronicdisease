@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchXunfeiTemplateVarMapper">
+    
+    <resultMap type="ResearchXunfeiTemplateVar" id="ResearchXunfeiTemplateVarResult">
+        <result property="id"    column="id"    />
+        <result property="speechId"    column="speech_id"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="content"    column="content"    />
+        <result property="original"    column="original"    />
+        <result property="limits"    column="limits"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectResearchXunfeiTemplateVarVo">
+        select id, speech_id, remarks, content, original, limits, sort_num, del_flag, update_by, create_by, create_time, update_time from research_xunfei_template_var
+    </sql>
+
+    <select id="selectResearchXunfeiTemplateVarList" parameterType="ResearchXunfeiTemplateVar" resultMap="ResearchXunfeiTemplateVarResult">
+        <include refid="selectResearchXunfeiTemplateVarVo"/>
+        <where>  
+            <if test="speechId != null "> and speech_id = #{speechId}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="original != null  and original != ''"> and original = #{original}</if>
+            <if test="limits != null  and limits != ''"> and limits = #{limits}</if>
+            <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+            <if test="delFlag != null  and delFlag != ''"> and del_flag = #{delFlag}</if>
+        </where>
+        ORDER BY sort_num asc
+    </select>
+    
+    <select id="selectResearchXunfeiTemplateVarById" parameterType="Long" resultMap="ResearchXunfeiTemplateVarResult">
+        <include refid="selectResearchXunfeiTemplateVarVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertResearchXunfeiTemplateVar" parameterType="ResearchXunfeiTemplateVar" useGeneratedKeys="true" keyProperty="id">
+        insert into research_xunfei_template_var
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="speechId != null">speech_id,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="content != null">content,</if>
+            <if test="original != null">original,</if>
+            <if test="limits != null">limits,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="speechId != null">#{speechId},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="content != null">#{content},</if>
+            <if test="original != null">#{original},</if>
+            <if test="limits != null">#{limits},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchXunfeiTemplateVar" parameterType="ResearchXunfeiTemplateVar">
+        update research_xunfei_template_var
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="speechId != null">speech_id = #{speechId},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="original != null">original = #{original},</if>
+            <if test="limits != null">limits = #{limits},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchXunfeiTemplateVarById" parameterType="Long">
+        delete from research_xunfei_template_var where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchXunfeiTemplateVarByIds" parameterType="String">
+        delete from research_xunfei_template_var where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
