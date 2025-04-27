@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -58,17 +57,16 @@ public class FollowOutboundCallRecordJob {
 
     /**
      * 智能外呼随访超窗数据筛选短信随访超窗数据筛选
-     *
      */
     @XxlJob("outboundCallRecordJobHandler")
-//    @Scheduled(cron = "0 0/2 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void outboundCallRecordJobHandler() throws Exception { //todo 随访超窗短信提醒单生成
-        XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选任务日期{}开始",DateUtils.getTime());
+        XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选任务日期{}开始", DateUtils.getTime());
         //进行中的队列
         ResearchInfo ri = new ResearchInfo();
         ri.setResearchStatus("1");
         List<ResearchInfo> researchInfoList = researchInfoMapper.selectResearchInfoList(ri);
-        if (researchInfoList == null || researchInfoList.isEmpty()){
+        if (researchInfoList == null || researchInfoList.isEmpty()) {
             XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选,没有查询到进行中的队列!");
         }
         //所有进行中队列的规则
@@ -84,9 +82,9 @@ public class FollowOutboundCallRecordJob {
             threadPoolExecutor.execute(new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for(int i=0;i<splist.size();i++) {
+                    for (int i = 0; i < splist.size(); i++) {
                         ResearchInfo r = splist.get(i);
-                        insertFollowRecordJob(r.getId(),insertRecord);
+                        insertFollowRecordJob(r.getId(), insertRecord);
                     }
                 }
             }));
@@ -98,28 +96,28 @@ public class FollowOutboundCallRecordJob {
             countDownLatch.await();
         } catch (InterruptedException e) {
             throw new NullPointerException(e.getMessage());
-        }finally {
+        } finally {
             threadPoolExecutor.shutdown(); //线程使用完毕后需要关团
         }
 
         //当线程池完成的线程数等于线程池中的总线程数
         boolean allThreadsIsDone = threadPoolExecutor.getTaskCount() == threadPoolExecutor.getCompletedTaskCount();
-        int u=0;
+        int u = 0;
         if (allThreadsIsDone) {
-            if (!insertRecord.isEmpty() && u==0){
+            if (!insertRecord.isEmpty() && u == 0) {
                 patientRecordOutboundMapper.batchInsertList(insertRecord);
-                resultStr = "操作成功,共插入"+insertRecord.size()+"条";
-                XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选任务{}",resultStr);
+                resultStr = "操作成功,共插入" + insertRecord.size() + "条";
+                XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选任务{}", resultStr);
                 u++;
             }
         }
         while (!allThreadsIsDone) {
             allThreadsIsDone = threadPoolExecutor.getTaskCount() == threadPoolExecutor.getCompletedTaskCount();
             if (allThreadsIsDone) {
-                if (!insertRecord.isEmpty() && u==0){
+                if (!insertRecord.isEmpty() && u == 0) {
                     patientRecordOutboundMapper.batchInsertList(insertRecord);
-                    resultStr = "操作成功,共插入"+insertRecord.size()+"条";
-                    XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选任务{}",resultStr);
+                    resultStr = "操作成功,共插入" + insertRecord.size() + "条";
+                    XxlJobHelper.log("智能外呼随访超窗数据筛选短信随访超窗数据筛选任务{}", resultStr);
                     u++;
                 }
             }
@@ -127,73 +125,73 @@ public class FollowOutboundCallRecordJob {
         XxlJobHelper.handleSuccess(resultStr);
     }
 
-    public void insertFollowRecordJob(Long researchId,List<PatientRecordOutbound> insertList){
+    public void insertFollowRecordJob(Long researchId, List<PatientRecordOutbound> insertList) {
         ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
-        ResearchOutbound researchOutbound = researchOutboundMapper.selectByResearchIdAndType(researchId,"1");
+        ResearchOutbound researchOutbound = researchOutboundMapper.selectByResearchIdAndType(researchId, "1");
         long TimeNow = System.currentTimeMillis();
         Date now = new Date(TimeNow);
         //随访外呼提前提醒
         PatientRecordTemplate pt = new PatientRecordTemplate();
         pt.setResearchId(researchId);
         List<PatientRecordTemplate> patientRecordTemplates = patientRecordTemplateMapper.selectPatientRecordTemplateList(pt);
-        if(researchOutbound!=null && researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
-            if(patientRecordTemplates.size()>0){
-                patientRecordTemplates.sort(Comparator.comparing(PatientRecordTemplate :: getFollowNum));
-                Map<Long, PatientRecordTemplate> maps = patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate :: getFollowId, Function.identity()));
+        if (researchOutbound != null && researchInfo != null && "1".equals(researchInfo.getResearchStatus())) {
+            if (patientRecordTemplates.size() > 0) {
+                patientRecordTemplates.sort(Comparator.comparing(PatientRecordTemplate::getFollowNum));
+                Map<Long, PatientRecordTemplate> maps = patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate::getFollowId, Function.identity()));
                 List<PatientRecord> patientRecords = patientRecordMapper.selectMaxRecordByResearchId(researchInfo.getId());
-                patientRecords.forEach(x->{
-                    if (!maps.containsKey(x.getFollowId())){
+                patientRecords.forEach(x -> {
+                    if (!maps.containsKey(x.getFollowId())) {
                         return;
                     }
-                    if(x.getLockVisitTime()==null){
+                    if (x.getLockVisitTime() == null) {
                         return;
                     }
-                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(x.getRecordId(),"1"/*电话*/,"1"/*随访*/);
-                    if(pro!=null){
+                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(x.getRecordId(), "1"/*电话*/, "1"/*随访*/);
+                    if (pro != null) {
                         return;
                     }
                     PatientRecordTemplate recordTemplate = maps.get(x.getFollowId());
-                    if(recordTemplate.getFollowNum()==0){
+                    if (recordTemplate.getFollowNum() == 0) {
                         //说明当前是基线,下次为第一次生成随访信息
                         int index = patientRecordTemplates.indexOf(recordTemplate);
                         x.setStageAddNum(1);
-                        if (index+1 < patientRecordTemplates.size()){
-                            if(isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1),researchOutbound.getFollowAdvanceDays())){
-                                insertList.add(patientRecordOutboundFollow(x,researchOutbound,patientRecordTemplates.get(index + 1),"1"));
+                        if (index + 1 < patientRecordTemplates.size()) {
+                            if (isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1), researchOutbound.getFollowAdvanceDays())) {
+                                insertList.add(patientRecordOutboundFollow(x, researchOutbound, patientRecordTemplates.get(index + 1), "1"));
                             }
                         }
-                    }else{
-                        x.setStageAddNum(x.getStageAddNum()+1);
+                    } else {
+                        x.setStageAddNum(x.getStageAddNum() + 1);
                         //限制频次
-                        if("1".equals(recordTemplate.getFollowFrequency())){
-                            if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1){
+                        if ("1".equals(recordTemplate.getFollowFrequency())) {
+                            if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1) {
                                 log.info("生成随访计划,队列ID{}随访规则ID{}followTotal没有值", researchInfo.getId(), recordTemplate.getFollowId());
                                 return;
                             }
                             if (x.getStageNum().intValue() == recordTemplate.getFollowTotal().intValue()) {//完成当前随访节点进入下一个随访节点
                                 int index = patientRecordTemplates.indexOf(recordTemplate);
-                                if (index+1 < patientRecordTemplates.size()){
-                                    if(isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1),researchOutbound.getFollowAdvanceDays())){
-                                        insertList.add(patientRecordOutboundFollow(x,researchOutbound,patientRecordTemplates.get(index + 1),"1"));
+                                if (index + 1 < patientRecordTemplates.size()) {
+                                    if (isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1), researchOutbound.getFollowAdvanceDays())) {
+                                        insertList.add(patientRecordOutboundFollow(x, researchOutbound, patientRecordTemplates.get(index + 1), "1"));
                                     }
                                 }
-                            }else if (x.getStageNum().intValue() < recordTemplate.getFollowTotal().intValue()){//未完成当前随访节点继续生成当前随访节点计划
-                                if(isCreateFollowRecord(now, x, recordTemplate,researchOutbound.getFollowAdvanceDays())){
-                                    insertList.add(patientRecordOutboundFollow(x,researchOutbound,recordTemplate,"1"));
+                            } else if (x.getStageNum().intValue() < recordTemplate.getFollowTotal().intValue()) {//未完成当前随访节点继续生成当前随访节点计划
+                                if (isCreateFollowRecord(now, x, recordTemplate, researchOutbound.getFollowAdvanceDays())) {
+                                    insertList.add(patientRecordOutboundFollow(x, researchOutbound, recordTemplate, "1"));
                                 }
                             }
-                        }else if ("2".equals(recordTemplate.getFollowFrequency())){//不限频次
+                        } else if ("2".equals(recordTemplate.getFollowFrequency())) {//不限频次
                             //没设置次数且间隔为0天
-                            if(recordTemplate.getFollowTotal()==null && recordTemplate.getFollowInterval()==0){
+                            if (recordTemplate.getFollowTotal() == null && recordTemplate.getFollowInterval() == 0) {
                                 int index = patientRecordTemplates.indexOf(recordTemplate);
-                                if (index+1 < patientRecordTemplates.size()){
-                                    if(isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1),researchOutbound.getFollowAdvanceDays())){
-                                        insertList.add(patientRecordOutboundFollow(x,researchOutbound,patientRecordTemplates.get(index + 1),"1"));
+                                if (index + 1 < patientRecordTemplates.size()) {
+                                    if (isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1), researchOutbound.getFollowAdvanceDays())) {
+                                        insertList.add(patientRecordOutboundFollow(x, researchOutbound, patientRecordTemplates.get(index + 1), "1"));
                                     }
                                 }
-                            }else{
-                                if(isCreateFollowRecord(now, x, recordTemplate,researchOutbound.getFollowAdvanceDays())){
-                                    insertList.add(patientRecordOutboundFollow(x,researchOutbound,recordTemplate,"1"));
+                            } else {
+                                if (isCreateFollowRecord(now, x, recordTemplate, researchOutbound.getFollowAdvanceDays())) {
+                                    insertList.add(patientRecordOutboundFollow(x, researchOutbound, recordTemplate, "1"));
                                 }
                             }
                         }
@@ -203,34 +201,38 @@ public class FollowOutboundCallRecordJob {
         }
 
         //超窗外呼提醒,超过随访时间1天要提醒
-        ResearchOutbound researchOutboundCall = researchOutboundMapper.selectByResearchIdAndType(researchId,"1"); // 1 外呼提醒
-        if(researchOutbound!=null && researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
+        ResearchOutbound researchOutboundCall = researchOutboundMapper.selectByResearchIdAndType(researchId, "1"); // 1 外呼提醒
+        if (researchOutbound != null && researchInfo != null && "1".equals(researchInfo.getResearchStatus())) {
             PatientRecord patientRecord = new PatientRecord();
             patientRecord.setResearchId(researchId);
             patientRecord.setFillStatus("0");
-            Date overDay = DateUtils.addDays(new Date(), -researchOutboundCall.getOverAdvanceDays());
+
+            Date overDay = null;
+            if (researchOutboundCall.getOverAdvanceDays() != null) {
+                overDay = DateUtils.addDays(new Date(), -researchOutboundCall.getOverAdvanceDays());
+            }
             String overDayStr = DateUtils.dateTime(overDay);
             patientRecord.setOverDay(overDayStr);
             List<PatientRecord> patientRecordList = patientRecordMapper.selectListByOverTime(patientRecord);
-            if(patientRecordList.size()>0){
-                for(PatientRecord p:patientRecordList){
-                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(p.getRecordId(),"1","2");
-                    if(pro!=null){
+            if (patientRecordList.size() > 0) {
+                for (PatientRecord p : patientRecordList) {
+                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(p.getRecordId(), "1", "2");
+                    if (pro != null) {
                         continue;
                     }
                     PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(p.getPatientId());
                     String patientStatus = patientInfo.getPatientStatus();
                     if (!"4".equals(patientStatus)) {
-                        insertList.add(patientRecordOutboundOver(p,researchOutbound,now,"1"));
+                        insertList.add(patientRecordOutboundOver(p, researchOutbound, now, "1"));
                     }
                 }
             }
         }
 
         //随访短信提醒
-        ResearchOutbound researchOutboundMessage = researchOutboundMapper.selectByResearchIdAndType(researchId,"2"); // 2 短信提醒
-        if(researchOutboundMessage!=null && researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
-            if(patientRecordTemplates.size()>0){
+        ResearchOutbound researchOutboundMessage = researchOutboundMapper.selectByResearchIdAndType(researchId, "2"); // 2 短信提醒
+        if (researchOutboundMessage != null && researchInfo != null && "1".equals(researchInfo.getResearchStatus())) {
+            if (patientRecordTemplates.size() > 0) {
                 patientRecordTemplates.sort(Comparator.comparing(PatientRecordTemplate::getFollowNum));
                 Map<Long, PatientRecordTemplate> maps = patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate::getFollowId, Function.identity()));
 //                List<PatientRecord> patientRecords = patientRecordMapper.selectMaxRecordByResearchId(researchInfo.getId());
@@ -258,62 +260,62 @@ public class FollowOutboundCallRecordJob {
 //                        insertList.add(patientRecordOutboundFollowSms(record, researchOutboundMessage, recordTemplate, "2"));
 //                    }
 //                }
-                patientRecords1.forEach(x->{
+                patientRecords1.forEach(x -> {
                     // todo 随访日志
                     XxlJobHelper.log("每个用户最大的随访进行提示, 用户随访{}", JSON.toJSONString(x));
-                    if (!maps.containsKey(x.getFollowId())){
+                    if (!maps.containsKey(x.getFollowId())) {
                         return;
                     }
-                    if(x.getLockVisitTime()==null){
+                    if (x.getLockVisitTime() == null) {
                         return;
                     }
-                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(x.getRecordId(),"2"/*短信*/,"1"/*随访*/);
-                    if(pro!=null){
+                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(x.getRecordId(), "2"/*短信*/, "1"/*随访*/);
+                    if (pro != null) {
                         return;
                     }
                     PatientRecordTemplate recordTemplate = maps.get(x.getFollowId());
-                    if(recordTemplate.getFollowNum()==0){
+                    if (recordTemplate.getFollowNum() == 0) {
                         //说明当前是基线,下次为第一次生成随访信息
                         int index = patientRecordTemplates.indexOf(recordTemplate);
                         x.setStageAddNum(1);
-                        if (index+1 < patientRecordTemplates.size()){
-                            if(isCreateFollowSms(now, x, patientRecordTemplates.get(index + 1),researchOutboundMessage.getFollowAdvanceDays())){
-                                insertList.add(patientRecordOutboundFollowSms(x,researchOutboundMessage,patientRecordTemplates.get(index + 1),"2"));
+                        if (index + 1 < patientRecordTemplates.size()) {
+                            if (isCreateFollowSms(now, x, patientRecordTemplates.get(index + 1), researchOutboundMessage.getFollowAdvanceDays())) {
+                                insertList.add(patientRecordOutboundFollowSms(x, researchOutboundMessage, patientRecordTemplates.get(index + 1), "2"));
                             }
                         }
-                    }else{
-                        x.setStageAddNum(x.getStageAddNum()+1);
+                    } else {
+                        x.setStageAddNum(x.getStageAddNum() + 1);
                         //限制频次
-                        if("1".equals(recordTemplate.getFollowFrequency())){
-                            if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1){
+                        if ("1".equals(recordTemplate.getFollowFrequency())) {
+                            if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1) {
                                 log.info("生成随访计划,队列ID{}随访规则ID{}followTotal没有值", researchInfo.getId(), recordTemplate.getFollowId());
                                 return;
                             }
                             if (x.getStageNum().intValue() == recordTemplate.getFollowTotal().intValue()) {//完成当前随访节点进入下一个随访节点
                                 int index = patientRecordTemplates.indexOf(recordTemplate);
-                                if (index+1 < patientRecordTemplates.size()){
+                                if (index + 1 < patientRecordTemplates.size()) {
                                     // patientRecordTemplates.get(index + 1) todo ??
-                                    if(isCreateFollowSms(now, x, patientRecordTemplates.get(index + 1),researchOutboundMessage.getFollowAdvanceDays())){
-                                        insertList.add(patientRecordOutboundFollowSms(x,researchOutboundMessage,patientRecordTemplates.get(index + 1),"2"));
+                                    if (isCreateFollowSms(now, x, patientRecordTemplates.get(index + 1), researchOutboundMessage.getFollowAdvanceDays())) {
+                                        insertList.add(patientRecordOutboundFollowSms(x, researchOutboundMessage, patientRecordTemplates.get(index + 1), "2"));
                                     }
                                 }
-                            }else if (x.getStageNum().intValue() < recordTemplate.getFollowTotal().intValue()){//未完成当前随访节点继续生成当前随访节点计划
-                                if(isCreateFollowSms(now, x, recordTemplate,researchOutboundMessage.getFollowAdvanceDays())){
-                                    insertList.add(patientRecordOutboundFollowSms(x,researchOutboundMessage,recordTemplate,"2"));
+                            } else if (x.getStageNum().intValue() < recordTemplate.getFollowTotal().intValue()) {//未完成当前随访节点继续生成当前随访节点计划
+                                if (isCreateFollowSms(now, x, recordTemplate, researchOutboundMessage.getFollowAdvanceDays())) {
+                                    insertList.add(patientRecordOutboundFollowSms(x, researchOutboundMessage, recordTemplate, "2"));
                                 }
                             }
-                        }else if ("2".equals(recordTemplate.getFollowFrequency())){//不限频次
+                        } else if ("2".equals(recordTemplate.getFollowFrequency())) {//不限频次
                             //没设置次数且间隔为0天
-                            if(recordTemplate.getFollowTotal()==null && recordTemplate.getFollowInterval()==0){
+                            if (recordTemplate.getFollowTotal() == null && recordTemplate.getFollowInterval() == 0) {
                                 int index = patientRecordTemplates.indexOf(recordTemplate);
-                                if (index+1 < patientRecordTemplates.size()){
-                                    if(isCreateFollowSms(now, x, patientRecordTemplates.get(index + 1),researchOutboundMessage.getFollowAdvanceDays())){
-                                        insertList.add(patientRecordOutboundFollowSms(x,researchOutboundMessage,patientRecordTemplates.get(index + 1),"2"));
+                                if (index + 1 < patientRecordTemplates.size()) {
+                                    if (isCreateFollowSms(now, x, patientRecordTemplates.get(index + 1), researchOutboundMessage.getFollowAdvanceDays())) {
+                                        insertList.add(patientRecordOutboundFollowSms(x, researchOutboundMessage, patientRecordTemplates.get(index + 1), "2"));
                                     }
                                 }
-                            }else{
-                                if(isCreateFollowSms(now, x, recordTemplate,researchOutboundMessage.getFollowAdvanceDays())){
-                                    insertList.add(patientRecordOutboundFollowSms(x,researchOutboundMessage,recordTemplate,"2"));
+                            } else {
+                                if (isCreateFollowSms(now, x, recordTemplate, researchOutboundMessage.getFollowAdvanceDays())) {
+                                    insertList.add(patientRecordOutboundFollowSms(x, researchOutboundMessage, recordTemplate, "2"));
                                 }
                             }
                         }
@@ -323,7 +325,7 @@ public class FollowOutboundCallRecordJob {
         }
 
         //超窗短信提醒
-        if(researchOutboundMessage!=null && researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
+        if (researchOutboundMessage != null && researchInfo != null && "1".equals(researchInfo.getResearchStatus())) {
             PatientRecord patientRecord = new PatientRecord();
             patientRecord.setResearchId(researchId);
             patientRecord.setFillStatus("0");
@@ -331,16 +333,16 @@ public class FollowOutboundCallRecordJob {
             String overDayStr = DateUtils.dateTime(overDay);
             patientRecord.setOverDay(overDayStr);
             List<PatientRecord> patientRecordList = patientRecordMapper.selectListByOverTime(patientRecord);
-            if(patientRecordList.size()>0){
-                for(PatientRecord p:patientRecordList){
-                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(p.getRecordId(),"2"/*短信*/,"2"/*超窗*/);
-                    if(pro!=null){
+            if (patientRecordList.size() > 0) {
+                for (PatientRecord p : patientRecordList) {
+                    PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(p.getRecordId(), "2"/*短信*/, "2"/*超窗*/);
+                    if (pro != null) {
                         continue;
                     }
                     PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(p.getPatientId());
                     String patientStatus = patientInfo.getPatientStatus();
                     if (!"4".equals(patientStatus)) {
-                        insertList.add(patientRecordOutboundOver(p,researchOutboundMessage,now,"2"));
+                        insertList.add(patientRecordOutboundOver(p, researchOutboundMessage, now, "2"));
                     }
                 }
             }
@@ -350,8 +352,8 @@ public class FollowOutboundCallRecordJob {
 
 
     //判断生成的下一个随访时间在提前提醒时间，是否在当前日期之前，如果是为true
-    public boolean isCreateFollowRecord(Date now, PatientRecord patientRecord, PatientRecordTemplate prt,Integer i) {
-        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},prt.getFollowInterval().intValue()={}",JSON.toJSONString(patientRecord),prt.getFollowInterval().intValue());
+    public boolean isCreateFollowRecord(Date now, PatientRecord patientRecord, PatientRecordTemplate prt, Integer i) {
+        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},prt.getFollowInterval().intValue()={}", JSON.toJSONString(patientRecord), prt.getFollowInterval().intValue());
 
         Date nextDate = null;
         if (StringUtils.equals("1", prt.getFollowIntervalUnit())) {
@@ -376,8 +378,8 @@ public class FollowOutboundCallRecordJob {
 
 
     //判断生成的下一个随访时间在提前提醒时间，是否在当前日期之前，如果是为true
-    public boolean isCreateFollowSms(Date now, PatientRecord patientRecord, PatientRecordTemplate prt,Integer i) {
-        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},prt.getFollowInterval().intValue()={}",JSON.toJSONString(patientRecord),prt.getFollowInterval().intValue());
+    public boolean isCreateFollowSms(Date now, PatientRecord patientRecord, PatientRecordTemplate prt, Integer i) {
+        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},prt.getFollowInterval().intValue()={}", JSON.toJSONString(patientRecord), prt.getFollowInterval().intValue());
 
         Date nextDate = null;
         if (StringUtils.equals("1", prt.getFollowIntervalUnit())) {
@@ -401,7 +403,7 @@ public class FollowOutboundCallRecordJob {
     }
 
     //外呼短信随访提前提醒
-    public PatientRecordOutbound patientRecordOutboundFollow(PatientRecord patientRecord,ResearchOutbound researchOutbound,PatientRecordTemplate prt,String outboundType){
+    public PatientRecordOutbound patientRecordOutboundFollow(PatientRecord patientRecord, ResearchOutbound researchOutbound, PatientRecordTemplate prt, String outboundType) {
         PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
         patientRecordOutbound.setRecordId(patientRecord.getRecordId());
         patientRecordOutbound.setResearchId(patientRecord.getResearchId());
@@ -411,7 +413,7 @@ public class FollowOutboundCallRecordJob {
         patientRecordOutbound.setRemindType("1");
         patientRecordOutbound.setStatus("1");
         patientRecordOutbound.setCreateTime(DateUtils.getNowDate());
-        patientRecordOutbound.setName("随访"+String.format("%02d", patientRecord.getStageAddNum()));
+        patientRecordOutbound.setName("随访" + String.format("%02d", patientRecord.getStageAddNum()));
         patientRecordOutbound.setStageNum(patientRecord.getStageAddNum());
 
         Date nextDate = null;
@@ -428,18 +430,18 @@ public class FollowOutboundCallRecordJob {
         }
 
         String date1 = DateUtils.dateTime(nextDate);
-        if(researchOutbound.getFollowAdvanceTime()!=null){
-            patientRecordOutbound.setOutboundTime(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,date1+" "+
-                    MedicalContants.GET_HOUR_TYPE.get(researchOutbound.getFollowAdvanceTime())+":00:00"));
+        if (researchOutbound.getFollowAdvanceTime() != null) {
+            patientRecordOutbound.setOutboundTime(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS, date1 + " " +
+                    MedicalContants.GET_HOUR_TYPE.get(researchOutbound.getFollowAdvanceTime()) + ":00:00"));
             patientRecordOutbound.setPlanVisitTime(planeDate);
-        }else{
+        } else {
             patientRecordOutbound.setOutboundTime(nextDate);
         }
         return patientRecordOutbound;
     }
 
     //短信提醒单
-    public PatientRecordOutbound patientRecordOutboundFollowSms(PatientRecord patientRecord,ResearchOutbound researchOutbound,PatientRecordTemplate prt,String outboundType){
+    public PatientRecordOutbound patientRecordOutboundFollowSms(PatientRecord patientRecord, ResearchOutbound researchOutbound, PatientRecordTemplate prt, String outboundType) {
         PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
         patientRecordOutbound.setRecordId(patientRecord.getRecordId());
         patientRecordOutbound.setResearchId(patientRecord.getResearchId());
@@ -449,7 +451,7 @@ public class FollowOutboundCallRecordJob {
         patientRecordOutbound.setRemindType("1");
         patientRecordOutbound.setStatus("1");
         patientRecordOutbound.setCreateTime(DateUtils.getNowDate());
-        patientRecordOutbound.setName("随访"+String.format("%02d", patientRecord.getStageAddNum()));
+        patientRecordOutbound.setName("随访" + String.format("%02d", patientRecord.getStageAddNum()));
         patientRecordOutbound.setStageNum(patientRecord.getStageAddNum());
 
         Date nextDate = null;
@@ -466,11 +468,11 @@ public class FollowOutboundCallRecordJob {
         }
 
         String date1 = DateUtils.dateTime(nextDate);
-        if(researchOutbound.getFollowAdvanceTime()!=null){
-            patientRecordOutbound.setOutboundTime(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,date1+" "+
-                    MedicalContants.GET_HOUR_TYPE.get(researchOutbound.getFollowAdvanceTime())+":00:00"));
+        if (researchOutbound.getFollowAdvanceTime() != null) {
+            patientRecordOutbound.setOutboundTime(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS, date1 + " " +
+                    MedicalContants.GET_HOUR_TYPE.get(researchOutbound.getFollowAdvanceTime()) + ":00:00"));
             patientRecordOutbound.setPlanVisitTime(planeDate);
-        }else{
+        } else {
             patientRecordOutbound.setOutboundTime(nextDate);
         }
         return patientRecordOutbound;
@@ -478,7 +480,7 @@ public class FollowOutboundCallRecordJob {
 
 
     //外呼超窗1天后未填写的提醒
-    public PatientRecordOutbound patientRecordOutboundOver(PatientRecord patientRecord,ResearchOutbound researchOutbound,Date now,String outboundType){
+    public PatientRecordOutbound patientRecordOutboundOver(PatientRecord patientRecord, ResearchOutbound researchOutbound, Date now, String outboundType) {
         PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
         patientRecordOutbound.setRecordId(patientRecord.getRecordId());
         patientRecordOutbound.setResearchId(patientRecord.getResearchId());
@@ -491,16 +493,16 @@ public class FollowOutboundCallRecordJob {
         patientRecordOutbound.setName(patientRecord.getName());
         patientRecordOutbound.setStageNum(patientRecord.getStageAddNum());
         patientRecordOutbound.setPlanVisitTime(patientRecord.getVisitTime());
-        Date boundTime = getDate(now,researchOutbound.getOverAdvanceTime());
+        Date boundTime = getDate(now, researchOutbound.getOverAdvanceTime());
         patientRecordOutbound.setOutboundTime(boundTime);
         return patientRecordOutbound;
     }
 
     //拼接第一个日期年月日，第二个日期时分秒
-    public Date getDate(Date date1,String type){
+    public Date getDate(Date date1, String type) {
         String dateStr1 = DateUtils.parseDateToStrFull(date1);
-        String dateStrStart =  dateStr1.substring(0,10);
-        Date result = DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,dateStrStart+" "+MedicalContants.GET_HOUR_TYPE.get(type)+":00:00");
+        String dateStrStart = dateStr1.substring(0, 10);
+        Date result = DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS, dateStrStart + " " + MedicalContants.GET_HOUR_TYPE.get(type) + ":00:00");
         return result;
     }
 

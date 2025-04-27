@@ -28,3 +28,18 @@ mybatis:
     mapperLocations: classpath*:mapper/**/**/*Mapper.xml
     # 加载全局的配置文件
     configLocation: classpath:mybatis-config.xml
+
+
+
+#image:
+#  # 拦截地址
+#  interceptPath: /tdapi/medical/patient/*
+#  #拦截IP
+#  interceptIp: "*.dchealthclinical.com"
+#  #旧域名
+#  oldDomain: "http://172.100.45.33"
+#  #新域名
+#  newDomain: "https://td.dchealthclinical.com"
+#  #图片IP转换域名拦截路径
+#  requestPath: /medical/patient/*
+
