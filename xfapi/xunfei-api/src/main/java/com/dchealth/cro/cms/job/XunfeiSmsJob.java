@@ -152,7 +152,7 @@ public class XunfeiSmsJob {
         }else if("12383".equals(followSpeechId)){
             //
             Var var1 = new Var("dwellerName","尊敬的"+patientRecordOutbound.getPatientName());
-            Var var2 = new Var("content","您在唐都慢病管理APP加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都慢病管理APP并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
+            Var var2 = new Var("content","您在唐都随访患者管理小程序加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都随访患者管理小程序并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
             Var var3 = new Var("center","唐都医院");
             varList.add(var1);
             varList.add(var2);
@@ -160,7 +160,7 @@ public class XunfeiSmsJob {
         }else if("10427".equals(followSpeechId)){
             //
             Var var1 = new Var("name","尊敬的"+patientRecordOutbound.getPatientName()+"，");
-            Var var2 = new Var("content","您在唐都慢病管理APP加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都慢病管理APP并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
+            Var var2 = new Var("content","您在唐都随访患者管理小程序加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都随访患者管理小程序并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
             varList.add(var1);
             varList.add(var2);
         }else if("16607".equals(followSpeechId)){

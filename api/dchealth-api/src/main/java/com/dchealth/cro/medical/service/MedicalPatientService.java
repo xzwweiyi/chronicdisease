@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import cn.hutool.core.util.StrUtil;
 import com.dchealth.cro.common.cache.RedisPublishService;
 import com.dchealth.cro.medical.form.*;
 import com.dchealth.cro.research.domain.ReSearchForm;
@@ -183,6 +184,12 @@ public class MedicalPatientService {
 
     @Resource
     private RedisPublishService redisPublishService;
+
+    @Value("${image.oldDomain}")
+    private String oldDomain;
+
+    @Value("${image.newDomain}")
+    private String newDomain;
 
 
 
@@ -1034,7 +1041,7 @@ public class MedicalPatientService {
         patientRecordDetailForm.setWarnEarlyRecordList(warnEarlyRecordList);
         //预警指导
         List<WarnLeaveMessage> list =
-                warnLeaveMessageMapper.selectWarnLeaveMessageByRecordId(patientRecord.getRecordId());
+                warnLeaveMessageMapper.selectWarnLeaveMessageByRecordId(recordId);
         if (list != null && list.size() > 0) {
             list.forEach(x -> {
                 if ("1".equals(x.getUserType())) {
@@ -1050,6 +1057,11 @@ public class MedicalPatientService {
                         x.setHeadImage(croCoreConfig.getUserHead());
                         x.setUserName(patientBaseInfo.getPersonName());
                     }
+                }
+                String content = x.getContent();
+                if (StrUtil.isNotEmpty(content) && content.contains(oldDomain)) {
+                    String image = content.replace(oldDomain, newDomain);
+                    x.setContent(image);
                 }
             });
         }
