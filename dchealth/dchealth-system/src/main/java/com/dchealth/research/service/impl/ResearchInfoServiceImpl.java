@@ -484,10 +484,13 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
         try {
             //小文本
             dynamicLargeText.init().createTableBySuffix(id.intValue());
+            dynamicLargeTextLog.init().createTableBySuffix(id.intValue());
             //大文本
             dynamicText.init().createTableBySuffix(id.intValue());
+            dynamicTextLog.init().createTableBySuffix(id.intValue());
             //动态表单
             dynamicFroms.init().createTableBySuffix(id.intValue());
+            dynamicFromsLog.init().createTableBySuffix(id.intValue());
         } catch (DynamicException e) {
             L.error("ERROR",e);
         }
