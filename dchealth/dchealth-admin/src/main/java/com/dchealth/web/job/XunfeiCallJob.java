@@ -521,7 +521,7 @@ public class XunfeiCallJob {
             Var var2 = new Var("content","您在唐都随访患者管理小程序加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都随访患者管理小程序并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
             varList.add(var1);
             varList.add(var2);
-        }else if("16607".equals(followSpeechId)){
+        }else if("19786".equals(followSpeechId)){
             //唐都医院随访短信提醒
             Var var1 = new Var("dwellerName",patientRecordOutbound.getPatientName());
             Var var2 = new Var("content1",patientRecordOutbound.getProjectName()+"队列");

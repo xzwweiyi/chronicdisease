@@ -131,6 +131,7 @@ public class ResearchInfoController extends BaseController
         vo.setCreateBy(getUsername());
         vo.setUserId(getUserId());
         vo.setCreateTime(new Date());
+        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId()));
         return AjaxResult.success(researchInfoService.insertResearchInfo(vo));
     }
 
@@ -145,6 +146,8 @@ public class ResearchInfoController extends BaseController
         if(vo.getProjectName() == null || "".equals(vo.getProjectName())){
             return AjaxResult.error("队列名称不能为空");
         }
+
+        applicationContext.publishEvent(new FollowTreeEvent(getUserId(),getUserId()));
         return toAjax(researchInfoService.updateResearchInfo(vo));
     }
 
