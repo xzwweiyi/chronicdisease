@@ -336,6 +336,8 @@ public class MedicalPatientService {
             record.setFollowSubmitTime(new Date());
             if(!"基线".equals(record.getName())){
                 saveAccountNotice(patientRecord);
+            } else if ("基线".equals(record.getName())) {
+                record.setFollowStatus("3");
             }
         }
         if (record.getIsSubmit() == 0) {

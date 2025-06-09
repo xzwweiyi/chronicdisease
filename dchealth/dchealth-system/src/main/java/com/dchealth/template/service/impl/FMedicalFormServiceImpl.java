@@ -331,6 +331,7 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
             medicalForm.setOpenProperty(form.getOpenProperty());
             medicalForm.setDynamic(form.getDynamic());
             medicalForm.setScoresTotalVal(form.getScoresTotalVal());
+            medicalForm.setSortNum(form.getSortNum());
             fMedicalFormMapper.insertFMedicalForm(medicalForm);
             if (form.getTemplateForms() != null && !form.getTemplateForms().isEmpty()) {
                 recurrenceSave(followId, medicalForm.getMedicalFormId(), form.getTemplateForms());
@@ -346,6 +347,7 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
                         subject.setMedicalFormId(medicalFormId);
                         subject.setIfScore("1");
                         subject.setFollowId(medicalForm.getFollowId());
+                        subject.setSortNum(medicalForm.getSortNum());
                         //存储每一个题目
                         fMedicalExamSubjectMapper.insertFMedicalExamSubject(subject);
                         //保存题目的选项
