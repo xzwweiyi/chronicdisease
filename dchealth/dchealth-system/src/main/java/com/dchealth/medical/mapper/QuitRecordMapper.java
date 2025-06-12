@@ -61,5 +61,5 @@ public interface QuitRecordMapper {
      * 删除当天生成的未填写的随访记录
      * @param record
      */
-    Integer removeNowDayRecord(PatientRecord record);
+    Integer removeNowDayRecord(@Param("record") PatientRecord record);
 }
