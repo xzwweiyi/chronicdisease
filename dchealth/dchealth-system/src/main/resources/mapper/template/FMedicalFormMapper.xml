@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="edcNum"    column="edc_num"    />
         <result property="lockFlag"    column="lock_flag"    />
         <result property="openCollapse"    column="open_collapse"    />
+        <result property="selfEvaluationType" column="self_evaluation_type"/>
     </resultMap>
 
     <sql id="selectFMedicalFormVo">
@@ -96,6 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="lockFlag != null and lockFlag != ''">lock_flag,</if>
             <if test="openCollapse != null and openCollapse != ''">open_collapse,</if>
             <if test="sortNum != null">sort_num,</if>
+            <if test="selfEvaluationType != null">self_evaluation_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="medicalCode != null and medicalCode != ''">#{medicalCode},</if>
@@ -118,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="lockFlag != null and lockFlag != ''">#{lockFlag},</if>
             <if test="openCollapse != null and openCollapse != ''">#{openCollapse},</if>
             <if test="sortNum != null">#{sortNum},</if>
+            <if test="selfEvaluationType != null">#{selfEvaluationType},</if>
         </trim>
     </insert>
 
@@ -144,6 +147,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="lockFlag != null and lockFlag != ''">lock_flag = #{lockFlag},</if>
             <if test="openCollapse != null and openCollapse != ''">open_collapse = #{openCollapse},</if>
             <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="selfEvaluationType != null">self_evaluation_type = #{selfEvaluationType},</if>
         </trim>
         where medical_form_id = #{medicalFormId}
     </update>

@@ -89,4 +89,9 @@ public class FMedicalForm extends BaseEntity
 
     private Integer sortNum;
 
+
+    /**
+     * 0 默认 1营养分析 2康复运动 3 不限
+     */
+    private Integer selfEvaluationType;
 }

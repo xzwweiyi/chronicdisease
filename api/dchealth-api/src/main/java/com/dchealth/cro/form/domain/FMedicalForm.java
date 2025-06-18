@@ -75,4 +75,14 @@ public class FMedicalForm
     private List<WarnConfig> warnConfigs;
 
     private String openCollapse;
+
+
+    /**
+     * 0 默认 1营养分析 2康复运动 3 不限
+     */
+    private Integer selfEvaluationType;
+
+    private String createBy;
+
+    private String updateBy;
 }

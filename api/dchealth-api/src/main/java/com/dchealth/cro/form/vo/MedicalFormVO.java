@@ -40,7 +40,7 @@ public class MedicalFormVO extends FormVO{
     /**  */
     private String attribute;
 
-    /** 0模块1标准项2拍照项3自评量表4预警填报 */
+    /** 0模块1标准项2拍照项3自评量表4预警填报 5健康管理*/
     private String formType;
 
     /** cms问卷 */
