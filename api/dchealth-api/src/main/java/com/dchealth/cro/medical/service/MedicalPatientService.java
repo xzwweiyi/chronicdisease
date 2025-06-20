@@ -1,45 +1,6 @@
 package com.dchealth.cro.medical.service;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import cn.hutool.core.util.StrUtil;
-import com.dchealth.cro.common.cache.RedisPublishService;
-import com.dchealth.cro.medical.form.*;
-import com.dchealth.cro.research.domain.ReSearchForm;
-import com.dchealth.cro.research.domain.ResearchPatient;
-import com.dchealth.cro.research.mapper.ResearchPatientMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -53,6 +14,7 @@ import com.dchealth.cro.account.mapper.SysUserMapper;
 import com.dchealth.cro.account.vo.PatientAccountInfoVO;
 import com.dchealth.cro.common.base.CommonResult;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.cache.RedisPublishService;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.common.utils.StringUtils;
@@ -76,36 +38,21 @@ import com.dchealth.cro.health.mapper.MpPersonMapper;
 import com.dchealth.cro.health.utils.HealthUtils;
 import com.dchealth.cro.his.domain.PatMasterIndex;
 import com.dchealth.cro.his.mapper.PatMasterIndexMapper;
-import com.dchealth.cro.medical.domain.PatientInfo;
-import com.dchealth.cro.medical.domain.PatientRecord;
-import com.dchealth.cro.medical.domain.PatientRecordFiles;
-import com.dchealth.cro.medical.domain.PatientRecordOutbound;
-import com.dchealth.cro.medical.domain.PatientRecordTemplate;
-import com.dchealth.cro.medical.domain.WarnDoctorPatient;
+import com.dchealth.cro.medical.domain.*;
 import com.dchealth.cro.medical.dto.DiseaseResearchPatientDto;
-import com.dchealth.cro.medical.mapper.PatientInfoMapper;
-import com.dchealth.cro.medical.mapper.PatientRecordFilesMapper;
-import com.dchealth.cro.medical.mapper.PatientRecordMapper;
-import com.dchealth.cro.medical.mapper.PatientRecordOutboundMapper;
-import com.dchealth.cro.medical.mapper.PatientRecordTemplateMapper;
-import com.dchealth.cro.medical.mapper.WarnDoctorPatientMapper;
+import com.dchealth.cro.medical.form.*;
+import com.dchealth.cro.medical.mapper.*;
 import com.dchealth.cro.medical.vo.PatientRecordListVo;
-import com.dchealth.cro.medical.vo.xunfei.Dweller;
-import com.dchealth.cro.medical.vo.xunfei.Recall;
-import com.dchealth.cro.medical.vo.xunfei.TaskRelationVo;
-import com.dchealth.cro.medical.vo.xunfei.Var;
-import com.dchealth.cro.medical.vo.xunfei.XunfeiReq;
-import com.dchealth.cro.medical.vo.xunfei.XunfeiRes;
+import com.dchealth.cro.medical.vo.xunfei.*;
 import com.dchealth.cro.question.domain.QuestionQuick;
 import com.dchealth.cro.question.domain.QuestionRecord;
 import com.dchealth.cro.question.mapper.QuestionQuickMapper;
 import com.dchealth.cro.question.mapper.QuestionRecordMapper;
 import com.dchealth.cro.question.vo.QuestionRecordVO;
-import com.dchealth.cro.research.domain.ResearchInfo;
-import com.dchealth.cro.research.domain.ResearchOutbound;
-import com.dchealth.cro.research.domain.ResearchUserRole;
+import com.dchealth.cro.research.domain.*;
 import com.dchealth.cro.research.mapper.ResearchInfoMapper;
 import com.dchealth.cro.research.mapper.ResearchOutboundMapper;
+import com.dchealth.cro.research.mapper.ResearchPatientMapper;
 import com.dchealth.cro.research.mapper.ResearchUserRoleMapper;
 import com.dchealth.cro.warn.domain.WarnEarlyRecord;
 import com.dchealth.cro.warn.domain.WarnLeaveMessage;
@@ -115,6 +62,26 @@ import com.dchealth.cro.warn.mapper.WarnLeaveMessageMapper;
 import com.dchealth.cro.warn.mapper.WarnMedicalEarlyConditionMapper;
 import com.dchealth.cro.warn.vo.OptionsVo;
 import com.dchealth.cro.warn.vo.WarnConditionValueVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class MedicalPatientService {
@@ -224,16 +191,16 @@ public class MedicalPatientService {
             return result;
         }
         PatientRecord record = new PatientRecord();
-        //质疑处理  患者回复质疑只处理质疑的逻辑不修改提交的逻辑
-        if(infoForm.getQuestionRecordForm() != null && !Objects.isNull(infoForm.getQuestionRecordForm().getQuestionId())) {
-            handleRequestionRecordFormInfo(infoForm, record);
-            record.setRecordId(patientRecord.getRecordId());
-            record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
-            patientRecordMapper.updatePatientRecord(record);
-            commonResult.setResult(true);
-            result.setData(commonResult);
-            return result;
-        }
+//        //质疑处理  患者回复质疑只处理质疑的逻辑不修改提交的逻辑
+//        if(infoForm.getQuestionRecordForm() != null && !Objects.isNull(infoForm.getQuestionRecordForm().getQuestionId())) {
+//            handleRequestionRecordFormInfo(infoForm, record);
+//            record.setRecordId(patientRecord.getRecordId());
+//            record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
+//            patientRecordMapper.updatePatientRecord(record);
+//            commonResult.setResult(true);
+//            result.setData(commonResult);
+//            return result;
+//        }
 
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
         patientRecord.setAccountId(patientInfo.getAccountId());
@@ -414,12 +381,16 @@ public class MedicalPatientService {
                 dynamicCommonMapper.executeInsertSql(dynamicSqls);
             }
             Optional<List<FMedicalPropertyForm>> otList = Optional.ofNullable(dyMap.get("0"));//其他数据
+
+            // 大文本
             if (otList.isPresent()) {
                 Optional<List<FMedicalPropertyForm>> ltList = otList.map(lt -> {
                     List<FMedicalPropertyForm> l =
                             lt.stream().filter(f -> PropertyType.largeText(f.getPropertyType())).collect(Collectors.toList());
                     return l.isEmpty() ? null : l;
                 });
+
+                // 小文本
                 Optional<List<FMedicalPropertyForm>> tList = otList.map(t -> {
                     List<FMedicalPropertyForm> l =
                             t.stream().filter(f -> PropertyType.text(f.getPropertyType())).collect(Collectors.toList());
@@ -2433,5 +2404,10 @@ public class MedicalPatientService {
         mpPersonMapper.updateMobile(form.getPersonId(), form.getMobile());
         // 返回成功信息
         return "联系手机修改成功！";
+    }
+
+    public Object selectHealthManageList(PatientRecord patientRecord) {
+
+        return null;
     }
 }

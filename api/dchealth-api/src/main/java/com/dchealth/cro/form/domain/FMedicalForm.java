@@ -82,6 +82,8 @@ public class FMedicalForm
      */
     private Integer selfEvaluationType;
 
+    private Integer healthManageType;
+
     private String createBy;
 
     private String updateBy;

@@ -8,12 +8,13 @@ dchealth:
   copyrightYear: 2022
   # 实例演示开关
   demoEnabled: true
-  profile: D:/dchealth/uploadPath
+  profile: /usr/local/server/mirco-server/upload_temp
+  fastPath: http://fastdfs-server:7910/fastdfs/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
-  fastPath: http://fastdfs-server:7910/fastdfs/
+
 
 elasticsearch:
   schema: http

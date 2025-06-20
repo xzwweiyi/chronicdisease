@@ -200,6 +200,8 @@ public class PatientInfo extends BaseEntity
     private Integer areaId;
     //排除队列状态
     private String notResearchStatus;
+
+    private Integer messageNums;
     /**
      * 随访提交时间
      */

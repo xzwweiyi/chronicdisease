@@ -6,10 +6,7 @@ import com.dchealth.common.annotation.DataScope;
 import com.dchealth.common.constant.FollowTipStatusConstants;
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.core.domain.entity.SysUser;
-import com.dchealth.common.utils.CommunalUtils;
-import com.dchealth.common.utils.DateUtils;
-import com.dchealth.common.utils.PageUtils;
-import com.dchealth.common.utils.StringUtils;
+import com.dchealth.common.utils.*;
 import com.dchealth.medical.domain.MpPerson;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.PatientRecord;
@@ -33,6 +30,8 @@ import com.dchealth.research.service.IResearchInfoService;
 import com.dchealth.system.mapper.SysUserMapper;
 import com.dchealth.template.domain.FMedicalForm;
 import com.dchealth.template.mapper.FMedicalFormMapper;
+import com.dchealth.user.domain.LeaveMessage;
+import com.dchealth.user.mapper.UserLeaveMessageMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -82,6 +81,10 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
     protected Logger logger = LoggerFactory.getLogger(PatientInfoServiceImpl.class);
     @Autowired
     private ResearchInfoMapper researchInfoMapper;
+
+    @Autowired
+    private UserLeaveMessageMapper userLeaveMessageMapper;
+
 
     /**
      * 查询患者信息
@@ -153,6 +156,8 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
 
     @Override
     public List<PatientInfo> selectPatientInfoListByAuth(PatientInfo requestPatientInfo) {
+
+        Long userId = SecurityUtils.getUserId();
         PatientInfo patientInfoParam = new PatientInfo();
         BeanUtils.copyProperties(requestPatientInfo,patientInfoParam);
         List<Long> patientIds = null;
@@ -193,8 +198,16 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                     info.setEdcNames(patientRecord.getEdcNames());
                 }
                 setSearchType(requestPatientInfo.getPatientStatus(),info);
+
+                // 添加留言功能 设置未读标识
+                List<LeaveMessage> leaveMessages = userLeaveMessageMapper.selectUpdateReadStatus(Long.valueOf(info.getPersonId()), userId);
+                if (leaveMessages != null) {
+                    int size = leaveMessages.size();
+                    info.setMessageNums(size);
+                }
             });
         }
+
         return patientInfos;
     }
 
