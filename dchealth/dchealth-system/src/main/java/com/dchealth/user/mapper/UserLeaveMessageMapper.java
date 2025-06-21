@@ -61,7 +61,7 @@ public interface UserLeaveMessageMapper
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteLeaveMessageByIds(List<Long> ids);
+    public int deleteLeaveMessageByIds(@Param("ids")List<Long> ids);
 
     /**
      * 查询是否有未读的消息

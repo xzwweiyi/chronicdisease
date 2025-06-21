@@ -71,27 +71,34 @@ public class LeaveMessageService {
         } else if ("1".equals(leaveMessageForm.getContentType())) {
             leaveMessageMapper.insertLeaveMessage(leaveMessage);
         }
+        ArrayList<UserMessageListVO> listVOS = new ArrayList<>();
 
         list = leaveMessageMapper.selectLeaveMessageByPersonId(leaveMessageForm.getPersonId());
-        if (list != null && list.size() > 0) {
-            list.forEach(x -> {
-                if ("1".equals(x.getUserType())) {
-                    SysUser sysUser = sysUserMapper.selectSysUserByUserId(x.getAccountId());
-                    if (sysUser != null) {
-                        x.setHeadImage(sysUser.getHeadImage() == null ? "https://hzfw.dchealthclinical.com/files/admin.png" : sysUser.getHeadImage());
-                        x.setUserName(sysUser.getNickName() == null ? "" : sysUser.getNickName());
-                    }
-                } else if ("2".equals(x.getUserType())) {
-                    MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(x.getAccountId());
-                    if (patientBaseInfo != null) {
-                        x.setHeadImage(croCoreConfig.getUserHead());
-                        x.setUserName(patientBaseInfo.getPersonName());
-                    }
+        list.forEach(x -> {
+            UserMessageListVO wvo = new UserMessageListVO();
+            wvo.setMsgType(x.getContentType());
+            wvo.setId(x.getId());
+            wvo.setAccountId(x.getAccountId());
+            wvo.setMsgTime(DateUtils.parseDateToStrFull(x.getCreateTime()));
+            wvo.setMsgText(x.getContent());
+            wvo.setUserType(x.getUserType());
+            if ("1".equals(x.getUserType())) {
+                SysUser sysUser = sysUserMapper.selectSysUserByUserId(x.getAccountId());
+                if (sysUser != null) {
+                    wvo.setHeadImage(sysUser.getHeadImage() == null ? "https://hzfw.dchealthclinical.com/files/admin.png" : sysUser.getHeadImage());
+                    wvo.setUserName(sysUser.getNickName() == null ? "" : sysUser.getNickName());
                 }
-            });
-        }
+            } else if ("2".equals(x.getUserType())) {
+                MpPerson mpPerson = mpPersonMapper.selectPersonByAccountId(x.getAccountId());
+                if (mpPerson != null) {
+                    wvo.setHeadImage(croCoreConfig.getUserHead());
+                    wvo.setUserName(mpPerson.getPersonName());
+                }
+            }
+            listVOS.add(wvo);
+        });
 
-        result.setData(list);
+        result.setData(listVOS);
         return result;
     }
 

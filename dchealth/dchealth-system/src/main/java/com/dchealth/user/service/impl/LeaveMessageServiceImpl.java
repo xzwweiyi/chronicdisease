@@ -63,6 +63,8 @@ public class LeaveMessageServiceImpl implements ILeaveMessageService {
         if (list != null && !list.isEmpty()) {
             list.forEach(x -> {
                 UserMessageListVO wvo = new UserMessageListVO();
+                wvo.setId(x.getId());
+                wvo.setAccountId(x.getAccountId());
                 wvo.setMsgType(x.getContentType());
                 wvo.setMsgTime(DateUtils.parseDateToStrFull(x.getCreateTime()));
                 wvo.setMsgText(x.getContent());

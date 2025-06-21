@@ -13,6 +13,8 @@ public class UserMessageListVO {
      */
     private String userName;
 
+    private Long id;
+
     /**
      * 消息时间
      */
@@ -45,6 +47,8 @@ public class UserMessageListVO {
      * 会话ID
      */
     private Long warnGuideConverId;
+
+    private Long accountId;
 
 
 }
