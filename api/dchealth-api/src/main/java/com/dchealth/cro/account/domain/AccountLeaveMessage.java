@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -40,16 +39,18 @@ public class AccountLeaveMessage implements Serializable {
     /**
      * 发送时间
      */
-    private LocalDateTime sendTime;
+    private Date sendTime;
 
     /**
      * 接收时间
      */
-    private LocalDateTime receiveTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date receiveTime;
 
     /**
      * 是否已读 0 未读  1  已读
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Boolean isRead;
 
 
@@ -94,7 +95,8 @@ public class AccountLeaveMessage implements Serializable {
      * 删除标识
      * @return
      */
-    private Boolean isDelete;
+    private Boolean isDeleteDc;
+    private Boolean isDeletePt;
 
     @Override
     public String toString() {

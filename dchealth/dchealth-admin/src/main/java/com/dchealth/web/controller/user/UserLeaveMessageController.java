@@ -25,7 +25,7 @@ public class UserLeaveMessageController extends BaseController {
     @Resource
     private ILeaveMessageService leaveMessageService;
 
-    @PreAuthorize("@ss.hasPermi('system:message:query')")
+//    @PreAuthorize("@ss.hasPermi('system:message:query')")
     @GetMapping(value = "/{personId}")
     public AjaxResult getInfo(@PathVariable("personId") Long personId)
     {

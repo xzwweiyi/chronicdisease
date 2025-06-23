@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,8 +56,8 @@ public class LeaveMessageService {
         BeanUtils.copyProperties(leaveMessageForm, leaveMessage);
         leaveMessage.setCreateTime(new Date());
         leaveMessage.setAccountId(leaveMessageForm.getAccountId())
-                .setSenderId(leaveMessageForm.getAccountId())
-                .setSendTime(LocalDateTime.now())
+                .setSenderId(leaveMessageForm.getPersonId())
+                .setSendTime(new Date())
                 .setPersonId(leaveMessage.getPersonId())
                 .setUserType("2")
         ;
@@ -153,7 +152,7 @@ public class LeaveMessageService {
         if (messageList != null && !messageList.isEmpty()) {
             messageList.forEach(x -> {
                 x.setIsRead(true);
-                x.setReceiveTime(LocalDateTime.now());
+                x.setReceiveTime(new Date());
                 x.setUpdateTime(new Date());
                 int i = leaveMessageMapper.updateLeaveMessage(x);
                 if (i <= 0) {

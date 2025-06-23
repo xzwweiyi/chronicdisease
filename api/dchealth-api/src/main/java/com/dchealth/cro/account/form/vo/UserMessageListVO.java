@@ -3,7 +3,6 @@ package com.dchealth.cro.account.form.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -65,12 +64,14 @@ public class UserMessageListVO {
     /**
      * 发送时间
      */
-    private LocalDateTime sendTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date sendTime;
 
     /**
      * 接收时间
      */
-    private LocalDateTime receiveTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date receiveTime;
 
     /**
      * 是否已读 0 未读  1  已读

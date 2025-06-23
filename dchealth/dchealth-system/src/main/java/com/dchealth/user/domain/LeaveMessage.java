@@ -2,12 +2,13 @@ package com.dchealth.user.domain;
 
 import com.dchealth.common.annotation.Excel;
 import com.dchealth.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 预警指导聊天对象 warn_leave_message
@@ -40,12 +41,14 @@ public class LeaveMessage extends BaseEntity{
     /**
      * 发送时间
      */
-    private LocalDateTime sendTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date sendTime;
 
     /**
      * 接收时间
      */
-    private LocalDateTime receiveTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date receiveTime;
 
     /**
      * 是否已读 0 未读  1  已读
@@ -81,7 +84,8 @@ public class LeaveMessage extends BaseEntity{
      * 删除标识
      * @return
      */
-    private Boolean isDelete;
+    private Boolean isDeleteDc;
+    private Boolean isDeletePt;
 
     @Override
     public String toString() {

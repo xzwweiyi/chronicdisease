@@ -200,7 +200,7 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 setSearchType(requestPatientInfo.getPatientStatus(),info);
 
                 // 添加留言功能 设置未读标识
-                List<LeaveMessage> leaveMessages = userLeaveMessageMapper.selectUpdateReadStatus(Long.valueOf(info.getPersonId()), userId);
+                List<LeaveMessage> leaveMessages = userLeaveMessageMapper.selectUpdateReadStatus(Long.valueOf(info.getPersonId()), Long.valueOf(info.getPersonId()));
                 if (leaveMessages != null) {
                     int size = leaveMessages.size();
                     info.setMessageNums(size);

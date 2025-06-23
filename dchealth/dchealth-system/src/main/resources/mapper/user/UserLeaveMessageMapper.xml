@@ -20,7 +20,8 @@
         <result property="sendTime" column="send_time"/>
         <result property="receiveTime" column="receive_time"/>
         <result property="createTime" column="create_time"/>
-        <result property="isDelete" column="is_delete"/>
+        <result property="isDeleteDc" column="is_delete_dc"/>
+        <result property="isDeletePt" column="is_delete_pt"/>
     </resultMap>
 
     <sql id="selectLeaveMessageVo">
@@ -33,7 +34,15 @@
                content_type,
                content,
                create_time,
-               is_delete
+               is_delete_dc,
+               is_delete_pt,
+               sender_id,
+               receiver_id,
+               is_read,
+               update_time,
+               send_time,
+               receive_time,
+               create_time
         from leave_message
     </sql>
 
@@ -47,7 +56,7 @@
             <if test="content != null  and content != ''">and content = #{content}</if>
             <if test="personId != null ">and person_id = #{personId}</if>
             <if test="accountName != null  and accountName != ''">and account_name = #{accountName}</if>
-            and is_delete = 0
+            and is_delete_dc = 0
         </where>
     </select>
 
@@ -57,7 +66,12 @@
     </select>
     <select id="selectUpdateReadStatus" resultType="com.dchealth.user.domain.LeaveMessage" resultMap="LeaveMessageResult">
         <include refid="selectLeaveMessageVo"/>
-        where sender_id = #{personId} and is_read = 0 and is_delete = 0
+        <where>
+            <if test="personId != null">and person_id = #{personId}</if>
+            <if test="senderId != null">and sender_id = #{senderId}</if>
+            and is_read = 0 and is_delete_dc = 0
+        </where>
+
     </select>
 
 
@@ -115,12 +129,12 @@
 
     <delete id="deleteLeaveMessageById" parameterType="Long">
         update leave_message
-        set is_delete = 1
+        set is_delete_dc = 1
         where id = #{id}
     </delete>
 
     <delete id="deleteLeaveMessageByIds" parameterType="String">
-        update leave_message set is_delete = 1 where id in
+        update leave_message set is_delete_dc = 1 where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>

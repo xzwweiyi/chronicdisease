@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -139,7 +138,7 @@ public class LeaveMessageServiceImpl implements ILeaveMessageService {
     @Transactional(rollbackFor = Exception.class)
     public Long sendMessage(UserMessageListReq messageListReq) {
         Long userId = SecurityUtils.getLoginUser().getUserId();
-        LocalDateTime now = LocalDateTime.now();
+        Date now = new Date();
         LeaveMessage leaveMessage = new LeaveMessage();
         leaveMessage.setRecordId(messageListReq.getPersonId())
                 .setAccountId(messageListReq.getFromUserId())
@@ -167,13 +166,13 @@ public class LeaveMessageServiceImpl implements ILeaveMessageService {
     public Boolean updateReadStatus(Long personId) {
         Long userId = SecurityUtils.getUserId();
         AtomicReference<Boolean> result = new AtomicReference<>(true);
-        List<LeaveMessage> leaveMessage = userLeaveMessageMapper.selectUpdateReadStatus(personId,userId);
+        List<LeaveMessage> leaveMessage = userLeaveMessageMapper.selectUpdateReadStatus(personId, personId);
         if (leaveMessage != null) {
             // 更新是否已读的状态
             leaveMessage.forEach(x -> {
                 x.setIsRead(true);
                 x.setReceiverId(userId);
-                x.setReceiveTime(LocalDateTime.now());
+                x.setReceiveTime(new Date());
                 int i = userLeaveMessageMapper.updateLeaveMessage(x);
                 if (i <= 0) {
                     result.set(false);
