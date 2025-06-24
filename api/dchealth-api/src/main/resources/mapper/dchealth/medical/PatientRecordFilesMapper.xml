@@ -9,6 +9,7 @@
         <result property="imageUrl"    column="image_url"    />
         <result property="patientId"    column="patient_id"    />
         <result property="recordId"    column="record_id"    />
+        <result property="healthId" column="health_id"/>
         <result property="medicalFormId"    column="medical_form_id"    />
         <result property="imageCode"    column="image_code"    />
         <result property="imageParentCode"    column="image_parent_code"    />
@@ -20,19 +21,21 @@
     </resultMap>
 
     <sql id="selectPatientRecordFilesVo">
-        select id, image_url, patient_id, record_id, medical_form_id, image_code, image_parent_code, create_time,
+        select id, image_url, patient_id,health_id, record_id, medical_form_id, image_code, image_parent_code, create_time,
                create_by, property_id, property_code, exam_record_id from patient_record_files
     </sql>
 
     <select id="selectPatientRecordFilesList" parameterType="com.dchealth.cro.medical.domain.PatientRecordFiles" resultMap="PatientRecordFilesResult">
         <include refid="selectPatientRecordFilesVo"/>
         <where>
-            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
-            <if test="patientId != null "> and patient_id = #{patientId}</if>
-            <if test="recordId != null "> and record_id = #{recordId}</if>
-            <if test="medicalFormId != null "> and medical_form_id = #{medicalFormId}</if>
-            <if test="imageCode != null  and imageCode != ''"> and image_code = #{imageCode}</if>
-            <if test="imageParentCode != null  and imageParentCode != ''"> and image_parent_code = #{imageParentCode}</if>
+            <if test="imageUrl != null  and imageUrl != ''">and image_url = #{imageUrl}</if>
+            <if test="patientId != null ">and patient_id = #{patientId}</if>
+            <if test="recordId != null ">and record_id = #{recordId}</if>
+            <if test="healthId != null ">and health_id = #{healthId}</if>
+            <if test="medicalFormId != null ">and medical_form_id = #{medicalFormId}</if>
+            <if test="imageCode != null  and imageCode != ''">and image_code = #{imageCode}</if>
+            <if test="imageParentCode != null  and imageParentCode != ''">and image_parent_code = #{imageParentCode}
+            </if>
         </where>
     </select>
 
@@ -52,6 +55,7 @@
             <if test="imageUrl != null and imageUrl != ''">image_url,</if>
             <if test="patientId != null">patient_id,</if>
             <if test="recordId != null">record_id,</if>
+            <if test="healthId != null">health_id,</if>
             <if test="medicalFormId != null">medical_form_id,</if>
             <if test="imageCode != null">image_code,</if>
             <if test="imageParentCode != null">image_parent_code,</if>
@@ -63,6 +67,7 @@
             <if test="imageUrl != null and imageUrl != ''">#{imageUrl},</if>
             <if test="patientId != null">#{patientId},</if>
             <if test="recordId != null">#{recordId},</if>
+            <if test="healthId != null">#{healthId},</if>
             <if test="medicalFormId != null">#{medicalFormId},</if>
             <if test="imageCode != null">#{imageCode},</if>
             <if test="imageParentCode != null">#{imageParentCode},</if>
@@ -74,9 +79,9 @@
 
     <insert id="batchInsertPatientRecordFiles">
         insert into
-        patient_record_files(image_url,patient_id,record_id,medical_form_id,property_id,property_code,exam_record_id,create_time) values
+        patient_record_files(image_url,patient_id,health_id,record_id,medical_form_id,property_id,property_code,exam_record_id,create_time) values
         <foreach item="item" index="index" collection="list" separator=",">
-            (#{item.imageUrl},#{item.patientId},#{item.recordId},#{item.medicalFormId},#{item.propertyId},#{item.propertyCode},#{item.examRecordId},#{item.createTime})
+            (#{item.imageUrl},#{item.patientId},#{item.healthId},#{item.recordId},#{item.medicalFormId},#{item.propertyId},#{item.propertyCode},#{item.examRecordId},#{item.createTime})
         </foreach>
     </insert>
 
@@ -86,6 +91,7 @@
             <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
             <if test="patientId != null">patient_id = #{patientId},</if>
             <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="healthId != null">health_id = #{healthId},</if>
             <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
             <if test="imageCode != null">image_code = #{imageCode},</if>
             <if test="imageParentCode != null">image_parent_code = #{imageParentCode},</if>
@@ -127,5 +133,8 @@
 
     <delete id="deletePatientRecordFiles"  parameterType="java.util.Map">
         delete from patient_record_files where property_id = #{propertyId} and  exam_record_id =#{examRecordId}
+    </delete>
+    <delete id="deletePatientRecordFilesByHealthId" parameterType="Long">
+        delete from patient_record_files where health_id = #{healthId}
     </delete>
 </mapper>

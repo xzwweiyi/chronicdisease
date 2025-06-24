@@ -22,6 +22,11 @@ public class PatientRecordSaveUpdateInfoForm {
     private Long recordId;
 
     /**
+     * 健康档案id
+     */
+    private Long healthId;
+
+    /**
      * 患者ID
      */
     //private Long patientId;

@@ -285,7 +285,6 @@ public class MedicalPatientService {
             pi.setPatientStatus(patientStatus);
             patientInfoMapper.updatePatientInfo(pi);
         }
-
     }
 
     private void handlePatientRecordInfo(PatientRecord patientRecord, PatientRecord record) {

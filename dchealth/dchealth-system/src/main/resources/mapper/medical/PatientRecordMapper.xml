@@ -575,22 +575,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <select id="selectPatientRecordByResearchIdAndPatientId" resultMap="PatientRecordResult">
-        select * from (SELECT re.*,max(record_id)over() maxId FROM patient_record re
-                                                              WHERE re.patient_id = #{patientId} and re.research_id = #{researchId}) a WHERE a.record_id = a.maxId;
+        SELECT re.*
+        FROM patient_record re
+                 JOIN (
+            SELECT MAX(record_id) AS max_id
+            FROM patient_record
+            WHERE patient_id = #{patientId} AND research_id = #{researchId}
+        ) max_rec ON re.record_id = max_rec.max_id
+        WHERE re.patient_id = #{patientId} AND re.research_id = #{researchId};
     </select>
 
     <select id="selectPatientRecordByResearchIdAndPatientId2" resultMap="PatientRecordResult">
-        select a.*,b.edcNames
-        from (SELECT re.*, max(record_id) over() maxId
-              FROM patient_record re
-              WHERE re.patient_id = #{patientId}
-                and re.research_id = #{researchId}) a
-                     left join (select patient_id, GROUP_CONCAT(name) edcNames
-                             from patient_record re
-                             where re.patient_id = #{patientId}
-                               and re.research_id = #{researchId}
-                               and re.edc_status = '4') b on a.patient_id = b.patient_id
-        WHERE a.record_id = a.maxId;
+        SELECT re.*, b.edcNames
+        FROM patient_record re
+                 LEFT JOIN (SELECT patient_id, GROUP_CONCAT(name) AS edcNames
+                            FROM patient_record
+                            WHERE patient_id = #{patientId}
+                              AND research_id = #{researchId}
+                              AND edc_status = '4') b ON re.patient_id = b.patient_id
+        WHERE re.patient_id = #{patientId}
+          AND re.research_id = #{researchId}
+          AND re.record_id = (SELECT MAX(record_id)
+                              FROM patient_record
+                              WHERE patient_id = #{patientId}
+                                AND research_id = #{researchId});
     </select>
 
     <select id="selectPatientRecordByPatientId" resultMap="PatientRecordResult">

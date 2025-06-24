@@ -56,20 +56,20 @@ spring:
     druid:
         # 主库数据源
         dbtarget:
-          url: jdbc:mysql://39.105.140.245:3306/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
+          url: jdbc:mysql://103.85.174.232:42569/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
           username: root
-          password: Ab123456!
+          password: root_2018DCH
           driver-class-name: com.mysql.cj.jdbc.Driver
         # 读取数据源
         dbcheck:
-          url: jdbc:mysql://39.105.140.245:3306/dchealth_etl_check?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:mysql://103.85.174.232:42569/dchealth_etl_check?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
           username: root
-          password: Ab123456!
+          password: root_2018DCH
           driver-class-name: com.mysql.cj.jdbc.Driver
         dbrecord:
-          url: jdbc:mysql://39.105.140.245:3306/dchealth_etl_record?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:mysql://103.85.174.232:42569/dchealth_etl_record?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
           username: root
-          password: Ab123456!
+          password: root_2018DCH
           driver-class-name: com.mysql.cj.jdbc.Driver
 
         # 初始连接数

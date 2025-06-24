@@ -1,10 +1,9 @@
 package com.dchealth.cro.medical.mapper;
 
 import com.dchealth.cro.medical.domain.PatientRecordFiles;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import org.springframework.stereotype.Repository;
 @Repository
 public interface PatientRecordFilesMapper {
 
@@ -92,4 +91,6 @@ public interface PatientRecordFilesMapper {
     void deletePatientRecordFilesByProId(Long propertyId);
 
     void deletePatientRecordFiles(Long propertyId,Long examRecordId);
+
+    void deletePatientRecordFilesByHealthId(Long healthId);
 }

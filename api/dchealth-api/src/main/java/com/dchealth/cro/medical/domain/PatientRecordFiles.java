@@ -19,6 +19,8 @@ public class PatientRecordFiles {
     /** 患者ID */
     private Long patientId;
 
+    private Long healthId;
+
     /** 档案ID */
     private Long recordId;
 

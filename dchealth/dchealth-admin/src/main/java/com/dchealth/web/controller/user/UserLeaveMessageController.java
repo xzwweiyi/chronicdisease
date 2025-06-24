@@ -6,7 +6,6 @@ import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.user.domain.LeaveMessage;
 import com.dchealth.user.service.ILeaveMessageService;
 import com.dchealth.user.vo.req.UserMessageListReq;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,7 +36,7 @@ public class UserLeaveMessageController extends BaseController {
     /**
      * 发送指导消息
      */
-    @PreAuthorize("@ss.hasPermi('system:message:send')")
+//    @PreAuthorize("@ss.hasPermi('system:message:send')")
     @PostMapping("/send")
     public AjaxResult send(@RequestBody UserMessageListReq messageListReq) {
         messageListReq.setFromUserId(getUserId());
@@ -49,7 +48,7 @@ public class UserLeaveMessageController extends BaseController {
     /**
      * 清空指导消息
      */
-    @PreAuthorize("@ss.hasPermi('system:message:clear')")
+//    @PreAuthorize("@ss.hasPermi('system:message:clear')")
     @GetMapping("/clear/{id}")
     public AjaxResult clear(@PathVariable("id") Long id) {
         return AjaxResult.success(leaveMessageService.deleteLeaveMessageById(id));
@@ -59,7 +58,7 @@ public class UserLeaveMessageController extends BaseController {
     /**
      * 批量清空指导消息
      */
-    @PreAuthorize("@ss.hasPermi('system:message:clearall')")
+//    @PreAuthorize("@ss.hasPermi('system:message:clearall')")
     @PostMapping("/batchClear")
     public AjaxResult batchClear(@RequestBody List<Long> ids) {
         return AjaxResult.success(leaveMessageService.deleteLeaveMessageByIds(ids));
