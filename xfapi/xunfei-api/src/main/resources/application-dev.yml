@@ -21,9 +21,9 @@ spring:
   datasource:
     name: dataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://103.85.174.232:42569/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://10.131.102.104:13306/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
     username: root
-    password: root_2018DCH
+    password: Hebta.123
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 5

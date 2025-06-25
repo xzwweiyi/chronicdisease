@@ -29,9 +29,9 @@ public class DbDocumentGeneration {
 	   //数据源
 	   HikariConfig hikariConfig = new HikariConfig();
 	   hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-	   hikariConfig.setJdbcUrl("jdbc:mysql://103.85.174.232:42569/axy717?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
+	   hikariConfig.setJdbcUrl("jdbc:mysql://10.131.102.104:13306/axy717?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8");
 	   hikariConfig.setUsername("root");
-	   hikariConfig.setPassword("root_2018DCH");
+	   hikariConfig.setPassword("Hebta.123");
 	   //设置可以获取tables remarks信息
 	   hikariConfig.addDataSourceProperty("useInformationSchema", "true");
 	   hikariConfig.setMinimumIdle(2);
