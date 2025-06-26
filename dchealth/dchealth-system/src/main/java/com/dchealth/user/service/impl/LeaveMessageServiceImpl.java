@@ -120,6 +120,9 @@ public class LeaveMessageServiceImpl implements ILeaveMessageService {
      */
     @Override
     public int deleteLeaveMessageByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
         return userLeaveMessageMapper.deleteLeaveMessageByIds(ids);
     }
 

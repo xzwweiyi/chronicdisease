@@ -1,5 +1,6 @@
 package com.dchealth.cro.account.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.dchealth.cro.account.domain.AccountLeaveMessage;
 import com.dchealth.cro.account.domain.SysUser;
 import com.dchealth.cro.account.form.req.UserMessageListReq;
@@ -15,6 +16,7 @@ import com.dchealth.cro.medical.form.LeaveMessageForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,12 @@ public class LeaveMessageService {
 
     @Autowired
     private CroCoreConfig croCoreConfig;
+
+    @Value("${image.oldDomain}")
+    private String oldDomain;
+
+    @Value("${image.newDomain}")
+    private String newDomain;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -127,6 +135,12 @@ public class LeaveMessageService {
                         wvo.setHeadImage(croCoreConfig.getUserHead());
                         wvo.setUserName(mpPerson.getPersonName());
                     }
+                }
+
+                String content = x.getContent();
+                if (StrUtil.isNotEmpty(content) && content.contains(oldDomain)) {
+                    String image = content.replace(oldDomain, newDomain);
+                    x.setContent(image);
                 }
                 result.add(wvo);
             });

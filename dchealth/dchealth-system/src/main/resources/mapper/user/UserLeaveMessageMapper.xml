@@ -133,10 +133,16 @@
         where id = #{id}
     </delete>
 
-    <delete id="deleteLeaveMessageByIds" parameterType="String">
-        update leave_message set is_delete_dc = 1 where id in
-        <foreach item="id" collection="ids" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+    <delete id="deleteLeaveMessageByIds" parameterType="java.util.List">
+        <!-- 或使用别名 parameterType="list" -->
+        UPDATE leave_message
+        SET is_delete_dc = 1
+        WHERE 1 = 0
+        <if test="list != null and !list.isEmpty()">
+            OR id IN
+            <foreach item="id" collection="list" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
     </delete>
 </mapper>
