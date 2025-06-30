@@ -3,30 +3,38 @@ package com.dchealth.cro.medical.service;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson2.JSONArray;
-import com.dchealth.cro.account.domain.AccountNotice;
+import com.dchealth.cro.account.constant.BaseConstant;
 import com.dchealth.cro.account.mapper.AccountNoticeMapper;
 import com.dchealth.cro.common.base.CommonResult;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.common.utils.StringUtils;
+import com.dchealth.cro.common.utils.bean.BeanUtils;
 import com.dchealth.cro.enums.FollowTipStatusEnum;
 import com.dchealth.cro.form.common.DynamicSql;
 import com.dchealth.cro.form.constant.PropertyType;
+import com.dchealth.cro.form.domain.DynamicCommonProperty;
 import com.dchealth.cro.form.domain.form.DynamicForm;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
 import com.dchealth.cro.form.mapper.DynamicCommonMapper;
+import com.dchealth.cro.form.service.MedicalFormService;
+import com.dchealth.cro.form.vo.MedicalFormVO;
+import com.dchealth.cro.form.vo.MedicalPropertyVO;
 import com.dchealth.cro.medical.domain.PatientInfo;
 import com.dchealth.cro.medical.domain.PatientRecord;
 import com.dchealth.cro.medical.domain.PatientRecordFiles;
 import com.dchealth.cro.medical.domain.PatientRecordHealth;
+import com.dchealth.cro.medical.form.PatientRecordDetailForm;
 import com.dchealth.cro.medical.form.PatientRecordFilesForm;
 import com.dchealth.cro.medical.form.PatientRecordSaveUpdateInfoForm;
 import com.dchealth.cro.medical.mapper.PatientInfoMapper;
 import com.dchealth.cro.medical.mapper.PatientRecordFilesMapper;
 import com.dchealth.cro.medical.mapper.PatientRecordHealthMapper;
 import com.dchealth.cro.medical.mapper.PatientRecordMapper;
-import com.dchealth.cro.research.domain.ResearchUserRole;
+import com.dchealth.cro.medical.vo.health.PatientRecordHealthReq;
+import com.dchealth.cro.research.domain.ResearchInfo;
+import com.dchealth.cro.research.mapper.ResearchInfoMapper;
 import com.dchealth.cro.research.mapper.ResearchUserRoleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -37,7 +45,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,6 +87,17 @@ public class PatientRecordHealthService {
 
     @Autowired
     private AccountNoticeMapper accountNoticeMapper;
+
+    @Autowired
+    private ResearchInfoMapper researchInfoMapper;
+
+    @Autowired
+    private MedicalFormService medicalFormService;
+
+    @Autowired
+    private Executor executor;
+
+
 
 
     /**
@@ -173,7 +195,7 @@ public class PatientRecordHealthService {
         health.setPatientId(patientRecord.getPatientId());
         health.setSubmitTime(DateUtils.getNowDate());
         health.setCreateTime(DateUtils.getNowDate());
-        health.setHealthManageType(1);
+        health.setHealthManageType(infoForm.getHealthManageType());
         int i = patientRecordHealthMapper.insertPatientRecordHealth(health);
         if (i < 0) {
             L.error("保存患者档案健康管理失败");
@@ -310,32 +332,201 @@ public class PatientRecordHealthService {
 
     }
 
-    public PatientRecord setFollowTipStatusInfo(PatientRecord record) {
-        if (!Objects.isNull(record.getFollowTipStatus()) && Objects.equals(record.getFollowTipStatus(),
-                FollowTipStatusEnum.BASELINE_REMINDER.getIndex())) {
-            // 基线节点，患者端在填写完基本的患者信息后，交互结束
-            record.setFollowTipStatus(FollowTipStatusEnum.NO_STATUS.getIndex());
+    public Object patientRecordHealthDetail(PatientRecordHealthReq healthReq) {
+
+        DchealthCloudResponseEntity<PatientRecordDetailForm> result = new DchealthCloudResponseEntity<>();
+        PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(healthReq.getRecordId());
+        if (patientRecord == null) {//档案不存在
+            result.setCode(CroApiCodeConstant.PATIENT_RECORD_NOT_EXIT.getCode());
+            return result;
         }
-        if (!Objects.isNull(record.getFollowTipStatus()) && Objects.equals(record.getFollowTipStatus(),
-                FollowTipStatusEnum.FOLLOW_UP_VISIT_DUE_REMINDER.getIndex())) {
-            record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
+        Long researchId = patientRecord.getResearchId();
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
+        if (Objects.isNull(researchInfo) || "1".equals(researchInfo.getDelFlag())) {
+            result.setCode(CroApiCodeConstant.ARTICLE_NOT_EXIST.getCode());
+            return result;
         }
-        if (!Objects.isNull(record.getFollowTipStatus()) && Objects.equals(record.getFollowTipStatus(),
-                FollowTipStatusEnum.FOLLOW_UP_QUESTIONING_REMINDER.getIndex())) {
-            record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
+        PatientRecordDetailForm patientRecordDetailForm = new PatientRecordDetailForm();
+        patientRecordDetailForm.setRecordId(healthReq.getRecordId());
+        patientRecordDetailForm.setIsSubmit(patientRecord.getIsSubmit());
+        patientRecordDetailForm.setStageName(patientRecord.getName());
+        patientRecordDetailForm.setOverTimeStatus(patientRecord.getOverTimeStatus());
+        patientRecordDetailForm.setWarnStatus(patientRecord.getWarnStatus());
+        patientRecordDetailForm.setCreateTimeStr(DateUtils.dateTime(patientRecord.getCreateTime()));
+        patientRecordDetailForm.setResearchId(patientRecord.getResearchId());
+        patientRecordDetailForm.setFollowTipStatus(patientRecord.getFollowTipStatus());
+        if(patientRecord.getVisitTime()!= null) {
+            patientRecordDetailForm.setVisitTime(DateUtils.parseDateToStrFull(patientRecord.getVisitTime()));
         }
-        return record;
+        List<MedicalFormVO> datas = medicalFormService.followForms(patientRecord.getFollowId(),
+                patientRecord.getRecordId(), patientRecord.getFollowStatus(), (formVOS, propertyVOS, propertyTypes) -> {
+                    List<PatientRecordFiles> patientRecordFiles =
+                            patientRecordFilesMapper.selectPatientRecordFilesByRecordId(healthReq.getRecordId());
+                    CompletableFuture<Void> pcf = getPcf(healthReq.getRecordId(), patientRecord, propertyVOS, propertyTypes,
+                            patientRecordFiles);
+                    CompletableFuture<Void> fcf = getFcf(healthReq.getRecordId(), patientRecord, formVOS, propertyVOS, patientRecordFiles);
+                    CompletableFuture.allOf(pcf, fcf).join();
+                });
+        patientRecordDetailForm.setMedicalFormVOS(datas);
+        result.setData(patientRecordDetailForm);
+        return result;
+
     }
 
-    private void saveAccountNotice(PatientRecord patientRecord) {
-        List<ResearchUserRole> researchUserRoleList = researchUserRoleMapper.findUserRoleByResearchId(patientRecord.getResearchId());
-        if(researchUserRoleList.size()>0){
-            String doctorMsgContent = "患者提交新的随访请尽快处理";
-            for(ResearchUserRole r:researchUserRoleList){
-                AccountNotice an = new AccountNotice(patientRecord,doctorMsgContent,"16",r.getUserId());
-                accountNoticeMapper.insertAccountNotice(an);
+
+    public void setFollowTipAndGetNextNodeInfo(PatientRecord patientRecord, PatientInfo patientInfo,
+                                               HttpServletRequest request) {
+        if (!Objects.isNull(request) && StringUtils.equals(request.getHeader("appType"), BaseConstant.PATIENT_POINT)) {
+            PatientRecord patientRecord1 = new PatientRecord();
+            if (Objects.equals(patientRecord.getFollowTipStatus(),
+                    FollowTipStatusEnum.FOLLOW_UP_OPINION_REMINDER.getIndex()) && StringUtils.equals(patientRecord.getFollowStatus(), "3") && StringUtils.equals(patientRecord.getEvaluateStatus(), "1")) {
+                patientRecord1.setRecordId(patientRecord.getRecordId());
+                patientRecord1.setFollowTipStatus(-1);
+//                patientRecord1.setEvaluateStatus("2");
+                patientRecordMapper.updatePatientRecord(patientRecord1);
             }
+            if (Objects.equals(patientRecord.getFollowTipStatus(), FollowTipStatusEnum.CHANGE_QUEUE_ALERT.getIndex()) && StringUtils.equals(patientInfo.getAdjustType(), "2")) {
+//            if (Objects.equals(patientRecord.getFollowTipStatus(), FollowTipStatusEnum.CHANGE_QUEUE_ALERT.getIndex
+//            ()) ) {
+                patientRecord1.setRecordId(patientRecord.getRecordId());
+                patientRecord1.setFollowTipStatus(-1);
+                patientRecordMapper.updatePatientRecord(patientRecord1);
+            }
+
         }
+    }
+
+
+    private CompletableFuture<Void> getFcf(Long recordId, PatientRecord patientRecord, List<MedicalFormVO> formVOS,
+                                           List<MedicalPropertyVO> propertyVOS,
+                                           List<PatientRecordFiles> patientRecordFiles) {
+        CompletableFuture<Void> fcf = CompletableFuture.runAsync(() -> {
+            if (formVOS != null && !formVOS.isEmpty()) {
+                if (patientRecordFiles != null && !patientRecordFiles.isEmpty()) {
+                    Map<Long, List<String>> filesMap =
+                            patientRecordFiles.stream().filter(f -> f.getMedicalFormId() != null).collect(Collectors.groupingBy(PatientRecordFiles::getMedicalFormId, Collectors.mapping(PatientRecordFiles::getImageUrl, Collectors.toList())));
+                    if (filesMap != null && !filesMap.isEmpty()) {//图片
+                        formVOS.stream().filter(f -> "2".equals(f.getFormType())).forEach(f -> {
+                            if (filesMap.containsKey(f.getMedicalFormId())) {
+                                f.setImageUrls(filesMap.get(f.getMedicalFormId()));
+                            }
+                        });
+                    }
+                }
+//                    if (formVOS.stream().anyMatch(m->"1".equals(m.getDynamic()))){
+                if (formVOS.stream().anyMatch(m -> "1".equals(m.getOpenMultiple()))) {
+                    DynamicForm dynamicForm = new DynamicForm();
+                    dynamicForm.setRecordId(recordId);
+                    dynamicForm.setType("1");
+                    dynamicForm.setSql(dynamicSql.buildSelectDynamic(patientRecord.getResearchId()));
+                    List<DynamicCommonProperty> dynamicList = dynamicCommonMapper.selectBySql(dynamicForm);
+                    if (dynamicList != null && !dynamicList.isEmpty()) {
+                        Map<Long, List<MedicalPropertyVO>> pMap =
+                                propertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO::getMedicalFormId));
+                        Map<Long, List<DynamicCommonProperty>> listMap =
+                                dynamicList.stream().collect(Collectors.groupingBy(DynamicCommonProperty::getFormId));
+                        formVOS.stream()
+//                                    .filter(f->"1".equals(f.getDynamic()))
+                                .filter(f -> "1".equals(f.getOpenMultiple())).forEach(f -> {
+                                    if (listMap.containsKey(f.getMedicalFormId()) && pMap.containsKey(f.getMedicalFormId())) {
+                                /*Map<Long, Integer> p = pMap.get(f.getMedicalFormId()).stream()
+                                        .collect(Collectors.toMap(MedicalPropertyVO :: getId,
+                                        MedicalPropertyVO::getSortNum));
+                                List<DynamicCommonProperty> commonProperties = listMap.get(f.getMedicalFormId());*/
+
+                                        Map<String, List<MedicalPropertyVO>> dynamicTable =
+                                                listMap.get(f.getMedicalFormId()).stream().collect(Collectors.groupingBy(DynamicCommonProperty::getNumber)).entrySet().stream().collect(Collectors.toMap(key -> String.valueOf(key.getKey()), item -> {
+                                                    List<DynamicCommonProperty> ds = item.getValue();
+                                                    if (ds == null || ds.isEmpty()) return new ArrayList<>();
+
+                                                    List<MedicalPropertyVO> ps = pMap.get(f.getMedicalFormId());
+                                                    List<MedicalPropertyVO> nps = BeanUtils.copyList(ps,
+                                                            MedicalPropertyVO::new);
+                                                    return nps.stream().map(pv -> {
+                                                        ds.stream().filter(m -> Objects.equals(pv.getId(), m.getPropertyId())).forEach(m2 -> {
+                                                            pv.setPropertyValue(m2.getPropertyValue());
+                                                            pv.setOther(m2.getOther());
+                                                        });
+                                                        return pv;
+                                                    }).collect(Collectors.toList());
+                                                }, (oldValue, newValue) -> newValue, LinkedHashMap::new));
+                                        f.setDynamicTable(dynamicTable);
+                                    } else {
+                                        if (pMap.containsKey(f.getMedicalFormId())) {
+                                            List<MedicalPropertyVO> ds = pMap.get(f.getMedicalFormId());
+                                            Map<String, List<MedicalPropertyVO>> map = new HashMap<>();
+                                            map.put("1", ds);
+                                            f.setDynamicTable(map);
+                                        }
+                                    }
+                                });
+                    } else {
+                        Map<Long, List<MedicalPropertyVO>> pMap =
+                                propertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO::getMedicalFormId));
+                        formVOS.stream().filter(f -> "1".equals(f.getOpenMultiple())).forEach(f -> {
+                            if (pMap.containsKey(f.getMedicalFormId())) {
+                                List<MedicalPropertyVO> ds = pMap.get(f.getMedicalFormId());
+                                Map<String, List<MedicalPropertyVO>> map = new HashMap<>();
+                                map.put("1", ds);
+                                f.setDynamicTable(map);
+                            }
+                        });
+                    }
+                }
+            }
+        }, executor);
+        return fcf;
+    }
+
+    private CompletableFuture<Void> getPcf(Long recordId, PatientRecord patientRecord,
+                                           List<MedicalPropertyVO> propertyVOS, Set<String> propertyTypes,
+                                           List<PatientRecordFiles> patientRecordFiles) {
+        CompletableFuture<Void> pcf = CompletableFuture.runAsync(() -> {
+            List<DynamicCommonProperty> t = new ArrayList<>();
+            if (propertyTypes != null && !propertyTypes.isEmpty()) {
+                DynamicForm dynamicForm = new DynamicForm();
+                dynamicForm.setRecordId(recordId);
+                dynamicForm.setType("1");
+                if (PropertyType.largeText(propertyTypes)) {//大文本
+                    dynamicForm.setSql(dynamicSql.buildSelectLargeText(patientRecord.getResearchId()));
+                    List<DynamicCommonProperty> largeTextList = dynamicCommonMapper.selectBySql(dynamicForm);
+                    if (largeTextList != null && !largeTextList.isEmpty()) t.addAll(largeTextList);
+                }
+                if (PropertyType.text(propertyTypes)) {//小文本
+                    dynamicForm.setSql(dynamicSql.buildSelectText(patientRecord.getResearchId()));
+                    List<DynamicCommonProperty> textList = dynamicCommonMapper.selectBySql(dynamicForm);
+                    if (textList != null && !textList.isEmpty()) t.addAll(textList);
+                }
+            }
+
+            Map<Long, List<String>> filesMap = null;
+            if (patientRecordFiles != null && !patientRecordFiles.isEmpty()) {
+                filesMap =
+                        patientRecordFiles.stream().filter(f -> f.getPropertyId() != null).collect(Collectors.groupingBy(PatientRecordFiles::getPropertyId, Collectors.mapping(PatientRecordFiles::getImageUrl, Collectors.toList())));
+            }
+            // 通过propertyId去重
+            t = t.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(DynamicCommonProperty::getPropertyId))), ArrayList::new));
+            Map<Long, DynamicCommonProperty> dp =
+                    t.stream().distinct().collect(Collectors.toMap(DynamicCommonProperty::getPropertyId, item -> item));
+            if (propertyVOS != null && !propertyVOS.isEmpty()) {
+                for (MedicalPropertyVO p : propertyVOS) {
+                    if (PropertyType.eq(p.getPropertyType(), PropertyType.UPLOAD)) {
+                        if (filesMap != null && !filesMap.isEmpty() && filesMap.containsKey(p.getId())) {
+                            p.setImageUrls(filesMap.get(p.getId()));
+                        }
+                    } else {
+                        if (dp != null && !dp.isEmpty() && dp.containsKey(p.getId())) {
+                            DynamicCommonProperty propertyVO = dp.get(p.getId());
+                            if (propertyVO != null) {
+                                p.setPropertyValue(propertyVO.getPropertyValue());
+                                p.setOther(propertyVO.getOther());
+                            }
+                        }
+                    }
+                }
+            }
+        }, executor);
+        return pcf;
     }
 
 }

@@ -1,16 +1,21 @@
 package com.dchealth.cro.medical.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
+import com.dchealth.cro.medical.domain.PatientRecordHealth;
 import com.dchealth.cro.medical.form.PatientRecordFilesForm;
 import com.dchealth.cro.medical.form.PatientRecordSaveUpdateInfoForm;
 import com.dchealth.cro.medical.service.PatientRecordHealthService;
+import com.dchealth.cro.medical.vo.health.PatientRecordHealthReq;
 import com.dchealth.cro.question.form.QuestionRecordForm;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +38,7 @@ import java.util.List;
 @RequestMapping("/system/health")
 public class PatientRecordHealthController extends ApiBaseController
 {
+    private static final Logger L = LoggerFactory.getLogger(PatientRecordHealthController.class);
 
     @Autowired
     private PatientRecordHealthService patientRecordHealthService;
@@ -79,5 +85,40 @@ public class PatientRecordHealthController extends ApiBaseController
             return buildExceptionMView();
         }
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "healthList", method = RequestMethod.POST)
+    public String healthList(PatientRecordHealthReq healthListReq) {
+        // 通过recordId获取到对应的健康管理的档案信息
+        DchealthCloudResponseEntity<List<PatientRecordHealth>> result = new DchealthCloudResponseEntity<>();
+        PatientRecordHealth patientRecordHealth = new PatientRecordHealth();
+        patientRecordHealth.setRecordId(healthListReq.getRecordId());
+        List<PatientRecordHealth> healthList = patientRecordHealthService.selectPatientRecordHealthList(patientRecordHealth);
+        if (ObjectUtil.isEmpty(healthList)) {
+            return JSON.toJSONString(result);
+        }
+        result.setData(healthList);
+        return buildSuccessMView(result) ;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "healthInfo", method = RequestMethod.POST)
+    public String healthInfo(PatientRecordHealthReq healthListReq) {
+
+        try {
+            if (healthListReq.getRecordId() == null) {
+                return buildErrorParamMView();
+            }
+            return buildSuccessMView(patientRecordHealthService.patientRecordHealthDetail(healthListReq));
+        } catch (Exception e) {
+            L.info("患者档案详情异常{}", JSON.toJSONString(healthListReq), e);
+            return buildExceptionMView();
+        }
+    }
+
+
+
 
 }
