@@ -18,7 +18,7 @@ public class UserMessageListReq {
     /**
      * 档案ID
      */
-    @NotNull(message = "患者ID不能为空")
+//    @NotNull(message = "患者ID不能为空")
     private Long personId;
 
     /** 会话id */

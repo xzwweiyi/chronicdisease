@@ -29,15 +29,14 @@ import java.util.List;
 
 /**
  * 患者档案健康管理Controller
- * 
+ *
  * @author lchbu
  * @date 2025-06-24
  */
 @Slf4j
 @RestController
 @RequestMapping("/system/health")
-public class PatientRecordHealthController extends ApiBaseController
-{
+public class PatientRecordHealthController extends ApiBaseController {
     private static final Logger L = LoggerFactory.getLogger(PatientRecordHealthController.class);
 
     @Autowired
@@ -45,6 +44,7 @@ public class PatientRecordHealthController extends ApiBaseController
 
     /**
      * 保存或更新患者档案
+     *
      * @param infoForm
      * @param bind
      * @return
@@ -58,23 +58,23 @@ public class PatientRecordHealthController extends ApiBaseController
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(!submitTypes.contains(infoForm.getIsSubmit())){
+            if (!submitTypes.contains(infoForm.getIsSubmit())) {
                 DchealthCloudResponseEntity<?> result = new DchealthCloudResponseEntity<>();
                 result.setCode(CroApiCodeConstant.WRONG_TYPE_OF_SUBMISSION.getCode());
                 result.setMsg(CroApiCodeConstant.WRONG_TYPE_OF_SUBMISSION.getMsg());
                 return JSON.toJSONString(result);
             }
 
-            if (StringUtils.isNotBlankAndNotEmpty(infoForm.getImageUrlsJson())){
+            if (StringUtils.isNotBlankAndNotEmpty(infoForm.getImageUrlsJson())) {
                 List<PatientRecordFilesForm> list = JSON.parseArray(infoForm.getImageUrlsJson(), PatientRecordFilesForm.class);
                 infoForm.setImageUrls(list);
             }
-            if (StringUtils.isNotBlankAndNotEmpty(infoForm.getPropertyFormsJson())){
+            if (StringUtils.isNotBlankAndNotEmpty(infoForm.getPropertyFormsJson())) {
                 List<FMedicalPropertyForm> list = JSON.parseArray(infoForm.getPropertyFormsJson(), FMedicalPropertyForm.class);
                 infoForm.setPropertyForms(list);
             }
 
-            if (StringUtils.isNotBlankAndNotEmpty(infoForm.getQuestionRecordJson())){
+            if (StringUtils.isNotBlankAndNotEmpty(infoForm.getQuestionRecordJson())) {
                 QuestionRecordForm questionRecordForm = JSON.parseObject(infoForm.getQuestionRecordJson(), QuestionRecordForm.class);
                 infoForm.setQuestionRecordForm(questionRecordForm);
             }
@@ -99,7 +99,7 @@ public class PatientRecordHealthController extends ApiBaseController
             return JSON.toJSONString(result);
         }
         result.setData(healthList);
-        return buildSuccessMView(result) ;
+        return buildSuccessMView(result);
     }
 
 
@@ -117,8 +117,6 @@ public class PatientRecordHealthController extends ApiBaseController
             return buildExceptionMView();
         }
     }
-
-
 
 
 }

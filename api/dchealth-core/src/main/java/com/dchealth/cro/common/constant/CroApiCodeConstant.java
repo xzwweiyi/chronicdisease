@@ -26,6 +26,7 @@ public enum CroApiCodeConstant {
 	LLLEGAL_CONTENT(1019,"内容不合法"),
 	COMMENT_NOT_EXIST(1020, "评论不存在"),
 	APPLY_SUCCESS(1021, "申请成功！"),
+	SEND_MESSAGE_ERROR(1022, "请绑定就诊卡号"),
 
 	/**
 	 * 用户

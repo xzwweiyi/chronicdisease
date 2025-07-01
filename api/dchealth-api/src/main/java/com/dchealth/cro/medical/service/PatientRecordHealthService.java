@@ -304,7 +304,6 @@ public class PatientRecordHealthService {
         if (!CollectionUtils.isEmpty(recordFiles)) {
             patientRecordFilesMapper.batchInsertPatientRecordFiles(recordFiles);
         }
-
     }
 
 
@@ -362,42 +361,18 @@ public class PatientRecordHealthService {
                 patientRecord.getRecordId(), patientRecord.getFollowStatus(), (formVOS, propertyVOS, propertyTypes) -> {
                     List<PatientRecordFiles> patientRecordFiles =
                             patientRecordFilesMapper.selectPatientRecordFilesByRecordId(healthReq.getRecordId());
-                    CompletableFuture<Void> pcf = getPcf(healthReq.getRecordId(), patientRecord, propertyVOS, propertyTypes,
+                    CompletableFuture<Void> pcf = getPcf(healthReq.getHealthId(), patientRecord, propertyVOS, propertyTypes,
                             patientRecordFiles);
-                    CompletableFuture<Void> fcf = getFcf(healthReq.getRecordId(), patientRecord, formVOS, propertyVOS, patientRecordFiles);
+                    CompletableFuture<Void> fcf = getFcf(healthReq.getHealthId(), patientRecord, formVOS, propertyVOS, patientRecordFiles);
                     CompletableFuture.allOf(pcf, fcf).join();
                 });
         patientRecordDetailForm.setMedicalFormVOS(datas);
         result.setData(patientRecordDetailForm);
         return result;
-
     }
 
 
-    public void setFollowTipAndGetNextNodeInfo(PatientRecord patientRecord, PatientInfo patientInfo,
-                                               HttpServletRequest request) {
-        if (!Objects.isNull(request) && StringUtils.equals(request.getHeader("appType"), BaseConstant.PATIENT_POINT)) {
-            PatientRecord patientRecord1 = new PatientRecord();
-            if (Objects.equals(patientRecord.getFollowTipStatus(),
-                    FollowTipStatusEnum.FOLLOW_UP_OPINION_REMINDER.getIndex()) && StringUtils.equals(patientRecord.getFollowStatus(), "3") && StringUtils.equals(patientRecord.getEvaluateStatus(), "1")) {
-                patientRecord1.setRecordId(patientRecord.getRecordId());
-                patientRecord1.setFollowTipStatus(-1);
-//                patientRecord1.setEvaluateStatus("2");
-                patientRecordMapper.updatePatientRecord(patientRecord1);
-            }
-            if (Objects.equals(patientRecord.getFollowTipStatus(), FollowTipStatusEnum.CHANGE_QUEUE_ALERT.getIndex()) && StringUtils.equals(patientInfo.getAdjustType(), "2")) {
-//            if (Objects.equals(patientRecord.getFollowTipStatus(), FollowTipStatusEnum.CHANGE_QUEUE_ALERT.getIndex
-//            ()) ) {
-                patientRecord1.setRecordId(patientRecord.getRecordId());
-                patientRecord1.setFollowTipStatus(-1);
-                patientRecordMapper.updatePatientRecord(patientRecord1);
-            }
-
-        }
-    }
-
-
-    private CompletableFuture<Void> getFcf(Long recordId, PatientRecord patientRecord, List<MedicalFormVO> formVOS,
+    private CompletableFuture<Void> getFcf(Long healthId, PatientRecord patientRecord, List<MedicalFormVO> formVOS,
                                            List<MedicalPropertyVO> propertyVOS,
                                            List<PatientRecordFiles> patientRecordFiles) {
         CompletableFuture<Void> fcf = CompletableFuture.runAsync(() -> {
@@ -416,7 +391,7 @@ public class PatientRecordHealthService {
 //                    if (formVOS.stream().anyMatch(m->"1".equals(m.getDynamic()))){
                 if (formVOS.stream().anyMatch(m -> "1".equals(m.getOpenMultiple()))) {
                     DynamicForm dynamicForm = new DynamicForm();
-                    dynamicForm.setRecordId(recordId);
+                    dynamicForm.setRecordId(healthId);
                     dynamicForm.setType("1");
                     dynamicForm.setSql(dynamicSql.buildSelectDynamic(patientRecord.getResearchId()));
                     List<DynamicCommonProperty> dynamicList = dynamicCommonMapper.selectBySql(dynamicForm);
@@ -478,14 +453,14 @@ public class PatientRecordHealthService {
         return fcf;
     }
 
-    private CompletableFuture<Void> getPcf(Long recordId, PatientRecord patientRecord,
+    private CompletableFuture<Void> getPcf(Long healthId, PatientRecord patientRecord,
                                            List<MedicalPropertyVO> propertyVOS, Set<String> propertyTypes,
                                            List<PatientRecordFiles> patientRecordFiles) {
         CompletableFuture<Void> pcf = CompletableFuture.runAsync(() -> {
             List<DynamicCommonProperty> t = new ArrayList<>();
             if (propertyTypes != null && !propertyTypes.isEmpty()) {
                 DynamicForm dynamicForm = new DynamicForm();
-                dynamicForm.setRecordId(recordId);
+                dynamicForm.setRecordId(healthId);
                 dynamicForm.setType("1");
                 if (PropertyType.largeText(propertyTypes)) {//大文本
                     dynamicForm.setSql(dynamicSql.buildSelectLargeText(patientRecord.getResearchId()));

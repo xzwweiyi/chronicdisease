@@ -140,7 +140,7 @@ public class LeaveMessageService {
                 String content = x.getContent();
                 if (StrUtil.isNotEmpty(content) && content.contains(oldDomain)) {
                     String image = content.replace(oldDomain, newDomain);
-                    x.setContent(image);
+                    wvo.setMsgText(image);
                 }
                 result.add(wvo);
             });
