@@ -71,4 +71,13 @@ public interface FMedicalFormMapper
      * @return 结果
      */
     public int deleteFMedicalFormByMedicalFormIds(Long[] medicalFormIds);
+
+    /**
+     * 获取健康管理模板（新需求）
+     * @param followId
+     * @param recordId
+     * @param healthManageType
+     * @return
+     */
+    List<FMedicalForm> selectFMedicalHealthFormJoinByMedicalFollowId(Long followId, Integer healthManageType);
 }

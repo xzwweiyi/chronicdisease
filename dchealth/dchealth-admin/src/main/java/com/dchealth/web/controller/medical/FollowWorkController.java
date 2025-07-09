@@ -89,7 +89,8 @@ public class FollowWorkController extends BaseController {
 	@GetMapping("/tree")
 	public AjaxResult tree() {
 		Long userId = getUserId();
-		FollowWorkTree followWorkTree = redisCache.getCacheObject(Constants.FOLLOW_TREE_KEY + userId);
+//		FollowWorkTree followWorkTree = redisCache.getCacheObject(Constants.FOLLOW_TREE_KEY + userId);
+		FollowWorkTree followWorkTree = null;
 
 		if (Objects.isNull(followWorkTree)){
 			logger.info("followWorkTree:"+userId+"查询数据库");

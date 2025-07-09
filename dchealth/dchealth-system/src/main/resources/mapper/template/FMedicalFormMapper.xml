@@ -186,7 +186,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId}
+        where follow_id = #{followId}  and form_type != '5'
     </select>
 
 <!--    <select id="selectFMedicalFormByMedicalFollowId2" parameterType="Long" resultMap="FMedicalFormResult">-->
@@ -197,7 +197,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalFormByMedicalFollowId2" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId}
+        where follow_id = #{followId} and form_type != '5'
         order by sort_num,create_time asc
     </select>
 
@@ -224,13 +224,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where  follow_id in
         <foreach collection="followIds" item="followId" open="(" separator="," close=")">
             #{followId}
-        </foreach> and parent_id=0
+        </foreach> and parent_id=0 and form_type != '5'
         order by create_time desc
     </select>
 
     <select id="selectFMedicalForm" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId} and medical_form_id=#{medicalFormId}
+        where follow_id = #{followId} and medical_form_id=#{medicalFormId} and form_type != '5'
     </select>
 
     <update id="updateScoreByMedicalFormId">
@@ -247,5 +247,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  where pr.record_id=#{recordId} and g.follow_id=#{followId} and g.parent_id=0
              ) k
     </select>
-
+    <select id="selectHealthFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
+    <include refid="selectFMedicalFormVo"/>
+    where follow_id = #{followId} and form_type = '5'
+    order by sort_num,create_time asc
+    </select>
+    <select id="queryFMedicalFormHealthList" resultType="com.dchealth.template.domain.FMedicalForm">
+        <include refid="selectFMedicalFormVo"/>
+        where  follow_id in
+        <foreach collection="followIds" item="followId" open="(" separator="," close=")">
+            #{followId}
+        </foreach> and parent_id=0 and form_type = '5'
+        order by create_time desc
+    </select>
 </mapper>

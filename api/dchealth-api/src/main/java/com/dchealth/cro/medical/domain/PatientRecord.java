@@ -1,14 +1,13 @@
 package com.dchealth.cro.medical.domain;
 
-import java.util.Date;
-
 import com.dchealth.cro.common.base.BaseEntity;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Date;
 
 @SuppressWarnings("serial")
 @Data
@@ -114,6 +113,12 @@ public class PatientRecord extends BaseEntity {
      * 评价状态0无状态1待评价2已完成
      */
     private String evaluateStatus;
+
+
+    /**
+     * 健康管理填写按钮控制
+     */
+    private Boolean healthEditable=false;
 
 
     //随访后台评价状态0无状态1待评价2已完成
@@ -256,6 +261,8 @@ public class PatientRecord extends BaseEntity {
     private Boolean isEditable=true;
 
     private Long accountId;
+
+    private Double formComplentRate;
 
     public PatientRecord() {
     }

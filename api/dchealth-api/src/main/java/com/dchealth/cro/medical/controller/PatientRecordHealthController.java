@@ -35,7 +35,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/system/health")
+@RequestMapping("/medical/healthManage")
 public class PatientRecordHealthController extends ApiBaseController {
     private static final Logger L = LoggerFactory.getLogger(PatientRecordHealthController.class);
 
@@ -108,10 +108,26 @@ public class PatientRecordHealthController extends ApiBaseController {
     public String healthInfo(PatientRecordHealthReq healthListReq) {
 
         try {
-            if (healthListReq.getRecordId() == null) {
+            if (healthListReq.getRecordId() == null && healthListReq.getHealthManageType() == null) {
                 return buildErrorParamMView();
             }
             return buildSuccessMView(patientRecordHealthService.patientRecordHealthDetail(healthListReq));
+        } catch (Exception e) {
+            L.info("患者档案详情异常{}", JSON.toJSONString(healthListReq), e);
+            return buildExceptionMView();
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "healthType", method = RequestMethod.POST)
+    public String healthType(PatientRecordHealthReq healthListReq) {
+
+        try {
+            if (healthListReq.getFollowId() == null) {
+                return buildErrorParamMView();
+            }
+            return buildSuccessMView(patientRecordHealthService.healthType(healthListReq));
         } catch (Exception e) {
             L.info("患者档案详情异常{}", JSON.toJSONString(healthListReq), e);
             return buildExceptionMView();

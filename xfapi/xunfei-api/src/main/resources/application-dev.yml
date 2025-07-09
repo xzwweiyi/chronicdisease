@@ -14,9 +14,9 @@ spring:
       max-request-size: 500MB
       location:  D:/usr/local/server/mirco-server/upload_temp
   redis:
-    host: 60.205.202.222
+    host: 10.131.101.91
     password: ENC(PvrtuyWawLp5QqkhAtQQ/uhKlQ7DxPBXnfoewA5CM6o=)
-    port: 6379
+    port: 16379
     database: 2
   datasource:
     name: dataSource

@@ -1,131 +1,133 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dchealth.medical.mapper.PatientRecordMapper">
 
     <resultMap type="PatientRecord" id="PatientRecordResult">
-        <result property="recordId"    column="record_id"    />
-        <result property="patientId"    column="patient_id"    />
-        <result property="researchId"    column="research_id"    />
-        <result property="followId"    column="follow_id"    />
-        <result property="name"    column="name"    />
-        <result property="stageNum"    column="stage_num"    />
-        <result property="stageAddNum"    column="stage_add_num"    />
-        <result property="questionStatus"    column="question_status"    />
-        <result property="questionTime"    column="question_time"    />
-        <result property="warnStatus"    column="warn_status"    />
-        <result property="overTimeStatus"    column="over_time_status"    />
-        <result property="overTimeHandleStatus"    column="over_time_handle_status"    />
-        <result property="loseType"    column="lose_type"    />
-        <result property="loseReason"    column="lose_reason"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="fillTime"    column="fill_time"    />
-        <result property="fillStatus"    column="fill_status"    />
-        <result property="visitTime"    column="visit_time"    />
-        <result property="lockVisitTime"    column="lock_visit_time"    />
-        <result property="evaluateStatusBack"    column="evaluate_status_back"    />
-        <result property="evaluatePrescriptionBack"    column="evaluate_prescription_back"    />
-        <result property="evaluateQualityBack"    column="evaluate_quality_back"    />
-        <result property="evaluateReplyBack"    column="evaluate_reply_back"    />
-        <result property="evaluateReplyBackTime"    column="evaluate_reply_back_time"    />
-        <result property="evaluateStatus"    column="evaluate_status"    />
-        <result property="evaluatePrescription"    column="evaluate_prescription"    />
-        <result property="evaluateQuality"    column="evaluate_quality"    />
-        <result property="evaluateReply"    column="evaluate_reply"    />
-        <result property="evaluateReplyTime"    column="evaluate_reply_time"    />
-        <result property="edcStatus"    column="edc_status"    />
-        <result property="followOpinion"    column="follow_opinion"    />
-        <result property="followOpinionUserId"    column="follow_opinion_user_id"    />
-        <result property="followStatus"    column="follow_status"    />
-        <result property="followCompleteTime"    column="follow_complete_time"    />
-        <result property="overTimeCreateTime"    column="over_time_create_time"    />
-        <result property="overTimeHandleTime"    column="over_time_handle_time"    />
-        <result property="ignoreType"    column="ignore_type"    />
-        <result property="followSubmitTime"    column="follow_submit_time"    />
-        <result property="accountId"    column="account_id"    />
-        <result property="warnEvaluateStatusBack"    column="warn_evaluate_status_back"    />
-        <result property="warnEvaluatePrescriptionBack"    column="warn_evaluate_prescription_back"    />
-        <result property="warnEvaluateQualityBack"    column="warn_evaluate_quality_back"    />
-        <result property="warnEvaluateReplyBack"    column="warn_evaluate_reply_back"    />
-        <result property="warnEvaluateReplyBackTime"    column="warn_evaluate_reply_back_time"    />
+        <result property="recordId" column="record_id"/>
+        <result property="patientId" column="patient_id"/>
+        <result property="researchId" column="research_id"/>
+        <result property="followId" column="follow_id"/>
+        <result property="name" column="name"/>
+        <result property="stageNum" column="stage_num"/>
+        <result property="stageAddNum" column="stage_add_num"/>
+        <result property="questionStatus" column="question_status"/>
+        <result property="questionTime" column="question_time"/>
+        <result property="warnStatus" column="warn_status"/>
+        <result property="overTimeStatus" column="over_time_status"/>
+        <result property="overTimeHandleStatus" column="over_time_handle_status"/>
+        <result property="loseType" column="lose_type"/>
+        <result property="loseReason" column="lose_reason"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="fillTime" column="fill_time"/>
+        <result property="fillStatus" column="fill_status"/>
+        <result property="visitTime" column="visit_time"/>
+        <result property="lockVisitTime" column="lock_visit_time"/>
+        <result property="evaluateStatusBack" column="evaluate_status_back"/>
+        <result property="evaluatePrescriptionBack" column="evaluate_prescription_back"/>
+        <result property="evaluateQualityBack" column="evaluate_quality_back"/>
+        <result property="evaluateReplyBack" column="evaluate_reply_back"/>
+        <result property="evaluateReplyBackTime" column="evaluate_reply_back_time"/>
+        <result property="evaluateStatus" column="evaluate_status"/>
+        <result property="evaluatePrescription" column="evaluate_prescription"/>
+        <result property="evaluateQuality" column="evaluate_quality"/>
+        <result property="evaluateReply" column="evaluate_reply"/>
+        <result property="evaluateReplyTime" column="evaluate_reply_time"/>
+        <result property="edcStatus" column="edc_status"/>
+        <result property="followOpinion" column="follow_opinion"/>
+        <result property="followOpinionUserId" column="follow_opinion_user_id"/>
+        <result property="followStatus" column="follow_status"/>
+        <result property="followCompleteTime" column="follow_complete_time"/>
+        <result property="overTimeCreateTime" column="over_time_create_time"/>
+        <result property="overTimeHandleTime" column="over_time_handle_time"/>
+        <result property="ignoreType" column="ignore_type"/>
+        <result property="followSubmitTime" column="follow_submit_time"/>
+        <result property="accountId" column="account_id"/>
+        <result property="warnEvaluateStatusBack" column="warn_evaluate_status_back"/>
+        <result property="warnEvaluatePrescriptionBack" column="warn_evaluate_prescription_back"/>
+        <result property="warnEvaluateQualityBack" column="warn_evaluate_quality_back"/>
+        <result property="warnEvaluateReplyBack" column="warn_evaluate_reply_back"/>
+        <result property="warnEvaluateReplyBackTime" column="warn_evaluate_reply_back_time"/>
 
-        <result property="overEvaluateStatusBack"    column="over_evaluate_status_back"    />
-        <result property="overEvaluatePrescriptionBack"    column="over_evaluate_prescription_back"    />
-        <result property="overEvaluateQualityBack"    column="over_evaluate_quality_back"    />
-        <result property="overEvaluateReplyBack"    column="over_evaluate_reply_back"    />
-        <result property="overEvaluateReplyBackTime"    column="over_evaluate_reply_back_time"    />
-        <result property="edcNames"    column="edcNames"    />
-        <result property="isSubmit"    column="is_submit"    />
+        <result property="overEvaluateStatusBack" column="over_evaluate_status_back"/>
+        <result property="overEvaluatePrescriptionBack" column="over_evaluate_prescription_back"/>
+        <result property="overEvaluateQualityBack" column="over_evaluate_quality_back"/>
+        <result property="overEvaluateReplyBack" column="over_evaluate_reply_back"/>
+        <result property="overEvaluateReplyBackTime" column="over_evaluate_reply_back_time"/>
+        <result property="edcNames" column="edcNames"/>
+        <result property="isSubmit" column="is_submit"/>
+
+        <result property="formComplentRate" column="form_complent_rate"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.FollowWorkListVO" id="FollowWorkListVOResult">
-        <result property="patientId"    column="patient_id"    />
-        <result property="patientName"    column="patient_name"    />
-        <result property="stageName"    column="stage_name"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="projectName"    column="project_name"    />
-        <result property="mobile"    column="mobile"    />
-        <result property="recordId"    column="record_id"    />
-        <result property="researchId"    column="research_id"    />
-        <result property="name"    column="name"    />
-        <result property="questionTime"    column="question_time"    />
-        <result property="followCompleteTime"    column="follow_complete_time"    />
-        <result property="followSubmitTime"    column="follow_submit_time"    />
-        <result property="stageAddNum"    column="stage_add_num"    />
-        <result property="overTimeHandleStatus"    column="over_time_handle_status"    />
-        <result property="overTimeHandleTime"    column="over_time_handle_time"    />
-        <result property="followStatus"    column="follow_status"    />
-        <result property="warnStatus"    column="warn_status"    />
-        <result property="overTimeStatus"    column="over_time_status"    />
-        <result property="overTimeCreateTime"    column="over_time_create_time"    />
-        <result property="personId"    column="person_id"    />
-        <result property="fillStatus"    column="fill_status"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="patientId" column="patient_id"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="projectName" column="project_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="recordId" column="record_id"/>
+        <result property="researchId" column="research_id"/>
+        <result property="name" column="name"/>
+        <result property="questionTime" column="question_time"/>
+        <result property="followCompleteTime" column="follow_complete_time"/>
+        <result property="followSubmitTime" column="follow_submit_time"/>
+        <result property="stageAddNum" column="stage_add_num"/>
+        <result property="overTimeHandleStatus" column="over_time_handle_status"/>
+        <result property="overTimeHandleTime" column="over_time_handle_time"/>
+        <result property="followStatus" column="follow_status"/>
+        <result property="warnStatus" column="warn_status"/>
+        <result property="overTimeStatus" column="over_time_status"/>
+        <result property="overTimeCreateTime" column="over_time_create_time"/>
+        <result property="personId" column="person_id"/>
+        <result property="fillStatus" column="fill_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="enrollmentTime" column="enrollment_time"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.EvaluateVO" id="EvaluateVOResult">
-        <result property="patientId"    column="patient_id"    />
-        <result property="patientName"    column="patient_name"    />
-        <result property="name"    column="name"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="projectName"    column="project_name"    />
-        <result property="recordId"    column="record_id"    />
+        <result property="patientId" column="patient_id"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="name" column="name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="projectName" column="project_name"/>
+        <result property="recordId" column="record_id"/>
 
-        <result property="evaluateReplyBackTime"    column="evaluate_reply_back_time"    />
-        <result property="evaluateReplyTime"    column="evaluate_reply_time"    />
-        <result property="warnEvaluateReplyBackTime"    column="warn_evaluate_reply_back_time"    />
-        <result property="overEvaluateReplyBackTime"    column="over_evaluate_reply_back_time"    />
+        <result property="evaluateReplyBackTime" column="evaluate_reply_back_time"/>
+        <result property="evaluateReplyTime" column="evaluate_reply_time"/>
+        <result property="warnEvaluateReplyBackTime" column="warn_evaluate_reply_back_time"/>
+        <result property="overEvaluateReplyBackTime" column="over_evaluate_reply_back_time"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.PatientRecordVo" id="PatientRecordVoResult">
-        <result property="recordId"    column="record_id"    />
-        <result property="patientId"    column="patient_id"    />
-        <result property="researchId"    column="research_id"    />
-        <result property="followId"    column="follow_id"    />
-        <result property="name"    column="name"    />
-        <result property="stageNum"    column="stage_num"    />
-        <result property="stageAddNum"    column="stage_add_num"    />
-        <result property="questionStatus"    column="question_status"    />
-        <result property="warnStatus"    column="warn_status"    />
-        <result property="overTimeStatus"    column="over_time_status"    />
-        <result property="overTimeHandleStatus"    column="over_time_handle_status"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="fillTime"    column="fill_time"    />
-        <result property="visitTime"    column="visit_time"    />
-        <result property="enrollmentTime"    column="enrollment_time"    />
-        <result property="lockVisitTime"    column="lock_visit_time"    />
-        <result property="edcStatus"    column="edc_status"    />
-        <result property="patientName"    column="patient_name"    />
-        <result property="followName"    column="follow_name"    />
-        <result property="followStatus"    column="follow_status"    />
+        <result property="recordId" column="record_id"/>
+        <result property="patientId" column="patient_id"/>
+        <result property="researchId" column="research_id"/>
+        <result property="followId" column="follow_id"/>
+        <result property="name" column="name"/>
+        <result property="stageNum" column="stage_num"/>
+        <result property="stageAddNum" column="stage_add_num"/>
+        <result property="questionStatus" column="question_status"/>
+        <result property="warnStatus" column="warn_status"/>
+        <result property="overTimeStatus" column="over_time_status"/>
+        <result property="overTimeHandleStatus" column="over_time_handle_status"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="fillTime" column="fill_time"/>
+        <result property="visitTime" column="visit_time"/>
+        <result property="enrollmentTime" column="enrollment_time"/>
+        <result property="lockVisitTime" column="lock_visit_time"/>
+        <result property="edcStatus" column="edc_status"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="followName" column="follow_name"/>
+        <result property="followStatus" column="follow_status"/>
     </resultMap>
     <resultMap type="com.dchealth.msgTip.domain.MsgSend" id="msgSendResult">
         <result property="diseaseId" column="disease_id"/>
@@ -139,58 +141,152 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="patientMobile" column="patient_mobile"/>
     </resultMap>
     <sql id="selectPatientRecordVo">
-        select record_id, patient_id, research_id, follow_id, name, stage_num, stage_add_num, question_status, question_time, warn_status, over_time_status, over_time_handle_status, lose_type, lose_reason,
-               update_by, create_by, create_time, update_time, fill_time, fill_status, visit_time, lock_visit_time, evaluate_status_back, evaluate_prescription_back, evaluate_quality_back,
-               evaluate_reply_back, evaluate_reply_back_time, evaluate_status, evaluate_prescription, evaluate_quality, evaluate_reply, evaluate_reply_time, edc_status,
-               follow_opinion, follow_status, follow_complete_time, ignore_type,
-               evaluate_status_back,evaluate_prescription_back,evaluate_quality_back,evaluate_reply_back,evaluate_reply_back_time,
-               over_evaluate_status_back,over_evaluate_prescription_back,over_evaluate_quality_back,over_evaluate_reply_back,over_evaluate_reply_back_time,
-               warn_evaluate_status_back,warn_evaluate_prescription_back,warn_evaluate_quality_back,warn_evaluate_reply_back,warn_evaluate_reply_back_time,
-               over_time_handle_time, is_submit
+        select record_id,
+               patient_id,
+               research_id,
+               follow_id,
+               name,
+               stage_num,
+               stage_add_num,
+               question_status,
+               question_time,
+               warn_status,
+               over_time_status,
+               over_time_handle_status,
+               lose_type,
+               lose_reason,
+               update_by,
+               create_by,
+               create_time,
+               update_time,
+               fill_time,
+               fill_status,
+               visit_time,
+               lock_visit_time,
+               evaluate_status_back,
+               evaluate_prescription_back,
+               evaluate_quality_back,
+               evaluate_reply_back,
+               evaluate_reply_back_time,
+               evaluate_status,
+               evaluate_prescription,
+               evaluate_quality,
+               evaluate_reply,
+               evaluate_reply_time,
+               edc_status,
+               follow_opinion,
+               follow_status,
+               follow_complete_time,
+               ignore_type,
+               evaluate_status_back,
+               evaluate_prescription_back,
+               evaluate_quality_back,
+               evaluate_reply_back,
+               evaluate_reply_back_time,
+               over_evaluate_status_back,
+               over_evaluate_prescription_back,
+               over_evaluate_quality_back,
+               over_evaluate_reply_back,
+               over_evaluate_reply_back_time,
+               warn_evaluate_status_back,
+               warn_evaluate_prescription_back,
+               warn_evaluate_quality_back,
+               warn_evaluate_reply_back,
+               warn_evaluate_reply_back_time,
+               over_time_handle_time,
+               is_submit
         from patient_record
     </sql>
 
     <sql id="selectPatientRecordVos">
-        select re.record_id, re.patient_id, re.research_id, re.follow_id, re.name, re.stage_num, re.stage_add_num, re.question_status, re.warn_status, re.over_time_status, re.over_time_handle_status, re.update_by, re.create_by, re.create_time, re.update_time, re.fill_time, re.visit_time, re.lock_visit_time, re.edc_status,
-               i.patient_name , te.follow_name, re.follow_opinion, re.follow_status
+        select re.record_id,
+               re.patient_id,
+               re.research_id,
+               re.follow_id,
+               re.name,
+               re.stage_num,
+               re.stage_add_num,
+               re.question_status,
+               re.warn_status,
+               re.over_time_status,
+               re.over_time_handle_status,
+               re.update_by,
+               re.create_by,
+               re.create_time,
+               re.update_time,
+               re.fill_time,
+               re.visit_time,
+               re.lock_visit_time,
+               re.edc_status,
+               i.patient_name,
+               te.follow_name,
+               re.follow_opinion,
+               re.follow_status
         from patient_record re
-        inner join patient_info i on re.patient_id = i.patient_id
-        left join patient_record_template te on re.follow_id = te.follow_id
+                 inner join patient_info i on re.patient_id = i.patient_id
+                 left join patient_record_template te on re.follow_id = te.follow_id
     </sql>
 
     <sql id="selectPatientRecordInfo">
-        select re.record_id, re.patient_id, re.research_id, re.follow_id, re.name, re.stage_num, re.stage_add_num, re.question_status, re.warn_status, re.over_time_status, re.over_time_handle_status, re.update_by, re.create_by, re.create_time, re.update_time, re.fill_time, re.visit_time, re.lock_visit_time, re.edc_status,
-               te.follow_name followName, re.follow_opinion followOpinion, re.follow_status followStatus
+        select re.record_id,
+               re.patient_id,
+               re.research_id,
+               re.follow_id,
+               re.name,
+               re.stage_num,
+               re.stage_add_num,
+               re.question_status,
+               re.warn_status,
+               re.over_time_status,
+               re.over_time_handle_status,
+               re.update_by,
+               re.create_by,
+               re.create_time,
+               re.update_time,
+               re.fill_time,
+               re.visit_time,
+               re.lock_visit_time,
+               re.edc_status,
+               te.follow_name    followName,
+               re.follow_opinion followOpinion,
+               re.follow_status  followStatus
         from patient_record re
-        left join patient_record_template te on re.follow_id = te.follow_id
+                 left join patient_record_template te on re.follow_id = te.follow_id
     </sql>
 
     <select id="selectPatientRecordList" parameterType="PatientRecord" resultMap="PatientRecordResult">
-        select g.record_id, g.patient_id, g.research_id, g.follow_id, g.name, g.stage_num, g.stage_add_num, g.question_status, g.question_time,
-               g.warn_status, g.over_time_status, g.over_time_handle_status, g.lose_type, g.lose_reason, g.update_by, g.create_by, g.create_time, g.update_time,
-               g.fill_time, g.fill_status, g.visit_time, g.lock_visit_time, g.evaluate_status_back, g.evaluate_prescription_back, g.evaluate_quality_back,
-               g.evaluate_reply_back, g.evaluate_reply_back_time, g.evaluate_status, g.evaluate_prescription, g.evaluate_quality, g.evaluate_reply,
-               g.evaluate_reply_time, g.edc_status, g.follow_opinion, g.follow_status, g.follow_complete_time, g.ignore_type,
-               g.evaluate_status_back,g.evaluate_prescription_back,g.evaluate_quality_back,g.evaluate_reply_back,g.evaluate_reply_back_time,
-               g.over_evaluate_status_back,g.over_evaluate_prescription_back,g.over_evaluate_quality_back,g.over_evaluate_reply_back,g.over_evaluate_reply_back_time,
-               g.warn_evaluate_status_back,g.warn_evaluate_prescription_back,g.warn_evaluate_quality_back,g.warn_evaluate_reply_back,g.warn_evaluate_reply_back_time
+        select g.record_id, g.patient_id, g.research_id, g.follow_id, g.name, g.stage_num, g.stage_add_num,
+        g.question_status, g.question_time,
+        g.warn_status, g.over_time_status, g.over_time_handle_status, g.lose_type, g.lose_reason, g.update_by,
+        g.create_by, g.create_time, g.update_time,
+        g.fill_time, g.fill_status, g.visit_time, g.lock_visit_time, g.evaluate_status_back,
+        g.evaluate_prescription_back, g.evaluate_quality_back,
+        g.evaluate_reply_back, g.evaluate_reply_back_time, g.evaluate_status, g.evaluate_prescription,
+        g.evaluate_quality, g.evaluate_reply,
+        g.evaluate_reply_time, g.edc_status, g.follow_opinion, g.follow_status, g.follow_complete_time, g.ignore_type,
+        g.evaluate_status_back,g.evaluate_prescription_back,g.evaluate_quality_back,g.evaluate_reply_back,g.evaluate_reply_back_time,
+        g.over_evaluate_status_back,g.over_evaluate_prescription_back,g.over_evaluate_quality_back,g.over_evaluate_reply_back,g.over_evaluate_reply_back_time,
+        g.warn_evaluate_status_back,g.warn_evaluate_prescription_back,g.warn_evaluate_quality_back,g.warn_evaluate_reply_back,g.warn_evaluate_reply_back_time
         from patient_record g
         INNER JOIN patient_info p on p.patient_id = g.patient_id
         INNER JOIN research_info i on i.id = p.research_id and i.del_flag = 0
         <where>
-            <if test="patientId != null "> and g.patient_id = #{patientId}</if>
-            <if test="researchId != null "> and g.research_id = #{researchId}</if>
-            <if test="followId != null "> and g.follow_id = #{followId}</if>
-            <if test="name != null  and name != ''"> and g.name like concat('%', #{name}, '%')</if>
-            <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
-            <if test="stageAddNum != null "> and g.stage_add_num = #{stageAddNum}</if>
-            <if test="questionStatus != null  and questionStatus != ''"> and g.question_status = #{questionStatus}</if>
-            <if test="warnStatus != null  and warnStatus != ''"> and g.warn_status = #{warnStatus}</if>
-            <if test="overTimeStatus != null  and overTimeStatus != ''"> and g.over_time_status = #{overTimeStatus}</if>
-            <if test="overTimeHandleStatus != null  and overTimeHandleStatus != ''"> and g.over_time_handle_status = #{overTimeHandleStatus}</if>
-            <if test="fillTime != null "> and g.fill_time = #{fillTime}</if>
-            <if test="visitTime != null "> and g.visit_time = #{visitTime}</if>
-            <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+            <if test="patientId != null ">and g.patient_id = #{patientId}</if>
+            <if test="researchId != null ">and g.research_id = #{researchId}</if>
+            <if test="followId != null ">and g.follow_id = #{followId}</if>
+            <if test="name != null  and name != ''">and g.name like concat('%', #{name}, '%')</if>
+            <if test="stageNum != null ">and g.stage_num = #{stageNum}</if>
+            <if test="stageAddNum != null ">and g.stage_add_num = #{stageAddNum}</if>
+            <if test="questionStatus != null  and questionStatus != ''">and g.question_status = #{questionStatus}</if>
+            <if test="warnStatus != null  and warnStatus != ''">and g.warn_status = #{warnStatus}</if>
+            <if test="overTimeStatus != null  and overTimeStatus != ''">and g.over_time_status = #{overTimeStatus}</if>
+            <if test="overTimeHandleStatus != null  and overTimeHandleStatus != ''">and g.over_time_handle_status =
+                #{overTimeHandleStatus}
+            </if>
+            <if test="fillTime != null ">and g.fill_time = #{fillTime}</if>
+            <if test="visitTime != null ">and g.visit_time = #{visitTime}</if>
+            <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}
+            </if>
         </where>
     </select>
 
@@ -203,23 +299,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         INNER JOIN research_info i on i.id = p.research_id and i.del_flag = 0
         INNER JOIN patient_record_template prt on prt.follow_id = g.follow_id
         where prt.follow_num > 0
-        <if test="patientId != null "> and g.patient_id = #{patientId}</if>
-        <if test="researchId != null "> and g.research_id = #{researchId}</if>
-        <if test="followId != null "> and g.follow_id = #{followId}</if>
-        <if test="name != null  and name != ''"> and g.name like concat('%', #{name}, '%')</if>
-        <if test="stageNum != null "> and g.stage_num = #{stageNum}</if>
-        <if test="stageAddNum != null "> and g.stage_add_num = #{stageAddNum}</if>
-        <if test="questionStatus != null  and questionStatus != ''"> and g.question_status = #{questionStatus}</if>
-        <if test="warnStatus != null  and warnStatus != ''"> and g.warn_status = #{warnStatus}</if>
-        <if test="overTimeStatus != null  and overTimeStatus != ''"> and g.over_time_status = #{overTimeStatus}</if>
-        <if test="overTimeHandleStatus != null  and overTimeHandleStatus != ''"> and g.over_time_handle_status = #{overTimeHandleStatus}</if>
-        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="patientId != null ">and g.patient_id = #{patientId}</if>
+        <if test="researchId != null ">and g.research_id = #{researchId}</if>
+        <if test="followId != null ">and g.follow_id = #{followId}</if>
+        <if test="name != null  and name != ''">and g.name like concat('%', #{name}, '%')</if>
+        <if test="stageNum != null ">and g.stage_num = #{stageNum}</if>
+        <if test="stageAddNum != null ">and g.stage_add_num = #{stageAddNum}</if>
+        <if test="questionStatus != null  and questionStatus != ''">and g.question_status = #{questionStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''">and g.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''">and g.over_time_status = #{overTimeStatus}</if>
+        <if test="overTimeHandleStatus != null  and overTimeHandleStatus != ''">and g.over_time_handle_status =
+            #{overTimeHandleStatus}
+        </if>
+        <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
     </select>
 
-    <select id="selectFollowWorkBasePatientRecordList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
-        select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id, ac.mobile,
+    <select id="selectFollowWorkBasePatientRecordList"
+            parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
+        ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status
+        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.form_complent_rate
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
@@ -227,22 +327,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         INNER JOIN patient_account ac on p.account_id=ac.account_id
         where prt.follow_num = 0 AND i.del_flag = '0'
         <!-- and p.patient_activity_status = '1' -->
-        <if test="researchId != null "> and r.research_id = #{researchId}</if>
-        <if test="followStatus != null"> and r.follow_status = #{followStatus}</if>
-        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
-        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
-        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
-        <if test="patientId != null  and patientId != '' "> and p.patient_id like concat('%', #{patientId}, '%')</if>
-        <if test="personId != null  and personId != '' "> and p.person_id like concat('%', #{personId}, '%')</if>
-        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
-        <if test="enrollmentStatus != null and enrollmentStatus != ''"> and p.enrollment_status = #{enrollmentStatus}</if>
-        <if test="enrollmentStartTime != null and enrollmentStartTime != ''"> and date(p.enrollment_time) >= #{enrollmentStartTime}</if>
-        <if test="enrollmentEndTime != null and enrollmentEndTime != ''"> and #{enrollmentEndTime} >= date(p.enrollment_time)</if>
+        <if test="researchId != null ">and r.research_id = #{researchId}</if>
+        <if test="followStatus != null">and r.follow_status = #{followStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''">and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''">and r.over_time_status = #{overTimeStatus}</if>
+        <if test="patientName != null  and patientName != '' ">and p.patient_name like concat('%', #{patientName},
+            '%')
+        </if>
+        <if test="patientId != null  and patientId != '' ">and p.patient_id like concat('%', #{patientId}, '%')</if>
+        <if test="personId != null  and personId != '' ">and p.person_id like concat('%', #{personId}, '%')</if>
+        <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="enrollmentStatus != null and enrollmentStatus != ''">and p.enrollment_status = #{enrollmentStatus}
+        </if>
+        <if test="enrollmentStartTime != null and enrollmentStartTime != ''">and date(p.enrollment_time) >=
+            #{enrollmentStartTime}
+        </if>
+        <if test="enrollmentEndTime != null and enrollmentEndTime != ''">and #{enrollmentEndTime} >=
+            date(p.enrollment_time)
+        </if>
     </select>
 
-    <select id="selectFollowWorkPatientRecordList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
-        select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id, ac.mobile,
-        r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num, r.over_time_create_time
+    <select id="selectFollowWorkPatientRecordList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm"
+            resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
+        ac.mobile,
+        r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
+        r.over_time_create_time
         ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
@@ -250,56 +360,67 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
         INNER JOIN patient_account ac on p.account_id=ac.account_id
         where prt.follow_num > 0 AND i.del_flag = '0'
-        and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
+        and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and
+        q.research_id = p.research_id and q.person_id = p.person_id)
         <!-- and p.patient_activity_status = '1' -->
-        <if test="researchId != null "> and r.research_id = #{researchId}</if>
+        <if test="researchId != null ">and r.research_id = #{researchId}</if>
         <choose>
             <when test="followStatusSql != null and followStatusSql != ''">
                 ${followStatusSql}
             </when>
             <when test="followStatus != null">
-              and r.follow_status = #{followStatus}
+                and r.follow_status = #{followStatus}
             </when>
         </choose>
-        <if test="patientStatus != '4'.toString()"> and p.patient_status != 4 </if>
-        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
-        <if test="overTimeStatus != null "> and r.over_time_status = #{overTimeStatus} </if>
+        <if test="patientStatus != '4'.toString()">and p.patient_status != 4</if>
+        <if test="warnStatus != null  and warnStatus != ''">and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null ">and r.over_time_status = #{overTimeStatus}</if>
         <if test="overTimeStates != null">
-          <foreach collection="overTimeStates" item="item" open="and r.over_time_status in (" separator="," close=")">
-             #{item}
-          </foreach>
+            <foreach collection="overTimeStates" item="item" open="and r.over_time_status in (" separator="," close=")">
+                #{item}
+            </foreach>
         </if>
-        <if test="evaluateStatus != null"> and r.evaluate_status = #{evaluateStatus}</if>
-        <if test="fillStatus != null "> and r.fill_status = #{fillStatus}</if>
-        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
-        <if test="patientId != null  and patientId != '' "> and p.patient_id like concat('%', #{patientId}, '%')</if>
-        <if test="personId != null  and personId != '' "> and p.person_id like concat('%', #{personId}, '%')</if>
-        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
-        <if test="stageName != null  and stageName != ''"> and r.name = #{stageName}</if>
-        <if test="enrollmentStartTime != null and enrollmentStartTime != ''"> and date(p.enrollment_time) >= #{enrollmentStartTime}</if>
-        <if test="enrollmentEndTime != null and enrollmentEndTime != ''"> and #{enrollmentEndTime} >= date(p.enrollment_time)</if>
+        <if test="evaluateStatus != null">and r.evaluate_status = #{evaluateStatus}</if>
+        <if test="fillStatus != null ">and r.fill_status = #{fillStatus}</if>
+        <if test="patientName != null  and patientName != '' ">and p.patient_name like concat('%', #{patientName},
+            '%')
+        </if>
+        <if test="patientId != null  and patientId != '' ">and p.patient_id like concat('%', #{patientId}, '%')</if>
+        <if test="personId != null  and personId != '' ">and p.person_id like concat('%', #{personId}, '%')</if>
+        <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="stageName != null  and stageName != ''">and r.name = #{stageName}</if>
+        <if test="enrollmentStartTime != null and enrollmentStartTime != ''">and date(p.enrollment_time) >=
+            #{enrollmentStartTime}
+        </if>
+        <if test="enrollmentEndTime != null and enrollmentEndTime != ''">and #{enrollmentEndTime} >=
+            date(p.enrollment_time)
+        </if>
     </select>
 
-    <select id="selectFollowWorkPatientRecordList2" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+    <select id="selectFollowWorkPatientRecordList2" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm"
+            resultMap="FollowWorkListVOResult">
         select r.research_id
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
         where prt.follow_num > 0
-        <if test="researchId != null "> and r.research_id = #{researchId}</if>
-        <if test="followStatus != null  and followStatus != ''"> and r.follow_status = #{followStatus}</if>
-        <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
-        <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
-        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
-        <if test="patientId != null  and patientId != '' "> and p.patient_id like concat('%', #{patientId}, '%')</if>
-        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="researchId != null ">and r.research_id = #{researchId}</if>
+        <if test="followStatus != null  and followStatus != ''">and r.follow_status = #{followStatus}</if>
+        <if test="warnStatus != null  and warnStatus != ''">and r.warn_status = #{warnStatus}</if>
+        <if test="overTimeStatus != null  and overTimeStatus != ''">and r.over_time_status = #{overTimeStatus}</if>
+        <if test="patientName != null  and patientName != '' ">and p.patient_name like concat('%', #{patientName},
+            '%')
+        </if>
+        <if test="patientId != null  and patientId != '' ">and p.patient_id like concat('%', #{patientId}, '%')</if>
+        <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
     </select>
 
-    <select id="selectFollowWorkPatientRecordListNew" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
-        select r.research_id,r.follow_status,r.warn_status,r.over_time_status
+    <select id="selectFollowWorkPatientRecordListNew"
+            parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select r.research_id, r.follow_status, r.warn_status, r.over_time_status
         FROM patient_record r
-        INNER JOIN patient_info p on p.patient_id = r.patient_id
-        INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
+                 INNER JOIN patient_info p on p.patient_id = r.patient_id
+                 INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
         where prt.follow_num > 0
 
     </select>
@@ -310,75 +431,155 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="selectEvaluateList" parameterType="com.dchealth.medical.domain.form.EvaluateForm" resultMap="EvaluateVOResult">
-        select p.patient_id, p.patient_name, i.project_name, r.name, r.create_time, r.record_id,r.evaluate_reply_back_time,r.evaluate_reply_time,
+    <select id="selectEvaluateList" parameterType="com.dchealth.medical.domain.form.EvaluateForm"
+            resultMap="EvaluateVOResult">
+        select p.patient_id, p.patient_name, i.project_name, r.name, r.create_time,
+        r.record_id,r.evaluate_reply_back_time,r.evaluate_reply_time,
         r.warn_evaluate_reply_back_time,r.over_evaluate_reply_back_time
         from patient_record r, patient_info p, research_info i
         where i.id=p.research_id and p.patient_id=r.patient_id and p.patient_activity_status = '1'
         and r.research_id = #{researchId}
-        <if test="belongType != null  and belongType != '' and belongType == '1'.toString()"> and r.follow_status in('3','4') and r.evaluate_status_back = #{evaluateStatus}</if>
-        <if test="belongType != null  and belongType != '' and belongType == '2'.toString()"> and r.follow_status in('3','4') and r.evaluate_status = #{evaluateStatus}</if>
-        <if test="belongType != null  and belongType != '' and belongType == '3'.toString()"> and r.over_time_status in('3','4') and  r.over_evaluate_status_back = #{evaluateStatus}</if>
-        <if test="belongType != null  and belongType != '' and belongType == '4'.toString()"> and r.warn_status in('3','4')  and r.warn_evaluate_status_back = #{evaluateStatus}</if>
-        <if test="patientId != null "> and p.patient_id = #{patientId}</if>
-        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
+        <if test="belongType != null  and belongType != '' and belongType == '1'.toString()">and r.follow_status
+            in('3','4') and r.evaluate_status_back = #{evaluateStatus}
+        </if>
+        <if test="belongType != null  and belongType != '' and belongType == '2'.toString()">and r.follow_status
+            in('3','4') and r.evaluate_status = #{evaluateStatus}
+        </if>
+        <if test="belongType != null  and belongType != '' and belongType == '3'.toString()">and r.over_time_status
+            in('3','4') and r.over_evaluate_status_back = #{evaluateStatus}
+        </if>
+        <if test="belongType != null  and belongType != '' and belongType == '4'.toString()">and r.warn_status
+            in('3','4') and r.warn_evaluate_status_back = #{evaluateStatus}
+        </if>
+        <if test="patientId != null ">and p.patient_id = #{patientId}</if>
+        <if test="patientName != null  and patientName != '' ">and p.patient_name like concat('%', #{patientName},
+            '%')
+        </if>
     </select>
 
     <select id="selectPatientRecordByResearchReleaseIdAndDate" resultMap="PatientRecordResult">
-        select pi.patient_id,pi.research_id,pi.enrollment_time,c.follow_id,c.stage_num,c.record_id,
-               c.lock_visit_time,c.stage_add_num from patient_info pi
-        left join
-        (
-        select pr.record_id,pr.follow_id,pr.patient_id,pr.research_id,pr.stage_num, pr.lock_visit_time,pr.stage_add_num from
-                                                                                                            patient_record pr,
-        (select MAX(r.record_id) as new_record_id from patient_record r where r.research_id=#{researchId} and TO_DAYS(r.lock_visit_time) = TO_DAYS(#{handleDate}) group by r.patient_id) pd
-        where pr.record_id=pd.new_record_id
-        ) c on c.patient_id=c.patient_id
-        where pi.research_id=#{researchId} and pi.enrollment_status='1'
+        select pi.patient_id,
+               pi.research_id,
+               pi.enrollment_time,
+               c.follow_id,
+               c.stage_num,
+               c.record_id,
+               c.lock_visit_time,
+               c.stage_add_num
+        from patient_info pi
+                 left join
+             (select pr.record_id,
+                     pr.follow_id,
+                     pr.patient_id,
+                     pr.research_id,
+                     pr.stage_num,
+                     pr.lock_visit_time,
+                     pr.stage_add_num
+              from patient_record pr,
+                   (select MAX(r.record_id) as new_record_id
+                    from patient_record r
+                    where r.research_id = #{researchId}
+                      and TO_DAYS(r.lock_visit_time) = TO_DAYS(#{handleDate})
+                    group by r.patient_id) pd
+              where pr.record_id = pd.new_record_id) c on c.patient_id = c.patient_id
+        where pi.research_id = #{researchId}
+          and pi.enrollment_status = '1'
     </select>
 
 
     <select id="selectPatientRecordByResearchReleaseIdAndDate2" resultMap="PatientRecordResult">
-        select pi.patient_id,pi.research_id,pi.enrollment_time,c.follow_id,c.stage_num,c.record_id, c.lock_visit_time from patient_info pi
-        left join
-        (
-        select pr.record_id,pr.follow_id,pr.patient_id,pr.research_id,pr.stage_num, pr.lock_visit_time from patient_record pr,
-        (select MAX(r.record_id) as new_record_id from patient_record r where r.research_id=#{researchId}
-            and date_format(r.lock_visit_time,'%y-%m') &lt;= date_format(#{handleDate},'%y-%m') group by r.patient_id) pd
-        where pr.record_id=pd.new_record_id
-        ) c on c.patient_id=pi.patient_id
-        where pi.research_id=#{researchId} and pi.enrollment_status='1'
+        select pi.patient_id,
+               pi.research_id,
+               pi.enrollment_time,
+               c.follow_id,
+               c.stage_num,
+               c.record_id,
+               c.lock_visit_time
+        from patient_info pi
+                 left join
+             (select pr.record_id, pr.follow_id, pr.patient_id, pr.research_id, pr.stage_num, pr.lock_visit_time
+              from patient_record pr,
+                   (select MAX(r.record_id) as new_record_id
+                    from patient_record r
+                    where r.research_id = #{researchId}
+                      and date_format(r.lock_visit_time, '%y-%m') &lt;= date_format(#{handleDate}, '%y-%m')
+                    group by r.patient_id) pd
+              where pr.record_id = pd.new_record_id) c on c.patient_id = pi.patient_id
+        where pi.research_id = #{researchId}
+          and pi.enrollment_status = '1'
     </select>
 
     <select id="selectCompletedPatientIdByResearchId" resultType="java.lang.Long">
-        select distinct pr.patient_id from patient_record pr
+        select distinct pr.patient_id
+        from patient_record pr
         where pr.research_id = #{researchId}
-        and  exists (select 1 from patient_record pr2 where pr.patient_id=pr2.patient_id and `name` != '基线' and follow_status = 3)
-        and not exists (select 1 from patient_record pr2 where pr.patient_id=pr2.patient_id and `name` != '基线' and follow_status != 3)
+          and exists (select 1
+                      from patient_record pr2
+                      where pr.patient_id = pr2.patient_id and `name` != '基线' and follow_status = 3)
+          and not exists (select 1
+                          from patient_record pr2
+                          where pr.patient_id = pr2.patient_id and `name` != '基线' and follow_status != 3)
 
     </select>
 
 
     <select id="selectOnePatientMaxRecordByResearchId" resultMap="PatientRecordResult">
-        select pr.record_id,pr.follow_id,pr.patient_id,pr.research_id,pr.stage_num,pr.stage_add_num, pr.lock_visit_time,
+        select pr.record_id,
+               pr.follow_id,
+               pr.patient_id,
+               pr.research_id,
+               pr.stage_num,
+               pr.stage_add_num,
+               pr.lock_visit_time,
                pi.account_id
         from patient_record pr,
              patient_info pi,
              mp_person mp,
-        (select MAX(r.record_id) as new_record_id from patient_record r where r.research_id=#{researchId} group by r.patient_id) pd,research_info ri
-        where pr.record_id=pd.new_record_id and ri.id=pr.research_id and pi.patient_id=pr.patient_id and mp.person_id=pi.person_id
-		and pr.research_id=#{researchId}  and pi.enrollment_status='1' and pi.is_end_create_record='0' and pi.account_id>0
-        and pi.person_id not in (select q.person_id from quit_record q where q.is_agree=1 and pi.research_id = q.research_id and q.person_id = pi.person_id)
+             (select MAX(r.record_id) as new_record_id
+              from patient_record r
+              where r.research_id = #{researchId}
+              group by r.patient_id) pd,
+             research_info ri
+        where pr.record_id = pd.new_record_id
+          and ri.id = pr.research_id
+          and pi.patient_id = pr.patient_id
+          and mp.person_id = pi.person_id
+          and pr.research_id = #{researchId}
+          and pi.enrollment_status = '1'
+          and pi.is_end_create_record = '0'
+          and pi.account_id > 0
+          and pi.person_id not in (select q.person_id
+                                   from quit_record q
+                                   where q.is_agree = 1
+                                     and pi.research_id = q.research_id
+                                     and q.person_id = pi.person_id)
 
     </select>
 
     <select id="selectMaxRecordByResearchId" resultMap="PatientRecordResult">
-        select pr.record_id,pr.follow_id,pr.patient_id,pr.research_id,pr.stage_num,pr.stage_add_num, pr.lock_visit_time,pi.account_id
-        from patient_record pr,patient_info pi,
-             (select MAX(r.record_id) as new_record_id from patient_record r where r.research_id=#{researchId} group by r.patient_id) pd,research_info ri
-        where pr.record_id=pd.new_record_id and ri.id=pr.research_id and pi.patient_id=pr.patient_id
-          and pr.research_id=#{researchId}  and pi.enrollment_status='1' and pi.account_id>0
-          and pi.person_id not in (select q.person_id from quit_record q where q.is_agree=1 and pi.research_id = q.research_id)
+        select pr.record_id,
+               pr.follow_id,
+               pr.patient_id,
+               pr.research_id,
+               pr.stage_num,
+               pr.stage_add_num,
+               pr.lock_visit_time,
+               pi.account_id
+        from patient_record pr,
+             patient_info pi,
+             (select MAX(r.record_id) as new_record_id
+              from patient_record r
+              where r.research_id = #{researchId}
+              group by r.patient_id) pd,
+             research_info ri
+        where pr.record_id = pd.new_record_id
+          and ri.id = pr.research_id
+          and pi.patient_id = pr.patient_id
+          and pr.research_id = #{researchId}
+          and pi.enrollment_status = '1'
+          and pi.account_id > 0
+          and pi.person_id not in
+              (select q.person_id from quit_record q where q.is_agree = 1 and pi.research_id = q.research_id)
     </select>
 
     <insert id="insertPatientRecord" parameterType="PatientRecord" useGeneratedKeys="true" keyProperty="recordId">
@@ -505,15 +706,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="followCompleteTime != null">follow_complete_time = #{followCompleteTime},</if>
             <if test="ignoreType != null">ignore_type = #{ignoreType},</if>
             <if test="warnEvaluateStatusBack != null">warn_evaluate_status_back = #{warnEvaluateStatusBack},</if>
-            <if test="warnEvaluatePrescriptionBack != null">warn_evaluate_prescription_back = #{warnEvaluatePrescriptionBack},</if>
+            <if test="warnEvaluatePrescriptionBack != null">warn_evaluate_prescription_back =
+                #{warnEvaluatePrescriptionBack},
+            </if>
             <if test="warnEvaluateQualityBack != null">warn_evaluate_quality_back = #{warnEvaluateQualityBack},</if>
             <if test="warnEvaluateReplyBack != null">warn_evaluate_reply_back = #{warnEvaluateReplyBack},</if>
-            <if test="warnEvaluateReplyBackTime != null">warn_evaluate_reply_back_time = #{warnEvaluateReplyBackTime},</if>
+            <if test="warnEvaluateReplyBackTime != null">warn_evaluate_reply_back_time = #{warnEvaluateReplyBackTime},
+            </if>
             <if test="overEvaluateStatusBack != null">over_evaluate_status_back = #{overEvaluateStatusBack},</if>
-            <if test="overEvaluatePrescriptionBack != null">over_evaluate_prescription_back = #{overEvaluatePrescriptionBack},</if>
+            <if test="overEvaluatePrescriptionBack != null">over_evaluate_prescription_back =
+                #{overEvaluatePrescriptionBack},
+            </if>
             <if test="overEvaluateQualityBack != null">over_evaluate_quality_back = #{overEvaluateQualityBack},</if>
             <if test="overEvaluateReplyBack != null">over_evaluate_reply_back = #{overEvaluateReplyBack},</if>
-            <if test="overEvaluateReplyBackTime != null">over_evaluate_reply_back_time = #{overEvaluateReplyBackTime},</if>
+            <if test="overEvaluateReplyBackTime != null">over_evaluate_reply_back_time = #{overEvaluateReplyBackTime},
+            </if>
             <if test="overTimeHandleTime != null">over_time_handle_time = #{overTimeHandleTime},</if>
             <if test="isSubmit != null">is_submit = #{isSubmit},</if>
         </trim>
@@ -533,8 +740,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <update id="updatePatientRecordOverTimeStatus" parameterType="String">
         update patient_record
-        set over_time_status = '1',over_time_create_time = (now())
-        where fill_status = '0' and TO_DAYS(visit_time) &lt; TO_DAYS(#{overDay}) and over_time_status='0'
+        set over_time_status      = '1',
+            over_time_create_time = (now())
+        where fill_status = '0'
+          and TO_DAYS(visit_time) &lt; TO_DAYS(#{overDay})
+          and over_time_status = '0'
     </update>
 
     <select id="selectListByOverTime" parameterType="PatientRecord" resultMap="PatientRecordResult">
@@ -544,19 +754,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         INNER JOIN research_info ri on g.research_id=ri.id
         INNER JOIN patient_record_template prt on prt.follow_id=g.follow_id and prt.follow_num>0
         <where>
-            <if test="researchId != null "> and g.research_id = #{researchId}</if>
-            <if test="fillStatus != null  and fillStatus != ''"> and g.fill_status = #{fillStatus}</if>
-            <if test="questionStatus != null  and questionStatus != ''"> and g.question_status = #{questionStatus}</if>
-            <if test="warnStatus != null  and warnStatus != ''"> and g.warn_status = #{warnStatus}</if>
-            <if test="overDay != null"> and TO_DAYS(g.lock_visit_time) = TO_DAYS(#{overDay}) </if>
-            <if test="questionTimeOver != null"> and TO_DAYS(g.question_time) = TO_DAYS(#{questionTimeOver}) </if>
-            <if test="createTime != null"> and TO_DAYS(g.create_time) = TO_DAYS(#{createTime}) </if>
-            <if test="overTimeCreateTime != null"> and TO_DAYS(g.over_time_create_time) = TO_DAYS(#{overTimeCreateTime}) </if>
+            <if test="researchId != null ">and g.research_id = #{researchId}</if>
+            <if test="fillStatus != null  and fillStatus != ''">and g.fill_status = #{fillStatus}</if>
+            <if test="questionStatus != null  and questionStatus != ''">and g.question_status = #{questionStatus}</if>
+            <if test="warnStatus != null  and warnStatus != ''">and g.warn_status = #{warnStatus}</if>
+            <if test="overDay != null">and TO_DAYS(g.lock_visit_time) = TO_DAYS(#{overDay})</if>
+            <if test="questionTimeOver != null">and TO_DAYS(g.question_time) = TO_DAYS(#{questionTimeOver})</if>
+            <if test="createTime != null">and TO_DAYS(g.create_time) = TO_DAYS(#{createTime})</if>
+            <if test="overTimeCreateTime != null">and TO_DAYS(g.over_time_create_time) =
+                TO_DAYS(#{overTimeCreateTime})
+            </if>
         </where>
     </select>
 
     <delete id="deletePatientRecordByRecordId" parameterType="Long">
-        delete from patient_record where record_id = #{recordId}
+        delete
+        from patient_record
+        where record_id = #{recordId}
     </delete>
 
     <delete id="deletePatientRecordByRecordIds" parameterType="String">
@@ -568,7 +782,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="batchInsertPatientRecord">
         insert into
-        patient_record(patient_id,research_id,stage_num,stage_add_num,follow_id,visit_time,create_time,name,lock_visit_time,follow_status,follow_tip_status) values
+        patient_record(patient_id,research_id,stage_num,stage_add_num,follow_id,visit_time,create_time,name,lock_visit_time,follow_status,follow_tip_status)
+        values
         <foreach item="item" index="index" collection="list" separator=",">
             (#{item.patientId},#{item.researchId},#{item.stageNum},#{item.stageAddNum},#{item.followId},#{item.visitTime},#{item.createTime},#{item.name},#{item.lockVisitTime},#{item.followStatus},#{item.followTipStatus})
         </foreach>
@@ -577,12 +792,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPatientRecordByResearchIdAndPatientId" resultMap="PatientRecordResult">
         SELECT re.*
         FROM patient_record re
-                 JOIN (
-            SELECT MAX(record_id) AS max_id
-            FROM patient_record
-            WHERE patient_id = #{patientId} AND research_id = #{researchId}
-        ) max_rec ON re.record_id = max_rec.max_id
-        WHERE re.patient_id = #{patientId} AND re.research_id = #{researchId};
+                 JOIN (SELECT MAX(record_id) AS max_id
+                       FROM patient_record
+                       WHERE patient_id = #{patientId}
+                         AND research_id = #{researchId}) max_rec ON re.record_id = max_rec.max_id
+        WHERE re.patient_id = #{patientId}
+          AND re.research_id = #{researchId};
     </select>
 
     <select id="selectPatientRecordByResearchIdAndPatientId2" resultMap="PatientRecordResult">
@@ -611,14 +826,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where edc_status = 1
     </select>
 
-    <select id="selectEcdPatientRecordVoList" parameterType="com.dchealth.medical.domain.vo.PatientRecordVo" resultMap="PatientRecordVoResult">
+    <select id="selectEcdPatientRecordVoList" parameterType="com.dchealth.medical.domain.vo.PatientRecordVo"
+            resultMap="PatientRecordVoResult">
         <include refid="selectPatientRecordVos"/>
         <where>
-            <if test="researchId != null "> and re.research_id = #{researchId}</if>
-            <if test="edcStatus != null "> and re.edc_status = #{edcStatus}</if>
-            <if test="patientId != null "> and re.patient_id = #{patientId}</if>
-            <if test="followId != null "> and re.follow_id = #{followId}</if>
-            <if test="patientName != null  and patientName != ''"> and i.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="researchId != null ">and re.research_id = #{researchId}</if>
+            <if test="edcStatus != null ">and re.edc_status = #{edcStatus}</if>
+            <if test="patientId != null ">and re.patient_id = #{patientId}</if>
+            <if test="followId != null ">and re.follow_id = #{followId}</if>
+            <if test="patientName != null  and patientName != ''">and i.patient_name like concat('%', #{patientName},
+                '%')
+            </if>
         </where>
     </select>
 
@@ -639,91 +857,138 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where patient_id = #{patientId} order by create_time asc limit 0,1
     </select>
 
-    <select id="selectPatientRecordListForStatistics" parameterType="com.dchealth.statistics.domain.StatisticsParam" resultMap="PatientRecordResult">
-        select record_id, patient_id, research_id, follow_id, name, stage_num, stage_add_num, question_status, question_time, warn_status, over_time_status,
-               over_time_handle_status, lose_type, lose_reason, update_by, create_by, create_time, update_time, fill_time, fill_status, visit_time, lock_visit_time,
-               evaluate_status_back, evaluate_prescription_back, evaluate_quality_back, evaluate_reply_back, evaluate_reply_back_time, evaluate_status,
-               evaluate_prescription, evaluate_quality, evaluate_reply, evaluate_reply_time, edc_status, follow_opinion, follow_status,
-               follow_complete_time,over_time_create_time from patient_record
-<!--        <where>-->
-<!--            <if test="startTime != null"> and to_Days(lock_visit_time) between to_Days(#{startTime}) and to_Days(#{endTime}) </if>-->
-<!--        </where>-->
+    <select id="selectPatientRecordListForStatistics" parameterType="com.dchealth.statistics.domain.StatisticsParam"
+            resultMap="PatientRecordResult">
+        select record_id, patient_id, research_id, follow_id, name, stage_num, stage_add_num, question_status,
+        question_time, warn_status, over_time_status,
+        over_time_handle_status, lose_type, lose_reason, update_by, create_by, create_time, update_time, fill_time,
+        fill_status, visit_time, lock_visit_time,
+        evaluate_status_back, evaluate_prescription_back, evaluate_quality_back, evaluate_reply_back,
+        evaluate_reply_back_time, evaluate_status,
+        evaluate_prescription, evaluate_quality, evaluate_reply, evaluate_reply_time, edc_status, follow_opinion,
+        follow_status,
+        follow_complete_time,over_time_create_time from patient_record
+        <!--        <where>-->
+        <!--            <if test="startTime != null"> and to_Days(lock_visit_time) between to_Days(#{startTime}) and to_Days(#{endTime}) </if>-->
+        <!--        </where>-->
     </select>
 
 
-    <select id="selectPatientRecordListForStatistics2" parameterType="com.dchealth.statistics.domain.StatisticsParam" resultMap="PatientRecordResult">
-        select  p.patient_id,p.patient_name, r.record_id ,p.dept_id,r.warn_status,r.over_time_create_time,p.research_id,r.`name`, r.follow_status, r.over_time_status
+    <select id="selectPatientRecordListForStatistics2" parameterType="com.dchealth.statistics.domain.StatisticsParam"
+            resultMap="PatientRecordResult">
+        select p.patient_id,p.patient_name, r.record_id
+        ,p.dept_id,r.warn_status,r.over_time_create_time,p.research_id,r.`name`, r.follow_status, r.over_time_status
         from patient_record r, patient_info p, research_info i, patient_record_template prt
         , sys_user su, research_diseases rd
-        where i.id=p.research_id and p.patient_id=r.patient_id  and prt.follow_id=r.follow_id and rd.disease_id = i.disease_type_id
+        where i.id=p.research_id and p.patient_id=r.patient_id and prt.follow_id=r.follow_id and rd.disease_id =
+        i.disease_type_id
         and su.user_name=i.create_by
         and i.del_flag = '0'
         and p.patient_status != 6
         and i.research_status != 0
         and rd.is_deleted = 0
-        <if test="researchId != null "> and p.research_id = #{researchId}</if>
-        <if test="deptId != null "> and p.dept_id = #{deptId}</if>
-        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
-        <if test="enrollmentStatus != null and enrollmentStatus != ''"> and p.enrollment_status = #{enrollmentStatus}</if>
-        <if test="userId != null "> and (i.id in (select research_id from research_user_role where user_id = #{userId}) or su.user_id = #{userId} )</if>
+        <if test="researchId != null ">and p.research_id = #{researchId}</if>
+        <if test="deptId != null ">and p.dept_id = #{deptId}</if>
+        <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="enrollmentStatus != null and enrollmentStatus != ''">and p.enrollment_status = #{enrollmentStatus}
+        </if>
+        <if test="userId != null ">and (i.id in (select research_id from research_user_role where user_id = #{userId})
+            or su.user_id = #{userId} )
+        </if>
     </select>
 
-    <select id="selectPatientRecordListForStatistics3" parameterType="com.dchealth.statistics.domain.StatisticsParam" resultMap="PatientRecordResult">
-        select  p.patient_id,p.patient_name, r.record_id ,p.dept_id,r.warn_status,r.over_time_create_time,p.research_id
+    <select id="selectPatientRecordListForStatistics3" parameterType="com.dchealth.statistics.domain.StatisticsParam"
+            resultMap="PatientRecordResult">
+        select p.patient_id,p.patient_name, r.record_id ,p.dept_id,r.warn_status,r.over_time_create_time,p.research_id
         from patient_record r, patient_info p, research_info i ,patient_record_template prt
         where i.id=p.research_id and p.patient_id=r.patient_id and prt.follow_id=r.follow_id and prt.follow_num>0
         and i.del_flag = '0'
-        <if test="researchId != null "> and p.research_id = #{researchId}</if>
-        <if test="deptId != null "> and p.dept_id = #{deptId}</if>
-        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="researchId != null ">and p.research_id = #{researchId}</if>
+        <if test="deptId != null ">and p.dept_id = #{deptId}</if>
+        <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
     </select>
 
     <select id="selectList" parameterType="PatientRecord" resultMap="PatientRecordResult">
         select g.record_id, g.patient_id, g.research_id,
         g.evaluate_prescription_back, g.evaluate_quality_back,
-        g.evaluate_prescription, g.evaluate_quality, g.follow_status,g.follow_opinion_user_id, g.follow_id,g.lock_visit_time,g.stage_add_num
+        g.evaluate_prescription, g.evaluate_quality, g.follow_status,g.follow_opinion_user_id,
+        g.follow_id,g.lock_visit_time,g.stage_add_num
         from patient_record g
         inner join patient_info pi on g.patient_id = pi.patient_id
         inner join research_info ri on g.research_id=ri.id
         <where>
-            <if test="followStatus != null  and followStatus != ''"> and g.follow_status = #{followStatus}</if>
-            <if test="followId != null "> and g.follow_id = #{followId}</if>
-            <if test="patientId != null "> and g.patient_id = #{patientId}</if>
-            <if test="overTimeStatus != null "> and g.over_time_status = #{overTimeStatus}</if>
-            <if test="followOpinionUserId != null "> and g.follow_opinion_user_id = #{followOpinionUserId}</if>
-            <if test="startTime != null "> and TO_DAYS(g.follow_complete_time) &gt;= TO_DAYS(#{startTime})</if>
-            <if test="endTime != null "> and TO_DAYS(g.follow_complete_time) &lt;= TO_DAYS(#{endTime})</if>
+            <if test="followStatus != null  and followStatus != ''">and g.follow_status = #{followStatus}</if>
+            <if test="followId != null ">and g.follow_id = #{followId}</if>
+            <if test="patientId != null ">and g.patient_id = #{patientId}</if>
+            <if test="overTimeStatus != null ">and g.over_time_status = #{overTimeStatus}</if>
+            <if test="followOpinionUserId != null ">and g.follow_opinion_user_id = #{followOpinionUserId}</if>
+            <if test="startTime != null ">and TO_DAYS(g.follow_complete_time) &gt;= TO_DAYS(#{startTime})</if>
+            <if test="endTime != null ">and TO_DAYS(g.follow_complete_time) &lt;= TO_DAYS(#{endTime})</if>
         </where>
     </select>
     <select id="selectPatientRecordByFollowId" resultMap="PatientRecordResult">
 
-        SELECT
-            pr.record_id, pr.follow_id, pr.patient_id, pr.research_id, pr.stage_num, pr.stage_add_num, pr.lock_visit_time ,
-            pr.question_status ,pr.question_time ,pr.warn_status ,pr.over_time_status ,pr.over_time_handle_status ,pr.over_time_create_time ,
-            pr.create_time ,pr.fill_time ,pr.fill_status ,pr.visit_time ,pr.evaluate_status_back ,pr.evaluate_prescription_back ,pr.evaluate_quality_back ,
-            pr.evaluate_reply_back_time,pr.evaluate_status ,pr.is_submit ,pr.fill_status
-        FROM
-            patient_record pr
-                LEFT JOIN patient_info pi ON pr.patient_id = pi.patient_id
-        WHERE
-            pr.follow_id = #{followId}
-          AND pr.follow_status in (0,1)
+        SELECT pr.record_id,
+               pr.follow_id,
+               pr.patient_id,
+               pr.research_id,
+               pr.stage_num,
+               pr.stage_add_num,
+               pr.lock_visit_time,
+               pr.question_status,
+               pr.question_time,
+               pr.warn_status,
+               pr.over_time_status,
+               pr.over_time_handle_status,
+               pr.over_time_create_time,
+               pr.create_time,
+               pr.fill_time,
+               pr.fill_status,
+               pr.visit_time,
+               pr.evaluate_status_back,
+               pr.evaluate_prescription_back,
+               pr.evaluate_quality_back,
+               pr.evaluate_reply_back_time,
+               pr.evaluate_status,
+               pr.is_submit,
+               pr.fill_status
+        FROM patient_record pr
+                 LEFT JOIN patient_info pi ON pr.patient_id = pi.patient_id
+        WHERE pr.follow_id = #{followId}
+          AND pr.follow_status in (0, 1)
           AND pi.is_end_create_record = '0'
-          AND pr.follow_tip_status IN ( 0, 1 )
+          AND pr.follow_tip_status IN (0, 1)
 
     </select>
     <select id="selectOverTimePatientRecordByFollowId" resultMap="PatientRecordResult">
 
-        SELECT
-            pr.record_id, pr.follow_id, pr.patient_id, pr.research_id, pr.stage_num, pr.stage_add_num, pr.lock_visit_time ,
-            pr.question_status ,pr.question_time ,pr.warn_status ,pr.over_time_status ,pr.over_time_handle_status ,pr.over_time_create_time ,
-            pr.create_time ,pr.fill_time ,pr.fill_status ,pr.visit_time ,pr.evaluate_status_back ,pr.evaluate_prescription_back ,pr.evaluate_quality_back ,
-            pr.evaluate_reply_back_time,pr.evaluate_status ,pr.is_submit ,pr.fill_status
-        FROM
-            patient_record pr
-                LEFT JOIN patient_info pi ON pr.patient_id = pi.patient_id
-        WHERE
-            pr.follow_id = #{followId}
+        SELECT pr.record_id,
+               pr.follow_id,
+               pr.patient_id,
+               pr.research_id,
+               pr.stage_num,
+               pr.stage_add_num,
+               pr.lock_visit_time,
+               pr.question_status,
+               pr.question_time,
+               pr.warn_status,
+               pr.over_time_status,
+               pr.over_time_handle_status,
+               pr.over_time_create_time,
+               pr.create_time,
+               pr.fill_time,
+               pr.fill_status,
+               pr.visit_time,
+               pr.evaluate_status_back,
+               pr.evaluate_prescription_back,
+               pr.evaluate_quality_back,
+               pr.evaluate_reply_back_time,
+               pr.evaluate_status,
+               pr.is_submit,
+               pr.fill_status
+        FROM patient_record pr
+                 LEFT JOIN patient_info pi ON pr.patient_id = pi.patient_id
+        WHERE pr.follow_id = #{followId}
           AND pr.over_time_status = 1
           AND pi.is_end_create_record = '0'
 
@@ -731,11 +996,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <delete id="deletePatientRecord" parameterType="com.dchealth.medical.domain.form.FollowWorkListCmdForm">
-        delete from patient_record where  research_id = #{researchId} and patient_id = #{patientId} and follow_id = #{followId}
+        delete
+        from patient_record
+        where research_id = #{researchId}
+          and patient_id = #{patientId}
+          and follow_id = #{followId}
     </delete>
 
     <update id="updateVisitTimeByResearchId">
-        update patient_record set visit_time = #{visitTime}, lock_visit_time = #{visitTime} where research_id = #{id}
+        update patient_record
+        set visit_time      = #{visitTime},
+            lock_visit_time = #{visitTime}
+        where research_id = #{id}
     </update>
 
     <select id="selectByRecordIds" resultMap="PatientRecordResult">

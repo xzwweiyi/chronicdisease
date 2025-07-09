@@ -8,7 +8,6 @@ import com.dchealth.dynamic.templete.DynamicText;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.PatientRecord;
 import com.dchealth.medical.domain.PatientRecordFiles;
-import com.dchealth.medical.domain.vo.MedicalFormVO;
 import com.dchealth.medical.domain.vo.PatientRecordVo;
 import com.dchealth.medical.mapper.PatientInfoMapper;
 import com.dchealth.medical.mapper.PatientRecordFilesMapper;
@@ -18,10 +17,8 @@ import com.dchealth.template.domain.*;
 import com.dchealth.template.domain.vo.*;
 import com.dchealth.template.mapper.*;
 import com.dchealth.template.service.IFMedicalFormService;
-import com.dchealth.warn.domain.WarnMedicalEarly;
 import com.dchealth.warn.domain.form.WarnTemplateEarlyForm;
 import com.dchealth.warn.domain.vo.WarnMedicalEarlyVO;
-import com.dchealth.warn.mapper.WarnMedicalEarlyMapper;
 import com.dchealth.warn.service.IWarnService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,6 +289,9 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
     @Override
     public int insertFMedicalForm(FMedicalForm fMedicalForm)
     {
+        // 对表单类型为5的健康管理方案类的进行限制。不可添加重名的，不可同时添加超过4个类型方案。考虑到小程序端的展示
+
+
         fMedicalForm.setCreateTime(new Date());
         return fMedicalFormMapper.insertFMedicalForm(fMedicalForm);
     }

@@ -1,8 +1,9 @@
 package com.dchealth.template.mapper;
 
-import java.util.List;
 import com.dchealth.template.domain.FMedicalForm;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 单模板Mapper接口
@@ -98,4 +99,17 @@ public interface FMedicalFormMapper
 
     public Integer selectMinStatusByRecordIdAndMedicalFormId(@Param("recordId") Long recordId,@Param("followId") Long followId);
 
+    /**
+     * 新添加的健康管理的需求
+     * @param followId
+     * @return
+     */
+    List<FMedicalForm> selectHealthFMedicalFormByMedicalFollowId(@Param("followId") Long followId);
+
+    /**
+     * 健康管理随访表单列表
+     * @param followIds
+     * @return
+     */
+    List<FMedicalForm> queryFMedicalFormHealthList(@Param("followIds") List<Long> followIds);
 }

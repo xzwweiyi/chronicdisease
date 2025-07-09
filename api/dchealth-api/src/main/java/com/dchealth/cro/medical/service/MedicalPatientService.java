@@ -25,9 +25,11 @@ import com.dchealth.cro.enums.FollowTipStatusEnum;
 import com.dchealth.cro.form.common.DynamicSql;
 import com.dchealth.cro.form.constant.PropertyType;
 import com.dchealth.cro.form.domain.DynamicCommonProperty;
+import com.dchealth.cro.form.domain.FMedicalForm;
 import com.dchealth.cro.form.domain.form.DynamicForm;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
 import com.dchealth.cro.form.mapper.DynamicCommonMapper;
+import com.dchealth.cro.form.mapper.FMedicalFormMapper;
 import com.dchealth.cro.form.service.MedicalFormService;
 import com.dchealth.cro.form.vo.MedicalFormVO;
 import com.dchealth.cro.form.vo.MedicalPropertyVO;
@@ -152,6 +154,9 @@ public class MedicalPatientService {
     @Resource
     private RedisPublishService redisPublishService;
 
+    @Resource
+    private FMedicalFormMapper fMedicalFormMapper;
+
     @Value("${image.oldDomain}")
     private String oldDomain;
 
@@ -214,6 +219,7 @@ public class MedicalPatientService {
         // 随访记录
         record.setIsSubmit(infoForm.getIsSubmit());
         record.setName(patientRecord.getName());
+        record.setFormComplentRate(infoForm.getFormComplentRate());
         handlePatientRecordInfo(patientRecord, record);
 
         // 修改患者队列随访状态
@@ -1691,6 +1697,7 @@ public class MedicalPatientService {
                 patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate::getFollowId,
                         Function.identity(), (key1, key2) -> key2));
 
+        // 唐都新需求（20250703）添加新的健康管理填写的入口
         patientRecords.forEach(s -> {
             PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(s.getPatientId());
             s.setPatientStatus(patientInfo.getPatientStatus());
@@ -1702,6 +1709,12 @@ public class MedicalPatientService {
                 } else {
                     //随访
                     s.setRecordNum(2);
+                }
+
+                // 查询队列下有没有健康管理的表单信息，如果有的话则需要放开填写的权限
+                List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(s.getFollowId(), null);
+                if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+                    s.setHealthEditable(true);
                 }
             }
             //后端失访和前端状态对应不上，后台1,2,3，api接口用0,1,2

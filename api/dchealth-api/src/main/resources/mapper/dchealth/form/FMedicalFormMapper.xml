@@ -48,6 +48,7 @@
                update_time,
                create_by,
                update_by,
+               health_manage_type,
                open_collapse
         from f_medical_form
     </sql>
@@ -81,7 +82,7 @@
 
     <select id="selectFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId}
+        where follow_id = #{followId} and form_type != '5'
     </select>
 
     <select id="selectFMedicalFormJoinByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
@@ -107,8 +108,17 @@
                         open_collapse
         from f_medical_form m
                  left join question_record_form q on q.medical_form_id = m.medical_form_id and q.record_id = #{recordId}
-        where m.follow_id = #{followId}
+        where m.follow_id = #{followId} and m.form_type != '5'
         ORDER BY m.sort_num, m.create_time asc
+    </select>
+    <select id="selectFMedicalHealthFormJoinByMedicalFollowId"
+            resultType="com.dchealth.cro.form.domain.FMedicalForm">
+            <include refid="selectFMedicalFormVo"/>
+        <where>
+            <if test="followId != null">and follow_id = #{followId}</if>
+            <if test="healthManageType != null">and health_manage_type = #{healthManageType}</if>
+            and form_type = '5'
+        </where>
     </select>
 
     <insert id="insertFMedicalForm" parameterType="com.dchealth.cro.form.domain.FMedicalForm" useGeneratedKeys="true"

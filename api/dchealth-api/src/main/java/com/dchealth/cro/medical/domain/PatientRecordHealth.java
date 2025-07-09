@@ -2,6 +2,7 @@ package com.dchealth.cro.medical.domain;
 
 import com.dchealth.cro.common.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -13,12 +14,13 @@ import java.util.Date;
  * @author lchbu
  * @date 2025-06-24
  */
+@Data
 public class PatientRecordHealth extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 健康档案id */
-    private Long healthId;
+    private String healthId;
 
     /** 患者档案id */
     private Long recordId;
@@ -42,12 +44,16 @@ public class PatientRecordHealth extends BaseEntity
     /** 是否删除 */
     private Integer isDelete;
 
-    public void setHealthId(Long healthId) 
+    private Date startTime;
+
+    private Date endTime;
+
+    public void setHealthId(String healthId)
     {
         this.healthId = healthId;
     }
 
-    public Long getHealthId() 
+    public String getHealthId()
     {
         return healthId;
     }

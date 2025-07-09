@@ -3,24 +3,30 @@ package com.dchealth.cro.medical.service;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson2.JSONArray;
-import com.dchealth.cro.account.constant.BaseConstant;
+import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.mapper.AccountNoticeMapper;
+import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.common.base.CommonResult;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.common.utils.bean.BeanUtils;
-import com.dchealth.cro.enums.FollowTipStatusEnum;
+import com.dchealth.cro.enums.HealthManageEnum;
 import com.dchealth.cro.form.common.DynamicSql;
 import com.dchealth.cro.form.constant.PropertyType;
 import com.dchealth.cro.form.domain.DynamicCommonProperty;
+import com.dchealth.cro.form.domain.FMedicalForm;
 import com.dchealth.cro.form.domain.form.DynamicForm;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
 import com.dchealth.cro.form.mapper.DynamicCommonMapper;
+import com.dchealth.cro.form.mapper.FMedicalFormMapper;
 import com.dchealth.cro.form.service.MedicalFormService;
 import com.dchealth.cro.form.vo.MedicalFormVO;
 import com.dchealth.cro.form.vo.MedicalPropertyVO;
+import com.dchealth.cro.health.domain.MpPerson;
+import com.dchealth.cro.health.mapper.MpPersonMapper;
+import com.dchealth.cro.health.utils.HealthUtils;
 import com.dchealth.cro.medical.domain.PatientInfo;
 import com.dchealth.cro.medical.domain.PatientRecord;
 import com.dchealth.cro.medical.domain.PatientRecordFiles;
@@ -32,6 +38,7 @@ import com.dchealth.cro.medical.mapper.PatientInfoMapper;
 import com.dchealth.cro.medical.mapper.PatientRecordFilesMapper;
 import com.dchealth.cro.medical.mapper.PatientRecordHealthMapper;
 import com.dchealth.cro.medical.mapper.PatientRecordMapper;
+import com.dchealth.cro.medical.vo.health.HealthTypeResp;
 import com.dchealth.cro.medical.vo.health.PatientRecordHealthReq;
 import com.dchealth.cro.research.domain.ResearchInfo;
 import com.dchealth.cro.research.mapper.ResearchInfoMapper;
@@ -45,7 +52,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -96,6 +106,15 @@ public class PatientRecordHealthService {
 
     @Autowired
     private Executor executor;
+
+    @Resource
+    private FMedicalFormMapper fMedicalFormMapper;
+
+    @Resource
+    private PatientAccountMapper patientAccountMapper;
+
+    @Resource
+    private MpPersonMapper mpPersonMapper;
 
 
 
@@ -189,7 +208,8 @@ public class PatientRecordHealthService {
         Snowflake snowflake = IdUtil.getSnowflake();
         long healthId = snowflake.nextId();
         PatientRecordHealth health = new PatientRecordHealth();
-        health.setHealthId(healthId);
+        health.setHealthId(String.valueOf(healthId));
+        health.setRecordId(infoForm.getRecordId());
         health.setFollowId(patientRecord.getFollowId());
         health.setResearchId(patientRecord.getResearchId());
         health.setPatientId(patientRecord.getPatientId());
@@ -347,7 +367,7 @@ public class PatientRecordHealthService {
         }
         PatientRecordDetailForm patientRecordDetailForm = new PatientRecordDetailForm();
         patientRecordDetailForm.setRecordId(healthReq.getRecordId());
-        patientRecordDetailForm.setIsSubmit(patientRecord.getIsSubmit());
+        patientRecordDetailForm.setIsSubmit(0);
         patientRecordDetailForm.setStageName(patientRecord.getName());
         patientRecordDetailForm.setOverTimeStatus(patientRecord.getOverTimeStatus());
         patientRecordDetailForm.setWarnStatus(patientRecord.getWarnStatus());
@@ -357,18 +377,49 @@ public class PatientRecordHealthService {
         if(patientRecord.getVisitTime()!= null) {
             patientRecordDetailForm.setVisitTime(DateUtils.parseDateToStrFull(patientRecord.getVisitTime()));
         }
-        List<MedicalFormVO> datas = medicalFormService.followForms(patientRecord.getFollowId(),
+
+        List<MedicalFormVO> datas = medicalFormService.followHealthForms(patientRecord.getFollowId(),
                 patientRecord.getRecordId(), patientRecord.getFollowStatus(), (formVOS, propertyVOS, propertyTypes) -> {
                     List<PatientRecordFiles> patientRecordFiles =
                             patientRecordFilesMapper.selectPatientRecordFilesByRecordId(healthReq.getRecordId());
-                    CompletableFuture<Void> pcf = getPcf(healthReq.getHealthId(), patientRecord, propertyVOS, propertyTypes,
-                            patientRecordFiles);
-                    CompletableFuture<Void> fcf = getFcf(healthReq.getHealthId(), patientRecord, formVOS, propertyVOS, patientRecordFiles);
-                    CompletableFuture.allOf(pcf, fcf).join();
-                });
+                    if (healthReq.getHealthId() != null) {
+                        CompletableFuture<Void> pcf = getPcf(healthReq.getHealthId(), patientRecord, propertyVOS, propertyTypes,
+                                patientRecordFiles);
+                        CompletableFuture<Void> fcf = getFcf(healthReq.getHealthId(), patientRecord, formVOS, propertyVOS, patientRecordFiles);
+                        CompletableFuture.allOf(pcf, fcf).join();
+                    }
+                }, healthReq.getHealthManageType());
         patientRecordDetailForm.setMedicalFormVOS(datas);
+
+        //获取患者信息
+        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
+        patientRecordDetailForm.setPatientId(patientInfo.getPatientId());
+        patientRecordDetailForm.setPersonId(patientInfo.getPersonId());
+        patientRecordDetailForm.setPatientName(patientInfo.getPatientName());
+        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(patientInfo.getAccountId());
+        if(patientAccount!=null){
+            patientRecordDetailForm.setPatientMobile(patientAccount.getMobile());
+        }
+
+        MpPerson pb = mpPersonMapper.selectPersonByAccountId(patientInfo.getAccountId());
+        if(pb!=null){
+            patientRecordDetailForm.setSex(HealthUtils.getSex(pb.getCardId()));
+        }
         result.setData(patientRecordDetailForm);
         return result;
+    }
+
+    private Boolean checkFillInFlag(Integer healthManageType, Long recordId) {
+        // 限制每天填写一次，需要不返回详情填写信息查询表中含有提交时间含有小于当前最后时间的信息则回显信息。如果没有则只显示表单
+        LocalDateTime start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        PatientRecordHealth patientRecordHealth = new PatientRecordHealth();
+        patientRecordHealth.setStartTime(Date.from(start.atZone(ZoneId.systemDefault()).toInstant()));
+        patientRecordHealth.setEndTime(Date.from(end.atZone(ZoneId.systemDefault()).toInstant()));
+        patientRecordHealth.setHealthManageType(healthManageType);
+        patientRecordHealth.setPatientId(recordId);
+        List<PatientRecordHealth> healthList = patientRecordHealthMapper.selectPatientRecordHealthList(patientRecordHealth);
+        return healthList != null && !healthList.isEmpty();
     }
 
 
@@ -504,4 +555,29 @@ public class PatientRecordHealthService {
         return pcf;
     }
 
+    public DchealthCloudResponseEntity<List<HealthTypeResp>> healthType(PatientRecordHealthReq healthListReq) {
+        DchealthCloudResponseEntity<List<HealthTypeResp>> responseEntity = new DchealthCloudResponseEntity<>();
+
+        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(healthListReq.getFollowId(), null);
+        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+
+            List<HealthTypeResp> healthTypeResps = new ArrayList<>();
+            fMedicalForms.forEach(item -> {
+                HealthTypeResp healthTypeResp = new HealthTypeResp();
+                healthTypeResp.setHealthManageType(item.getHealthManageType());
+                healthTypeResp.setHealthManageTypeName(HealthManageEnum.getName(item.getHealthManageType()));
+
+                // 如果当天存在值则不可以进行编辑
+                Boolean b = checkFillInFlag(item.getHealthManageType(), healthListReq.getRecordId());
+                if (b) {
+                    healthTypeResp.setIsEditable(false);
+                }
+
+                healthTypeResps.add(healthTypeResp);
+            });
+            responseEntity.setData(healthTypeResps);
+            return responseEntity;
+        }
+       return responseEntity;
+    }
 }

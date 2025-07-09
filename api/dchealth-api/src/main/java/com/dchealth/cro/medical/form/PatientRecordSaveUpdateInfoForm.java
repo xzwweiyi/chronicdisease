@@ -76,4 +76,10 @@ public class PatientRecordSaveUpdateInfoForm {
      */
     private Integer isSubmit;
 
+    /**
+     * 表单完成比率
+     */
+    private Double formComplentRate;
+
+
 }

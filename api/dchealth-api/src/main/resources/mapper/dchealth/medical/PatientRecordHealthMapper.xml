@@ -30,7 +30,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="patientId != null "> and patient_id = #{patientId}</if>
             <if test="researchId != null "> and research_id = #{researchId}</if>
             <if test="followId != null "> and follow_id = #{followId}</if>
-            <if test="submitTime != null "> and submit_time = #{submitTime}</if>
+            <if test="submitTime != null "> and submit_time =  #{submitTime}</if>
+            <if test="startTime != null">
+                <![CDATA[ AND submit_time >= #{startTime} ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[ AND submit_time <= #{endTime} ]]>
+            </if>
             <if test="healthManageType != null "> and health_manage_type = #{healthManageType}</if>
             <if test="isDelete != null "> and is_delete = #{isDelete}</if>
         </where>
@@ -44,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertPatientRecordHealth" parameterType="com.dchealth.cro.medical.domain.PatientRecordHealth" useGeneratedKeys="true" keyProperty="healthId">
         insert into patient_record_health
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="healthId != null">health_id,</if>
             <if test="recordId != null">record_id,</if>
             <if test="patientId != null">patient_id,</if>
             <if test="researchId != null">research_id,</if>
@@ -57,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDelete != null">is_delete,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="healthId != null">#{healthId},</if>
             <if test="recordId != null">#{recordId},</if>
             <if test="patientId != null">#{patientId},</if>
             <if test="researchId != null">#{researchId},</if>

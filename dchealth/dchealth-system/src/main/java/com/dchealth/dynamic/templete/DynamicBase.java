@@ -60,7 +60,6 @@ public abstract class DynamicBase {
      * 构建列
      */
     public abstract void buildDynamicColumn();
-
     public DynamicBase createTable() {
         String createTableSQL = getCreateTableSQL("");
         dynamicTableMapper.createTable(createTableSQL);

@@ -8,6 +8,7 @@ import com.dchealth.common.enums.BusinessType;
 import com.dchealth.common.utils.poi.ExcelUtil;
 import com.dchealth.health.domain.PatientRecordHealth;
 import com.dchealth.health.service.IPatientRecordHealthService;
+import com.dchealth.health.vo.req.RecordHealthReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import java.util.List;
  * @date 2025-06-24
  */
 @RestController
-@RequestMapping("/system/health")
+@RequestMapping("/follow/health")
 public class PatientRecordHealthController extends BaseController
 {
     @Autowired
@@ -31,7 +32,7 @@ public class PatientRecordHealthController extends BaseController
     /**
      * 查询患者档案健康管理列表
      */
-    @PreAuthorize("@ss.hasPermi('system:health:list')")
+    @PreAuthorize("@ss.hasPermi('follow:health:list')")
     @GetMapping("/list")
     public TableDataInfo list(PatientRecordHealth patientRecordHealth)
     {
@@ -40,10 +41,17 @@ public class PatientRecordHealthController extends BaseController
         return getDataTable(list);
     }
 
+    @PostMapping("/typeList")
+    public AjaxResult typeList(@RequestBody RecordHealthReq recordHealthReq)
+    {
+
+        return AjaxResult.success(patientRecordHealthService.typeList(recordHealthReq));
+    }
+
     /**
      * 导出患者档案健康管理列表
      */
-    @PreAuthorize("@ss.hasPermi('system:health:export')")
+    @PreAuthorize("@ss.hasPermi('follow:health:export')")
     @Log(title = "患者档案健康管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, PatientRecordHealth patientRecordHealth)
@@ -56,17 +64,17 @@ public class PatientRecordHealthController extends BaseController
     /**
      * 获取患者档案健康管理详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:health:query')")
-    @GetMapping(value = "/{healthId}")
-    public AjaxResult getInfo(@PathVariable("healthId") Long healthId)
+    @PreAuthorize("@ss.hasPermi('follow:health:query')")
+    @GetMapping(value = "/{recordId}")
+    public AjaxResult getInfo(@RequestBody RecordHealthReq recordHealthReq)
     {
-        return AjaxResult.success(patientRecordHealthService.selectPatientRecordHealthByHealthId(healthId));
+        return AjaxResult.success(patientRecordHealthService.selectPatientRecordHealthByRecordId(recordHealthReq));
     }
 
     /**
      * 新增患者档案健康管理
      */
-    @PreAuthorize("@ss.hasPermi('system:health:add')")
+    @PreAuthorize("@ss.hasPermi('follow:health:add')")
     @Log(title = "患者档案健康管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody PatientRecordHealth patientRecordHealth)
@@ -77,7 +85,7 @@ public class PatientRecordHealthController extends BaseController
     /**
      * 修改患者档案健康管理
      */
-    @PreAuthorize("@ss.hasPermi('system:health:edit')")
+    @PreAuthorize("@ss.hasPermi('follow:health:edit')")
     @Log(title = "患者档案健康管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody PatientRecordHealth patientRecordHealth)
@@ -88,7 +96,7 @@ public class PatientRecordHealthController extends BaseController
     /**
      * 删除患者档案健康管理
      */
-    @PreAuthorize("@ss.hasPermi('system:health:remove')")
+    @PreAuthorize("@ss.hasPermi('follow:health:remove')")
     @Log(title = "患者档案健康管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{healthIds}")
     public AjaxResult remove(@PathVariable Long[] healthIds)

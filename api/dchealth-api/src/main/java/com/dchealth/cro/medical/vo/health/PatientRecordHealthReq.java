@@ -20,8 +20,18 @@ public class PatientRecordHealthReq implements Serializable {
     private Long healthId;
 
     /**
+     * 随访id
+     */
+    private Long followId;
+
+    /**
      * 档案管理id
      */
     private Long recordId;
+
+    /**
+     * 健康管理类型
+     */
+    private Integer healthManageType;
 
 }

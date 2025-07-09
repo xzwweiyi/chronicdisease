@@ -1,6 +1,8 @@
 package com.dchealth.health.service;
 
 import com.dchealth.health.domain.PatientRecordHealth;
+import com.dchealth.health.vo.req.RecordHealthReq;
+import com.dchealth.health.vo.req.RecordHealthTree;
 
 import java.util.List;
 
@@ -15,10 +17,10 @@ public interface IPatientRecordHealthService
     /**
      * 查询患者档案健康管理
      * 
-     * @param healthId 患者档案健康管理主键
+     * @param recordHealthReq 患者档案健康管理主键
      * @return 患者档案健康管理
      */
-    public PatientRecordHealth selectPatientRecordHealthByHealthId(Long healthId);
+    public PatientRecordHealth selectPatientRecordHealthByRecordId(RecordHealthReq recordHealthReq);
 
     /**
      * 查询患者档案健康管理列表
@@ -59,4 +61,6 @@ public interface IPatientRecordHealthService
      * @return 结果
      */
     public int deletePatientRecordHealthByHealthId(Long healthId);
+
+    List<RecordHealthTree> typeList(RecordHealthReq recordHealthReq);
 }

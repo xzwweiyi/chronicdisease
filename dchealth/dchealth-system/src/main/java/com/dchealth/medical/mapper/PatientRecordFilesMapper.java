@@ -1,8 +1,9 @@
 package com.dchealth.medical.mapper;
 
-import java.util.List;
 import com.dchealth.medical.domain.PatientRecordFiles;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 患者档案图片Mapper接口
@@ -83,4 +84,11 @@ public interface PatientRecordFilesMapper
     List<PatientRecordFiles> selectPatientRecordFilesByProId(Long propertyId);
 
     List<PatientRecordFiles> selectPatientRecordFiles(@Param("propertyId") Long propertyId,@Param("examRecordId")Long examRecordId);
+
+    /**
+     * 根据健康检查id查询图片、文件
+     * @param healthId
+     * @return
+     */
+    List<PatientRecordFiles> selectPatientRecordFilesByHealthId(Long healthId);
 }

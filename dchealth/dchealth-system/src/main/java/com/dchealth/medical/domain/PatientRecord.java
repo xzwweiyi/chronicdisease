@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 患者档案对象 patient_record
@@ -260,6 +259,8 @@ public class PatientRecord extends BaseEntity{
     private Long accountId;
 
     private String edcNames;
+
+    private Double formComplentRate;
 
     public PatientRecord(){}
 
