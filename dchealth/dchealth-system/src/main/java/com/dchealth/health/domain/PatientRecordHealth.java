@@ -44,7 +44,7 @@ public class PatientRecordHealth extends BaseEntity
 
     /** 健康管理类型 */
     @Excel(name = "健康管理类型")
-    private Long healthManageType;
+    private Integer healthManageType;
 
     /** 是否删除 */
     @Excel(name = "是否删除")
@@ -104,12 +104,12 @@ public class PatientRecordHealth extends BaseEntity
     {
         return submitTime;
     }
-    public void setHealthManageType(Long healthManageType) 
+    public void setHealthManageType(Integer healthManageType)
     {
         this.healthManageType = healthManageType;
     }
 
-    public Long getHealthManageType() 
+    public Integer getHealthManageType()
     {
         return healthManageType;
     }

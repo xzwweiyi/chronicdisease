@@ -1,10 +1,10 @@
 package com.dchealth.health.vo.req;
 
+import com.alibaba.excel.util.DateUtils;
 import com.dchealth.cms.domain.CmsArticle;
-import com.dchealth.common.core.domain.entity.SysDictData;
-import com.dchealth.compatibility.vo.VisitListVO;
+import com.dchealth.common.enums.HealthManageEnum;
+import com.dchealth.health.domain.PatientRecordHealth;
 import com.dchealth.medical.domain.PatientRecord;
-import com.dchealth.medical.domain.ResearchPatient;
 import com.dchealth.research.domain.vo.ResearchDiseasesVO;
 import com.dchealth.template.domain.FMedicalForm;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,10 +12,7 @@ import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -59,6 +56,8 @@ public class RecordHealthTree implements Serializable {
      */
     private Long articleId;
 
+    private Long healthId;
+
     /**
      * 模板Id
      */
@@ -71,7 +70,7 @@ public class RecordHealthTree implements Serializable {
     public RecordHealthTree() {
     }
 
-    public RecordHealthTree(List<ResearchDiseasesVO> list, List<PatientRecord> patientRecords, List<CmsArticle> cmsArticles, Long patientId, List<FMedicalForm> fMedicalForms) {
+    public RecordHealthTree(List<ResearchDiseasesVO> list, List<PatientRecord> patientRecords, List<CmsArticle> cmsArticles, Long patientId, List<FMedicalForm> fMedicalForms, List<PatientRecordHealth> patientRecordHealths) {
         this.type = "0";
         this.parentNodeId = "0";
         this.nodeId = "0";
@@ -105,28 +104,9 @@ public class RecordHealthTree implements Serializable {
                             level2Tree.setLabel(researchDiseasesVO.getProjectName());
                             level2Tree.setResearchId(researchDiseasesVO.getResearchId());
 
-
-                            List<RecordHealthTree> child = new ArrayList<>();
-                            Map<Integer, String> level3NodeMap = level2Nodes();
-                            level3NodeMap.forEach((key, value) -> {
-                                //第三级节点
-                                RecordHealthTree level3Tree = new RecordHealthTree();
-                                level3Tree.setId(Long.valueOf(key));
-                                level3Tree.setNodeId("fl_" + 0);
-                                level3Tree.setParentNodeId("ri_" + researchDiseasesVO.getResearchId().longValue());
-                                level3Tree.setType(String.valueOf(key));
-                                level3Tree.setLabel(value);
-                                level3Tree.setResearchId(researchDiseasesVO.getResearchId());
-
                                 //第四级节点
-                                List<RecordHealthTree> diseasesResearchTreeList = buildLevel4Node(patientRecords, cmsArticles, key, researchDiseasesVO, fMedicalForms, patientId, key);
-                                if (!CollectionUtils.isEmpty(diseasesResearchTreeList)) {
-                                    level3Tree.setChildren(diseasesResearchTreeList);
-                                }
-                                child.add(level3Tree);
-                            });
-
-                            level2Tree.setChildren(child);
+                                List<RecordHealthTree> diseasesResearchTreeList = buildLevel4Node(patientRecords, cmsArticles, 1, researchDiseasesVO, fMedicalForms, patientId, 1, patientRecordHealths);
+                            level2Tree.setChildren(diseasesResearchTreeList);
                             rs.add(level2Tree);
                         }
                     }
@@ -137,42 +117,6 @@ public class RecordHealthTree implements Serializable {
             });
         }
         this.children = dis;
-    }
-
-    public RecordHealthTree(List<ResearchPatient> researchPatients, List<VisitListVO> patientHealthRecord, String personId, List<SysDictData> sysDictData) {
-        this.setNodeId("0");
-        this.setParentNodeId("0");
-        this.setLabel("患者健康档案");
-        this.setType("0");
-        this.setPersonId(personId);
-        List<RecordHealthTree> pht = new ArrayList();
-        if (patientHealthRecord != null && patientHealthRecord.size() > 0) {
-            for (VisitListVO pr : patientHealthRecord) {
-                RecordHealthTree ptree = new RecordHealthTree();
-//                ptree.setId(pr.get);
-//                ptree.setNodeId("rd_" + pr.getRecordId());
-                ptree.setParentNodeId(this.nodeId);
-//                ptree.setLabel(DateUtils.parseDateToStrShort(pr.getCreateTime()));
-                ptree.setType("1");
-                ptree.setPersonId(personId);
-                List<RecordHealthTree> tree = new ArrayList();
-                for (SysDictData sy : sysDictData) {
-                    //获取疾病类型
-                    RecordHealthTree tr = new RecordHealthTree();
-                    tr.setId(sy.getDictCode());
-                    tr.setNodeId("ri_" + sy.getDictCode());
-//                    tr.setParentNodeId("rd_" + pr.getRecordId());
-                    tr.setLabel(sy.getDictLabel());
-                    tr.setType("2");
-                    tr.setPersonId(personId);
-//                    tr.setRecordId(pr.getRecordId());
-                    tree.add(tr);
-                }
-                ptree.setChildren(tree);
-                pht.add(ptree);
-            }
-        }
-        this.children = pht;
     }
 
 
@@ -186,7 +130,7 @@ public class RecordHealthTree implements Serializable {
      */
     private List<RecordHealthTree> buildLevel4Node(List<PatientRecord> patientRecords, List<CmsArticle> cmsArticles,
                                                    Integer key, ResearchDiseasesVO researchDiseasesVO,
-                                                   List<FMedicalForm> fMedicalForms, Long patientIdI, Integer keyValue) {
+                                                   List<FMedicalForm> fMedicalForms, Long patientIdI, Integer keyValue, List<PatientRecordHealth> patientRecordHealths) {
 
         List<RecordHealthTree> tree = new ArrayList<>();
         if (key == 1 || key == 2) {
@@ -210,9 +154,10 @@ public class RecordHealthTree implements Serializable {
                             diseasesResearchTree.setResearchId(patientRecord.getResearchId());
                             diseasesResearchTree.setFollowId(patientRecord.getFollowId());
                             diseasesResearchTree.setRecordId(patientRecord.getRecordId());
-                            List<RecordHealthTree> diseasesResearchTreeList = processRecord(fMedicalForms, patientRecord.getFollowId(), patientRecord.getRecordId(), patientRecord.getResearchId(), keyValue);
+                            List<RecordHealthTree> diseasesResearchTreeList = processRecord(fMedicalForms, patientRecord.getFollowId(), patientRecord.getRecordId(), patientRecord.getResearchId(), keyValue, patientRecordHealths);
                             if (!CollectionUtils.isEmpty(diseasesResearchTreeList)) {
-                                diseasesResearchTree.setChildren(diseasesResearchTreeList);
+//                                diseasesResearchTree.setChildren(diseasesResearchTreeList);
+                                return diseasesResearchTreeList;
                             }
 
                             tree.add(diseasesResearchTree);
@@ -235,7 +180,7 @@ public class RecordHealthTree implements Serializable {
                             diseasesResearchTree.setResearchId(patientRecord.getResearchId());
                             diseasesResearchTree.setFollowId(patientRecord.getFollowId());
                             diseasesResearchTree.setRecordId(patientRecord.getRecordId());
-                            List<RecordHealthTree> diseasesResearchTreeList = processRecord(fMedicalForms, patientRecord.getFollowId(), patientRecord.getRecordId(), patientRecord.getResearchId(), keyValue);
+                            List<RecordHealthTree> diseasesResearchTreeList = processRecord(fMedicalForms, patientRecord.getFollowId(), patientRecord.getRecordId(), patientRecord.getResearchId(), keyValue, patientRecordHealths);
                             if (!CollectionUtils.isEmpty(diseasesResearchTreeList)) {
                                 diseasesResearchTree.setChildren(diseasesResearchTreeList);
                             }
@@ -282,7 +227,7 @@ public class RecordHealthTree implements Serializable {
         return map;
     }
 
-    private List<RecordHealthTree> processRecord(List<FMedicalForm> fMedicalForms, Long followId, Long recordId, Long researchId, Integer keyValue) {
+    private List<RecordHealthTree> processRecord(List<FMedicalForm> fMedicalForms, Long followId, Long recordId, Long researchId, Integer keyValue, List<PatientRecordHealth> patientRecordHealths) {
 
         List<RecordHealthTree> tree = new ArrayList<>();
         if (!CollectionUtils.isEmpty(fMedicalForms)) {
@@ -302,8 +247,47 @@ public class RecordHealthTree implements Serializable {
                     diseasesResearchTree.setMedicalFormId(fMedicalForm.getMedicalFormId());
                     diseasesResearchTree.setRecordId(recordId);
                     diseasesResearchTree.setResearchId(researchId);
+
+                    List<RecordHealthTree> recordHealthTrees = recordHealth(recordId, researchId, keyValue, patientRecordHealths, fMedicalForm.getHealthManageType());
+                    if (!CollectionUtils.isEmpty(recordHealthTrees)) {
+                        diseasesResearchTree.setChildren(recordHealthTrees);
+                    }
                     tree.add(diseasesResearchTree);
                 }
+            }
+        }
+        return tree;
+    }
+
+
+
+    private List<RecordHealthTree> recordHealth( Long recordId, Long researchId, Integer keyValue, List<PatientRecordHealth> patientRecordHealths, Integer healthManageType) {
+
+        List<RecordHealthTree> tree = new ArrayList<>();
+
+        for (HealthManageEnum value : HealthManageEnum.values()) {
+
+            for (int i = 0; i < patientRecordHealths.size(); i++) {
+
+                if (value.getCode() == patientRecordHealths.get(i).getHealthManageType() && value.getCode() == healthManageType) {
+                    PatientRecordHealth patientRecordHealth = patientRecordHealths.get(i);
+                    RecordHealthTree diseasesResearchTree = new RecordHealthTree();
+
+                    Date submitTime = patientRecordHealth.getSubmitTime();
+                    String time = submitTime != null ? DateUtils.format(submitTime, "yyyy-MM-dd HH:mm:ss") : "";
+                    diseasesResearchTree.setId((long) i);
+                    diseasesResearchTree.setNodeId("pr_" + i);
+                    diseasesResearchTree.setParentNodeId("fl_" + 4);
+                    diseasesResearchTree.setType(String.valueOf(keyValue));
+                    diseasesResearchTree.setLabel(HealthManageEnum.getName(patientRecordHealth.getHealthManageType()) + " " + time);
+                    diseasesResearchTree.setFollowId(patientRecordHealths.get(i).getFollowId());
+//                    diseasesResearchTree.setMedicalFormId(patientRecordHealths.get(i).getMedicalFormId());
+                    diseasesResearchTree.setHealthId(patientRecordHealths.get(i).getHealthId());
+                    diseasesResearchTree.setRecordId(recordId);
+                    diseasesResearchTree.setResearchId(researchId);
+                    tree.add(diseasesResearchTree);
+                }
+
             }
         }
         return tree;

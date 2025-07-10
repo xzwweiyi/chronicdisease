@@ -344,12 +344,17 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
                 fMedicalForms = fMedicalFormMapper.queryFMedicalFormHealthList(followIds);
             }
 
+            // 健康管理列表获取
+            PatientRecordHealth patientRecordHealth = new PatientRecordHealth();
+            patientRecordHealth.setPatientId(recordHealthReq.getPatientId());
+            List<PatientRecordHealth> patientRecordHealths = patientRecordHealthMapper.selectPatientRecordHealthList(patientRecordHealth);
+
 
             //树状图处理
             if (researchDiseases != null && !researchDiseases.isEmpty()) {
                 Map<Long, List<ResearchDiseasesVO>> map = researchDiseases.stream().collect(Collectors.groupingBy(ResearchDiseasesVO::getDeptId));
                 List<FMedicalForm> finalFMedicalForms = fMedicalForms;
-                map.forEach((k, v) -> result.add(new RecordHealthTree(v, patientRecords, cmsArticles, recordHealthReq.getPatientId(), finalFMedicalForms)));
+                map.forEach((k, v) -> result.add(new RecordHealthTree(v, patientRecords, cmsArticles, recordHealthReq.getPatientId(), finalFMedicalForms, patientRecordHealths)));
             }
         }
 
