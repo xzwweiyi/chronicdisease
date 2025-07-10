@@ -114,10 +114,6 @@ public class LeaveMessageController extends ApiBaseController {
     @RequestMapping(value = "beachClear", method = RequestMethod.POST)
     public String beachClear(LeaveMessageForm messageForm) {
         try {
-            if (ObjectUtil.isNull(messageForm.getPersonId())) {
-                log.info("批量清空留言，personId为空");
-                return buildSuccessMView(0);
-            }
             return buildSuccessMView(leaveMessageService.beachClear(messageForm));
         } catch (Exception e) {
             log.info("批量清空留言{}, {}", JSON.toJSONString(messageForm), e.getMessage());
