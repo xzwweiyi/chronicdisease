@@ -1,30 +1,29 @@
 package com.dchealth.web.controller.template;
 
-import java.util.List;
-
-import com.dchealth.template.domain.vo.FMedicalFormSortReq;
-import com.dchealth.template.domain.vo.FMedicalInfoReq;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.dchealth.common.annotation.Log;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.core.page.TableDataInfo;
 import com.dchealth.common.enums.BusinessType;
 import com.dchealth.template.domain.FMedicalForm;
+import com.dchealth.template.domain.vo.FMedicalFormSortReq;
+import com.dchealth.template.domain.vo.FMedicalInfoReq;
 import com.dchealth.template.service.IFMedicalFormService;
-import com.dchealth.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 单模板Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-06-08
  */
 @RestController
 @RequestMapping("/template/f_medical_form")
-public class FMedicalFormController extends BaseController
-{
+public class FMedicalFormController extends BaseController {
     @Autowired
     private IFMedicalFormService fMedicalFormService;
 
@@ -33,8 +32,7 @@ public class FMedicalFormController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('base:medical:list')")
     @GetMapping("/list")
-    public TableDataInfo list(FMedicalForm fMedicalForm)
-    {
+    public TableDataInfo list(FMedicalForm fMedicalForm) {
         List<FMedicalForm> list = fMedicalFormService.selectFMedicalFormList(fMedicalForm);
         return getDataTable(list);
     }
@@ -44,8 +42,7 @@ public class FMedicalFormController extends BaseController
      */
     @PostMapping("/importOrUpdate")
     public AjaxResult importOrUpdate(Long templateId, Long followId,
-                                     @RequestParam(value = "operateType", required = false) Integer operateType)
-    {
+                                     @RequestParam(value = "operateType", required = false) Integer operateType) {
         return toAjax(fMedicalFormService.importOrUpdate(templateId, followId, operateType));
     }
 
@@ -55,29 +52,28 @@ public class FMedicalFormController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('base:medical:query')")
     @GetMapping(value = "/{medicalFormId}")
-    public AjaxResult getInfo(@PathVariable("medicalFormId") Long medicalFormId)
-    {
+    public AjaxResult getInfo(@PathVariable("medicalFormId") Long medicalFormId) {
         return AjaxResult.success(fMedicalFormService.selectFMedicalFormByMedicalFormId(medicalFormId));
     }
 
     /**
      * 详情内容
+     *
      * @param medicalFormId
      * @return
      */
     @GetMapping(value = "/detail/{medicalFormId}")
-    public AjaxResult detail(@PathVariable("medicalFormId") Long medicalFormId)
-    {
+    public AjaxResult detail(@PathVariable("medicalFormId") Long medicalFormId) {
         return AjaxResult.success(fMedicalFormService.detail(medicalFormId));
     }
 
     /**
      * 所有详情
+     *
      * @return
      */
     @GetMapping(value = "/detailAll/{followId}")
-    public AjaxResult detailAll(@PathVariable("followId") Long followId)
-    {
+    public AjaxResult detailAll(@PathVariable("followId") Long followId) {
         return AjaxResult.success(fMedicalFormService.detailAll(followId));
     }
 
@@ -87,9 +83,13 @@ public class FMedicalFormController extends BaseController
     @PreAuthorize("@ss.hasPermi('base:medical:add')")
     @Log(title = "单模板", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody FMedicalForm fMedicalForm)
-    {
-        return toAjax(fMedicalFormService.insertFMedicalForm(fMedicalForm));
+    public AjaxResult add(@RequestBody FMedicalForm fMedicalForm) {
+        try {
+            return toAjax(fMedicalFormService.insertFMedicalForm(fMedicalForm));
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+//        return toAjax();
     }
 
     /**
@@ -98,8 +98,7 @@ public class FMedicalFormController extends BaseController
     @PreAuthorize("@ss.hasPermi('base:medical:edit')")
     @Log(title = "单模板", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody FMedicalForm fMedicalForm)
-    {
+    public AjaxResult edit(@RequestBody FMedicalForm fMedicalForm) {
         return toAjax(fMedicalFormService.updateFMedicalForm(fMedicalForm));
     }
 
@@ -108,59 +107,58 @@ public class FMedicalFormController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('base:medical:remove')")
     @Log(title = "单模板", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{medicalFormId}")
-    public AjaxResult remove(@PathVariable Long medicalFormId)
-    {
+    @DeleteMapping("/{medicalFormId}")
+    public AjaxResult remove(@PathVariable Long medicalFormId) {
         return toAjax(fMedicalFormService.deleteFMedicalFormByMedicalFormId(medicalFormId));
     }
 
     /**
      * 获取随访详细信息
+     *
      * @param fMedicalInfoReq
      * @return
      */
     @GetMapping(value = "/fMedicalInfoReq")
-    public AjaxResult getFollowFMedicalFormInfo(FMedicalInfoReq fMedicalInfoReq)
-    {
+    public AjaxResult getFollowFMedicalFormInfo(FMedicalInfoReq fMedicalInfoReq) {
         return AjaxResult.success(fMedicalFormService.selectFollowFMedicalFormInfo(fMedicalInfoReq));
     }
 
     /**
      * 获取问卷详细信息(暂时废弃)
+     *
      * @param fMedicalInfoReq
      * @return
      */
     @GetMapping(value = "/fMedicalFormExamInfo")
-    public AjaxResult getFMedicalFormExamInfo(FMedicalInfoReq fMedicalInfoReq)
-    {
+    public AjaxResult getFMedicalFormExamInfo(FMedicalInfoReq fMedicalInfoReq) {
         return AjaxResult.success(fMedicalFormService.getFMedicalFormExamInfo(fMedicalInfoReq));
     }
 
     /**
      * 判定表单与模板是否有重复项
-     * @param templateId 模板id
-     * @param followId 随访id
+     *
+     * @param templateId      模板id
+     * @param followId        随访id
      * @param templateFromIds 模块id集合
      * @return
      */
     @GetMapping(value = "/fMedicalFormIsRepeat")
-    public AjaxResult getFMedicalFormIsRepeat(Long templateId, Long followId, @RequestParam(value = "templateFromIds",required = false) List<String> templateFromIds)
-    {
+    public AjaxResult getFMedicalFormIsRepeat(Long templateId, Long followId, @RequestParam(value = "templateFromIds", required = false) List<String> templateFromIds) {
         return AjaxResult.success(fMedicalFormService.getFMedicalFormIsRepeat(templateId, followId, templateFromIds));
     }
 
 
     /**
      * CRF导入模板模块信息
-     * @param templateId 模板id
-     * @param followId 随访id
+     *
+     * @param templateId      模板id
+     * @param followId        随访id
      * @param templateFromIds 模块id集合
      * @return
      */
     @PostMapping("/importOrUpdateByTemplateFromIds")
     public AjaxResult importOrUpdateByTemplateFromIds(Long templateId, Long followId, @RequestParam("templateFromIds") List<String> templateFromIds,
-                                                      @RequestParam(value = "operateType", required = false) Integer operateType)
-    {
+                                                      @RequestParam(value = "operateType", required = false) Integer operateType) {
         return toAjax(fMedicalFormService.importOrUpdateByTemplateFromIds(templateId, followId, templateFromIds, operateType));
     }
 
@@ -170,7 +168,7 @@ public class FMedicalFormController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('base:medical:batchUpdateSortNum')")
     @PostMapping("/batchUpdateSortNum")
-    public AjaxResult batchUpdateSortNum(@RequestBody FMedicalFormSortReq fMedicalFormSortReq){
+    public AjaxResult batchUpdateSortNum(@RequestBody FMedicalFormSortReq fMedicalFormSortReq) {
         return toAjax(fMedicalFormService.batchUpdateSortNum(fMedicalFormSortReq));
     }
 

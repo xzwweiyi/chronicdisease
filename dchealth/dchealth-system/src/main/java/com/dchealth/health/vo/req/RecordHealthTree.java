@@ -240,7 +240,7 @@ public class RecordHealthTree implements Serializable {
                     RecordHealthTree diseasesResearchTree = new RecordHealthTree();
                     diseasesResearchTree.setId(Long.valueOf(i));
                     diseasesResearchTree.setNodeId("pr_" + i);
-                    diseasesResearchTree.setParentNodeId("fl_" + 4);
+                    diseasesResearchTree.setParentNodeId("fl_" + 3);
                     diseasesResearchTree.setType(String.valueOf(keyValue));
                     diseasesResearchTree.setLabel(fMedicalForm.getMedicalName());
                     diseasesResearchTree.setFollowId(fMedicalForm.getFollowId());
@@ -248,7 +248,7 @@ public class RecordHealthTree implements Serializable {
                     diseasesResearchTree.setRecordId(recordId);
                     diseasesResearchTree.setResearchId(researchId);
 
-                    List<RecordHealthTree> recordHealthTrees = recordHealth(recordId, researchId, keyValue, patientRecordHealths, fMedicalForm.getHealthManageType());
+                    List<RecordHealthTree> recordHealthTrees = recordHealth(recordId, researchId, keyValue, patientRecordHealths, fMedicalForm.getHealthManageType(),fMedicalForm.getMedicalFormId());
                     if (!CollectionUtils.isEmpty(recordHealthTrees)) {
                         diseasesResearchTree.setChildren(recordHealthTrees);
                     }
@@ -261,7 +261,7 @@ public class RecordHealthTree implements Serializable {
 
 
 
-    private List<RecordHealthTree> recordHealth( Long recordId, Long researchId, Integer keyValue, List<PatientRecordHealth> patientRecordHealths, Integer healthManageType) {
+    private List<RecordHealthTree> recordHealth( Long recordId, Long researchId, Integer keyValue, List<PatientRecordHealth> patientRecordHealths, Integer healthManageType, Long medicalFormId) {
 
         List<RecordHealthTree> tree = new ArrayList<>();
 
@@ -281,7 +281,7 @@ public class RecordHealthTree implements Serializable {
                     diseasesResearchTree.setType(String.valueOf(keyValue));
                     diseasesResearchTree.setLabel(HealthManageEnum.getName(patientRecordHealth.getHealthManageType()) + " " + time);
                     diseasesResearchTree.setFollowId(patientRecordHealths.get(i).getFollowId());
-//                    diseasesResearchTree.setMedicalFormId(patientRecordHealths.get(i).getMedicalFormId());
+                    diseasesResearchTree.setMedicalFormId(medicalFormId);
                     diseasesResearchTree.setHealthId(patientRecordHealths.get(i).getHealthId());
                     diseasesResearchTree.setRecordId(recordId);
                     diseasesResearchTree.setResearchId(researchId);

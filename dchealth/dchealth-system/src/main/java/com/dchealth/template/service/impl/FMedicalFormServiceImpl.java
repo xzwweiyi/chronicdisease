@@ -290,7 +290,20 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
     public int insertFMedicalForm(FMedicalForm fMedicalForm)
     {
         // 对表单类型为5的健康管理方案类的进行限制。不可添加重名的，不可同时添加超过4个类型方案。考虑到小程序端的展示
+        if ("5".equals(fMedicalForm.getFormType())) {
+            List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByFollowId(fMedicalForm.getFollowId());
+            if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+                fMedicalForms.forEach(x -> {
+                    if (x.getHealthManageType().equals(fMedicalForm.getHealthManageType())) {
+                        throw new RuntimeException("模板名称重复");
+                    }
+                });
+            }
 
+            if (fMedicalForms != null && fMedicalForms.size()>4) {
+                throw new RuntimeException("健康管理方案类不可添加超过4个");
+            }
+        }
 
         fMedicalForm.setCreateTime(new Date());
         return fMedicalFormMapper.insertFMedicalForm(fMedicalForm);

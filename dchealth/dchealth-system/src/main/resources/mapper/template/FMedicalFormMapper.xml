@@ -38,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectFMedicalFormOtherVo">
-        select f.medical_form_id, f.medical_code, f.medical_name, f.parent_id, f.open_image, f.open_property, f.open_multiple, f.attribute,f.article_id,
+        select f.medical_form_id, f.medical_code, f.medical_name, f.parent_id, f.open_image, f.open_property, f.open_multiple, f.attribute,f.article_id,f.health_manage_type,
         f.form_source,f.form_type,f.scores_total_val,f.follow_id, f.create_time, f.update_time, f.create_by, f.update_by,f.dynamic, f.open_collapse,f.sort_num,
         (select count(1) from f_medical_property where medical_form_id=f.medical_form_id) property_num,
         (select count(1) from f_medical_form where parent_id=f.medical_form_id and form_type='2') edc_num
@@ -60,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="articleId != null "> and f.article_id = #{articleId}</if>
             <if test="formSource != null  and formSource != ''"> and f.form_source = #{formSource}</if>
             <if test="dynamic != null  and dynamic != ''"> and f.dynamic = #{dynamic}</if>
+             <if test="healthManageType != null">and f.health_manage_type = #{healthManageType}</if>
         </where>
         order by sort_num,create_time asc
     </select>

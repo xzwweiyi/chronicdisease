@@ -26,6 +26,11 @@ public class PatientRecordSaveUpdateInfoForm {
      */
     private Long healthId;
 
+    /**
+     *表单id
+     */
+    private Long medicalFormId;
+
     private Integer healthManageType;
 
     /**

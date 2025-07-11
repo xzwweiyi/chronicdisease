@@ -3,6 +3,7 @@ package com.dchealth.health.service;
 import com.dchealth.health.domain.PatientRecordHealth;
 import com.dchealth.health.vo.req.RecordHealthReq;
 import com.dchealth.health.vo.req.RecordHealthTree;
+import com.dchealth.template.domain.vo.MedicalDetailInfoVo;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface IPatientRecordHealthService
      * @param recordHealthReq 患者档案健康管理主键
      * @return 患者档案健康管理
      */
-    public PatientRecordHealth selectPatientRecordHealthByRecordId(RecordHealthReq recordHealthReq);
+    public MedicalDetailInfoVo selectPatientRecordHealthByRecordId(RecordHealthReq recordHealthReq);
 
     /**
      * 查询患者档案健康管理列表

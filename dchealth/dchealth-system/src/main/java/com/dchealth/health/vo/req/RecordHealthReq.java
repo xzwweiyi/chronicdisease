@@ -26,4 +26,30 @@ public class RecordHealthReq {
      * 患者id
      */
     private Long patientId;
+
+    /**
+     * 队列id
+     */
+    private Long researchId;
+
+    /**
+     * 随访id
+     */
+    private Long followId;
+
+    /**
+     * 患教id
+     */
+    private Long articleId;
+
+    /**
+     * 表单id
+     */
+    private Long medicalFormId;
+
+
+    /**
+     * 问卷提交记录id
+     */
+    private Long examRecordId;
 }
