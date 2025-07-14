@@ -130,7 +130,7 @@ token:
 xxl:
   job:
     admin:
-      addresses: https://test.dchealthclinical.com/dchealth-job-admin
+      addresses: http://10.131.101.91:8032/jobadmin/
     # job, access token
     accessToken: default_token
     # job executor appname

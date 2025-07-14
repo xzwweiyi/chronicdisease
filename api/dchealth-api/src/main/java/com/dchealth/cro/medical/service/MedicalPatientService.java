@@ -1697,7 +1697,6 @@ public class MedicalPatientService {
                 patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate::getFollowId,
                         Function.identity(), (key1, key2) -> key2));
 
-        // 唐都新需求（20250703）添加新的健康管理填写的入口
         patientRecords.forEach(s -> {
             PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(s.getPatientId());
             s.setPatientStatus(patientInfo.getPatientStatus());
@@ -1710,7 +1709,7 @@ public class MedicalPatientService {
                     //随访
                     s.setRecordNum(2);
                 }
-
+                // 唐都新需求（20250703）添加新的健康管理填写的入口
                 // 查询队列下有没有健康管理的表单信息，如果有的话则需要放开填写的权限
                 List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(s.getFollowId(), null);
                 if (fMedicalForms != null && !fMedicalForms.isEmpty()) {

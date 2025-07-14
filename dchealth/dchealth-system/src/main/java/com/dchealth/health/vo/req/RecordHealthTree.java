@@ -56,7 +56,7 @@ public class RecordHealthTree implements Serializable {
      */
     private Long articleId;
 
-    private Long healthId;
+    private String healthId;
 
     /**
      * 模板Id
@@ -282,7 +282,7 @@ public class RecordHealthTree implements Serializable {
                     diseasesResearchTree.setLabel(HealthManageEnum.getName(patientRecordHealth.getHealthManageType()) + " " + time);
                     diseasesResearchTree.setFollowId(patientRecordHealths.get(i).getFollowId());
                     diseasesResearchTree.setMedicalFormId(medicalFormId);
-                    diseasesResearchTree.setHealthId(patientRecordHealths.get(i).getHealthId());
+                    diseasesResearchTree.setHealthId(String.valueOf(patientRecordHealths.get(i).getHealthId()));
                     diseasesResearchTree.setRecordId(recordId);
                     diseasesResearchTree.setResearchId(researchId);
                     tree.add(diseasesResearchTree);

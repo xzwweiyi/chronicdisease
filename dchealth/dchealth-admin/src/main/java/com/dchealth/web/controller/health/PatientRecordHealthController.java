@@ -65,7 +65,7 @@ public class PatientRecordHealthController extends BaseController
      * 获取患者档案健康管理详细信息
      */
     @PreAuthorize("@ss.hasPermi('follow:health:query')")
-    @GetMapping(value = "/query")
+    @PostMapping(value = "/query")
     public AjaxResult getInfo(@RequestBody RecordHealthReq recordHealthReq)
     {
         return AjaxResult.success(patientRecordHealthService.selectPatientRecordHealthByRecordId(recordHealthReq));
