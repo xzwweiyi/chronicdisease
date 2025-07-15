@@ -24,17 +24,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="dynamic"    column="dynamic"    />
         <result property="propertyNum"    column="property_num"    />
         <result property="edcNum"    column="edc_num"    />
+        <result property="healthManageType"    column="health_manage_type"    />
     </resultMap>
 
     <sql id="selectFTemplateFormVo">
         select template_form_id, template_id, template_code, template_name, parent_id, open_image, open_property, open_multiple, create_time, update_time,
-               create_by, update_by, attribute,sort_num,form_type,scores_total_val,dynamic
+               create_by, update_by, attribute,sort_num,form_type,scores_total_val,health_manage_type,dynamic
         from f_template_form
     </sql>
 
     <sql id="selectFTemplateFormOtherVo">
         select t.template_form_id, t.template_id, t.template_code, t.template_name, t.parent_id, t.open_image, t.open_property, t.open_multiple, t.create_time, t.update_time, t.create_by, t.update_by, t.attribute
-        ,t.sort_num,t.form_type,t.scores_total_val,t.dynamic,
+        ,t.sort_num,t.form_type,t.scores_total_val,t.health_manage_type,t.dynamic,
         (select count(1) from f_template_property where template_form_id=t.template_form_id) property_num,
         (select count(1) from f_template_form where parent_id=t.template_form_id and form_type='2') edc_num
         from f_template_form t
@@ -53,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="attribute != null  and attribute != ''"> and t.attribute = #{attribute}</if>
             <if test="formType != null  and formType != ''"> and t.form_type = #{formType}</if>
             <if test="dynamic != null  and dynamic != ''"> and t.dynamic = #{dynamic}</if>
+             <if test="healthManageType != null"> and t.health_manage_type = #{healthManageType}</if>
         </where>
     </select>
     
@@ -84,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sortNum != null">sort_num,</if>
             <if test="formType != null and formType != ''">form_type,</if>
             <if test="scoresTotalVal != null and scoresTotalVal != ''">scores_total_val,</if>
+            <if test="healthManageType != null">health_manage_type,</if>
             <if test="dynamic != null and dynamic != ''">dynamic,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -102,6 +105,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sortNum != null">#{sortNum},</if>
             <if test="formType != null and formType != ''">#{formType},</if>
             <if test="scoresTotalVal != null and scoresTotalVal != ''">#{scoresTotalVal},</if>
+            <if test="healthManageType != null">#{healthManageType},</if>
             <if test="dynamic != null and dynamic != ''">#{dynamic},</if>
          </trim>
     </insert>
@@ -124,6 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sortNum != null">sort_num = #{sortNum},</if>
             <if test="formType != null and formType != ''">form_type = #{formType},</if>
             <if test="scoresTotalVal != null and scoresTotalVal != ''">scores_total_val = #{scoresTotalVal},</if>
+            <if test="healthManageType != null">health_manage_type = #{healthManageType},</if>
             <if test="dynamic != null and dynamic != ''">dynamic = #{dynamic},</if>
         </trim>
         where template_form_id = #{templateFormId}

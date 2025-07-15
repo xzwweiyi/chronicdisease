@@ -175,7 +175,7 @@ public class FTemplateServiceImpl implements IFTemplateService
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int importOrUpdate(Long templateId, Long followId) {
         fTemplateFormMapper.deleteFTemplateFormByTemplateId(templateId);
         fTemplatePropertyMapper.deleteFTemplatePropertyByTemplateId(templateId);
@@ -293,6 +293,7 @@ public class FTemplateServiceImpl implements IFTemplateService
             templateForm.setTemplateCode(form.getMedicalCode());
             templateForm.setTemplateName(form.getMedicalName());
             templateForm.setAttribute(form.getAttribute());
+            templateForm.setHealthManageType(form.getHealthManageType());
             templateForm.setUpdateBy(form.getUpdateBy());
             templateForm.setUpdateTime(form.getUpdateTime());
             templateForm.setDynamic(form.getDynamic());

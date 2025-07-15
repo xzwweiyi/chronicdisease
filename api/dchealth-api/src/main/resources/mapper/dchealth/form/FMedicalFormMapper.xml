@@ -111,12 +111,13 @@
         where m.follow_id = #{followId} and m.form_type != '5'
         ORDER BY m.sort_num, m.create_time asc
     </select>
+
     <select id="selectFMedicalHealthFormJoinByMedicalFollowId"
             resultType="com.dchealth.cro.form.domain.FMedicalForm">
             <include refid="selectFMedicalFormVo"/>
         <where>
             <if test="followId != null">and follow_id = #{followId}</if>
-            <if test="healthManageType != null">and health_manage_type = #{healthManageType}</if>
+            <if test="healthManageType != null">and health_manage_type = #{healthManageType} </if>
             and form_type = '5'
         </where>
     </select>

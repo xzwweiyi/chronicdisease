@@ -43,7 +43,12 @@ public class FMedicalFormController extends BaseController {
     @PostMapping("/importOrUpdate")
     public AjaxResult importOrUpdate(Long templateId, Long followId,
                                      @RequestParam(value = "operateType", required = false) Integer operateType) {
-        return toAjax(fMedicalFormService.importOrUpdate(templateId, followId, operateType));
+
+        try {
+            return toAjax(fMedicalFormService.importOrUpdate(templateId, followId, operateType));
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 

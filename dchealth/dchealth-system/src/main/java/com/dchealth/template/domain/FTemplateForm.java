@@ -85,4 +85,6 @@ public class FTemplateForm extends BaseEntity
     private Integer propertyNum;
 
     private Integer edcNum;
+
+    private Integer healthManageType;
 }

@@ -202,6 +202,8 @@ public class PatientInfo extends BaseEntity
     private String notResearchStatus;
 
     private Integer messageNums;
+
+    private Boolean MessageStatus;
     /**
      * 随访提交时间
      */

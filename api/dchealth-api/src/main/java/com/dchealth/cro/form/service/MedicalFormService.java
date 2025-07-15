@@ -44,21 +44,22 @@ public class MedicalFormService {
 
     /**
      * 获取随访表单内容
+     *
      * @param followId
      */
-    public List<MedicalFormVO>  followForms(Long followId, Long recordId, String followStatus, FormConsumer<List<MedicalFormVO>, List<MedicalPropertyVO>, Set<String>> fun){
+    public List<MedicalFormVO> followForms(Long followId, Long recordId, String followStatus, FormConsumer<List<MedicalFormVO>, List<MedicalPropertyVO>, Set<String>> fun) {
         List<FMedicalForm> formList = fMedicalFormMapper.selectFMedicalFormJoinByMedicalFollowId(followId, recordId);
       /*  if ("2".equals(followStatus)){
             formList = fMedicalFormMapper.selectFMedicalFormJoinByMedicalFollowId(followId, recordId);
         }else{
             formList = fMedicalFormMapper.selectFMedicalFormByMedicalFollowId(followId);
         }*/
-        if (formList == null || formList.isEmpty()){
+        if (formList == null || formList.isEmpty()) {
             return null;
         }
         //如果是否开启动态添加属性为空  默认为0未开启
         formList.stream().forEach(x -> {
-            if(StringUtils.isBlank(x.getOpenMultiple())) {
+            if (StringUtils.isBlank(x.getOpenMultiple())) {
                 x.setOpenMultiple("0");
             }
         });
@@ -70,13 +71,13 @@ public class MedicalFormService {
                 fMedicalExamSubjectMapper.selectFMedicalPropertyByFollowId(followId);
         List<FMedicalProperty> fMedicalProperties = BeanUtils.copyList(questionnaireList,
                 FMedicalProperty::new);
-        if(fMedicalProperties!=null){
+        if (fMedicalProperties != null) {
             properties.addAll(fMedicalProperties);
         }
 
         List<WarnConfig> warnConfigs = warnConfigMapper.selectWarnConfigByFollowId(followId);
-        List<MedicalFormVO> medicalFormVOS = BeanUtils.copyList(formList, MedicalFormVO :: new);
-        List<MedicalPropertyVO> medicalPropertyVOS = BeanUtils.copyList(properties, MedicalPropertyVO :: new);
+        List<MedicalFormVO> medicalFormVOS = BeanUtils.copyList(formList, MedicalFormVO::new);
+        List<MedicalPropertyVO> medicalPropertyVOS = BeanUtils.copyList(properties, MedicalPropertyVO::new);
         List<WarnConfigVO> warnConfigVOS = BeanUtils.copyList(warnConfigs, WarnConfigVO::new);
         // 属性集合
         Set<String> collect = Optional.ofNullable(medicalPropertyVOS)
@@ -86,30 +87,30 @@ public class MedicalFormService {
                 .map(MedicalPropertyVO::getPropertyType)
                 .collect(Collectors.toSet());
         // 动态表单相关
-        if(!CollectionUtils.isEmpty(collect)){
+        if (!CollectionUtils.isEmpty(collect)) {
             fun.accept(medicalFormVOS, medicalPropertyVOS, collect);
         }
-        if (medicalFormVOS != null && !medicalFormVOS.isEmpty()){
-            Map<Long,List<MedicalPropertyVO>> map = null;
-            if (medicalPropertyVOS != null && !medicalPropertyVOS.isEmpty()){
-                map = medicalPropertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO :: getMedicalFormId));
+        if (medicalFormVOS != null && !medicalFormVOS.isEmpty()) {
+            Map<Long, List<MedicalPropertyVO>> map = null;
+            if (medicalPropertyVOS != null && !medicalPropertyVOS.isEmpty()) {
+                map = medicalPropertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO::getMedicalFormId));
             }
             Map<Long, List<WarnConfigVO>> warnConfigMaps = null;
-            if (warnConfigVOS != null && !warnConfigVOS.isEmpty()){
-                warnConfigMaps = warnConfigVOS.stream().collect(Collectors.groupingBy(WarnConfigVO :: getMedicalFormId));
+            if (warnConfigVOS != null && !warnConfigVOS.isEmpty()) {
+                warnConfigMaps = warnConfigVOS.stream().collect(Collectors.groupingBy(WarnConfigVO::getMedicalFormId));
             }
             for (MedicalFormVO x : medicalFormVOS) {
 //                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getDynamic())){
-                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getOpenMultiple())){
+                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getOpenMultiple())) {
                     x.setPropertyVOS(map.get(x.getMedicalFormId()));
                 }
-                if (warnConfigMaps != null && warnConfigMaps.containsKey(x.getMedicalFormId())){
+                if (warnConfigMaps != null && warnConfigMaps.containsKey(x.getMedicalFormId())) {
                     x.setWarnConfigVOS(warnConfigMaps.get(x.getMedicalFormId()));
                 }
             }
         }
 
-        return recurrenceTreeData(0l,medicalFormVOS);
+        return recurrenceTreeData(0l, medicalFormVOS);
     }
 
     private void modifyCheckField(Long recordId, List<FMedicalForm> formList) {
@@ -124,37 +125,38 @@ public class MedicalFormService {
         }
     }
 
-    public List<MedicalFormVO>  followHealthForms(Long followId, Long recordId, String followStatus, FormConsumer<List<MedicalFormVO>, List<MedicalPropertyVO>, Set<String>> fun, Integer healthType){
+    public List<MedicalFormVO> followHealthForms(Long followId, Long recordId, String followStatus, FormConsumer<List<MedicalFormVO>, List<MedicalPropertyVO>, Set<String>> fun, Integer healthType) {
         List<FMedicalForm> formList = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(followId, healthType);
-      /*  if ("2".equals(followStatus)){
-            formList = fMedicalFormMapper.selectFMedicalFormJoinByMedicalFollowId(followId, recordId);
-        }else{
-            formList = fMedicalFormMapper.selectFMedicalFormByMedicalFollowId(followId);
-        }*/
-        if (formList == null || formList.isEmpty()){
+
+        if (formList == null || formList.isEmpty()) {
             return null;
         }
+
+        FMedicalForm fMedicalForm = new FMedicalForm();
+        fMedicalForm.setParentId(formList.get(0).getMedicalFormId());
+        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormList(fMedicalForm);
+
+        formList.addAll(fMedicalForms);
         //如果是否开启动态添加属性为空  默认为0未开启
         formList.stream().forEach(x -> {
-            if(StringUtils.isBlank(x.getOpenMultiple())) {
+            if (StringUtils.isBlank(x.getOpenMultiple())) {
                 x.setOpenMultiple("0");
             }
         });
 //        modifyCheckField(recordId, formList);
-
         List<FMedicalProperty> properties = fMedicalPropertyMapper.selectFMedicalPropertyByFollowId(followId);
         //患者自评量表的数据查出来，增加到properties中
         List<FMedicalExamSubject> questionnaireList =
                 fMedicalExamSubjectMapper.selectFMedicalPropertyByFollowId(followId);
         List<FMedicalProperty> fMedicalProperties = BeanUtils.copyList(questionnaireList,
                 FMedicalProperty::new);
-        if(fMedicalProperties!=null){
+        if (fMedicalProperties != null) {
             properties.addAll(fMedicalProperties);
         }
 
         List<WarnConfig> warnConfigs = warnConfigMapper.selectWarnConfigByFollowId(followId);
-        List<MedicalFormVO> medicalFormVOS = BeanUtils.copyList(formList, MedicalFormVO :: new);
-        List<MedicalPropertyVO> medicalPropertyVOS = BeanUtils.copyList(properties, MedicalPropertyVO :: new);
+        List<MedicalFormVO> medicalFormVOS = BeanUtils.copyList(formList, MedicalFormVO::new);
+        List<MedicalPropertyVO> medicalPropertyVOS = BeanUtils.copyList(properties, MedicalPropertyVO::new);
         List<WarnConfigVO> warnConfigVOS = BeanUtils.copyList(warnConfigs, WarnConfigVO::new);
         // 属性集合
         Set<String> collect = Optional.ofNullable(medicalPropertyVOS)
@@ -164,53 +166,53 @@ public class MedicalFormService {
                 .map(MedicalPropertyVO::getPropertyType)
                 .collect(Collectors.toSet());
         // 动态表单相关
-        if(!CollectionUtils.isEmpty(collect)){
+        if (!CollectionUtils.isEmpty(collect)) {
             fun.accept(medicalFormVOS, medicalPropertyVOS, collect);
         }
-        if (medicalFormVOS != null && !medicalFormVOS.isEmpty()){
-            Map<Long,List<MedicalPropertyVO>> map = null;
-            if (medicalPropertyVOS != null && !medicalPropertyVOS.isEmpty()){
-                map = medicalPropertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO :: getMedicalFormId));
+        if (medicalFormVOS != null && !medicalFormVOS.isEmpty()) {
+            Map<Long, List<MedicalPropertyVO>> map = null;
+            if (medicalPropertyVOS != null && !medicalPropertyVOS.isEmpty()) {
+                map = medicalPropertyVOS.stream().collect(Collectors.groupingBy(MedicalPropertyVO::getMedicalFormId));
             }
             Map<Long, List<WarnConfigVO>> warnConfigMaps = null;
-            if (warnConfigVOS != null && !warnConfigVOS.isEmpty()){
-                warnConfigMaps = warnConfigVOS.stream().collect(Collectors.groupingBy(WarnConfigVO :: getMedicalFormId));
+            if (warnConfigVOS != null && !warnConfigVOS.isEmpty()) {
+                warnConfigMaps = warnConfigVOS.stream().collect(Collectors.groupingBy(WarnConfigVO::getMedicalFormId));
             }
             for (MedicalFormVO x : medicalFormVOS) {
 //                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getDynamic())){
-                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getOpenMultiple())){
+                if (map != null && map.containsKey(x.getMedicalFormId()) && !"1".equals(x.getOpenMultiple())) {
                     x.setPropertyVOS(map.get(x.getMedicalFormId()));
                 }
-                if (warnConfigMaps != null && warnConfigMaps.containsKey(x.getMedicalFormId())){
+                if (warnConfigMaps != null && warnConfigMaps.containsKey(x.getMedicalFormId())) {
                     x.setWarnConfigVOS(warnConfigMaps.get(x.getMedicalFormId()));
                 }
             }
         }
 
-        return recurrenceTreeData(0l,medicalFormVOS);
+        return recurrenceTreeData(0l, medicalFormVOS);
     }
-
 
 
     /**
      * 数结构
+     *
      * @param id
      * @param medicalFormVOS
      * @return
      */
-    private List<MedicalFormVO> recurrenceTreeData(long id, List<MedicalFormVO> medicalFormVOS){
-        if (medicalFormVOS == null || medicalFormVOS.isEmpty()){
+    private List<MedicalFormVO> recurrenceTreeData(long id, List<MedicalFormVO> medicalFormVOS) {
+        if (medicalFormVOS == null || medicalFormVOS.isEmpty()) {
             return null;
         }
         List<MedicalFormVO> result = new ArrayList<>();
-        medicalFormVOS.forEach(x->{
-            if (id == x.getParentId()){
+        medicalFormVOS.forEach(x -> {
+            if (id == x.getParentId()) {
                 result.add(x);
             }
         });
         for (MedicalFormVO fMedicalForm : result) {
             List<MedicalFormVO> childs = recurrenceTreeData(fMedicalForm.getMedicalFormId(), medicalFormVOS);
-            if (childs != null && !childs.isEmpty()){
+            if (childs != null && !childs.isEmpty()) {
                 fMedicalForm.setChildrens(childs);
             }
         }

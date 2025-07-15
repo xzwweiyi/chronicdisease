@@ -171,7 +171,7 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
                 if (childrens != null && !childrens.isEmpty()){
                     x.setMedicalFormList(findChildren(childrens, warnMap, itemMap));
                 }
-                if ("0".equals(x.getFormType()) || "1".equals(x.getFormType()) || "2".equals(x.getFormType()) || "4".equals(x.getFormType())){
+                if ("0".equals(x.getFormType()) || "1".equals(x.getFormType()) || "2".equals(x.getFormType()) || "4".equals(x.getFormType()) || "5".equals(x.getFormType())){
                     List<FMedicalProperty> fMedicalProperties = fMedicalPropertyMapper.selectFMedicalPropertyByMedicalFormId(x.getMedicalFormId());
                     if (fMedicalProperties != null){
                         if("4".equals(x.getFormType()) || "1".equals(x.getFormType())){
@@ -289,28 +289,35 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
     @Override
     public int insertFMedicalForm(FMedicalForm fMedicalForm)
     {
-        // 对表单类型为5的健康管理方案类的进行限制。不可添加重名的，不可同时添加超过4个类型方案。考虑到小程序端的展示
-        if ("5".equals(fMedicalForm.getFormType())) {
-            List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByFollowId(fMedicalForm.getFollowId());
-            if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
-                fMedicalForms.forEach(x -> {
-                    if (x.getHealthManageType().equals(fMedicalForm.getHealthManageType())) {
-                        throw new RuntimeException("模板名称重复");
-                    }
-                });
-            }
-
-            if (fMedicalForms != null && fMedicalForms.size()>4) {
-                throw new RuntimeException("健康管理方案类不可添加超过4个");
-            }
-        }
+        checkHealthType(fMedicalForm);
 
         fMedicalForm.setCreateTime(new Date());
         return fMedicalFormMapper.insertFMedicalForm(fMedicalForm);
     }
 
+    private void checkHealthType(FMedicalForm fMedicalForm) {
+        // 对表单类型为5的健康管理方案类的进行限制。不可添加重名的，不可同时添加超过4个类型方案。考虑到小程序端的展示
+        if ("5".equals(fMedicalForm.getFormType())) {
+            List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByFollowId(fMedicalForm.getFollowId());
+
+            if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+                List<FMedicalForm> list = fMedicalForms.stream().filter(x -> x.getHealthManageType() != 0).collect(Collectors.toList());
+                list.forEach(x -> {
+                    if (x.getHealthManageType().equals(fMedicalForm.getHealthManageType())) {
+                        throw new RuntimeException("不可重复添加健康管理模板");
+                    }
+                });
+                if (list.size() > 4) {
+                    throw new RuntimeException("健康管理方案类不可添加超过4个");
+                }
+            }
+
+
+        }
+    }
+
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int importOrUpdate(Long templateId, Long followId, Integer operateType) {
         //构建模板信息
         List<FTemplateForm> forms = builtFTemplateFromInfo(templateId, followId, operateType, null);
@@ -343,8 +350,12 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
             medicalForm.setOpenMultiple(form.getOpenMultiple());
             medicalForm.setOpenProperty(form.getOpenProperty());
             medicalForm.setDynamic(form.getDynamic());
+            medicalForm.setHealthManageType(form.getHealthManageType());
             medicalForm.setScoresTotalVal(form.getScoresTotalVal());
             medicalForm.setSortNum(form.getSortNum());
+
+            // 导入 之前进行校验
+            checkHealthType(medicalForm);
             fMedicalFormMapper.insertFMedicalForm(medicalForm);
             if (form.getTemplateForms() != null && !form.getTemplateForms().isEmpty()) {
                 recurrenceSave(followId, medicalForm.getMedicalFormId(), form.getTemplateForms());

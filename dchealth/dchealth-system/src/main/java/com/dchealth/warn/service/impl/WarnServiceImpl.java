@@ -117,7 +117,7 @@ public class WarnServiceImpl implements IWarnService {
             warnMedicalEarlies.forEach(w->{
                 WarnMedicalEarlyForm warnMedicalEarlyForm = new WarnMedicalEarlyForm();
                 BeanUtils.copyProperties(w, warnMedicalEarlyForm);
-                if (conds.containsKey(w.getId())){
+                if (conds != null && conds.containsKey(w.getId())){
                     List<WarnMedicalEarlyCondition> medicalEarlyConditions = conds.get(w.getId());
                     List<WarnMedicalEarlyConditionForm> warnMedicalEarlyConditionForms = new ArrayList<>();
                     medicalEarlyConditions.forEach(e->{

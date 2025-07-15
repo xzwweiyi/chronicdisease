@@ -1684,6 +1684,14 @@ public class MedicalPatientService {
         PatientRecordListVo resultVo = new PatientRecordListVo();
 
         List<PatientRecord> patientRecords = patientRecordMapper.selectPatientRecordList(record);
+        // 唐都新需求（20250703）添加新的健康管理填写的入口
+        // 查询队列下有没有健康管理的表单信息，如果有的话则需要放开填写的权限
+        PatientRecord rp = patientRecords.get(0);
+        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(rp.getFollowId(), null);
+        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+            rp.setHealthEditable(true);
+        }
+
         //对于A-》B->A 的情况递归查询同一个队列中旧队列的数据
         DchealthCloudResponseEntity<PatientRecordListVo> result1 = addOldFollowNodes(record, result,
                 patientRecords);
@@ -1709,12 +1717,6 @@ public class MedicalPatientService {
                     //随访
                     s.setRecordNum(2);
                 }
-                // 唐都新需求（20250703）添加新的健康管理填写的入口
-                // 查询队列下有没有健康管理的表单信息，如果有的话则需要放开填写的权限
-                List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(s.getFollowId(), null);
-                if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
-                    s.setHealthEditable(true);
-                }
             }
             //后端失访和前端状态对应不上，后台1,2,3，api接口用0,1,2
             if("1".equals(s.getLoseType())){
@@ -1728,6 +1730,7 @@ public class MedicalPatientService {
             }
             PatientRecord patientRecord = setFollowTipAndGetNextNodeInfo(s, patientInfo, patientRecords,
                     maxFollowIdPr, patientRecordTemplates);
+
             if (!Objects.isNull(patientRecord)&&!"4".equals(patientInfo.getPatientStatus())) {
                 nextNodeAtomic.set(patientRecord);
             }

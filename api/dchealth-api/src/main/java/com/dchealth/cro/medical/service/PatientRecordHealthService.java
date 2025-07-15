@@ -409,7 +409,7 @@ public class PatientRecordHealthService {
         return result;
     }
 
-    private Boolean checkFillInFlag(Integer healthManageType, Long recordId) {
+    private Boolean checkFillInFlag(Integer healthManageType, Long recordId, Long followId) {
         // 限制每天填写一次，需要不返回详情填写信息查询表中含有提交时间含有小于当前最后时间的信息则回显信息。如果没有则只显示表单
         LocalDateTime start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
@@ -418,8 +418,10 @@ public class PatientRecordHealthService {
         patientRecordHealth.setEndTime(Date.from(end.atZone(ZoneId.systemDefault()).toInstant()));
         patientRecordHealth.setHealthManageType(healthManageType);
         patientRecordHealth.setPatientId(recordId);
+        patientRecordHealth.setFollowId(followId);
         List<PatientRecordHealth> healthList = patientRecordHealthMapper.selectPatientRecordHealthList(patientRecordHealth);
-        return healthList != null && !healthList.isEmpty();
+        return !healthList.isEmpty();
+//        return healthList != null && !healthList.isEmpty();
     }
 
 
@@ -568,7 +570,7 @@ public class PatientRecordHealthService {
                 healthTypeResp.setHealthManageTypeName(HealthManageEnum.getName(item.getHealthManageType()));
 
                 // 如果当天存在值则不可以进行编辑
-                Boolean b = checkFillInFlag(item.getHealthManageType(), healthListReq.getRecordId());
+                Boolean b = checkFillInFlag(item.getHealthManageType(), healthListReq.getRecordId(), item.getFollowId());
                 if (b) {
                     healthTypeResp.setIsEditable(false);
                 }
