@@ -96,6 +96,8 @@ public class PatientRecordVo extends BaseEntity
     private String dynamic;
     private String followStatus;
 
+    private Double formComplentRate;
+
     public PatientRecordVo(){}
 
 }

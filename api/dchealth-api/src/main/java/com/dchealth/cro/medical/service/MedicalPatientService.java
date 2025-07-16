@@ -196,16 +196,16 @@ public class MedicalPatientService {
             return result;
         }
         PatientRecord record = new PatientRecord();
-//        //质疑处理  患者回复质疑只处理质疑的逻辑不修改提交的逻辑
-//        if(infoForm.getQuestionRecordForm() != null && !Objects.isNull(infoForm.getQuestionRecordForm().getQuestionId())) {
-//            handleRequestionRecordFormInfo(infoForm, record);
-//            record.setRecordId(patientRecord.getRecordId());
-//            record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
-//            patientRecordMapper.updatePatientRecord(record);
-//            commonResult.setResult(true);
-//            result.setData(commonResult);
-//            return result;
-//        }
+        //质疑处理  患者回复质疑只处理质疑的逻辑不修改提交的逻辑
+        if(infoForm.getQuestionRecordForm() != null && !Objects.isNull(infoForm.getQuestionRecordForm().getQuestionId())) {
+            handleRequestionRecordFormInfo(infoForm, record);
+            record.setRecordId(patientRecord.getRecordId());
+            record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
+            patientRecordMapper.updatePatientRecord(record);
+            commonResult.setResult(true);
+            result.setData(commonResult);
+            return result;
+        }
 
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
         patientRecord.setAccountId(patientInfo.getAccountId());
@@ -1686,11 +1686,11 @@ public class MedicalPatientService {
         List<PatientRecord> patientRecords = patientRecordMapper.selectPatientRecordList(record);
         // 唐都新需求（20250703）添加新的健康管理填写的入口
         // 查询队列下有没有健康管理的表单信息，如果有的话则需要放开填写的权限
-        PatientRecord rp = patientRecords.get(0);
-        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(rp.getFollowId(), null);
-        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
-            rp.setHealthEditable(true);
-        }
+//        PatientRecord rp = patientRecords.get(0);
+//        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(rp.getFollowId(), null);
+//        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+//            rp.setHealthEditable(true);
+//        }
 
         //对于A-》B->A 的情况递归查询同一个队列中旧队列的数据
         DchealthCloudResponseEntity<PatientRecordListVo> result1 = addOldFollowNodes(record, result,
@@ -1734,6 +1734,13 @@ public class MedicalPatientService {
             if (!Objects.isNull(patientRecord)&&!"4".equals(patientInfo.getPatientStatus())) {
                 nextNodeAtomic.set(patientRecord);
             }
+
+//            PatientRecord rp = patientRecords.get(0);
+            List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalHealthFormJoinByMedicalFollowId(s.getFollowId(), null);
+            if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+                s.setHealthEditable(true);
+            }
+
         });
         ResearchInfo ri = researchInfoMapper.selectResearchInfoById(record.getResearchId());
         if (!Objects.isNull(nextNodeAtomic.get()) && nextNodeAtomic.get().getResearchId() != null && !"0".equals(ri.getResearchStatus())) {

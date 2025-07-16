@@ -203,7 +203,7 @@ public class PatientInfo extends BaseEntity
 
     private Integer messageNums;
 
-    private Boolean MessageStatus;
+    private Integer messageStatus;
     /**
      * 随访提交时间
      */

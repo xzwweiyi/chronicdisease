@@ -63,7 +63,7 @@ public class MedicalFormService {
                 x.setOpenMultiple("0");
             }
         });
-//        modifyCheckField(recordId, formList);
+        modifyCheckField(recordId, formList);
 
         List<FMedicalProperty> properties = fMedicalPropertyMapper.selectFMedicalPropertyByFollowId(followId);
         //患者自评量表的数据查出来，增加到properties中

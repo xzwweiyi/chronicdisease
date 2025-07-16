@@ -203,8 +203,8 @@
             select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
             ) ru on ri.id=ru.research_id
         </if>
-        <if test="MessageStatus != null">
-            left join leave_message lm on lm.person_id=mp.person_id
+        <if test="messageStatus != null  and messageStatus == 1">
+            inner join (SELECT sender_id,is_delete_dc, count(1) as num from leave_message where is_read = 0 GROUP BY sender_id) lm on lm.sender_id=mp.person_id
         </if>
         <where>
             <if test="patientId != null ">and g.patient_id = #{patientId}</if>
@@ -237,8 +237,8 @@
             <if test="searchType != null  and searchType != '' and searchType=='4'.toString()">and g.patient_status =
                 #{searchType}
             </if>
-            <if test="MessageStatus != null">
-                and lm.is_read = 0
+            <if test="messageStatus != null and messageStatus == 1">
+                and lm.num > 0 and lm.is_delete_dc = 0
             </if>
 
             <choose>

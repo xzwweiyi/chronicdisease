@@ -1,6 +1,5 @@
 package com.dchealth.medical.domain.vo;
 
-import com.dchealth.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -156,5 +155,10 @@ public class FollowWorkListVO {
      * 创建人姓名
      */
     private String createName;
+
+    /**
+     * 表单填写比率
+     */
+    private Double formComplentRate;
 
 }

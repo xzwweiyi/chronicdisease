@@ -128,6 +128,7 @@
         <result property="patientName" column="patient_name"/>
         <result property="followName" column="follow_name"/>
         <result property="followStatus" column="follow_status"/>
+        <result property="formComplentRate" column="form_complent_rate"/>
     </resultMap>
     <resultMap type="com.dchealth.msgTip.domain.MsgSend" id="msgSendResult">
         <result property="diseaseId" column="disease_id"/>
@@ -194,7 +195,8 @@
                warn_evaluate_reply_back,
                warn_evaluate_reply_back_time,
                over_time_handle_time,
-               is_submit
+               is_submit,
+               form_complent_rate
         from patient_record
     </sql>
 
@@ -221,7 +223,8 @@
                i.patient_name,
                te.follow_name,
                re.follow_opinion,
-               re.follow_status
+               re.follow_status,
+               re.form_complent_rate
         from patient_record re
                  inner join patient_info i on re.patient_id = i.patient_id
                  left join patient_record_template te on re.follow_id = te.follow_id
@@ -353,7 +356,7 @@
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by
+        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
