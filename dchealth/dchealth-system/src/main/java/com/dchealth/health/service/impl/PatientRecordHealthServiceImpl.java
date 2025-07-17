@@ -112,20 +112,21 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
         PatientRecordHealth patientRecordHealth = patientRecordHealthMapper.selectPatientRecordHealthByHealthId(recordHealthReq.getHealthId());
 
         List<FMedicalForm> fMedicalFormInfo = getFMedicalFormInfo(recordHealthReq, patientRecordHealth);
-        if(fMedicalFormInfo != null && !fMedicalFormInfo.isEmpty()){
+        if (fMedicalFormInfo != null && !fMedicalFormInfo.isEmpty()) {
             result.setMedicalInfos(fMedicalFormInfo);
             //查询患者基本信息
             PatientInfo patientInfo = patientInfoMapper.selectPatientDetailInfoByPatientId(patientId);
-            if(patientInfo!=null && patientInfo.getIdCard()!=null){
-                if(patientInfo.getIdCard().length()==18){
+            if (patientInfo != null && patientInfo.getIdCard() != null) {
+                if (patientInfo.getIdCard().length() == 18) {
                     patientInfo.setSex(Integer.parseInt(CommunalUtils.getSex(patientInfo.getIdCard())));
                 }
             }
-            //此处新增随访提交时间 应唐都老师要求
 
-                if (patientRecordHealth != null && patientRecordHealth.getUpdateTime() != null) {
-                        patientInfo.setCommitTime(patientRecordHealth.getUpdateTime());
+            //此处新增随访提交时间 应唐都老师要求
+            if (patientRecordHealth != null && patientRecordHealth.getUpdateTime() != null) {
+                patientInfo.setCommitTime(patientRecordHealth.getSubmitTime());
             }
+
 
             result.setPatientInfo(patientInfo);
         }
@@ -232,23 +233,26 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
     }
 
 
-    public List<FMedicalForm> getFMedicalFormInfo(RecordHealthReq vo, PatientRecordHealth patientRecordHealth){
+    public List<FMedicalForm> getFMedicalFormInfo(RecordHealthReq vo, PatientRecordHealth patientRecordHealth) {
         List<FMedicalForm> fMedicalForms = null;
         List<FMedicalProperty> fMedicalProperties = null;
         Long followId = vo.getFollowId();
         //获取随访模块信息
-        if(followId != null){
+        if (followId != null) {
             FMedicalForm fMedicalForm = new FMedicalForm();
             fMedicalForm.setHealthManageType(patientRecordHealth.getHealthManageType());
             fMedicalForm.setFollowId(patientRecordHealth.getFollowId());
             fMedicalForm.setFormType("5");
             fMedicalForms = fMedicalFormMapper.selectFMedicalFormList(fMedicalForm);
             FMedicalForm ff = new FMedicalForm();
-            ff.setParentId(vo.getMedicalFormId());
-            List<FMedicalForm> childForm = fMedicalFormMapper.selectFMedicalFormList(ff);
-            if(childForm.size()>0){
-                fMedicalForms.addAll(childForm);
+            if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+                ff.setParentId(fMedicalForms.get(0).getMedicalFormId());
+                List<FMedicalForm> childForm = fMedicalFormMapper.selectFMedicalFormList(ff);
+                if (!childForm.isEmpty()) {
+                    fMedicalForms.addAll(childForm);
+                }
             }
+
 
             //查询随访模块属相信息
 //            fMedicalProperties = fMedicalPropertyMapper.selectFMedicalProperty(followId,vo.getMedicalFormId());
@@ -270,11 +274,11 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
 //            }
 
         }
-        if(fMedicalForms != null && !fMedicalForms.isEmpty()) {
+        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
             //判断表单id是否存在属性分组表中，存在则将属性信息赋值表单
             for (FMedicalForm fMedicalForm : fMedicalForms) {
                 //属性值赋值
-                packageMedicalProperties(fMedicalProperties,fMedicalForm,vo,"1");
+                packageMedicalProperties(fMedicalProperties, fMedicalForm, vo, "1");
             }
             //构建树状结构-子父关系
             fMedicalForms = rebuildTreeData(0l, fMedicalForms);
@@ -283,7 +287,7 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
     }
 
 
-    public void packageMedicalProperties(List<FMedicalProperty> fMedicalProperties, FMedicalForm fMedicalForm, RecordHealthReq vo,String type){
+    public void packageMedicalProperties(List<FMedicalProperty> fMedicalProperties, FMedicalForm fMedicalForm, RecordHealthReq vo, String type) {
         Long followId = vo.getFollowId();
         Long researchId = vo.getResearchId();
         Map<Long, List<FMedicalProperty>> fMedicalPropertyMaps = null;
@@ -303,23 +307,23 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
                     Set<String> propertyTypes = medicalProperties.stream().filter(fMedicalProperty -> fMedicalProperty.getPropertyType() != null).map(FMedicalProperty::getPropertyType).collect(Collectors.toSet());
                     if (propertyTypes != null && PropertyType.largeText(propertyTypes)) {
                         //大文本
-                        sql = dynamicLargeText.buildSelectSql(researchId, fMedicalForm.getMedicalFormId(), vo.getHealthId(),type);
+                        sql = dynamicLargeText.buildSelectSql(researchId, fMedicalForm.getMedicalFormId(), vo.getHealthId(), type);
                         List<FMedicalValueVo> valueVos = fMedicalPropertyMapper.selectFMedicalValues(sql);
                         fMedicalValueVos.addAll(valueVos);
                     }
-                    if(PropertyType.text(propertyTypes)) {
+                    if (PropertyType.text(propertyTypes)) {
                         //小文本
-                        sql = dynamicText.buildSelectSql(researchId, fMedicalForm.getMedicalFormId(), vo.getHealthId(),type);
+                        sql = dynamicText.buildSelectSql(researchId, fMedicalForm.getMedicalFormId(), vo.getHealthId(), type);
                         List<FMedicalValueVo> valueVos = fMedicalPropertyMapper.selectFMedicalValues(sql);
                         fMedicalValueVos.addAll(valueVos);
                     }
-                    if(true){//"1".equals(fMedicalForm.getDynamic())
+                    if (true) {//"1".equals(fMedicalForm.getDynamic())
                         //动态表单
-                        sql = dynamicFroms.buildSelectSql(researchId, fMedicalForm.getMedicalFormId(), vo.getHealthId(),type);
+                        sql = dynamicFroms.buildSelectSql(researchId, fMedicalForm.getMedicalFormId(), vo.getHealthId(), type);
                         List<FMedicalValueVo> valueVos = fMedicalPropertyMapper.selectFMedicalValues(sql);
                         fMedicalValueVos.addAll(valueVos);
                     }
-                    if(PropertyType.upLoad(propertyTypes)){
+                    if (PropertyType.upLoad(propertyTypes)) {
                         //图片
                         List<PatientRecordFiles> recordFiles = patientRecordFilesMapper.selectPatientRecordFilesByHealthId(vo.getHealthId());
                         patientRecordFiles.addAll(recordFiles);
@@ -329,10 +333,10 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
                 Map<Long, List<PatientRecordFiles>> fileMap = null;
                 //将值赋值属性表
                 if (fMedicalValueVos != null && !fMedicalValueVos.isEmpty()) {
-                    valuesMap = fMedicalValueVos.stream().collect(Collectors.toMap(FMedicalValueVo::getPropertyCode,item -> item));
+                    valuesMap = fMedicalValueVos.stream().collect(Collectors.toMap(FMedicalValueVo::getPropertyCode, item -> item));
                 }
                 //图片赋值
-                if(patientRecordFiles != null && !patientRecordFiles.isEmpty()){
+                if (patientRecordFiles != null && !patientRecordFiles.isEmpty()) {
                     fileMap = patientRecordFiles.stream().collect(Collectors.groupingBy(PatientRecordFiles::getPropertyId));
                 }
                 for (FMedicalProperty fMedicalProperty : medicalProperties) {
@@ -341,7 +345,7 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
                         fMedicalProperty.setPropertyValue(fMedicalValueVo.getPropertyValue());
                         fMedicalProperty.setOther(fMedicalValueVo.getOther());
                     }
-                    if(fileMap != null && fileMap.get(fMedicalProperty.getId()) != null){
+                    if (fileMap != null && fileMap.get(fMedicalProperty.getId()) != null) {
                         List<PatientRecordFiles> files = fileMap.get(fMedicalProperty.getId());
                         List<String> list = files.stream().map(PatientRecordFiles::getImageUrl).collect(Collectors.toList());
                         fMedicalProperty.setImageUrls(list);
@@ -354,14 +358,14 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
 
     private List<FMedicalForm> rebuildTreeData(long id, List<FMedicalForm> fMedicalForms) {
         List<FMedicalForm> result = new ArrayList<>();
-        fMedicalForms.forEach(x->{
-            if (x.getParentId() != null && id == x.getParentId()){
+        fMedicalForms.forEach(x -> {
+            if (x.getParentId() != null && id == x.getParentId()) {
                 result.add(x);
             }
         });
         for (FMedicalForm fMedicalForm : result) {
             List<FMedicalForm> childs = rebuildTreeData(fMedicalForm.getMedicalFormId(), fMedicalForms);
-            if (childs != null && !childs.isEmpty()){
+            if (childs != null && !childs.isEmpty()) {
                 fMedicalForm.setMedicalFormList(childs);
             }
         }

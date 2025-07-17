@@ -87,6 +87,8 @@ public interface FMedicalFormMapper
 
     List<FMedicalForm> selectFMedicalFormByMedicalFollowId2(Long followId);
 
+    List<FMedicalForm> selectFMedicalFormByMedicalFollowId3(Long followId);
+
     List<FMedicalForm> selectFMedicalFormByFollowIds(List<Long> followIds);
 
     List<FMedicalForm> queryFMedicalFormList(@Param("followIds") List<Long> followIds);

@@ -152,6 +152,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="openCollapse != null and openCollapse != ''">open_collapse = #{openCollapse},</if>
             <if test="sortNum != null">sort_num = #{sortNum},</if>
             <if test="selfEvaluationType != null">self_evaluation_type = #{selfEvaluationType},</if>
+            <if test="healthManageType != null">health_manage_type = #{healthManageType},</if>
         </trim>
         where medical_form_id = #{medicalFormId}
     </update>
@@ -199,6 +200,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectFMedicalFormByMedicalFollowId2" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
         where follow_id = #{followId} and form_type != '5'
+        order by sort_num,create_time asc
+    </select>
+
+    <select id="selectFMedicalFormByMedicalFollowId3" parameterType="Long" resultMap="FMedicalFormResult">
+        <include refid="selectFMedicalFormVo"/>
+        where follow_id = #{followId}
         order by sort_num,create_time asc
     </select>
 

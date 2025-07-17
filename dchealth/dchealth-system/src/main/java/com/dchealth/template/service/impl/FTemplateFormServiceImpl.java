@@ -1,19 +1,11 @@
 package com.dchealth.template.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.dchealth.common.utils.DateUtils;
 import com.dchealth.template.domain.*;
-import com.dchealth.template.mapper.FTemplateExamItemMapper;
-import com.dchealth.template.mapper.FTemplateExamSubjectMapper;
-import com.dchealth.template.mapper.FTemplatePropertyMapper;
+import com.dchealth.template.mapper.*;
+import com.dchealth.template.service.IFTemplateFormService;
 import com.dchealth.warn.domain.WarnTemplateEarly;
 import com.dchealth.warn.domain.WarnTemplateEarlyCondition;
-import com.dchealth.warn.domain.form.WarnTemplateEarlyConditionForm;
-import com.dchealth.warn.domain.form.WarnTemplateEarlyForm;
 import com.dchealth.warn.domain.vo.WarnTemplateEarlyConditionVO;
 import com.dchealth.warn.domain.vo.WarnTemplateEarlyVO;
 import com.dchealth.warn.mapper.WarnTemplateEarlyConditionMapper;
@@ -21,8 +13,11 @@ import com.dchealth.warn.mapper.WarnTemplateEarlyMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.dchealth.template.mapper.FTemplateFormMapper;
-import com.dchealth.template.service.IFTemplateFormService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 单模板Service业务层处理
@@ -46,6 +41,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
     @Autowired
     WarnTemplateEarlyConditionMapper warnTemplateEarlyConditionMapper;
 
+    @Autowired
+    private FMedicalFormMapper fMedicalFormMapper;
     /**
      * 查询单模板
      *
@@ -274,6 +271,7 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
     @Override
     public int insertFTemplateForm(FTemplateForm fTemplateForm)
     {
+        checkHealthType(fTemplateForm);
         fTemplateForm.setCreateTime(DateUtils.getNowDate());
         return fTemplateFormMapper.insertFTemplateForm(fTemplateForm);
     }
@@ -288,8 +286,9 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
     public int updateFTemplateForm(FTemplateForm fTemplateForm)
     {
         fTemplateForm.setUpdateTime(DateUtils.getNowDate());
+        checkHealthType(fTemplateForm);
         List<FTemplateProperty> fTemplateProperties = fTemplateForm.getTemplateProperties();
-        if(fTemplateProperties != null && fTemplateProperties.size() > 0){
+        if(fTemplateProperties != null && !fTemplateProperties.isEmpty()){
             for (FTemplateProperty fTemplateProperty : fTemplateProperties) {
                 //更新表单属性信息
                 fTemplatePropertyMapper.updateFTemplateProperty(fTemplateProperty);
@@ -337,5 +336,26 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
         }
         return fTemplateForm;
 
+    }
+
+    private void checkHealthType(FTemplateForm fTemplateForm) {
+        // 对表单类型为5的健康管理方案类的进行限制。不可添加重名的，不可同时添加超过4个类型方案。考虑到小程序端的展示
+        if ("5".equals(fTemplateForm.getFormType())) {
+            List<FTemplateForm> fTemplateForms = fTemplateFormMapper.selectFTemplateFormByTemplateId(fTemplateForm.getTemplateId());
+
+            if (fTemplateForms != null && !fTemplateForms.isEmpty()) {
+                List<FTemplateForm> list = fTemplateForms.stream().filter(x -> x.getHealthManageType() != 0).collect(Collectors.toList());
+                list.forEach(x -> {
+                    if (x.getHealthManageType().equals(fTemplateForm.getHealthManageType())) {
+                        throw new RuntimeException("不可重复添加健康管理模板");
+                    }
+                });
+                if (list.size() > 4) {
+                    throw new RuntimeException("健康管理方案类不可添加超过4个");
+                }
+            }
+
+
+        }
     }
 }

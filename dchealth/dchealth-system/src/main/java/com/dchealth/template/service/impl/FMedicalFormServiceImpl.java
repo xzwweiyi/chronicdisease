@@ -97,7 +97,7 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
     @Override
     public List<FMedicalForm> detailAll(Long followId) {
         List<FMedicalForm> result = new ArrayList<>();
-        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByMedicalFollowId2(followId);
+        List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByMedicalFollowId3(followId);
         if(fMedicalForms!=null && fMedicalForms.size()>0){
             for(FMedicalForm f:fMedicalForms){
                 if(f.getParentId()==0){
@@ -495,6 +495,7 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
     public int updateFMedicalForm(FMedicalForm fMedicalForm)
     {
         fMedicalForm.setUpdateTime(new Date());
+        checkHealthType(fMedicalForm);
         return fMedicalFormMapper.updateFMedicalForm(fMedicalForm);
     }
 

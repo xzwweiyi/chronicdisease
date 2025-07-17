@@ -1,19 +1,5 @@
 package com.dchealth.web.controller.system;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.dchealth.common.annotation.Log;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
@@ -24,6 +10,14 @@ import com.dchealth.common.utils.StringUtils;
 import com.dchealth.common.utils.poi.ExcelUtil;
 import com.dchealth.system.service.ISysDictDataService;
 import com.dchealth.system.service.ISysDictTypeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 数据字典信息
@@ -43,6 +37,15 @@ public class SysDictDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:dict:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysDictData dictData)
+    {
+        startPage();
+        List<SysDictData> list = dictDataService.selectDictDataList(dictData);
+        return getDataTable(list);
+    }
+
+//    @PreAuthorize("@ss.hasPermi('system:dict:list')")
+    @GetMapping("/otherList")
+    public TableDataInfo otherList(SysDictData dictData)
     {
         startPage();
         List<SysDictData> list = dictDataService.selectDictDataList(dictData);

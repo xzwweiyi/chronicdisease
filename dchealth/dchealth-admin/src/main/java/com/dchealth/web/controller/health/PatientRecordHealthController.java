@@ -32,7 +32,7 @@ public class PatientRecordHealthController extends BaseController
     /**
      * 查询患者档案健康管理列表
      */
-    @PreAuthorize("@ss.hasPermi('follow:health:list')")
+//    @PreAuthorize("@ss.hasPermi('follow:health:list')")
     @GetMapping("/list")
     public TableDataInfo list(PatientRecordHealth patientRecordHealth)
     {
@@ -64,7 +64,7 @@ public class PatientRecordHealthController extends BaseController
     /**
      * 获取患者档案健康管理详细信息
      */
-    @PreAuthorize("@ss.hasPermi('follow:health:query')")
+//    @PreAuthorize("@ss.hasPermi('follow:health:query')")
     @PostMapping(value = "/query")
     public AjaxResult getInfo(@RequestBody RecordHealthReq recordHealthReq)
     {

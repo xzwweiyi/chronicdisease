@@ -210,6 +210,7 @@ public class PatientRecordHealthService {
         PatientRecordHealth health = new PatientRecordHealth();
         health.setHealthId(String.valueOf(healthId));
         health.setRecordId(infoForm.getRecordId());
+//        health.setMedicalFormId(infoForm.getMedicalFormId());
         health.setFollowId(patientRecord.getFollowId());
         health.setResearchId(patientRecord.getResearchId());
         health.setPatientId(patientRecord.getPatientId());
@@ -369,11 +370,11 @@ public class PatientRecordHealthService {
         patientRecordDetailForm.setRecordId(healthReq.getRecordId());
         patientRecordDetailForm.setIsSubmit(0);
         patientRecordDetailForm.setStageName(patientRecord.getName());
-        patientRecordDetailForm.setOverTimeStatus(patientRecord.getOverTimeStatus());
-        patientRecordDetailForm.setWarnStatus(patientRecord.getWarnStatus());
+//        patientRecordDetailForm.setOverTimeStatus(patientRecord.getOverTimeStatus());
+//        patientRecordDetailForm.setWarnStatus(patientRecord.getWarnStatus());
         patientRecordDetailForm.setCreateTimeStr(DateUtils.dateTime(patientRecord.getCreateTime()));
         patientRecordDetailForm.setResearchId(patientRecord.getResearchId());
-        patientRecordDetailForm.setFollowTipStatus(patientRecord.getFollowTipStatus());
+
         if(patientRecord.getVisitTime()!= null) {
             patientRecordDetailForm.setVisitTime(DateUtils.parseDateToStrFull(patientRecord.getVisitTime()));
         }
@@ -396,6 +397,7 @@ public class PatientRecordHealthService {
         patientRecordDetailForm.setPatientId(patientInfo.getPatientId());
         patientRecordDetailForm.setPersonId(patientInfo.getPersonId());
         patientRecordDetailForm.setPatientName(patientInfo.getPatientName());
+        patientRecordDetailForm.setFollowTipStatus(-1);
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(patientInfo.getAccountId());
         if(patientAccount!=null){
             patientRecordDetailForm.setPatientMobile(patientAccount.getMobile());
