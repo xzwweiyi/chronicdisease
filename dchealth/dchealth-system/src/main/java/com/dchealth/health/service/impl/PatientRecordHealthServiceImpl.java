@@ -123,7 +123,7 @@ public class PatientRecordHealthServiceImpl extends CommonService implements IPa
             }
 
             //此处新增随访提交时间 应唐都老师要求
-            if (patientRecordHealth != null && patientRecordHealth.getUpdateTime() != null) {
+            if (patientRecordHealth != null && patientRecordHealth.getSubmitTime() != null) {
                 patientInfo.setCommitTime(patientRecordHealth.getSubmitTime());
             }
 
