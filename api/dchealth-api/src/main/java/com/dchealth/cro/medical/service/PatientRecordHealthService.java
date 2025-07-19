@@ -261,8 +261,8 @@ public class PatientRecordHealthService {
                     infoForm.getPropertyForms().stream().collect(Collectors.groupingBy(FMedicalPropertyForm::getDynamic));
             Optional<List<FMedicalPropertyForm>> dyList = Optional.ofNullable(dyMap.get("1"));//动态表格数据
             if (dyList.isPresent()) {
-                dynamicCommonMapper.executeDeleteSql(dynamicSql.buildDeleteDynamic(patientRecord.getResearchId(),
-                        patientRecord.getRecordId()));
+//                dynamicCommonMapper.executeDeleteSql(dynamicSql.buildDeleteDynamic(patientRecord.getResearchId(),
+//                        infoForm.getHealthId()));
                 String dynamicSqls = dynamicSql.buildBatchDynamicSql(dynamicForm, dyList.get());
                 dynamicCommonMapper.executeInsertSql(dynamicSqls);
             }
@@ -283,15 +283,15 @@ public class PatientRecordHealthService {
                     return l.isEmpty() ? null : l;
                 });
                 if (ltList.isPresent()) {
-                    String delSql = dynamicSql.buildDeleteLargeText(patientRecord.getResearchId(),
-                            patientRecord.getRecordId());
-                    dynamicCommonMapper.executeDeleteSql(delSql);
+//                    String delSql = dynamicSql.buildDeleteLargeText(patientRecord.getResearchId(),
+//                            patientRecord.getRecordId());
+//                    dynamicCommonMapper.executeDeleteSql(delSql);
                     String largeTextSql = dynamicSql.buildBatchLargeTextSql(dynamicForm, ltList.get());
                     dynamicCommonMapper.executeInsertSql(largeTextSql);
                 }
                 if (tList.isPresent()) {
-                    dynamicCommonMapper.executeDeleteSql(dynamicSql.buildDeleteText(patientRecord.getResearchId(),
-                            patientRecord.getRecordId()));
+//                    dynamicCommonMapper.executeDeleteSql(dynamicSql.buildDeleteText(patientRecord.getResearchId(),
+//                            patientRecord.getRecordId()));
                     String textSql = dynamicSql.buildBatchTextSql(dynamicForm, tList.get());
                     dynamicCommonMapper.executeInsertSql(textSql);
                 }
@@ -411,7 +411,7 @@ public class PatientRecordHealthService {
         return result;
     }
 
-    private Boolean checkFillInFlag(Integer healthManageType, Long recordId, Long followId) {
+    private Boolean checkFillInFlag(Integer healthManageType, Long recordId, Long followId, Long patientId) {
         // 限制每天填写一次，需要不返回详情填写信息查询表中含有提交时间含有小于当前最后时间的信息则回显信息。如果没有则只显示表单
         LocalDateTime start = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
@@ -419,7 +419,8 @@ public class PatientRecordHealthService {
         patientRecordHealth.setStartTime(Date.from(start.atZone(ZoneId.systemDefault()).toInstant()));
         patientRecordHealth.setEndTime(Date.from(end.atZone(ZoneId.systemDefault()).toInstant()));
         patientRecordHealth.setHealthManageType(healthManageType);
-        patientRecordHealth.setPatientId(recordId);
+        patientRecordHealth.setRecordId(recordId);
+        patientRecordHealth.setPatientId(patientId);
         patientRecordHealth.setFollowId(followId);
         List<PatientRecordHealth> healthList = patientRecordHealthMapper.selectPatientRecordHealthList(patientRecordHealth);
         return !healthList.isEmpty();
@@ -572,7 +573,7 @@ public class PatientRecordHealthService {
                 healthTypeResp.setHealthManageTypeName(HealthManageEnum.getName(item.getHealthManageType()));
 
                 // 如果当天存在值则不可以进行编辑
-                Boolean b = checkFillInFlag(item.getHealthManageType(), healthListReq.getRecordId(), item.getFollowId());
+                Boolean b = checkFillInFlag(item.getHealthManageType(), healthListReq.getRecordId(), item.getFollowId(), healthListReq.getPatientId());
                 if (b) {
                     healthTypeResp.setIsEditable(false);
                 }

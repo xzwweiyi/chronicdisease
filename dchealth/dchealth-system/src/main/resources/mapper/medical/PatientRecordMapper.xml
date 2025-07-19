@@ -88,6 +88,8 @@
         <result property="fillStatus" column="fill_status"/>
         <result property="createBy" column="create_by"/>
         <result property="enrollmentTime" column="enrollment_time"/>
+        <result property="formComplentRate" column="form_complent_rate"/>
+
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.EvaluateVO" id="EvaluateVOResult">

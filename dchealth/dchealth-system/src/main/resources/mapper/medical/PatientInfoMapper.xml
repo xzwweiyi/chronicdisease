@@ -247,7 +247,7 @@
                     and lm.num > 0 and lm.is_delete_dc = 0
                 </if>
                 <if test="messageStatus == 0">
-                    and (lm.is_delete_dc = 0 or lm.is_delete_dc is null)
+                    and (lm.is_delete_dc = 0 or lm.is_delete_dc is null) and (lm.num = 0 or lm.num is null)
                 </if>
 
             </if>

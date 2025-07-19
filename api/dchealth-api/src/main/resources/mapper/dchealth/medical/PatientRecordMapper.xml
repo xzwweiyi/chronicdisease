@@ -299,6 +299,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="followCompleteTime != null">follow_complete_time = #{followCompleteTime},</if>
             <if test="isSubmit != null">is_submit = #{isSubmit},</if>
             <if test="overTimeHandleTime != null">over_time_handle_time = #{overTimeHandleTime},</if>
+            <if test="formComplentRate != null">form_complent_rate = #{formComplentRate},</if>
         </trim>
         where record_id = #{recordId}
     </update>

@@ -220,6 +220,8 @@ public class MedicalPatientService {
         record.setIsSubmit(infoForm.getIsSubmit());
         record.setName(patientRecord.getName());
         record.setFormComplentRate(infoForm.getFormComplentRate());
+
+        record.setFormComplentRate(infoForm.getFormComplentRate());
         handlePatientRecordInfo(patientRecord, record);
 
         // 修改患者队列随访状态

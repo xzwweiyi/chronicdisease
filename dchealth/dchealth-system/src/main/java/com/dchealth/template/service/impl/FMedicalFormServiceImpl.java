@@ -876,7 +876,7 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
         if(followId != null){
             fMedicalForms = fMedicalFormMapper.selectFMedicalForm(followId,vo.getMedicalFormId());
             FMedicalForm ff = new FMedicalForm();
-            ff.setParentId(vo.getMedicalFormId());
+            ff.setParentId(fMedicalForms.get(0).getMedicalFormId());
             List<FMedicalForm> childForm = fMedicalFormMapper.selectFMedicalFormList(ff);
             if(childForm.size()>0){
                 fMedicalForms.addAll(childForm);

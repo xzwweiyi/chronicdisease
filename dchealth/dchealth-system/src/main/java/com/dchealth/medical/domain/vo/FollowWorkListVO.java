@@ -157,7 +157,7 @@ public class FollowWorkListVO {
     private String createName;
 
     /**
-     * 表单填写比率
+     * 表单填写比率 form_complent_rate
      */
     private Double formComplentRate;
 
