@@ -295,9 +295,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and b.person_id = c.person_id
         AND mpa.person_id = c.person_id
         AND a.research_id = d.id
-        AND d.id IN ( SELECT research_id FROM research_user_role
-        <if test="userName != null  and userName = 'admin'"> WHERE user_id is not null </if>
-        <if test="userName != null  and userName != 'admin'"> WHERE user_id = #{userId} and user_id is not null </if>)
+<!--        AND d.id IN ( SELECT research_id FROM research_user_role-->
+<!--        <if test="userName != null  and userName = 'admin'"> WHERE user_id is not null </if>-->
+<!--        <if test="userName != null  and userName != 'admin'"> WHERE user_id = #{userId} and user_id is not null </if>)-->
         ) s
         LEFT JOIN cms_article ca ON ca.id = s.article_id
         inner JOIN research_info_article_patient rp ON S.article_id = rp.article_id AND S.research_id = rp.research_id AND s.account_id = rp.account_id

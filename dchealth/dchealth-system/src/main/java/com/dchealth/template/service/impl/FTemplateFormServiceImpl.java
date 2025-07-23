@@ -150,7 +150,7 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
                     }
                 } else if("3".equals(x.getFormType())) {
                     packageFTemplateProperty(x);
-                } else if ("0".equals(x.getFormType()) || "4".equals(x.getFormType())) {
+                } else if ("0".equals(x.getFormType()) || "4".equals(x.getFormType()) || "5".equals(x.getFormType())) {
 
                     List<FTemplateProperty> fTemplateProperties = fTemplatePropertyMapper.selectFTemplatePropertyByTemFromId(x.getTemplateFormId());
                     if (fTemplateProperties != null){
