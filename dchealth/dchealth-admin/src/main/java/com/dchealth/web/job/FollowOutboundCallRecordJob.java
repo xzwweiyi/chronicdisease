@@ -24,11 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,31 +71,30 @@ public class FollowOutboundCallRecordJob {
         }
         //所有进行中队列的规则
         String resultStr = "";
-        List<PatientRecordOutbound> insertRecord = new ArrayList<>();
+        List<PatientRecordOutbound> insertRecord = new CopyOnWriteArrayList<>();
 
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(20, 50, 4, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(10), new ThreadPoolExecutor.CallerRunsPolicy());
         List<List<ResearchInfo>> splitList = SplitListUtils.splitList(researchInfoList, 10);
         //记录单个任务的执行次数
         CountDownLatch countDownLatch = new CountDownLatch(splitList.size());
-        for (List<ResearchInfo> splist : splitList) {
-            threadPoolExecutor.execute(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < splist.size(); i++) {
-                        ResearchInfo r = splist.get(i);
+        for (List<ResearchInfo> subList : splitList) {
+            threadPoolExecutor.execute(() -> {
+                try {
+                    for (ResearchInfo r : subList) {
                         insertFollowRecordJob(r.getId(), insertRecord);
                     }
+                } finally {
+                    countDownLatch.countDown(); // 在任务完成后调用
                 }
-            }));
-            // 任务个数 - 1, 直至为0时唤醒await()
-            countDownLatch.countDown();
+            });
         }
         try {
             // 让当前线程处于阻塞状态，直到锁存器计数为零
             countDownLatch.await();
         } catch (InterruptedException e) {
-            throw new NullPointerException(e.getMessage());
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("任务被中断", e);
         } finally {
             threadPoolExecutor.shutdown(); //线程使用完毕后需要关团
         }

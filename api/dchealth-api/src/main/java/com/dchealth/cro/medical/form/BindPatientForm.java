@@ -28,4 +28,9 @@ public class BindPatientForm {
      */
     @NotBlank(message = "就诊ID不能为空")
     private String registrySigns;
+
+    /**
+     * 电话号 （对接预问诊系统添加字段）
+     */
+    private String mobile;
 }

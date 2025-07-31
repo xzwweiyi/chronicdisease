@@ -1,11 +1,10 @@
 package com.dchealth.cro.medical.domain;
 
-import java.util.Date;
-
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import lombok.Data;
+import java.util.Date;
 
 
 @Data
@@ -34,6 +33,8 @@ public class AppLoginRecord{
 
     /** 创建时间 */
     private Date createTime;
+
+    private String result;
 
     @Override
     public String toString() {

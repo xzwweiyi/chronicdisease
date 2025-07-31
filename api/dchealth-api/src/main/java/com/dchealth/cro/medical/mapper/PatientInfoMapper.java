@@ -106,4 +106,14 @@ public interface PatientInfoMapper
      * @return 结果
      */
     Integer updatePatientMobile(@Param("personId") String personId, @Param("mobile") String mobile);
+
+    /**
+     * 查询患者信息
+     *
+     * @param patientId 患者信息主键
+     * @return 患者信息
+     */
+    public PatientInfo selectPatientInfoByPatientId(Long patientId);
+
+    List<PatientInfo> selectPatientInfoByPersonId(@Param("personId")String personId);
 }

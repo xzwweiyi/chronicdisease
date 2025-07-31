@@ -54,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="doctorId != null "> and doctor_id = #{doctorId}</if>
             <if test="researchType != null  and researchType != ''"> and research_type = #{researchType}</if>
             <if test="stage != null  and stage != ''"> and stage = #{stage}</if>
+             <if test="delFlag != null">and del_flag = #{delFlag}</if>
         </where>
     </select>
     

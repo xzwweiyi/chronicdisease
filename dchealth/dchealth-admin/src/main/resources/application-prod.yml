@@ -126,19 +126,26 @@ token:
     expireTime: 300
 xxl:
   job:
+    # 调度中心配置
     admin:
-      addresses: http://172.100.45.33:8032/jobadmin/
-    # job, access token
-    accessToken: default_token
-    # job executor appname
+      addresses: http://172.100.45.33:8032/jobadmin/  # 调度中心地址（确保端口和路径正确）
+    accessToken: default_token  # 调度中心通讯TOKEN（需与admin端一致）
+
+    # 执行器配置
     executor:
-      appname: tangdu
-      address:
-      ip: 172.100.45.33
-      port: 8866
-      logpath: /usr/local/server/mirco-server/logs/jobhandler
-      #executor log-retention-days
-      logretentiondays: 30
+      appname: tangdu  # 执行器名称（需唯一）
+      address:  # 执行器地址（自动注册时可为空）
+      ip: 172.100.45.33  # 执行器IP（建议显式配置）
+      port: 8866  # 执行器端口（确保未被占用）
+      logpath: /usr/local/server/mirco-server/logs/jobhandler  # 任务日志路径
+      logretentiondays: 30  # 日志保留天数
+
+    # 网络超时配置（关键修复项）
+    http:
+      timeout: 15000  # 连接调度中心超时（毫秒，默认5000，建议15秒）
+      readTimeout: 30000  # 读取调度中心响应超时（毫秒，默认10000，建议30秒）
+
+
 
 
 # 讯飞服务请求域名

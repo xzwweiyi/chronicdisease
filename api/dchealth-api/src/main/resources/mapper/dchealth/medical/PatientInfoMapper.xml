@@ -229,6 +229,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           and g.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = g.research_id and q.person_id = g.person_id)
     </select>
 
+    <select id="selectPatientInfoByPatientId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where patient_id = #{patientId}
+    </select>
+    <select id="selectPatientInfoByPersonId" parameterType="String" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where person_id = #{personId}
+    </select>
+
     <update id="updatePatientMobile">
         update patient_info set patient_mobile = #{mobile} where person_id = #{personId}
     </update>

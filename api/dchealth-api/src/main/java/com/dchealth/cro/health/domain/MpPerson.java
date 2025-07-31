@@ -1,11 +1,10 @@
 package com.dchealth.cro.health.domain;
 
+import com.dchealth.cro.medical.domain.PatientInfo;
+import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
-
-import com.dchealth.cro.medical.domain.PatientInfo;
-
-import lombok.Data;
 
 /**
  * 患者信息-对应omop对象 mp_person
@@ -74,6 +73,12 @@ public class MpPerson {
     private String degreeOfEducation;
     private Long accountId;
     private List<PatientInfo> patientInfoList;
+
+
+    private Long researchId;
+    private Long deptId;
+    private String mobile;
+    private String patientName;
 
    
 }

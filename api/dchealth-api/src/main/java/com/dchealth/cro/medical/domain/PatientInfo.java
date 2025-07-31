@@ -1,13 +1,12 @@
 package com.dchealth.cro.medical.domain;
 
-import java.util.Date;
-
 import com.dchealth.cro.research.domain.ResearchInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 /**
  * 患者信息对象 patient_info
@@ -159,6 +158,8 @@ public class PatientInfo
     private Integer refuseCount;
 
     private Integer smsSendCount;
+
+    private String projectName;
 
     public PatientInfo(){}
 

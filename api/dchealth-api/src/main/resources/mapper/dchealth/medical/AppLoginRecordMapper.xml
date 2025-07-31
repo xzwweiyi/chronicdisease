@@ -46,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthStat != null">month_stat,</if>
             <if test="yearStat != null">year_stat,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="result != null">result,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="accountId != null">#{accountId},</if>
@@ -55,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthStat != null">#{monthStat},</if>
             <if test="yearStat != null">#{yearStat},</if>
             <if test="createTime != null">#{createTime},</if>
+            <if test="result != null">#{result},</if>
          </trim>
     </insert>
 

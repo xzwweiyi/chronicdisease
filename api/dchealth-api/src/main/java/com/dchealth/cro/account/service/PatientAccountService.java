@@ -1,16 +1,5 @@
 package com.dchealth.cro.account.service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.dchealth.cro.account.domain.PatientAccount;
@@ -37,6 +26,16 @@ import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPersonMapper;
 import com.dchealth.cro.medical.domain.AppLoginRecord;
 import com.dchealth.cro.medical.mapper.AppLoginRecordMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PatientAccountService {
@@ -172,6 +171,7 @@ public class PatientAccountService {
     	}
     	return patientInfo(tenantId, deviceToken, patientAccount.getAccountId(),loginName);
     }
+
     @Transactional
     public DchealthCloudResponseEntity<PatientAccountInfoVO> loginByOpenId(String openId) {
     	DchealthCloudResponseEntity<PatientAccountInfoVO> result = new DchealthCloudResponseEntity<>();
