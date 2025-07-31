@@ -1,6 +1,7 @@
 package com.dchealth.cro.common.utils;
 
 import com.alibaba.fastjson2.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -13,6 +14,7 @@ import org.springframework.util.DigestUtils;
 
 import java.io.IOException;
 
+@Slf4j
 public class XunfeiHttpClientUtil {
 	private RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(150000).setConnectTimeout(150000)
 			.setConnectionRequestTimeout(150000).build();
@@ -52,6 +54,7 @@ public class XunfeiHttpClientUtil {
 		httpPost.setHeader("Content-Type","application/json; charset=utf-8");
 		// 创建参数队列
 		httpPost.setEntity(new StringEntity(JSON.toJSONString(object), "UTF-8"));
+		log.info("参数: {}",JSON.toJSONString(object));
 		return sendHttpPost(httpPost);
 	}
 

@@ -5,15 +5,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.cms.domain.PatientRecordOutbound;
 import com.dchealth.cro.cms.domain.RecordOutboundHttpVO;
-import com.dchealth.cro.cms.domain.RecordOutboundVO;
-import com.dchealth.cro.cms.domain.ResearchOutbound;
 import com.dchealth.cro.cms.form.RecordOutbounUpdateForm;
 import com.dchealth.cro.cms.utils.TdApiHttpClientUtil;
 import com.dchealth.cro.cms.utils.XunfeiConstants;
-import com.dchealth.cro.cms.vo.*;
+import com.dchealth.cro.cms.vo.BatchListReq;
+import com.dchealth.cro.cms.vo.BatchListRes;
+import com.dchealth.cro.cms.vo.RecordDetailReq;
+import com.dchealth.cro.cms.vo.RecordDetailRes;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.common.utils.XunfeiHttpClientUtil;
-import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @Auther: zdd
  */
 @Component
+@Slf4j
 public class XunfeiGetResultJob {
 
     private static Logger logger = LoggerFactory.getLogger(XunfeiGetResultJob.class);
@@ -93,16 +95,16 @@ public class XunfeiGetResultJob {
                                 RecordDetailReq recordDetailReq = new RecordDetailReq();
                                 recordDetailReq.setRecordId(br.getRecordId());
                                 String detailResult = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(XunfeiConstants.XUNFEI_RECORD_DETAIL, recordDetailReq);
+
 //                                String detailResult = "{\"code\": 0,\"message\": \"成功\",\"data\": {\"speechId\": \"15303181554565121\",\"speechName\": \"预警提醒\",\"recordUrl\": \"https://www.xfzyzl.com/yetavoice/ant/2/ivr/40/2023/10/23/0/180555918-E0A3A789E1EFFC90C4BA40B9670C69C0.wav\",\"resultCode\": \"0\",\"planName\": \"一键随访_20231023144116\",\"telephone\": \"17600093418\",\"endNode\": \"1\",\"recordId\": \"208ecaf05cae4b4296754b15789d242c\",\"dialog\": \"[{\\\"node\\\":\\\"自我介绍与居民确认\\\",\\\"result\\\":\\\"对。\\\",\\\"robot\\\":\\\"您好，我是唐都医院随访工作人员，请问您是张哥吗？\\\"},{\\\"node\\\":\\\"通知\\\",\\\"result\\\":\\\"好。\\\",\\\"robot\\\":\\\"好的，我们这边看到，您10-23在唐都慢病管理APP填报的随访信息结果异常，触发了预警，请您及时登录唐都慢病管理APP并查看预警指导。\\\"},{\\\"node\\\":\\\"通知完成\\\",\\\"result\\\":\\\"再见。\\\",\\\"robot\\\":\\\"好的，感谢您的接听，祝您身体健康，生活愉快，再见！\\\"}]\",\"dwellerName\": \"张哥\",\"callTimeLength\": 32,\"callResult\": \"成功\",\"callTime\": 1698043277000,\"taskTime\": \"2023-10-23 14:41:16\"}}";
 
                                 com.alibaba.fastjson.JSONObject detailJsonObject = com.alibaba.fastjson.JSON.parseObject(detailResult);
+                                log.info("讯飞返回结果：========>{}", detailJsonObject);
                                 RecordDetailRes recordDetailRes = com.alibaba.fastjson.JSONObject.parseObject(detailJsonObject.getString("data"),RecordDetailRes.class);
                                 pro.setStatus("3");
                                 pro.setXunfeiRecordId(br.getRecordId());
                                 pro.setXunfeiSpeechId(recordDetailRes.getSpeechId());
-                                Date callDate = new Date();
-                                callDate.setTime(recordDetailRes.getCallTime());
-                                pro.setXunfeiCallTime(callDate);
+
                                 pro.setXunfeiTaskTime(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,recordDetailRes.getTaskTime()));
                                 pro.setXunfeiPlanName(recordDetailRes.getPlanName());
                                 pro.setXunfeiSpeechName(recordDetailRes.getSpeechName());
@@ -112,6 +114,9 @@ public class XunfeiGetResultJob {
                                 pro.setXunfeiEndNode(recordDetailRes.getEndNode());
                                 //讯飞音频文件地址
                                 if(recordDetailRes.getResultCode()!=null && ( "0".equals(recordDetailRes.getResultCode()) || "15".equals(recordDetailRes.getResultCode()) )){
+                                    Date callDate = new Date();
+                                    callDate.setTime(recordDetailRes.getCallTime());
+                                    pro.setXunfeiCallTime(callDate);
                                     String soundUrl = recordDetailRes.getRecordUrl();
                                     if(StringUtils.isNotEmpty(soundUrl) && soundUrl.indexOf(".wav")!=-1){
                                         Integer position = soundUrl.indexOf(".wav");
