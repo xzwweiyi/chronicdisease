@@ -1,3 +1,4 @@
+import com.alibaba.fastjson.JSON;
 import com.dchealth.cro.ApiApplication;
 import com.dchealth.cro.common.constant.Constants;
 import com.dchealth.cro.common.crypto.Sm2Utils;
@@ -35,7 +36,7 @@ public class YuApiTest {
         String httpUrl = "http://127.0.0.1:7918/tdapi/api/bind";
         Map<String, String> maps = new HashMap<>();
         maps.put("card", "610111197403033032");
-        maps.put("patientId", "10001685");
+        maps.put("personId", "10001685");
         maps.put("mobile", "15300000000");
         String result = sendSzDefaultHttpPost(httpUrl, maps);
         System.out.println(result);
@@ -72,6 +73,7 @@ public class YuApiTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(JSON.toJSONString(httpPost));
         return sendHttpPost(httpPost);
     }
 

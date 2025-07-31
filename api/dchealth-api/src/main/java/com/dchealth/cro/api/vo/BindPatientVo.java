@@ -14,7 +14,7 @@ public class BindPatientVo {
 
     private String card;
 
-    private String patientId;
+    private String personId;
 
     private String mobile;
 }

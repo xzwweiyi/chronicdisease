@@ -27,7 +27,7 @@ public class BindPatientInfo extends ApiBaseController {
     public String bindPatientInfo( BindPatientVo bindPatientVo, BindingResult bind) {
         BindPatientForm bindPatientForm = new BindPatientForm();
         bindPatientForm.setIdCardNo(bindPatientVo.getCard());
-        bindPatientForm.setRegistrySigns(bindPatientVo.getPatientId());
+        bindPatientForm.setRegistrySigns(bindPatientVo.getPersonId());
         bindPatientForm.setMobile(bindPatientVo.getMobile());
         log.info("bindPatient:{}", JSON.toJSONString(bindPatientForm));
         try {
