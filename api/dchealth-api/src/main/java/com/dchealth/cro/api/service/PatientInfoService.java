@@ -99,7 +99,7 @@ public class PatientInfoService {
                 patientInfo.setResearchId(researchId);
                 patientInfo.setPlanResearchId(researchId);
                 patientInfo.setPatientName(mpPerson.getPersonName());
-                patientInfo.setDeptId(Long.valueOf(Objects.requireNonNull(BindDeptEnum.NEIFENMI.getSzCode("369"))));
+                patientInfo.setDeptId(Long.valueOf(Objects.requireNonNull(BindDeptEnum.getSzCode("150002"))));
                 patientInfo.setPatientMobile(mobile);
                 patientInfo.setPatientStatus("0");
                 patientInfo.setCreateTime(DateUtils.getNowDate());
@@ -162,10 +162,8 @@ public class PatientInfoService {
 //            researchIds.forEach(researchId -> {researchInfoService.createTableInAddUser(researchId);});
 //        }
 
-
         return num;
     }
-
 
     /**
      * 根据部门信息查看队列信息，取队列中的第一个队列为默认队列对患者进行自动入组 自动入组到第一个队列

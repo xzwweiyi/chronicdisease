@@ -5,6 +5,8 @@ import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.account.vo.PatientAccountInfoVO;
+import com.dchealth.cro.api.enums.BindDeptEnum;
+import com.dchealth.cro.api.vo.BindPatientVo;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.cache.RedisPublishService;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
@@ -72,7 +74,7 @@ public class BindPatientInfoService {
 
 
     @Transactional
-    public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatient(BindPatientForm bindPatientForm) {
+    public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatient(BindPatientVo bindPatientForm) {
         DchealthCloudResponseEntity<PatientAccountInfoVO> result = new DchealthCloudResponseEntity<>();
 
         String bindResult = "成功绑定患者信息";
@@ -96,7 +98,7 @@ public class BindPatientInfoService {
             return result;
         }
         //绑定且输入的身份证
-        if ("1".equals(patientAccount.getBindStatus()) && bindPatientForm.getIdCardNo().equalsIgnoreCase(patientAccount.getIdCard())) {
+        if ("1".equals(patientAccount.getBindStatus()) && bindPatientForm.getCard().equalsIgnoreCase(patientAccount.getIdCard())) {
             result.setCode(CroApiCodeConstant.ALREADY_BINDING.getCode());
             String personId = patientAccount.getRegistrySigns();
             // 返回已绑定id
@@ -107,7 +109,7 @@ public class BindPatientInfoService {
             insertAppRecordLog(patientAccount, "", bindResult);
             return result;
         }
-        if ("1".equals(patientAccount.getBindStatus()) && !bindPatientForm.getIdCardNo().equalsIgnoreCase(patientAccount.getIdCard())) {
+        if ("1".equals(patientAccount.getBindStatus()) && !bindPatientForm.getCard().equalsIgnoreCase(patientAccount.getIdCard())) {
             result.setCode(CroApiCodeConstant.ALREADY_BINDING_OTHER.getCode());
             String personId = patientAccount.getRegistrySigns();
             // 返回已绑定id
@@ -128,7 +130,7 @@ public class BindPatientInfoService {
         }
         // 只处理未绑定的状态
         PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
-        MpPerson patientBaseInfos = mpPersonMapper.selectMpPersonByPersonIdCardId(bindPatientForm.getRegistrySigns(), bindPatientForm.getIdCardNo());
+        MpPerson patientBaseInfos = mpPersonMapper.selectMpPersonByPersonIdCardId(bindPatientForm.getPersonId(), bindPatientForm.getCard());
         if (patientBaseInfos != null) {
             MpPatientAccount mpa = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientBaseInfos.getPersonId());
             if (mpa != null && !(mpa.getAccountId().longValue() == patientAccount.getAccountId().longValue())) {
@@ -140,7 +142,7 @@ public class BindPatientInfoService {
         }
 
         if (patientBaseInfos == null) {
-            PatMasterIndex patMasterIndex = patMasterIndexMapper.selectByIdNoAndPatientId(bindPatientForm.getIdCardNo(), bindPatientForm.getRegistrySigns());
+            PatMasterIndex patMasterIndex = patMasterIndexMapper.selectByIdNoAndPatientId(bindPatientForm.getCard(), bindPatientForm.getPersonId());
             if (patMasterIndex == null) {
                 result.setCode(CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getCode());
                 bindResult = CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getMsg();
@@ -148,12 +150,12 @@ public class BindPatientInfoService {
                 return result;
             }
 //            此处因为患者多手机多就诊号暂时加入手机号查询
-            MpPerson patientBaseInfo = mpPersonMapper.selectMpPersonByCardId(bindPatientForm.getIdCardNo(), patientAccount.getMobile());
+            MpPerson patientBaseInfo = mpPersonMapper.selectMpPersonByCardId(bindPatientForm.getCard(), patientAccount.getMobile());
             if (Objects.nonNull(patientBaseInfo)) {
                 // 多个身份证~ 发布事件后, 设置主号, 然后
                 Map<String, String> json = new HashMap<>();
-                json.put("idCard", bindPatientForm.getIdCardNo());
-                json.put("personId", bindPatientForm.getRegistrySigns());
+                json.put("idCard", bindPatientForm.getCard());
+                json.put("personId", bindPatientForm.getPersonId());
                 redisPublishService.convertAndSend("patientCard", JSON.toJSONString(json));
 //               if(bindPatientForm.getAccountId().equals()) {
 //
@@ -180,8 +182,8 @@ public class BindPatientInfoService {
         patientAccount2.setAccountId(patientAccount.getAccountId());
         mpPatientAccountMapper.insertMpPatientAccount(patientAccount2);
         patientAccount.setBindStatus("1");
-        patientAccount.setRegistrySigns(bindPatientForm.getRegistrySigns());
-        patientAccount.setIdCard(bindPatientForm.getIdCardNo());
+        patientAccount.setRegistrySigns(bindPatientForm.getPersonId());
+        patientAccount.setIdCard(bindPatientForm.getCard());
         patientAccountMapper.updatePatientAccount(patientAccount);
         patientAccountInfoVO.setPersonId(patientBaseInfos.getPersonId());
         patientAccountInfoVO.setPersonName(patientBaseInfos.getPersonName());
@@ -209,12 +211,18 @@ public class BindPatientInfoService {
 
         insertAppRecordLog(patientAccount, "", bindResult);
 
+        // 只对肥胖门诊患者进行默认入组
+        if (StringUtils.isNotBlank(bindPatientForm.getDeptCode()) && !"150002".equals(bindPatientForm.getDeptCode())) {
+            result.setMsg("绑定成功");
+            return result;
+        }
+
         // 指定 部门内分泌科肥胖课题专属
-        ResearchInfo researchInfo = patientInfoService.autoEnrollmentList("369");
+        ResearchInfo researchInfo = patientInfoService.autoEnrollmentList(BindDeptEnum.getSzCode("150002"));
 
         //模拟登录成功，绑定患者号之后 默认将内分泌科患者导入到队列
 
-        int i = patientInfoService.importEnrollment(bindPatientForm.getMobile(), bindPatientForm.getIdCardNo(), patientBaseInfos.getPersonName(),  patientAccount, researchInfo);
+        int i = patientInfoService.importEnrollment(bindPatientForm.getMobile(), bindPatientForm.getCard(), patientBaseInfos.getPersonName(),  patientAccount, researchInfo);
 
 
         result.setData(patientAccountInfoVO);

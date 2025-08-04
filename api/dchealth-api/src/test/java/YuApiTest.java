@@ -27,7 +27,7 @@ import java.util.*;
  * @Date: 2025/7/25 11:47
  * @Version: 1.0
  */
-@SpringBootTest(classes = ApiApplication.class)
+//@SpringBootTest(classes = ApiApplication.class)
 public class YuApiTest {
 
     @Test

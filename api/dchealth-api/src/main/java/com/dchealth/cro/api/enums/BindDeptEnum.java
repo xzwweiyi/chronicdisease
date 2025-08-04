@@ -9,7 +9,7 @@ package com.dchealth.cro.api.enums;
  */
 public enum BindDeptEnum {
 
-    NEIFENMI("369", "369", "");
+    FEI_PANG_MZ("150002", "266", "肥胖门诊");
 
     private final String tdCode;
     private final String szCode;
@@ -21,10 +21,21 @@ public enum BindDeptEnum {
         this.name = name;
     }
 
-    public String getSzCode(String tdCode) {
-        for (BindDeptEnum value : values()) {
-            if (value.tdCode.equals(tdCode)) {
-                return value.szCode;
+    // 通过tdCode获取对应的szCode
+    public static String getSzCode(String tdCode) {
+        for (BindDeptEnum bindDept : BindDeptEnum.values()) {
+            if (bindDept.tdCode.equals(tdCode)) {
+                return bindDept.szCode;
+            }
+        }
+        return null; // 或者抛出自定义异常，根据业务需求决定
+    }
+
+    // 也可以直接获取整个枚举实例
+    public static BindDeptEnum getByTdCode(String tdCode) {
+        for (BindDeptEnum bindDept : BindDeptEnum.values()) {
+            if (bindDept.tdCode.equals(tdCode)) {
+                return bindDept;
             }
         }
         return null;
