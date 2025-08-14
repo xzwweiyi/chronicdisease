@@ -1,38 +1,30 @@
 package com.dchealth.web.controller.medical;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.dchealth.common.constant.Constants;
-import com.dchealth.common.core.domain.entity.SysUser;
-import com.dchealth.common.core.redis.RedisCache;
-import com.dchealth.listener.FollowTreeEnum;
-import com.dchealth.listener.FollowTreeEvent;
-import com.dchealth.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.dchealth.common.annotation.Log;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.core.page.TableDataInfo;
+import com.dchealth.common.core.redis.RedisCache;
 import com.dchealth.common.enums.BusinessType;
 import com.dchealth.common.utils.poi.ExcelUtil;
+import com.dchealth.compatibility.domain.MpDrugExposure;
+import com.dchealth.compatibility.mapper.MpDrugExposureMapper;
+import com.dchealth.compatibility.vo.MpDrugExposureVO;
+import com.dchealth.listener.FollowTreeEvent;
 import com.dchealth.medical.domain.MpPerson;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
 import com.dchealth.medical.service.IPatientInfoService;
+import com.dchealth.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 /**
  * 患者信息Controller
  * 
@@ -51,6 +43,9 @@ public class PatientInfoController extends BaseController
     private RedisCache redisCache;
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private MpDrugExposureMapper mpDrugExposureMapper;
 
     /**
      * 查询患者信息列表
@@ -161,6 +156,17 @@ public class PatientInfoController extends BaseController
         startPage();
         List<PatientEnrollmentVo> list = patientInfoService.selectNoEnrollmentPatientInfoList(patientInfo);
         return getDataTable(list);
+    }
+
+    /**
+     * 查看患者用药信息
+     */
+    @PostMapping("/drugInfo")
+    public AjaxResult drugInfo(@Validated @RequestBody MpDrugExposureVO mpDrugExposureVO)
+    {
+
+        List<MpDrugExposure> list = mpDrugExposureMapper.selectByPersonIdAndVisitId(String.valueOf(mpDrugExposureVO.getPersonId()), String.valueOf(mpDrugExposureVO.getVisitOccurrenceId()));
+        return AjaxResult.success(list);
     }
 
     /**

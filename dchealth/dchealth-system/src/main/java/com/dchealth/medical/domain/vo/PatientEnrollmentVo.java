@@ -83,4 +83,11 @@ public class PatientEnrollmentVo {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date followSubmitTime;
 
+    private Integer visitType;
+
+    /**
+     * 就诊id
+     */
+    private Long visitOccurrenceId;
+
 }

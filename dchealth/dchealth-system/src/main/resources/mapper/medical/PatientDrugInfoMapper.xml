@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientDrugInfoMapper">
+    
+    <resultMap type="PatientDrugInfo" id="PatientDrugInfoResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="drugExposureId"    column="drug_exposure_id"    />
+        <result property="drugType"    column="drug_type"    />
+        <result property="drugSctid"    column="drug_sctid"    />
+        <result property="drugValue"    column="drug_value"    />
+        <result property="dosageForm"    column="dosage_form"    />
+        <result property="drugExposureStartDate"    column="drug_exposure_start_date"    />
+        <result property="daysSupply"    column="days_supply"    />
+        <result property="departmentName"    column="department_name"    />
+    </resultMap>
+
+    <sql id="selectPatientDrugInfoVo">
+        select id, care_site_id, person_id, visit_occurrence_id, drug_exposure_id, drug_type, drug_sctid, drug_value, dosage_form, drug_exposure_start_date, days_supply, department_name from patient_drug_info
+    </sql>
+
+    <select id="selectPatientDrugInfoList" parameterType="PatientDrugInfo" resultMap="PatientDrugInfoResult">
+        <include refid="selectPatientDrugInfoVo"/>
+        <where>  
+            <if test="careSiteId != null  and careSiteId != ''"> and care_site_id = #{careSiteId}</if>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="drugExposureId != null  and drugExposureId != ''"> and drug_exposure_id = #{drugExposureId}</if>
+            <if test="drugType != null  and drugType != ''"> and drug_type = #{drugType}</if>
+            <if test="drugSctid != null "> and drug_sctid = #{drugSctid}</if>
+            <if test="drugValue != null  and drugValue != ''"> and drug_value = #{drugValue}</if>
+            <if test="dosageForm != null  and dosageForm != ''"> and dosage_form = #{dosageForm}</if>
+            <if test="drugExposureStartDate != null "> and drug_exposure_start_date = #{drugExposureStartDate}</if>
+            <if test="daysSupply != null "> and days_supply = #{daysSupply}</if>
+            <if test="departmentName != null  and departmentName != ''"> and department_name like concat('%', #{departmentName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientDrugInfoById" parameterType="Long" resultMap="PatientDrugInfoResult">
+        <include refid="selectPatientDrugInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientDrugInfo" parameterType="PatientDrugInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_drug_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="careSiteId != null">care_site_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="visitOccurrenceId != null">visit_occurrence_id,</if>
+            <if test="drugExposureId != null">drug_exposure_id,</if>
+            <if test="drugType != null">drug_type,</if>
+            <if test="drugSctid != null">drug_sctid,</if>
+            <if test="drugValue != null">drug_value,</if>
+            <if test="dosageForm != null">dosage_form,</if>
+            <if test="drugExposureStartDate != null">drug_exposure_start_date,</if>
+            <if test="daysSupply != null">days_supply,</if>
+            <if test="departmentName != null">department_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="careSiteId != null">#{careSiteId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="visitOccurrenceId != null">#{visitOccurrenceId},</if>
+            <if test="drugExposureId != null">#{drugExposureId},</if>
+            <if test="drugType != null">#{drugType},</if>
+            <if test="drugSctid != null">#{drugSctid},</if>
+            <if test="drugValue != null">#{drugValue},</if>
+            <if test="dosageForm != null">#{dosageForm},</if>
+            <if test="drugExposureStartDate != null">#{drugExposureStartDate},</if>
+            <if test="daysSupply != null">#{daysSupply},</if>
+            <if test="departmentName != null">#{departmentName},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientDrugInfo" parameterType="PatientDrugInfo">
+        update patient_drug_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="careSiteId != null">care_site_id = #{careSiteId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="visitOccurrenceId != null">visit_occurrence_id = #{visitOccurrenceId},</if>
+            <if test="drugExposureId != null">drug_exposure_id = #{drugExposureId},</if>
+            <if test="drugType != null">drug_type = #{drugType},</if>
+            <if test="drugSctid != null">drug_sctid = #{drugSctid},</if>
+            <if test="drugValue != null">drug_value = #{drugValue},</if>
+            <if test="dosageForm != null">dosage_form = #{dosageForm},</if>
+            <if test="drugExposureStartDate != null">drug_exposure_start_date = #{drugExposureStartDate},</if>
+            <if test="daysSupply != null">days_supply = #{daysSupply},</if>
+            <if test="departmentName != null">department_name = #{departmentName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientDrugInfoById" parameterType="Long">
+        delete from patient_drug_info where id = #{id}
+    </delete>
+
+    <delete id="deletePatientDrugInfoByIds" parameterType="String">
+        delete from patient_drug_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

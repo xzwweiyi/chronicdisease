@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.DrugDictMapper">
+    
+    <resultMap type="DrugDict" id="DrugDictResult">
+        <result property="id"    column="id"    />
+        <result property="drugCode"    column="drug_code"    />
+        <result property="drugName"    column="drug_name"    />
+        <result property="drugSpec"    column="drug_spec"    />
+        <result property="drugUnit"    column="drug_unit"    />
+        <result property="drugForm"    column="drug_form"    />
+        <result property="pharmacologyType"    column="pharmacology_type"    />
+        <result property="doseUnit"    column="dose_unit"    />
+        <result property="drugMaterialType"    column="drug_material_type"    />
+        <result property="costs"    column="costs"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="mainComponents"    column="main_components"    />
+        <result property="tradeName"    column="trade_name"    />
+        <result property="supplier"    column="supplier"    />
+        <result property="dataVendorId"    column="data_vendor_id"    />
+        <result property="atlasFlag"    column="atlas_flag"    />
+    </resultMap>
+
+    <sql id="selectDrugDictVo">
+        select id, drug_code, drug_name, drug_spec, drug_unit, drug_form, pharmacology_type, dose_unit, drug_material_type, costs, manufacturer, main_components, trade_name, supplier, data_vendor_id, atlas_flag from drug_dict
+    </sql>
+
+    <select id="selectDrugDictList" parameterType="DrugDict" resultMap="DrugDictResult">
+        <include refid="selectDrugDictVo"/>
+        <where>  
+            <if test="drugCode != null  and drugCode != ''"> and drug_code = #{drugCode}</if>
+            <if test="drugName != null  and drugName != ''"> and drug_name like concat('%', #{drugName}, '%')</if>
+            <if test="drugSpec != null  and drugSpec != ''"> and drug_spec = #{drugSpec}</if>
+            <if test="drugUnit != null  and drugUnit != ''"> and drug_unit = #{drugUnit}</if>
+            <if test="drugForm != null  and drugForm != ''"> and drug_form = #{drugForm}</if>
+            <if test="pharmacologyType != null  and pharmacologyType != ''"> and pharmacology_type = #{pharmacologyType}</if>
+            <if test="doseUnit != null  and doseUnit != ''"> and dose_unit = #{doseUnit}</if>
+            <if test="drugMaterialType != null  and drugMaterialType != ''"> and drug_material_type = #{drugMaterialType}</if>
+            <if test="costs != null  and costs != ''"> and costs = #{costs}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and manufacturer = #{manufacturer}</if>
+            <if test="mainComponents != null  and mainComponents != ''"> and main_components = #{mainComponents}</if>
+            <if test="tradeName != null  and tradeName != ''"> and trade_name like concat('%', #{tradeName}, '%')</if>
+            <if test="supplier != null  and supplier != ''"> and supplier = #{supplier}</if>
+            <if test="dataVendorId != null "> and data_vendor_id = #{dataVendorId}</if>
+            <if test="atlasFlag != null  and atlasFlag != ''"> and atlas_flag = #{atlasFlag}</if>
+        </where>
+    </select>
+    
+    <select id="selectDrugDictById" parameterType="Long" resultMap="DrugDictResult">
+        <include refid="selectDrugDictVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDrugDict" parameterType="DrugDict" useGeneratedKeys="true" keyProperty="id">
+        insert into drug_dict
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="drugCode != null and drugCode != ''">drug_code,</if>
+            <if test="drugName != null and drugName != ''">drug_name,</if>
+            <if test="drugSpec != null">drug_spec,</if>
+            <if test="drugUnit != null">drug_unit,</if>
+            <if test="drugForm != null">drug_form,</if>
+            <if test="pharmacologyType != null">pharmacology_type,</if>
+            <if test="doseUnit != null">dose_unit,</if>
+            <if test="drugMaterialType != null">drug_material_type,</if>
+            <if test="costs != null">costs,</if>
+            <if test="manufacturer != null">manufacturer,</if>
+            <if test="mainComponents != null">main_components,</if>
+            <if test="tradeName != null">trade_name,</if>
+            <if test="supplier != null">supplier,</if>
+            <if test="dataVendorId != null">data_vendor_id,</if>
+            <if test="atlasFlag != null">atlas_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="drugCode != null and drugCode != ''">#{drugCode},</if>
+            <if test="drugName != null and drugName != ''">#{drugName},</if>
+            <if test="drugSpec != null">#{drugSpec},</if>
+            <if test="drugUnit != null">#{drugUnit},</if>
+            <if test="drugForm != null">#{drugForm},</if>
+            <if test="pharmacologyType != null">#{pharmacologyType},</if>
+            <if test="doseUnit != null">#{doseUnit},</if>
+            <if test="drugMaterialType != null">#{drugMaterialType},</if>
+            <if test="costs != null">#{costs},</if>
+            <if test="manufacturer != null">#{manufacturer},</if>
+            <if test="mainComponents != null">#{mainComponents},</if>
+            <if test="tradeName != null">#{tradeName},</if>
+            <if test="supplier != null">#{supplier},</if>
+            <if test="dataVendorId != null">#{dataVendorId},</if>
+            <if test="atlasFlag != null">#{atlasFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDrugDict" parameterType="DrugDict">
+        update drug_dict
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="drugCode != null and drugCode != ''">drug_code = #{drugCode},</if>
+            <if test="drugName != null and drugName != ''">drug_name = #{drugName},</if>
+            <if test="drugSpec != null">drug_spec = #{drugSpec},</if>
+            <if test="drugUnit != null">drug_unit = #{drugUnit},</if>
+            <if test="drugForm != null">drug_form = #{drugForm},</if>
+            <if test="pharmacologyType != null">pharmacology_type = #{pharmacologyType},</if>
+            <if test="doseUnit != null">dose_unit = #{doseUnit},</if>
+            <if test="drugMaterialType != null">drug_material_type = #{drugMaterialType},</if>
+            <if test="costs != null">costs = #{costs},</if>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="mainComponents != null">main_components = #{mainComponents},</if>
+            <if test="tradeName != null">trade_name = #{tradeName},</if>
+            <if test="supplier != null">supplier = #{supplier},</if>
+            <if test="dataVendorId != null">data_vendor_id = #{dataVendorId},</if>
+            <if test="atlasFlag != null">atlas_flag = #{atlasFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDrugDictById" parameterType="Long">
+        delete from drug_dict where id = #{id}
+    </delete>
+
+    <delete id="deleteDrugDictByIds" parameterType="String">
+        delete from drug_dict where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

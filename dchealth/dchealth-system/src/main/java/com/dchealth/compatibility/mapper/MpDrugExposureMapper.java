@@ -1,8 +1,9 @@
 package com.dchealth.compatibility.mapper;
 
+import com.dchealth.compatibility.domain.MpDrugExposure;
 import org.apache.ibatis.annotations.Param;
 
-import com.dchealth.compatibility.domain.MpDrugExposure;
+import java.util.List;
 
 /**
  * 用药信息Mapper接口
@@ -18,6 +19,6 @@ public interface MpDrugExposureMapper
      * @param id 用药信息主键
      * @return 用药信息
      */
-    public MpDrugExposure selectByPersonIdAndVisitId(@Param("personId")String personId,@Param("visitOccurrenceId")String visitOccurrenceId);
+    public List<MpDrugExposure> selectByPersonIdAndVisitId(@Param("personId")String personId, @Param("visitOccurrenceId")String visitOccurrenceId);
 
 }
