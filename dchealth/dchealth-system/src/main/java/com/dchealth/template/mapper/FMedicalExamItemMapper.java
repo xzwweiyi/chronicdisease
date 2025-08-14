@@ -82,4 +82,6 @@ public interface FMedicalExamItemMapper
     List<FMedicalExamItem> selectFMedicalExamItemByFromId(Long medicalFormId);
 
     List<FMedicalExamItem> selectFMedicalExamItemByProIdAndValue(Long propertyId, List<String> values);
+
+    void deleteFMedicalExamItemByPropertyId(Long propertyId);
 }

@@ -10,6 +10,8 @@ import com.dchealth.template.domain.vo.FMedicalValueVo;
 import com.dchealth.template.domain.vo.FMedicalVo;
 import com.dchealth.template.mapper.*;
 import com.dchealth.template.service.IFMedicalPropertyService;
+import com.dchealth.warn.mapper.WarnMedicalEarlyConditionMapper;
+import com.dchealth.warn.mapper.WarnMedicalEarlyMapper;
 import com.dchealth.warn.service.IWarnService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,11 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
 
     @Autowired
     private FMedicalExamItemMapper fMedicalExamItemMapper;
+
+    @Autowired
+    private WarnMedicalEarlyMapper warnMedicalEarlyMapper;
+    @Autowired
+    private WarnMedicalEarlyConditionMapper warnMedicalEarlyConditionMapper;
 
 
     /**
@@ -132,8 +139,8 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
         params.setParentId(fMedicalForm.getMedicalFormId());
         List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormList(params);
         //删除旧的数据
-        deleteChildDataIter(fMedicalForms);
-        deleteParentData(fMedicalForm);
+        //deleteChildDataIter(fMedicalForms);
+        //deleteParentData(fMedicalForm);
         //插入新的数据
         save(fMedicalForm.getFollowId(), fMedicalForm.getParentId() == null ? 0l : fMedicalForm.getParentId(),
                 new ArrayList<FMedicalForm>() {{
@@ -201,7 +208,12 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
                         subject.setIfScore("1");
                         subject.setFollowId(x.getFollowId());
                         //存储每一个题目
-                        fMedicalExamSubjectMapper.insertFMedicalExamSubject(subject);
+                        Long id=y.getId();
+                        if (id!=null){
+                            fMedicalExamSubjectMapper.updateFMedicalExamSubject(subject);
+                        }else {
+                            fMedicalExamSubjectMapper.insertFMedicalExamSubject(subject);
+                        }
                         //保存题目的选项
                         Optional<List<FMedicalExamItem>> itemList = Optional.ofNullable(y.getItemList());
                         if(itemList.isPresent()){
@@ -209,14 +221,24 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
                                 item.setPropertyId(subject.getId());
                                 item.setMedicalFormId(medicalFormId);
                                 item.setCreateTime(date);
-                                fMedicalExamItemMapper.insertFMedicalExamItem(item);
+                                Long itemId=item.getId();
+                                if (itemId!=null){
+                                    fMedicalExamItemMapper.updateFMedicalExamItem(item);
+                                }else {
+                                    fMedicalExamItemMapper.insertFMedicalExamItem(item);
+                                }
                             });
                         }
                     } else {
                         y.setCreateTime(date);
                         y.setMedicalFormId(x.getMedicalFormId());
                         y.setFollowId(followId);
-                        insertFMedicalProperty(y);
+                        Long id=y.getId();
+                        if (id!=null){
+                            updateFMedicalProperty(y);
+                        }else {
+                            insertFMedicalProperty(y);
+                        }
                         if (y.getWarnMedicalEarlyForms() != null && !y.getWarnMedicalEarlyForms().isEmpty()){
                             warnService.saveWarnMedical(followId, x.getMedicalFormId(), y.getId(), y.getWarnMedicalEarlyForms());
                         }
@@ -283,6 +305,21 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
 
         }
         return collect;
+    }
+
+    @Override
+    public void deletePropertyById(Long id, Integer formType) {
+        //0模块1标准项2拍照项3自评量表4预警填报
+        if (3==formType){
+            fMedicalExamSubjectMapper.deleteFMedicalExamSubjectById(id);
+            fMedicalExamItemMapper.deleteFMedicalExamItemByPropertyId(id);
+        }else{
+            fMedicalPropertyMapper.deleteFMedicalPropertyById(id);
+            if (4==formType){
+                warnMedicalEarlyMapper.deleteWarnMedicalEarlyByPropertyIds(Collections.singletonList(id));
+                warnMedicalEarlyConditionMapper.deleteWarnMedicalEarlyConditionByPropertyIds(Collections.singletonList(id));
+            }
+        }
     }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {

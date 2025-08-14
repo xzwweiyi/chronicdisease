@@ -108,4 +108,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{value}
         </foreach>
     </select>
+
+    <delete id="deleteFMedicalExamItemByPropertyId">
+        delete from f_medical_exam_item where property_id = #{propertyId}
+    </delete>
 </mapper>

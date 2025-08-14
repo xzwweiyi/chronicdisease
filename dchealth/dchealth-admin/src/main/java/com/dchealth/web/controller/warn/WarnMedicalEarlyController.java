@@ -2,6 +2,8 @@ package com.dchealth.web.controller.warn;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.dchealth.warn.service.IWarnMedicalEarlyConditionService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +35,9 @@ public class WarnMedicalEarlyController extends BaseController
 {
     @Autowired
     private IWarnMedicalEarlyService warnMedicalEarlyService;
+
+    @Autowired
+    private IWarnMedicalEarlyConditionService warnMedicalEarlyConditionService;
 
     /**
      * 查询预警表单列表
@@ -100,5 +105,14 @@ public class WarnMedicalEarlyController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(warnMedicalEarlyService.deleteWarnMedicalEarlyByIds(ids));
+    }
+
+    /**
+     * 删除预警表单规则
+     */
+    @DeleteMapping("condition/{id}")
+    public AjaxResult conditionRemove(@PathVariable Long id)
+    {
+        return toAjax(warnMedicalEarlyConditionService.deleteWarnMedicalEarlyConditionById(id));
     }
 }

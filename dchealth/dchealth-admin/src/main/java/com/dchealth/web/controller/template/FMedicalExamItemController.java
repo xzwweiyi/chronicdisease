@@ -101,4 +101,14 @@ public class FMedicalExamItemController extends BaseController
     {
         return toAjax(fMedicalExamItemService.deleteFMedicalExamItemByIds(ids));
     }
+
+    /**
+     * 删除属性题目选项
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:remove')")
+    @Log(title = "属性题目选项", businessType = BusinessType.DELETE)
+    @DeleteMapping("delete/{id}")
+    public AjaxResult remove(@PathVariable Long id) {
+        return toAjax(fMedicalExamItemService.deleteFMedicalExamItemById(id));
+    }
 }
