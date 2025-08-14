@@ -82,4 +82,6 @@ public interface WarnMedicalEarlyConditionMapper
     public int deleteWarnMedicalEarlyConditionByIds(Long[] ids);
 
     public int deleteWarnMedicalEarlyConditionByPropertyIds(List<Long> propertyIds);
+
+    public int deleteWarnMedicalEarlyConditionByPropertyId(Long propertyId);
 }

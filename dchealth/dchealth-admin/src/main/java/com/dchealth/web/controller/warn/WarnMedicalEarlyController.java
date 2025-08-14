@@ -110,7 +110,7 @@ public class WarnMedicalEarlyController extends BaseController
     /**
      * 删除预警表单规则
      */
-    @DeleteMapping("condition/{id}")
+    @GetMapping("condition/{id}")
     public AjaxResult conditionRemove(@PathVariable Long id)
     {
         return toAjax(warnMedicalEarlyConditionService.deleteWarnMedicalEarlyConditionById(id));

@@ -153,4 +153,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
+    <delete id="deleteWarnMedicalEarlyConditionByPropertyId">
+        delete from warn_medical_early_condition where property_id =#{propertyId}
+    </delete>
 </mapper>

@@ -316,8 +316,8 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
         }else{
             fMedicalPropertyMapper.deleteFMedicalPropertyById(id);
             if (4==formType){
-                warnMedicalEarlyMapper.deleteWarnMedicalEarlyByPropertyIds(Collections.singletonList(id));
-                warnMedicalEarlyConditionMapper.deleteWarnMedicalEarlyConditionByPropertyIds(Collections.singletonList(id));
+                warnMedicalEarlyMapper.deleteWarnMedicalEarlyByPropertyId(id);
+                warnMedicalEarlyConditionMapper.deleteWarnMedicalEarlyConditionByPropertyId(id);
             }
         }
     }
