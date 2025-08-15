@@ -33,11 +33,11 @@ public class PatientDrugInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('drug:info:list')")
     @GetMapping("/list")
-    public TableDataInfo list(PatientDrugInfo patientDrugInfo)
+    public AjaxResult list(PatientDrugInfo patientDrugInfo)
     {
-        startPage();
-        List<PatientDrugInfo> list = patientDrugInfoService.selectPatientDrugInfoList(patientDrugInfo);
-        return getDataTable(list);
+        //startPage();
+        return patientDrugInfoService.selectPatientDrugInfoList(patientDrugInfo);
+        //return getDataTable(list);
     }
 
     /**
@@ -48,7 +48,7 @@ public class PatientDrugInfoController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, PatientDrugInfo patientDrugInfo)
     {
-        List<PatientDrugInfo> list = patientDrugInfoService.selectPatientDrugInfoList(patientDrugInfo);
+        List<PatientDrugInfo> list = patientDrugInfoService.getPatientDrugInfoList(patientDrugInfo);
         ExcelUtil<PatientDrugInfo> util = new ExcelUtil<PatientDrugInfo>(PatientDrugInfo.class);
         util.exportExcel(response, list, "用药信息数据");
     }

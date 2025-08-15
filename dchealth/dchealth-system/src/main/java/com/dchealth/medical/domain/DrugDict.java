@@ -1,5 +1,6 @@
 package com.dchealth.medical.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.dchealth.common.annotation.Excel;
@@ -11,6 +12,7 @@ import com.dchealth.common.core.domain.BaseEntity;
  * @author wangpf
  * @date 2025-08-13
  */
+@Data
 public class DrugDict extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -78,150 +80,7 @@ public class DrugDict extends BaseEntity
     @Excel(name = "溯源标识")
     private String atlasFlag;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
 
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setDrugCode(String drugCode) 
-    {
-        this.drugCode = drugCode;
-    }
-
-    public String getDrugCode() 
-    {
-        return drugCode;
-    }
-    public void setDrugName(String drugName) 
-    {
-        this.drugName = drugName;
-    }
-
-    public String getDrugName() 
-    {
-        return drugName;
-    }
-    public void setDrugSpec(String drugSpec) 
-    {
-        this.drugSpec = drugSpec;
-    }
-
-    public String getDrugSpec() 
-    {
-        return drugSpec;
-    }
-    public void setDrugUnit(String drugUnit) 
-    {
-        this.drugUnit = drugUnit;
-    }
-
-    public String getDrugUnit() 
-    {
-        return drugUnit;
-    }
-    public void setDrugForm(String drugForm) 
-    {
-        this.drugForm = drugForm;
-    }
-
-    public String getDrugForm() 
-    {
-        return drugForm;
-    }
-    public void setPharmacologyType(String pharmacologyType) 
-    {
-        this.pharmacologyType = pharmacologyType;
-    }
-
-    public String getPharmacologyType() 
-    {
-        return pharmacologyType;
-    }
-    public void setDoseUnit(String doseUnit) 
-    {
-        this.doseUnit = doseUnit;
-    }
-
-    public String getDoseUnit() 
-    {
-        return doseUnit;
-    }
-    public void setDrugMaterialType(String drugMaterialType) 
-    {
-        this.drugMaterialType = drugMaterialType;
-    }
-
-    public String getDrugMaterialType() 
-    {
-        return drugMaterialType;
-    }
-    public void setCosts(String costs) 
-    {
-        this.costs = costs;
-    }
-
-    public String getCosts() 
-    {
-        return costs;
-    }
-    public void setManufacturer(String manufacturer) 
-    {
-        this.manufacturer = manufacturer;
-    }
-
-    public String getManufacturer() 
-    {
-        return manufacturer;
-    }
-    public void setMainComponents(String mainComponents) 
-    {
-        this.mainComponents = mainComponents;
-    }
-
-    public String getMainComponents() 
-    {
-        return mainComponents;
-    }
-    public void setTradeName(String tradeName) 
-    {
-        this.tradeName = tradeName;
-    }
-
-    public String getTradeName() 
-    {
-        return tradeName;
-    }
-    public void setSupplier(String supplier) 
-    {
-        this.supplier = supplier;
-    }
-
-    public String getSupplier() 
-    {
-        return supplier;
-    }
-    public void setDataVendorId(Long dataVendorId) 
-    {
-        this.dataVendorId = dataVendorId;
-    }
-
-    public Long getDataVendorId() 
-    {
-        return dataVendorId;
-    }
-    public void setAtlasFlag(String atlasFlag) 
-    {
-        this.atlasFlag = atlasFlag;
-    }
-
-    public String getAtlasFlag() 
-    {
-        return atlasFlag;
-    }
 
     @Override
     public String toString() {

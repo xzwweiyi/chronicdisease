@@ -1,12 +1,17 @@
 package com.dchealth.medical.service.impl;
 
+import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.medical.domain.PatientDrugInfo;
 import com.dchealth.medical.mapper.PatientDrugInfoMapper;
 import com.dchealth.medical.service.IPatientDrugInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 用药信息Service业务层处理
@@ -39,9 +44,11 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
      * @return 用药信息
      */
     @Override
-    public List<PatientDrugInfo> selectPatientDrugInfoList(PatientDrugInfo patientDrugInfo)
+    public AjaxResult selectPatientDrugInfoList(PatientDrugInfo patientDrugInfo)
     {
-        return patientDrugInfoMapper.selectPatientDrugInfoList(patientDrugInfo);
+        List<PatientDrugInfo> list=patientDrugInfoMapper.selectPatientDrugInfoList(patientDrugInfo);
+        Map<String,List<PatientDrugInfo>> map=list.stream().collect(Collectors.groupingBy(PatientDrugInfo::getVisitOccurrenceId));
+        return AjaxResult.success(map);
     }
 
     /**
@@ -90,5 +97,10 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
     public int deletePatientDrugInfoById(Long id)
     {
         return patientDrugInfoMapper.deletePatientDrugInfoById(id);
+    }
+
+    @Override
+    public List<PatientDrugInfo> getPatientDrugInfoList(PatientDrugInfo patientDrugInfo) {
+        return patientDrugInfoMapper.selectPatientDrugInfoList(patientDrugInfo);
     }
 }

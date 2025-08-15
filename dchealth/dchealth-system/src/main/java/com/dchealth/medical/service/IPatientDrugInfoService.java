@@ -1,5 +1,6 @@
 package com.dchealth.medical.service;
 
+import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.medical.domain.PatientDrugInfo;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public interface IPatientDrugInfoService
      * @param patientDrugInfo 用药信息
      * @return 用药信息集合
      */
-    public List<PatientDrugInfo> selectPatientDrugInfoList(PatientDrugInfo patientDrugInfo);
+    public AjaxResult selectPatientDrugInfoList(PatientDrugInfo patientDrugInfo);
 
     /**
      * 新增用药信息
@@ -59,4 +60,6 @@ public interface IPatientDrugInfoService
      * @return 结果
      */
     public int deletePatientDrugInfoById(Long id);
+
+    List<PatientDrugInfo> getPatientDrugInfoList(PatientDrugInfo patientDrugInfo);
 }
