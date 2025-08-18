@@ -1,6 +1,7 @@
 package com.dchealth.medical.service;
 
 import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.compatibility.domain.MpDrugExposure;
 import com.dchealth.medical.domain.PatientDrugInfo;
 
 import java.util.List;
@@ -62,4 +63,6 @@ public interface IPatientDrugInfoService
     public int deletePatientDrugInfoById(Long id);
 
     List<PatientDrugInfo> getPatientDrugInfoList(PatientDrugInfo patientDrugInfo);
+
+    AjaxResult mpDrugExposureList(MpDrugExposure mpDrugExposure);
 }
