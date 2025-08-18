@@ -1,10 +1,9 @@
 package com.dchealth.compatibility.domain;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 用药信息对象 mp_drug_exposure
@@ -62,6 +61,36 @@ public class MpDrugExposure
 
     /** 开单科室名称 */
     private String departmentName;
+
+
+    /**
+     * 就诊时间
+     */
+    private Date visitStartTime;
+
+    /** 药品代码 */
+    private String drugCode;
+
+    /** 药品名称 */
+    private String drugName;
+
+    /** 反映药品的含量信息 */
+    private String drugSpec;
+
+    /** 如片、支等 */
+    private String drugUnit;
+
+    /** 如针剂、片剂等，使用规范描述 */
+    private String drugForm;
+
+    /** 按药品的毒理分类，如普通、毒麻、精神等 */
+    private String pharmacologyType;
+
+    /** 剂量的单位，如MG、ML等 */
+    private String doseUnit;
+
+    /** 反映是否药品及何类药品：1-西药2-中草药 3-中成药 5-辅料 6-试剂 9-其它 */
+    private String drugMaterialType;
 
    
 }

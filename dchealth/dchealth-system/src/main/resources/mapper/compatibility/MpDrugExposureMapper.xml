@@ -27,6 +27,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectMpDrugExposureVo"/>
         where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
     </select>
-        
+
+
+
+    <select id="selectPatientDrugInfoList" parameterType="PatientDrugInfo" resultType="com.dchealth.compatibility.domain.MpDrugExposure">
+        SELECT
+        p.id id,
+        p.person_id personId,
+        p.visit_occurrence_id visitOccurrenceId,
+        p.drug_exposure_id drugExposureId,
+        p.drug_type drugType,
+        p.drug_sctid drugSctid,
+        p.drug_value drugValue,
+        p.dosage_form dosageForm,
+        p.drug_exposure_start_date drugExposureStartDate,
+        p.days_supply daysSupply,
+        p.department_name departmentName,
+        p.visit_start_time visitStartTime,
+        p.drug_code drugCode,
+        d.drug_name drugName,
+        d.drug_spec drugSpec,
+        d.drug_unit drugUnit,
+        d.drug_form drugForm,
+        d.pharmacology_type pharmacologyType,
+        d.dose_unit doseUnit,
+        d.drug_material_type drugMaterialType
+        FROM patient_drug_info p
+        INNER JOIN drug_dict d ON d.drug_code=p.drug_code
+        <where>
+            <if test="careSiteId != null  and careSiteId != ''"> and p.care_site_id = #{careSiteId}</if>
+            <if test="personId != null  and personId != ''"> and p.person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and p.visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="drugExposureId != null  and drugExposureId != ''"> and p.drug_exposure_id = #{drugExposureId}</if>
+            <if test="drugType != null  and drugType != ''"> and p.drug_type = #{drugType}</if>
+            <if test="drugSctid != null "> and p.drug_sctid = #{drugSctid}</if>
+            <if test="drugValue != null  and drugValue != ''"> and p.drug_value = #{drugValue}</if>
+            <if test="dosageForm != null  and dosageForm != ''"> and p.dosage_form = #{dosageForm}</if>
+            <if test="drugExposureStartDate != null "> and p.drug_exposure_start_date = #{drugExposureStartDate}</if>
+            <if test="daysSupply != null "> and p.days_supply = #{daysSupply}</if>
+            <if test="departmentName != null  and departmentName != ''"> and p.department_name like concat('%', #{departmentName}, '%')</if>
+        </where>
+    </select>
+
 
 </mapper>

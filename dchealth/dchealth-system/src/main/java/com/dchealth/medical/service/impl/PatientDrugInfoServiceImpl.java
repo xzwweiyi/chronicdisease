@@ -1,14 +1,14 @@
 package com.dchealth.medical.service.impl;
 
 import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.compatibility.domain.MpDrugExposure;
+import com.dchealth.compatibility.mapper.MpDrugExposureMapper;
 import com.dchealth.medical.domain.PatientDrugInfo;
 import com.dchealth.medical.mapper.PatientDrugInfoMapper;
 import com.dchealth.medical.service.IPatientDrugInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +24,9 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
 {
     @Autowired
     private PatientDrugInfoMapper patientDrugInfoMapper;
+
+    @Autowired
+    private MpDrugExposureMapper mpDrugExposureMapper;
 
     /**
      * 查询用药信息
@@ -102,5 +105,13 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
     @Override
     public List<PatientDrugInfo> getPatientDrugInfoList(PatientDrugInfo patientDrugInfo) {
         return patientDrugInfoMapper.selectPatientDrugInfoList(patientDrugInfo);
+    }
+
+    @Override
+    public AjaxResult mpDrugExposureList(MpDrugExposure mpDrugExposure) {
+
+        List<PatientDrugInfo> list=mpDrugExposureMapper.selectPatientDrugInfoList(mpDrugExposure);
+        Map<String,List<PatientDrugInfo>> map=list.stream().collect(Collectors.groupingBy(PatientDrugInfo::getVisitOccurrenceId));
+        return AjaxResult.success(map);
     }
 }

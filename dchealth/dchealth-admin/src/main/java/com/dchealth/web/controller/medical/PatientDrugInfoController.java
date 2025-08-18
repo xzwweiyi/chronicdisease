@@ -3,9 +3,9 @@ package com.dchealth.web.controller.medical;
 import com.dchealth.common.annotation.Log;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
-import com.dchealth.common.core.page.TableDataInfo;
 import com.dchealth.common.enums.BusinessType;
 import com.dchealth.common.utils.poi.ExcelUtil;
+import com.dchealth.compatibility.domain.MpDrugExposure;
 import com.dchealth.medical.domain.PatientDrugInfo;
 import com.dchealth.medical.service.IPatientDrugInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,5 +94,17 @@ public class PatientDrugInfoController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(patientDrugInfoService.deletePatientDrugInfoByIds(ids));
+    }
+
+
+    /**
+     * 原始用药信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('drug:info:remove')")
+    @Log(title = "用药信息", businessType = BusinessType.DELETE)
+    @PostMapping("/list")
+    public AjaxResult mpDrugExposureList(@RequestBody MpDrugExposure mpDrugExposure)
+    {
+        return patientDrugInfoService.mpDrugExposureList(mpDrugExposure);
     }
 }

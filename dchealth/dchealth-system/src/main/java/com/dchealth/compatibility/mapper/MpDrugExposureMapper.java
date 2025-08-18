@@ -1,6 +1,7 @@
 package com.dchealth.compatibility.mapper;
 
 import com.dchealth.compatibility.domain.MpDrugExposure;
+import com.dchealth.medical.domain.PatientDrugInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface MpDrugExposureMapper
      */
     public List<MpDrugExposure> selectByPersonIdAndVisitId(@Param("personId")String personId, @Param("visitOccurrenceId")String visitOccurrenceId);
 
+
+    List<PatientDrugInfo> selectPatientDrugInfoList(MpDrugExposure mpDrugExposure);
 }
