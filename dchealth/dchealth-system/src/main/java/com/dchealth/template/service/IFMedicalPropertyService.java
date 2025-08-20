@@ -72,5 +72,5 @@ public interface IFMedicalPropertyService
 
     List<FMedicalValueVo> findValueChangeRecord(FMedicalVo fMedicalVo);
 
-    void deletePropertyById(Long id, Integer formType);
+    void deletePropertyById(Long id,Long medicalFormId, Integer formType);
 }

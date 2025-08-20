@@ -308,17 +308,22 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
     }
 
     @Override
-    public void deletePropertyById(Long id, Integer formType) {
-        //0模块1标准项2拍照项3自评量表4预警填报
-        if (3==formType){
-            fMedicalExamSubjectMapper.deleteFMedicalExamSubjectById(id);
-            fMedicalExamItemMapper.deleteFMedicalExamItemByPropertyId(id);
-        }else{
-            fMedicalPropertyMapper.deleteFMedicalPropertyById(id);
-            if (4==formType){
-                warnMedicalEarlyMapper.deleteWarnMedicalEarlyByPropertyId(id);
-                warnMedicalEarlyConditionMapper.deleteWarnMedicalEarlyConditionByPropertyId(id);
+    public void deletePropertyById(Long id, Long medicalFormId, Integer formType) {
+        if (id != null) {
+            //0模块1标准项2拍照项3自评量表4预警填报
+            if (3 == formType) {
+                fMedicalExamSubjectMapper.deleteFMedicalExamSubjectById(id);
+                fMedicalExamItemMapper.deleteFMedicalExamItemByPropertyId(id);
+            } else {
+                fMedicalPropertyMapper.deleteFMedicalPropertyById(id);
+                if (4 == formType) {
+                    warnMedicalEarlyMapper.deleteWarnMedicalEarlyByPropertyId(id);
+                    warnMedicalEarlyConditionMapper.deleteWarnMedicalEarlyConditionByPropertyId(id);
+                }
             }
+        } else {
+            fMedicalFormMapper.deleteFMedicalFormByMedicalFormId(medicalFormId);
+            fMedicalPropertyMapper.deleteFMedicalPropertyByMedicalFormId(medicalFormId);
         }
     }
 

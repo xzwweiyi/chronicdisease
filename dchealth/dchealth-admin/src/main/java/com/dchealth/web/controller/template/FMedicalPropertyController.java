@@ -101,8 +101,9 @@ public class FMedicalPropertyController extends BaseController
      * @return
      */
     @GetMapping("/delete")
-    public AjaxResult delete(@RequestParam Long id,@RequestParam Integer formType){
-    fMedicalPropertyService.deletePropertyById(id,formType);
+    public AjaxResult delete(@RequestParam(name = "id", required = false) Long id,
+                             @RequestParam(name = "medicalFormId", required = false) Long medicalFormId,@RequestParam Integer formType){
+    fMedicalPropertyService.deletePropertyById(id,medicalFormId,formType);
         return AjaxResult.success();
     }
 }
