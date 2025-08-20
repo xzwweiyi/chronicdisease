@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
  * @date 2022-06-08
  */
 @Service
-public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
-{
+public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService {
     @Autowired
     private FMedicalPropertyMapper fMedicalPropertyMapper;
     @Autowired
@@ -71,8 +70,7 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
      * @return 属性
      */
     @Override
-    public FMedicalProperty selectFMedicalPropertyById(Long id)
-    {
+    public FMedicalProperty selectFMedicalPropertyById(Long id) {
         return fMedicalPropertyMapper.selectFMedicalPropertyById(id);
     }
 
@@ -83,8 +81,7 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
      * @return 属性
      */
     @Override
-    public List<FMedicalProperty> selectFMedicalPropertyList(FMedicalProperty fMedicalProperty)
-    {
+    public List<FMedicalProperty> selectFMedicalPropertyList(FMedicalProperty fMedicalProperty) {
         return fMedicalPropertyMapper.selectFMedicalPropertyList(fMedicalProperty);
     }
 
@@ -95,8 +92,7 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
      * @return 结果
      */
     @Override
-    public int insertFMedicalProperty(FMedicalProperty fMedicalProperty)
-    {
+    public int insertFMedicalProperty(FMedicalProperty fMedicalProperty) {
         fMedicalProperty.setCreateTime(DateUtils.getNowDate());
         return fMedicalPropertyMapper.insertFMedicalProperty(fMedicalProperty);
     }
@@ -108,19 +104,19 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
      * @return 结果
      */
     @Override
-    public int updateFMedicalProperty(FMedicalProperty fMedicalProperty)
-    {
+    public int updateFMedicalProperty(FMedicalProperty fMedicalProperty) {
         return fMedicalPropertyMapper.updateFMedicalProperty(fMedicalProperty);
     }
 
     /**
      * 迭代删除
+     *
      * @param fMedicalForms
      * @return
      */
-    private int deleteIter(List<FMedicalForm> fMedicalForms){
-        if (fMedicalForms != null && !fMedicalForms.isEmpty()){
-            fMedicalForms.forEach(x->{
+    private int deleteIter(List<FMedicalForm> fMedicalForms) {
+        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
+            fMedicalForms.forEach(x -> {
                 FMedicalForm params = new FMedicalForm();
                 params.setParentId(x.getMedicalFormId());
                 List<FMedicalForm> childrens = fMedicalFormMapper.selectFMedicalFormList(params);
@@ -159,47 +155,53 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
     }
 
     private void deleteChildDataIter(List<FMedicalForm> fMedicalForms) {
-        if (fMedicalForms != null && !fMedicalForms.isEmpty()){
+        if (fMedicalForms != null && !fMedicalForms.isEmpty()) {
             //迭代删除子数据
             deleteIter(fMedicalForms);
         }
     }
 
-    private int save(Long followId,Long parentFormId, List<FMedicalForm> fMedicalForms){
+    private int save(Long followId, Long parentFormId, List<FMedicalForm> fMedicalForms) {
         Date date = DateUtils.getNowDate();
-        fMedicalForms.forEach(x->{
-            if (x.getMedicalFormId() == null){
+        fMedicalForms.forEach(x -> {
+            if (x.getMedicalFormId() == null) {
                 x.setCreateTime(date);
                 x.setFollowId(followId);
                 x.setParentId(parentFormId);
                 fMedicalFormMapper.insertFMedicalForm(x);
             }
-            if ("2".equals(x.getFormType()) && x.getBaseFormId() != null){//拍照项组件
+            if ("2".equals(x.getFormType()) && x.getBaseFormId() != null) {//拍照项组件
                 FLibraryProperty params = new FLibraryProperty();
                 params.setLibraryId(x.getBaseFormId());
                 List<FLibraryProperty> fLibraryProperties = fLibraryPropertyMapper.selectFLibraryPropertyList(params);
                 List<FMedicalProperty> list = null;
-                if (fLibraryProperties != null && !fLibraryProperties.isEmpty()){
+                if (fLibraryProperties != null && !fLibraryProperties.isEmpty()) {
                     list = new ArrayList<>();
-                    for (FLibraryProperty y : fLibraryProperties){
+                    for (FLibraryProperty y : fLibraryProperties) {
                         FMedicalProperty property = new FMedicalProperty();
-                        BeanUtils.copyProperties(y,property);
+                        BeanUtils.copyProperties(y, property);
                         list.add(property);
+
+                        property.setCreateTime(date);
+                        property.setMedicalFormId(x.getMedicalFormId());
+                        property.setFollowId(followId);
+                        insertFMedicalProperty(property);
+
                     }
-                    x.setMedicalProperties(list);
+//                    x.setMedicalProperties(list);
                 }
             }
             /*if ("5".equals(x.getFormType())){
                 warnService.saveWarnMedical(followId, x.getMedicalFormId(), x.getWarnMedicalEarlyForms());
             }*/
 
-            if ("3".equals(x.getFormType()) && x.getScoresTotalVal()!=null){
+            if ("3".equals(x.getFormType()) && x.getScoresTotalVal() != null) {
                 //设置问卷总分
-                fMedicalFormMapper.updateScoreByMedicalFormId(x.getMedicalFormId(),x.getScoresTotalVal());
+                fMedicalFormMapper.updateScoreByMedicalFormId(x.getMedicalFormId(), x.getScoresTotalVal());
             }
-            if (x.getMedicalProperties() != null && !x.getMedicalProperties().isEmpty()){
-                x.getMedicalProperties().forEach(y->{
-                    if("3".equals(x.getFormType())){
+            if (x.getMedicalProperties() != null && !x.getMedicalProperties().isEmpty()) {
+                x.getMedicalProperties().forEach(y -> {
+                    if ("3".equals(x.getFormType())) {
                         FMedicalExamSubject subject = new FMedicalExamSubject();
                         BeanUtils.copyProperties(y, subject);
                         Long medicalFormId = x.getMedicalFormId();
@@ -208,23 +210,23 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
                         subject.setIfScore("1");
                         subject.setFollowId(x.getFollowId());
                         //存储每一个题目
-                        Long id=y.getId();
-                        if (id!=null){
+                        Long id = y.getId();
+                        if (id != null) {
                             fMedicalExamSubjectMapper.updateFMedicalExamSubject(subject);
-                        }else {
+                        } else {
                             fMedicalExamSubjectMapper.insertFMedicalExamSubject(subject);
                         }
                         //保存题目的选项
                         Optional<List<FMedicalExamItem>> itemList = Optional.ofNullable(y.getItemList());
-                        if(itemList.isPresent()){
-                            itemList.get().forEach(item ->{
+                        if (itemList.isPresent()) {
+                            itemList.get().forEach(item -> {
                                 item.setPropertyId(subject.getId());
                                 item.setMedicalFormId(medicalFormId);
                                 item.setCreateTime(date);
-                                Long itemId=item.getId();
-                                if (itemId!=null){
+                                Long itemId = item.getId();
+                                if (itemId != null) {
                                     fMedicalExamItemMapper.updateFMedicalExamItem(item);
-                                }else {
+                                } else {
                                     fMedicalExamItemMapper.insertFMedicalExamItem(item);
                                 }
                             });
@@ -233,21 +235,21 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
                         y.setCreateTime(date);
                         y.setMedicalFormId(x.getMedicalFormId());
                         y.setFollowId(followId);
-                        Long id=y.getId();
-                        if (id!=null){
+                        Long id = y.getId();
+                        if (id != null) {
                             updateFMedicalProperty(y);
-                        }else {
+                        } else {
                             insertFMedicalProperty(y);
                         }
-                        if (y.getWarnMedicalEarlyForms() != null && !y.getWarnMedicalEarlyForms().isEmpty()){
+                        if (y.getWarnMedicalEarlyForms() != null && !y.getWarnMedicalEarlyForms().isEmpty()) {
                             warnService.saveWarnMedical(followId, x.getMedicalFormId(), y.getId(), y.getWarnMedicalEarlyForms());
                         }
                     }
                 });
             }
-            if (x.getMedicalFormList() != null && !x.getMedicalFormList().isEmpty()){
+            if (x.getMedicalFormList() != null && !x.getMedicalFormList().isEmpty()) {
                 //递归
-                save(followId,x.getMedicalFormId(),x.getMedicalFormList());
+                save(followId, x.getMedicalFormId(), x.getMedicalFormList());
             }
         });
         return 1;
@@ -260,8 +262,7 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
      * @return 结果
      */
     @Override
-    public int deleteFMedicalPropertyByIds(Long[] ids)
-    {
+    public int deleteFMedicalPropertyByIds(Long[] ids) {
         return fMedicalPropertyMapper.deleteFMedicalPropertyByIds(ids);
     }
 
@@ -272,8 +273,7 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
      * @return 结果
      */
     @Override
-    public int deleteFMedicalPropertyById(Long id)
-    {
+    public int deleteFMedicalPropertyById(Long id) {
         return fMedicalPropertyMapper.deleteFMedicalPropertyById(id);
     }
 
@@ -286,21 +286,21 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService
         List<FMedicalValueVo> valueVos = null;
         if (propertyType != null && PropertyType.largeText(propertyType)) {
             //大文本
-            String sql = dynamicLargeTextLog.buildSelectSql(fMedicalVo.getResearchId(), fMedicalVo.getFormId(), fMedicalVo.getRecordId(),fMedicalVo.getPropertyId(),fMedicalVo.getPropertyCode());
+            String sql = dynamicLargeTextLog.buildSelectSql(fMedicalVo.getResearchId(), fMedicalVo.getFormId(), fMedicalVo.getRecordId(), fMedicalVo.getPropertyId(), fMedicalVo.getPropertyCode());
             valueVos = fMedicalPropertyMapper.selectFMedicalValues(sql);
         }
-        if(PropertyType.text(propertyType)) {
+        if (PropertyType.text(propertyType)) {
             //小文本
-            String sql = dynamicTextLog.buildSelectSql(fMedicalVo.getResearchId(), fMedicalVo.getFormId(), fMedicalVo.getRecordId(),fMedicalVo.getPropertyId(),fMedicalVo.getPropertyCode());
+            String sql = dynamicTextLog.buildSelectSql(fMedicalVo.getResearchId(), fMedicalVo.getFormId(), fMedicalVo.getRecordId(), fMedicalVo.getPropertyId(), fMedicalVo.getPropertyCode());
             valueVos = fMedicalPropertyMapper.selectFMedicalValues(sql);
         }
-        if("1".equals(dynamic)){
+        if ("1".equals(dynamic)) {
             //动态表单
-            String sql = dynamicFromsLog.buildSelectSql(fMedicalVo.getResearchId(), fMedicalVo.getFormId(), fMedicalVo.getRecordId(),fMedicalVo.getPropertyId(),fMedicalVo.getPropertyCode());
+            String sql = dynamicFromsLog.buildSelectSql(fMedicalVo.getResearchId(), fMedicalVo.getFormId(), fMedicalVo.getRecordId(), fMedicalVo.getPropertyId(), fMedicalVo.getPropertyCode());
             valueVos = fMedicalPropertyMapper.selectFMedicalValues(sql);
         }
         List<FMedicalValueVo> collect = null;
-        if (valueVos != null){
+        if (valueVos != null) {
             collect = valueVos.stream().filter(distinctByKey(FMedicalValueVo::getPropertyValue)).collect(Collectors.toList());
 
         }
