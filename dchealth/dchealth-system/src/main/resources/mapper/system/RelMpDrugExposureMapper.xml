@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.system.mapper.RelMpDrugExposureMapper">
+    
+    <resultMap type="RelMpDrugExposure" id="RelMpDrugExposureResult">
+        <result property="id"    column="id"    />
+        <result property="drugExposureId"    column="drug_exposure_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="drugConceptId"    column="drug_concept_id"    />
+        <result property="drugExposureStartDate"    column="drug_exposure_start_date"    />
+        <result property="drugExposureEndDate"    column="drug_exposure_end_date"    />
+        <result property="drugSourceValue"    column="drug_source_value"    />
+        <result property="drugValue"    column="drug_value"    />
+        <result property="drugSourceConceptId"    column="drug_source_concept_id"    />
+        <result property="drugTypeConceptId"    column="drug_type_concept_id"    />
+        <result property="drugType"    column="drug_type"    />
+        <result property="stopReason"    column="stop_reason"    />
+        <result property="refills"    column="refills"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="daysSupply"    column="days_supply"    />
+        <result property="sig"    column="sig"    />
+        <result property="routeConceptId"    column="route_concept_id"    />
+        <result property="effectiveDrugDose"    column="effective_drug_dose"    />
+        <result property="doseUnitConceptId"    column="dose_unit_concept_id"    />
+        <result property="lotNumber"    column="lot_number"    />
+        <result property="providerId"    column="provider_id"    />
+        <result property="routeSourceValue"    column="route_source_value"    />
+        <result property="doseUnitSourceValue"    column="dose_unit_source_value"    />
+        <result property="departmentId"    column="department_id"    />
+        <result property="medicationFrequency"    column="medication_frequency"    />
+        <result property="routeCode"    column="route_code"    />
+        <result property="drugPackageSpec"    column="drug_package_spec"    />
+        <result property="drugProperties"    column="drug_properties"    />
+        <result property="isAntibiotics"    column="is_antibiotics"    />
+        <result property="rcptNo"    column="rcpt_no"    />
+        <result property="dosageForm"    column="dosage_form"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="totalUnit"    column="total_unit"    />
+        <result property="executionTime"    column="execution_time"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="dataVendorId"    column="data_vendor_id"    />
+        <result property="atlasFlag"    column="atlas_flag"    />
+        <result property="visitSourceConceptId"    column="visit_source_concept_id"    />
+        <result property="providerName"    column="provider_name"    />
+        <result property="departmentName"    column="department_name"    />
+    </resultMap>
+
+    <sql id="selectRelMpDrugExposureVo">
+        select id, drug_exposure_id, person_id, visit_occurrence_id, drug_concept_id, drug_exposure_start_date, drug_exposure_end_date, drug_source_value, drug_value, drug_source_concept_id, drug_type_concept_id, drug_type, stop_reason, refills, quantity, days_supply, sig, route_concept_id, effective_drug_dose, dose_unit_concept_id, lot_number, provider_id, route_source_value, dose_unit_source_value, department_id, medication_frequency, route_code, drug_package_spec, drug_properties, is_antibiotics, rcpt_no, dosage_form, order_type, total_unit, execution_time, order_status, update_time, data_vendor_id, atlas_flag, visit_source_concept_id, provider_name, department_name from rel_mp_drug_exposure
+    </sql>
+
+    <select id="selectRelMpDrugExposureList" parameterType="RelMpDrugExposure" resultMap="RelMpDrugExposureResult">
+        <include refid="selectRelMpDrugExposureVo"/>
+        <where>  
+            <if test="drugExposureId != null  and drugExposureId != ''"> and drug_exposure_id = #{drugExposureId}</if>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="drugConceptId != null  and drugConceptId != ''"> and drug_concept_id = #{drugConceptId}</if>
+            <if test="drugExposureStartDate != null  and drugExposureStartDate != ''"> and drug_exposure_start_date >= #{drugExposureStartDate}</if>
+            <if test="drugExposureEndDate != null  and drugExposureEndDate != ''"> and drug_exposure_end_date = #{drugExposureEndDate}</if>
+            <if test="drugSourceValue != null  and drugSourceValue != ''"> and drug_source_value = #{drugSourceValue}</if>
+            <if test="drugValue != null  and drugValue != ''"> and drug_value = #{drugValue}</if>
+            <if test="drugSourceConceptId != null  and drugSourceConceptId != ''"> and drug_source_concept_id = #{drugSourceConceptId}</if>
+            <if test="drugTypeConceptId != null  and drugTypeConceptId != ''"> and drug_type_concept_id = #{drugTypeConceptId}</if>
+            <if test="drugType != null  and drugType != ''"> and drug_type = #{drugType}</if>
+            <if test="stopReason != null  and stopReason != ''"> and stop_reason = #{stopReason}</if>
+            <if test="refills != null  and refills != ''"> and refills = #{refills}</if>
+            <if test="quantity != null  and quantity != ''"> and quantity = #{quantity}</if>
+            <if test="daysSupply != null  and daysSupply != ''"> and days_supply = #{daysSupply}</if>
+            <if test="sig != null  and sig != ''"> and sig = #{sig}</if>
+            <if test="routeConceptId != null  and routeConceptId != ''"> and route_concept_id = #{routeConceptId}</if>
+            <if test="effectiveDrugDose != null  and effectiveDrugDose != ''"> and effective_drug_dose = #{effectiveDrugDose}</if>
+            <if test="doseUnitConceptId != null  and doseUnitConceptId != ''"> and dose_unit_concept_id = #{doseUnitConceptId}</if>
+            <if test="lotNumber != null  and lotNumber != ''"> and lot_number = #{lotNumber}</if>
+            <if test="providerId != null  and providerId != ''"> and provider_id = #{providerId}</if>
+            <if test="routeSourceValue != null  and routeSourceValue != ''"> and route_source_value = #{routeSourceValue}</if>
+            <if test="doseUnitSourceValue != null  and doseUnitSourceValue != ''"> and dose_unit_source_value = #{doseUnitSourceValue}</if>
+            <if test="departmentId != null  and departmentId != ''"> and department_id = #{departmentId}</if>
+            <if test="medicationFrequency != null  and medicationFrequency != ''"> and medication_frequency = #{medicationFrequency}</if>
+            <if test="routeCode != null  and routeCode != ''"> and route_code = #{routeCode}</if>
+            <if test="drugPackageSpec != null  and drugPackageSpec != ''"> and drug_package_spec = #{drugPackageSpec}</if>
+            <if test="drugProperties != null  and drugProperties != ''"> and drug_properties = #{drugProperties}</if>
+            <if test="isAntibiotics != null  and isAntibiotics != ''"> and is_antibiotics = #{isAntibiotics}</if>
+            <if test="rcptNo != null  and rcptNo != ''"> and rcpt_no = #{rcptNo}</if>
+            <if test="dosageForm != null  and dosageForm != ''"> and dosage_form = #{dosageForm}</if>
+            <if test="orderType != null  and orderType != ''"> and order_type = #{orderType}</if>
+            <if test="totalUnit != null  and totalUnit != ''"> and total_unit = #{totalUnit}</if>
+            <if test="executionTime != null  and executionTime != ''"> and execution_time = #{executionTime}</if>
+            <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
+            <if test="dataVendorId != null  and dataVendorId != ''"> and data_vendor_id = #{dataVendorId}</if>
+            <if test="atlasFlag != null  and atlasFlag != ''"> and atlas_flag = #{atlasFlag}</if>
+            <if test="visitSourceConceptId != null  and visitSourceConceptId != ''"> and visit_source_concept_id = #{visitSourceConceptId}</if>
+            <if test="providerName != null  and providerName != ''"> and provider_name like concat('%', #{providerName}, '%')</if>
+            <if test="departmentName != null  and departmentName != ''"> and department_name like concat('%', #{departmentName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectRelMpDrugExposureById" parameterType="Long" resultMap="RelMpDrugExposureResult">
+        <include refid="selectRelMpDrugExposureVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertRelMpDrugExposure" parameterType="RelMpDrugExposure" useGeneratedKeys="true" keyProperty="id">
+        insert into rel_mp_drug_exposure
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="drugExposureId != null">drug_exposure_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="visitOccurrenceId != null">visit_occurrence_id,</if>
+            <if test="drugConceptId != null">drug_concept_id,</if>
+            <if test="drugExposureStartDate != null">drug_exposure_start_date,</if>
+            <if test="drugExposureEndDate != null">drug_exposure_end_date,</if>
+            <if test="drugSourceValue != null">drug_source_value,</if>
+            <if test="drugValue != null">drug_value,</if>
+            <if test="drugSourceConceptId != null">drug_source_concept_id,</if>
+            <if test="drugTypeConceptId != null">drug_type_concept_id,</if>
+            <if test="drugType != null">drug_type,</if>
+            <if test="stopReason != null">stop_reason,</if>
+            <if test="refills != null">refills,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="daysSupply != null">days_supply,</if>
+            <if test="sig != null">sig,</if>
+            <if test="routeConceptId != null">route_concept_id,</if>
+            <if test="effectiveDrugDose != null">effective_drug_dose,</if>
+            <if test="doseUnitConceptId != null">dose_unit_concept_id,</if>
+            <if test="lotNumber != null">lot_number,</if>
+            <if test="providerId != null">provider_id,</if>
+            <if test="routeSourceValue != null">route_source_value,</if>
+            <if test="doseUnitSourceValue != null">dose_unit_source_value,</if>
+            <if test="departmentId != null">department_id,</if>
+            <if test="medicationFrequency != null">medication_frequency,</if>
+            <if test="routeCode != null">route_code,</if>
+            <if test="drugPackageSpec != null">drug_package_spec,</if>
+            <if test="drugProperties != null">drug_properties,</if>
+            <if test="isAntibiotics != null">is_antibiotics,</if>
+            <if test="rcptNo != null">rcpt_no,</if>
+            <if test="dosageForm != null">dosage_form,</if>
+            <if test="orderType != null">order_type,</if>
+            <if test="totalUnit != null">total_unit,</if>
+            <if test="executionTime != null">execution_time,</if>
+            <if test="orderStatus != null">order_status,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="dataVendorId != null">data_vendor_id,</if>
+            <if test="atlasFlag != null">atlas_flag,</if>
+            <if test="visitSourceConceptId != null">visit_source_concept_id,</if>
+            <if test="providerName != null">provider_name,</if>
+            <if test="departmentName != null">department_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="drugExposureId != null">#{drugExposureId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="visitOccurrenceId != null">#{visitOccurrenceId},</if>
+            <if test="drugConceptId != null">#{drugConceptId},</if>
+            <if test="drugExposureStartDate != null">#{drugExposureStartDate},</if>
+            <if test="drugExposureEndDate != null">#{drugExposureEndDate},</if>
+            <if test="drugSourceValue != null">#{drugSourceValue},</if>
+            <if test="drugValue != null">#{drugValue},</if>
+            <if test="drugSourceConceptId != null">#{drugSourceConceptId},</if>
+            <if test="drugTypeConceptId != null">#{drugTypeConceptId},</if>
+            <if test="drugType != null">#{drugType},</if>
+            <if test="stopReason != null">#{stopReason},</if>
+            <if test="refills != null">#{refills},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="daysSupply != null">#{daysSupply},</if>
+            <if test="sig != null">#{sig},</if>
+            <if test="routeConceptId != null">#{routeConceptId},</if>
+            <if test="effectiveDrugDose != null">#{effectiveDrugDose},</if>
+            <if test="doseUnitConceptId != null">#{doseUnitConceptId},</if>
+            <if test="lotNumber != null">#{lotNumber},</if>
+            <if test="providerId != null">#{providerId},</if>
+            <if test="routeSourceValue != null">#{routeSourceValue},</if>
+            <if test="doseUnitSourceValue != null">#{doseUnitSourceValue},</if>
+            <if test="departmentId != null">#{departmentId},</if>
+            <if test="medicationFrequency != null">#{medicationFrequency},</if>
+            <if test="routeCode != null">#{routeCode},</if>
+            <if test="drugPackageSpec != null">#{drugPackageSpec},</if>
+            <if test="drugProperties != null">#{drugProperties},</if>
+            <if test="isAntibiotics != null">#{isAntibiotics},</if>
+            <if test="rcptNo != null">#{rcptNo},</if>
+            <if test="dosageForm != null">#{dosageForm},</if>
+            <if test="orderType != null">#{orderType},</if>
+            <if test="totalUnit != null">#{totalUnit},</if>
+            <if test="executionTime != null">#{executionTime},</if>
+            <if test="orderStatus != null">#{orderStatus},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="dataVendorId != null">#{dataVendorId},</if>
+            <if test="atlasFlag != null">#{atlasFlag},</if>
+            <if test="visitSourceConceptId != null">#{visitSourceConceptId},</if>
+            <if test="providerName != null">#{providerName},</if>
+            <if test="departmentName != null">#{departmentName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRelMpDrugExposure" parameterType="RelMpDrugExposure">
+        update rel_mp_drug_exposure
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="drugExposureId != null">drug_exposure_id = #{drugExposureId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="visitOccurrenceId != null">visit_occurrence_id = #{visitOccurrenceId},</if>
+            <if test="drugConceptId != null">drug_concept_id = #{drugConceptId},</if>
+            <if test="drugExposureStartDate != null">drug_exposure_start_date = #{drugExposureStartDate},</if>
+            <if test="drugExposureEndDate != null">drug_exposure_end_date = #{drugExposureEndDate},</if>
+            <if test="drugSourceValue != null">drug_source_value = #{drugSourceValue},</if>
+            <if test="drugValue != null">drug_value = #{drugValue},</if>
+            <if test="drugSourceConceptId != null">drug_source_concept_id = #{drugSourceConceptId},</if>
+            <if test="drugTypeConceptId != null">drug_type_concept_id = #{drugTypeConceptId},</if>
+            <if test="drugType != null">drug_type = #{drugType},</if>
+            <if test="stopReason != null">stop_reason = #{stopReason},</if>
+            <if test="refills != null">refills = #{refills},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="daysSupply != null">days_supply = #{daysSupply},</if>
+            <if test="sig != null">sig = #{sig},</if>
+            <if test="routeConceptId != null">route_concept_id = #{routeConceptId},</if>
+            <if test="effectiveDrugDose != null">effective_drug_dose = #{effectiveDrugDose},</if>
+            <if test="doseUnitConceptId != null">dose_unit_concept_id = #{doseUnitConceptId},</if>
+            <if test="lotNumber != null">lot_number = #{lotNumber},</if>
+            <if test="providerId != null">provider_id = #{providerId},</if>
+            <if test="routeSourceValue != null">route_source_value = #{routeSourceValue},</if>
+            <if test="doseUnitSourceValue != null">dose_unit_source_value = #{doseUnitSourceValue},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            <if test="medicationFrequency != null">medication_frequency = #{medicationFrequency},</if>
+            <if test="routeCode != null">route_code = #{routeCode},</if>
+            <if test="drugPackageSpec != null">drug_package_spec = #{drugPackageSpec},</if>
+            <if test="drugProperties != null">drug_properties = #{drugProperties},</if>
+            <if test="isAntibiotics != null">is_antibiotics = #{isAntibiotics},</if>
+            <if test="rcptNo != null">rcpt_no = #{rcptNo},</if>
+            <if test="dosageForm != null">dosage_form = #{dosageForm},</if>
+            <if test="orderType != null">order_type = #{orderType},</if>
+            <if test="totalUnit != null">total_unit = #{totalUnit},</if>
+            <if test="executionTime != null">execution_time = #{executionTime},</if>
+            <if test="orderStatus != null">order_status = #{orderStatus},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="dataVendorId != null">data_vendor_id = #{dataVendorId},</if>
+            <if test="atlasFlag != null">atlas_flag = #{atlasFlag},</if>
+            <if test="visitSourceConceptId != null">visit_source_concept_id = #{visitSourceConceptId},</if>
+            <if test="providerName != null">provider_name = #{providerName},</if>
+            <if test="departmentName != null">department_name = #{departmentName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRelMpDrugExposureById" parameterType="Long">
+        delete from rel_mp_drug_exposure where id = #{id}
+    </delete>
+
+    <delete id="deleteRelMpDrugExposureByIds" parameterType="String">
+        delete from rel_mp_drug_exposure where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

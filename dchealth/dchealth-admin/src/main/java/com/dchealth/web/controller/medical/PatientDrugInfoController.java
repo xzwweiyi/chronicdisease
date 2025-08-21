@@ -100,9 +100,9 @@ public class PatientDrugInfoController extends BaseController
     /**
      * 原始用药信息列表
      */
-    @PreAuthorize("@ss.hasPermi('drug:info:remove')")
+//    @PreAuthorize("@ss.hasPermi('drug:info:mplist')")
     @Log(title = "用药信息", businessType = BusinessType.DELETE)
-    @PostMapping("/list")
+    @PostMapping("/mpList")
     public AjaxResult mpDrugExposureList(@RequestBody MpDrugExposure mpDrugExposure)
     {
         return patientDrugInfoService.mpDrugExposureList(mpDrugExposure);
