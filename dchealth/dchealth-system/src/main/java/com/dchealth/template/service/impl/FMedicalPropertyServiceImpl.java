@@ -169,6 +169,9 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService {
                 x.setFollowId(followId);
                 x.setParentId(parentFormId);
                 fMedicalFormMapper.insertFMedicalForm(x);
+            } else {
+                x.setUpdateTime(date);
+                fMedicalFormMapper.updateFMedicalForm(x);
             }
             if ("2".equals(x.getFormType()) && x.getBaseFormId() != null) {//拍照项组件
                 FLibraryProperty params = new FLibraryProperty();
@@ -182,11 +185,13 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService {
                         BeanUtils.copyProperties(y, property);
                         list.add(property);
 
+//                        fMedicalPropertyMapper.selectFMedicalPropertyById()
+
                         property.setCreateTime(date);
                         property.setMedicalFormId(x.getMedicalFormId());
                         property.setFollowId(followId);
-                        insertFMedicalProperty(property);
 
+                        insertFMedicalProperty(property);
                     }
 //                    x.setMedicalProperties(list);
                 }

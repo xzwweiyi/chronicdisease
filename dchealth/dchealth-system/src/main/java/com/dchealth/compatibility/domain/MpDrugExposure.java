@@ -2,6 +2,7 @@ package com.dchealth.compatibility.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import java.util.Date;
  * @date 2023-11-04
  */
 @Data
+@Accessors(chain = true)
 public class MpDrugExposure
 {
 	  /** 创建者 */
@@ -44,7 +46,7 @@ public class MpDrugExposure
     private String drugType;
 
     /** 药品sctid */
-    private Long drugSctid;
+    private String drugSctid;
 
     /** 药品名称 */
     private String drugValue;
