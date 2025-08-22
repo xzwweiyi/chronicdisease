@@ -61,7 +61,7 @@ public class SyncMpDrugExposureJob {
                             .setDrugType(x.getDrugType())
                             .setDosageForm(x.getDosageForm())
                             .setDrugValue(x.getDrugSourceValue())
-                            .setDrugSctid(x.getDrugConceptId())
+                            .setDrugCode(x.getDrugConceptId())
                             .setDrugExposureStartDate(parseDate(x.getDrugExposureStartDate(), "yyyy-MM-dd HH:mm:ss"))
 
                             .setDepartmentName(x.getDepartmentName());

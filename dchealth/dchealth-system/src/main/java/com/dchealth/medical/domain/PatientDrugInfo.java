@@ -1,6 +1,5 @@
 package com.dchealth.medical.domain;
 
-import com.dchealth.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -44,7 +43,7 @@ public class PatientDrugInfo{
     private String drugType;
 
     /** 药品sctid */
-    private Long drugSctid;
+    private String drugSctid;
 
     /** 药品名称 */
     private String drugValue;

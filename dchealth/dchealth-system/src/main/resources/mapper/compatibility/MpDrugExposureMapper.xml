@@ -53,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         d.dose_unit doseUnit,
         d.drug_material_type drugMaterialType
         FROM patient_drug_info p
-        INNER JOIN drug_dict d ON p.drug_sctid = d.drug_code
+        INNER JOIN drug_dict d ON d.drug_code=p.drug_code
         <where>
             <if test="careSiteId != null  and careSiteId != ''"> and p.care_site_id = #{careSiteId}</if>
             <if test="personId != null  and personId != ''"> and p.person_id = #{personId}</if>
