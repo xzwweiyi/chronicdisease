@@ -72,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="careSiteId != null">care_site_id,</if>
             <if test="personId != null">person_id,</if>
+            <if test="drugCode != null">drug_code,</if>
             <if test="visitOccurrenceId != null">visit_occurrence_id,</if>
             <if test="drugExposureId != null">drug_exposure_id,</if>
             <if test="drugType != null">drug_type,</if>
@@ -85,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="careSiteId != null">#{careSiteId},</if>
             <if test="personId != null">#{personId},</if>
+            <if test="drugCode != null">#{drugCode},</if>
             <if test="visitOccurrenceId != null">#{visitOccurrenceId},</if>
             <if test="drugExposureId != null">#{drugExposureId},</if>
             <if test="drugType != null">#{drugType},</if>

@@ -9,6 +9,8 @@ import com.dchealth.medical.service.IPatientDrugInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,6 +65,10 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
     @Override
     public int insertPatientDrugInfo(PatientDrugInfo patientDrugInfo)
     {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        patientDrugInfo.setCreateTime(new Date());
+        patientDrugInfo.setVisitStartTime(new Date());
+        patientDrugInfo.setVisitOccurrenceId(patientDrugInfo.getPersonId() + "_" + format.format(new Date()));
         return patientDrugInfoMapper.insertPatientDrugInfo(patientDrugInfo);
     }
 
@@ -75,6 +81,7 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
     @Override
     public int updatePatientDrugInfo(PatientDrugInfo patientDrugInfo)
     {
+        patientDrugInfo.setUpdateTime(new Date());
         return patientDrugInfoMapper.updatePatientDrugInfo(patientDrugInfo);
     }
 

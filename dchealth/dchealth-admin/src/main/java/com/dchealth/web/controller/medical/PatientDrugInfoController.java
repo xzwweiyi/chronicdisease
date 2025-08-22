@@ -31,9 +31,9 @@ public class PatientDrugInfoController extends BaseController
     /**
      * 查询用药信息列表
      */
-    @PreAuthorize("@ss.hasPermi('drug:info:list')")
-    @GetMapping("/list")
-    public AjaxResult list(PatientDrugInfo patientDrugInfo)
+//    @PreAuthorize("@ss.hasPermi('drug:info:list')")
+    @PostMapping("/list")
+    public AjaxResult list(@RequestBody PatientDrugInfo patientDrugInfo)
     {
         //startPage();
         return patientDrugInfoService.selectPatientDrugInfoList(patientDrugInfo);
@@ -66,9 +66,9 @@ public class PatientDrugInfoController extends BaseController
     /**
      * 新增用药信息
      */
-    @PreAuthorize("@ss.hasPermi('drug:info:add')")
-    @Log(title = "用药信息", businessType = BusinessType.INSERT)
-    @PostMapping
+//    @PreAuthorize("@ss.hasPermi('drug:info:add')")
+//    @Log(title = "用药信息", businessType = BusinessType.INSERT)
+    @PostMapping("add")
     public AjaxResult add(@RequestBody PatientDrugInfo patientDrugInfo)
     {
         return toAjax(patientDrugInfoService.insertPatientDrugInfo(patientDrugInfo));
@@ -77,9 +77,9 @@ public class PatientDrugInfoController extends BaseController
     /**
      * 修改用药信息
      */
-    @PreAuthorize("@ss.hasPermi('drug:info:edit')")
-    @Log(title = "用药信息", businessType = BusinessType.UPDATE)
-    @PutMapping
+//    @PreAuthorize("@ss.hasPermi('drug:info:edit')")
+//    @Log(title = "用药信息", businessType = BusinessType.UPDATE)
+    @PostMapping("update")
     public AjaxResult edit(@RequestBody PatientDrugInfo patientDrugInfo)
     {
         return toAjax(patientDrugInfoService.updatePatientDrugInfo(patientDrugInfo));
@@ -88,7 +88,7 @@ public class PatientDrugInfoController extends BaseController
     /**
      * 删除用药信息
      */
-    @PreAuthorize("@ss.hasPermi('drug:info:remove')")
+//    @PreAuthorize("@ss.hasPermi('drug:info:remove')")
     @Log(title = "用药信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

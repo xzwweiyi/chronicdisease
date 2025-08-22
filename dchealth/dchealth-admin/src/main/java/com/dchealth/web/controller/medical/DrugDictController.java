@@ -17,24 +17,22 @@ import java.util.List;
 
 /**
  * 药品字典Controller
- * 
+ *
  * @author wangpf
  * @date 2025-08-13
  */
 @RestController
-@RequestMapping("/system/dict")
-public class DrugDictController extends BaseController
-{
+@RequestMapping("/drug/dict")
+public class DrugDictController extends BaseController {
     @Autowired
     private IDrugDictService drugDictService;
 
     /**
      * 查询药品字典列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:list')")
-    @GetMapping("/list")
-    public TableDataInfo list(DrugDict drugDict)
-    {
+//    @PreAuthorize("@ss.hasPermi('drug:dict:list')")
+    @PostMapping("/list")
+    public TableDataInfo list(@RequestBody DrugDict drugDict) {
         startPage();
         List<DrugDict> list = drugDictService.selectDrugDictList(drugDict);
         return getDataTable(list);
@@ -43,11 +41,10 @@ public class DrugDictController extends BaseController
     /**
      * 导出药品字典列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:export')")
+    @PreAuthorize("@ss.hasPermi('drug:dict:export')")
     @Log(title = "药品字典", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, DrugDict drugDict)
-    {
+    public void export(HttpServletResponse response, DrugDict drugDict) {
         List<DrugDict> list = drugDictService.selectDrugDictList(drugDict);
         ExcelUtil<DrugDict> util = new ExcelUtil<DrugDict>(DrugDict.class);
         util.exportExcel(response, list, "药品字典数据");
@@ -56,43 +53,39 @@ public class DrugDictController extends BaseController
     /**
      * 获取药品字典详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:query')")
+    @PreAuthorize("@ss.hasPermi('drug:dict:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(drugDictService.selectDrugDictById(id));
     }
 
     /**
      * 新增药品字典
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:add')")
+    @PreAuthorize("@ss.hasPermi('drug:dict:add')")
     @Log(title = "药品字典", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody DrugDict drugDict)
-    {
+    public AjaxResult add(@RequestBody DrugDict drugDict) {
         return toAjax(drugDictService.insertDrugDict(drugDict));
     }
 
     /**
      * 修改药品字典
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:edit')")
+    @PreAuthorize("@ss.hasPermi('drug:dict:edit')")
     @Log(title = "药品字典", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody DrugDict drugDict)
-    {
+    public AjaxResult edit(@RequestBody DrugDict drugDict) {
         return toAjax(drugDictService.updateDrugDict(drugDict));
     }
 
     /**
      * 删除药品字典
      */
-    @PreAuthorize("@ss.hasPermi('system:dict:remove')")
+    @PreAuthorize("@ss.hasPermi('drug:dict:remove')")
     @Log(title = "药品字典", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(drugDictService.deleteDrugDictByIds(ids));
     }
 }
