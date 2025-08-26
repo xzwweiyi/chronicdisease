@@ -41,7 +41,11 @@ public class DrugDictServiceImpl implements IDrugDictService
     @Override
     public List<DrugDict> selectDrugDictList(DrugDict drugDict)
     {
-        return drugDictMapper.selectDrugDictList(drugDict);
+        List<DrugDict> drugDicts = drugDictMapper.selectDrugDictList(drugDict);
+        drugDicts.forEach(item -> {
+            item.setDrugName(item.getDrugName() + "（" + item.getDrugSpec() + "，" + item.getDrugUnit() + "）");
+        });
+        return drugDicts;
     }
 
     /**

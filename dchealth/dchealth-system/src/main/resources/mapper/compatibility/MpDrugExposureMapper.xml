@@ -38,22 +38,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         p.drug_exposure_id drugExposureId,
         p.drug_type drugType,
         p.drug_sctid drugSctid,
-        p.drug_value drugValue,
+        p.drug_value drugName,
         p.dosage_form dosageForm,
         p.drug_exposure_start_date drugExposureStartDate,
         p.days_supply daysSupply,
         p.department_name departmentName,
-        p.visit_start_time visitStartTime,
         p.drug_code drugCode,
-        d.drug_name drugName,
-        d.drug_spec drugSpec,
-        d.drug_unit drugUnit,
-        d.drug_form drugForm,
-        d.pharmacology_type pharmacologyType,
-        d.dose_unit doseUnit,
-        d.drug_material_type drugMaterialType
-        FROM patient_drug_info p
-        INNER JOIN drug_dict d ON d.drug_code=p.drug_code
+        p.drug_spec drugSpec,
+        p.drug_unit drugUnit
+        FROM mp_drug_exposure p
         <where>
             <if test="careSiteId != null  and careSiteId != ''"> and p.care_site_id = #{careSiteId}</if>
             <if test="personId != null  and personId != ''"> and p.person_id = #{personId}</if>
