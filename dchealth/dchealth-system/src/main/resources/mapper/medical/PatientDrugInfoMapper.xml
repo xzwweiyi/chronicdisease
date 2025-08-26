@@ -31,22 +31,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         p.drug_exposure_id drugExposureId,
         p.drug_type drugType,
         p.drug_sctid drugSctid,
-        p.drug_value drugValue,
+        p.drug_value drugName,
         p.dosage_form dosageForm,
         p.drug_exposure_start_date drugExposureStartDate,
         p.days_supply daysSupply,
         p.department_name departmentName,
         p.visit_start_time visitStartTime,
         p.drug_code drugCode,
-        d.drug_name drugName,
-        d.drug_spec drugSpec,
-        d.drug_unit drugUnit,
-        d.drug_form drugForm,
-        d.pharmacology_type pharmacologyType,
-        d.dose_unit doseUnit,
-        d.drug_material_type drugMaterialType
+        p.drug_spec drugSpec,
+        p.drug_unit drugUnit
         FROM patient_drug_info p
-        INNER JOIN drug_dict d ON d.drug_code=p.drug_code
         <where>  
             <if test="careSiteId != null  and careSiteId != ''"> and p.care_site_id = #{careSiteId}</if>
             <if test="personId != null  and personId != ''"> and p.person_id = #{personId}</if>
@@ -82,6 +76,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="drugExposureStartDate != null">drug_exposure_start_date,</if>
             <if test="daysSupply != null">days_supply,</if>
             <if test="departmentName != null">department_name,</if>
+            <if test="drugSpec != null">drug_spec,</if>
+            <if test="drugUnit != null">drug_unit,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="careSiteId != null">#{careSiteId},</if>
@@ -96,6 +92,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="drugExposureStartDate != null">#{drugExposureStartDate},</if>
             <if test="daysSupply != null">#{daysSupply},</if>
             <if test="departmentName != null">#{departmentName},</if>
+            <if test="drugSpec != null">#{drugSpec},</if>
+            <if test="drugUnit != null">#{drugUnit},</if>
          </trim>
     </insert>
 
@@ -113,6 +111,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="drugExposureStartDate != null">drug_exposure_start_date = #{drugExposureStartDate},</if>
             <if test="daysSupply != null">days_supply = #{daysSupply},</if>
             <if test="departmentName != null">department_name = #{departmentName},</if>
+            <if test="drugSpec != null">drug_spec = #{drugSpec},</if>
+            <if test="drugUnit != null">drug_unit = #{drugUnit},</if>
         </trim>
         where id = #{id}
     </update>

@@ -23,6 +23,6 @@ public class MpDrugExposureVO {
     /**
      * 就诊id
      */
-    @NotNull(message = "visitOccurrenceId不能为空")
+//    @NotNull(message = "visitOccurrenceId不能为空")
     private Long visitOccurrenceId;
 }

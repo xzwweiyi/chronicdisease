@@ -164,8 +164,9 @@ public class PatientInfoController extends BaseController
     @PostMapping("/drugInfo")
     public AjaxResult drugInfo(@Validated @RequestBody MpDrugExposureVO mpDrugExposureVO)
     {
-
-        List<MpDrugExposure> list = mpDrugExposureMapper.selectByPersonIdAndVisitId(String.valueOf(mpDrugExposureVO.getPersonId()), String.valueOf(mpDrugExposureVO.getVisitOccurrenceId()));
+        MpDrugExposure mpDrugExposure = new MpDrugExposure();
+        mpDrugExposure.setPersonId(String.valueOf(mpDrugExposureVO.getPersonId()));
+        List<MpDrugExposure> list = mpDrugExposureMapper.selectPatientDrugInfoList(mpDrugExposure);
         return AjaxResult.success(list);
     }
 
