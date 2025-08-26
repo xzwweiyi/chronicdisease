@@ -1,6 +1,7 @@
 package com.dchealth.web.job;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.dchealth.common.utils.StringUtils;
 import com.dchealth.compatibility.domain.MpDrugExposure;
 import com.dchealth.compatibility.mapper.MpDrugExposureMapper;
@@ -44,8 +45,13 @@ public class SyncMpDrugExposureJob {
         // 将数据处理完成后同步到mp_drug_exposure表
         log.info("开始同步mp_drug_exposure表数据！");
         RelMpDrugExposure relMpDrugExposure = new RelMpDrugExposure();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        relMpDrugExposure.setDrugExposureStartDate(format.format(LocalDate.now().minusDays(1)));
+        List<MpDrugExposure> exposures = mpDrugExposureMapper.selectPatientDrugInfoList(new MpDrugExposure());
+
+        if (ObjectUtil.isNotEmpty(exposures)) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            relMpDrugExposure.setDrugExposureStartDate(format.format(LocalDate.now().minusDays(1)));
+        }
+
         List<RelMpDrugExposure> relMpDrugExposures = relMpDrugExposureMapper.selectRelMpDrugExposureList(relMpDrugExposure);
 
         List<MpDrugExposure> mpDrugExposures = new ArrayList<>();
