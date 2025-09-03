@@ -39,7 +39,7 @@ public class SyncMpDrugExposureJob {
     @Autowired
     private MpDrugExposureMapper mpDrugExposureMapper;
 
-    @Scheduled(cron = "0 0 6 * * ?")  // 每天上午8点执行
+    @Scheduled(cron = "0 0 6 * * ?")  // 每天上午6点执行
     private void syncMpDrugExposureHandler() throws Exception {
 
         // 将数据处理完成后同步到mp_drug_exposure表
