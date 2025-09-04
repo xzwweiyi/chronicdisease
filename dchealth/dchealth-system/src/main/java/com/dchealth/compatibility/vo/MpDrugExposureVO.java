@@ -18,7 +18,7 @@ public class MpDrugExposureVO {
      * 就诊类型
      */
     @NotNull(message = "personId不能为空")
-    private Long personId;
+    private String personId;
 
     /**
      * 就诊id

@@ -152,4 +152,6 @@ public class RelMpDrugExposure  {
     /** 备注 */
     private String remark;
 
+    private String dt;
+
 }

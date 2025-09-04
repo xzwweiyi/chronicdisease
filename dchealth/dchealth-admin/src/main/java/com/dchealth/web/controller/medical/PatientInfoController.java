@@ -165,7 +165,8 @@ public class PatientInfoController extends BaseController
     public AjaxResult drugInfo(@Validated @RequestBody MpDrugExposureVO mpDrugExposureVO)
     {
         MpDrugExposure mpDrugExposure = new MpDrugExposure();
-        mpDrugExposure.setPersonId(String.valueOf(mpDrugExposureVO.getPersonId()));
+        mpDrugExposure.setPersonId(mpDrugExposureVO.getPersonId());
+        logger.info("查看患者用药信息 {}", mpDrugExposure);
         List<MpDrugExposure> list = mpDrugExposureMapper.selectPatientDrugInfoList(mpDrugExposure);
         return AjaxResult.success(list);
     }
