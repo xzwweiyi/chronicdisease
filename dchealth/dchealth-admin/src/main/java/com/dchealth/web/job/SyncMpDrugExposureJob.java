@@ -1,20 +1,18 @@
 package com.dchealth.web.job;
 
 
-import cn.hutool.core.util.ObjectUtil;
 import com.dchealth.common.utils.StringUtils;
 import com.dchealth.compatibility.domain.MpDrugExposure;
 import com.dchealth.compatibility.mapper.MpDrugExposureMapper;
 import com.dchealth.system.domain.RelMpDrugExposure;
 import com.dchealth.system.mapper.RelMpDrugExposureMapper;
+import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,37 +37,40 @@ public class SyncMpDrugExposureJob {
     @Autowired
     private MpDrugExposureMapper mpDrugExposureMapper;
 
-    @Scheduled(cron = "0 0 6 * * ?")  // 每天上午6点执行
-    private void syncMpDrugExposureHandler() throws Exception {
+//    @Scheduled(cron = "0 0 6 * * ?")  // 每天上午8点执行
+    @XxlJob("syncMpDrugExposureHandler")
+    public void syncMpDrugExposureHandler() throws Exception {
 
         // 将数据处理完成后同步到mp_drug_exposure表
         log.info("开始同步mp_drug_exposure表数据！");
         RelMpDrugExposure relMpDrugExposure = new RelMpDrugExposure();
-        List<MpDrugExposure> exposures = mpDrugExposureMapper.selectPatientDrugInfoList(new MpDrugExposure());
+//        List<MpDrugExposure> exposures = mpDrugExposureMapper.selectPatientDrugInfoList(new MpDrugExposure());
 
-        if (ObjectUtil.isNotEmpty(exposures)) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            relMpDrugExposure.setDrugExposureStartDate(format.format(LocalDate.now().minusDays(1)));
-        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+//        relMpDrugExposure.setDt(format.format(new Date()));
 
         List<RelMpDrugExposure> relMpDrugExposures = relMpDrugExposureMapper.selectRelMpDrugExposureList(relMpDrugExposure);
 
         List<MpDrugExposure> mpDrugExposures = new ArrayList<>();
         partition(relMpDrugExposures, BATCH_SIZE).forEach(item -> {
 
-
             item.forEach(x -> {
                 MpDrugExposure mpDrugExposure = new MpDrugExposure();
                 try {
-                    mpDrugExposure.setPersonId(x.getPersonId())
-                            .setVisitOccurrenceId(x.getDrugSourceConceptId())
+                    String visitRecordId = x.getDrugSourceConceptId();
+                    int index = visitRecordId.indexOf("_");
+                    String personId = visitRecordId.substring(0, index);
+                    mpDrugExposure.setPersonId(personId)
+                            .setVisitOccurrenceId(x.getVisitSourceConceptId())
                             .setDrugExposureId(x.getDrugExposureId())
                             .setDrugType(x.getDrugType())
+                            .setDrugExposureId(x.getDrugSourceConceptId())
                             .setDosageForm(x.getDosageForm())
                             .setDrugValue(x.getDrugSourceValue())
                             .setDrugCode(x.getDrugConceptId())
                             .setDrugSpec(x.getEffectiveDrugDose())
-                            .setDrugUnit(x.getDoseUnitConceptId())
+                            .setDrugUnit(x.getDrugSourceValue())
                             .setDrugExposureStartDate(parseDate(x.getDrugExposureStartDate(), "yyyy-MM-dd HH:mm:ss"))
 
                             .setDepartmentName(x.getDepartmentName());

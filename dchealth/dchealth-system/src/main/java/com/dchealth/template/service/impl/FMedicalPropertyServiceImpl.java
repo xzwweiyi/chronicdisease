@@ -176,24 +176,24 @@ public class FMedicalPropertyServiceImpl implements IFMedicalPropertyService {
             if ("2".equals(x.getFormType()) && x.getBaseFormId() != null) {//拍照项组件
                 FLibraryProperty params = new FLibraryProperty();
                 params.setLibraryId(x.getBaseFormId());
-                List<FLibraryProperty> fLibraryProperties = fLibraryPropertyMapper.selectFLibraryPropertyList(params);
-                List<FMedicalProperty> list = null;
-                if (fLibraryProperties != null && !fLibraryProperties.isEmpty()) {
-                    list = new ArrayList<>();
-                    for (FLibraryProperty y : fLibraryProperties) {
-                        FMedicalProperty property = new FMedicalProperty();
-                        BeanUtils.copyProperties(y, property);
-                        list.add(property);
+//                List<FLibraryProperty> fLibraryProperties = fLibraryPropertyMapper.selectFLibraryPropertyList(params);
+                List<FMedicalProperty> list = x.getMedicalProperties();
+                if (list != null && !list.isEmpty()) {
+//                    list = new ArrayList<>();
+//                    for (FLibraryProperty y : fLibraryProperties) {
+//                        FMedicalProperty property = new FMedicalProperty();
+//                        BeanUtils.copyProperties(y, property);
+//                        list.add(property);
 
 //                        fMedicalPropertyMapper.selectFMedicalPropertyById()
 
-                        property.setCreateTime(date);
-                        property.setMedicalFormId(x.getMedicalFormId());
-                        property.setFollowId(followId);
-
-                        insertFMedicalProperty(property);
-                    }
-//                    x.setMedicalProperties(list);
+//                        property.setCreateTime(date);
+//                        property.setMedicalFormId(x.getMedicalFormId());
+//                        property.setFollowId(followId);
+//
+//                        insertFMedicalProperty(property);
+//                    }
+                    x.setMedicalProperties(list);
                 }
             }
             /*if ("5".equals(x.getFormType())){

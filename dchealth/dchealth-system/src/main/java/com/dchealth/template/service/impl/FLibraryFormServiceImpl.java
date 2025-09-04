@@ -48,6 +48,7 @@ public class FLibraryFormServiceImpl implements IFLibraryFormService
             FLibraryProperty property = new FLibraryProperty();
             property.setLibraryId(libraryId);
             List<FLibraryProperty> fLibraryProperties = fLibraryPropertyMapper.selectFLibraryPropertyList(property);
+
             fLibraryForm.setLibraryProperties(fLibraryProperties);
         }
 
@@ -72,6 +73,9 @@ public class FLibraryFormServiceImpl implements IFLibraryFormService
                 property.setLibraryId(x.getLibraryId());
                 property.setPropertyName(formNameSearch);
                 List<FLibraryProperty> fLibraryProperties = fLibraryPropertyMapper.selectFLibraryPropertyList(property);
+                fLibraryProperties.forEach(item->{
+                    item.setId(null);
+                });
                 x.setLibraryProperties(fLibraryProperties);
             });
         }
