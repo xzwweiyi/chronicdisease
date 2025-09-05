@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.medical.mapper.PatientInformedMapper">
+    
+    <resultMap type="com.dchealth.cro.medical.domain.PatientInformed" id="PatientInformedResult">
+        <result property="id"    column="id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="card"    column="card"    />
+        <result property="deptCode"    column="dept_code"    />
+        <result property="isAgree"    column="is_agree"    />
+    </resultMap>
+
+    <sql id="selectPatientInformedVo">
+        select id, person_id, mobile, card, dept_code, is_agree from patient_informed
+    </sql>
+
+    <select id="selectPatientInformedList" parameterType="com.dchealth.cro.medical.domain.PatientInformed" resultMap="PatientInformedResult">
+        <include refid="selectPatientInformedVo"/>
+        <where>  
+            <if test="personId != null "> and person_id = #{personId}</if>
+            <if test="mobile != null  and mobile != ''"> and mobile = #{mobile}</if>
+            <if test="card != null  and card != ''"> and card = #{card}</if>
+            <if test="deptCode != null  and deptCode != ''"> and dept_code = #{deptCode}</if>
+            <if test="isAgree != null "> and is_agree = #{isAgree}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientInformedById" parameterType="Long" resultMap="PatientInformedResult">
+        <include refid="selectPatientInformedVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientInformed" parameterType="com.dchealth.cro.medical.domain.PatientInformed">
+        insert into patient_informed
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="mobile != null">mobile,</if>
+            <if test="card != null">card,</if>
+            <if test="deptCode != null">dept_code,</if>
+            <if test="isAgree != null">is_agree,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="mobile != null">#{mobile},</if>
+            <if test="card != null">#{card},</if>
+            <if test="deptCode != null">#{deptCode},</if>
+            <if test="isAgree != null">#{isAgree},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientInformed" parameterType="com.dchealth.cro.medical.domain.PatientInformed">
+        update patient_informed
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="mobile != null">mobile = #{mobile},</if>
+            <if test="card != null">card = #{card},</if>
+            <if test="deptCode != null">dept_code = #{deptCode},</if>
+            <if test="isAgree != null">is_agree = #{isAgree},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientInformedById" parameterType="Long">
+        delete from patient_informed where id = #{id}
+    </delete>
+
+    <delete id="deletePatientInformedByIds" parameterType="String">
+        delete from patient_informed where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

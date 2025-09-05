@@ -1,13 +1,11 @@
 package com.dchealth.medical.service;
 
-import java.util.List;
-
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.medical.domain.MpPerson;
 import com.dchealth.medical.domain.PatientInfo;
-import com.dchealth.medical.domain.vo.DiseasesResearchTree;
-import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
-import com.dchealth.medical.domain.vo.ResearchPatientVO;
+import com.dchealth.medical.domain.vo.*;
+
+import java.util.List;
 
 /**
  * 患者信息Service接口
@@ -94,4 +92,9 @@ public interface IPatientInfoService
     boolean canDelete(Long userId, Long[] patientIds);
 
     boolean canDeleteById(Long userId, Long id);
+
+    int moveEnrollment(MoveEnrollmentVo moveEnrollmentVo);
+
+
+    List<EnrollmentListVo> enrollmentList(MoveEnrollmentVo moveEnrollmentVo);
 }

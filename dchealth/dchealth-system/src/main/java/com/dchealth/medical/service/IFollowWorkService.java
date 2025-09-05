@@ -2,8 +2,10 @@ package com.dchealth.medical.service;
 
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.core.domain.model.LoginUser;
+import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.form.*;
 import com.dchealth.medical.domain.vo.*;
+import com.dchealth.research.domain.ResearchInfo;
 
 import java.util.List;
 
@@ -140,4 +142,9 @@ public interface IFollowWorkService {
      * @return
      */
     public AjaxResult saveOrUpdatePatientRecord(PatientRecordSaveUpdateInfoForm infoForm, LoginUser loginUser);
+
+
+    public void createPopNotice(ResearchInfo researchInfo, String patientId);
+
+    public void clearFollowRecord(PatientInfo patientInfo);
 }

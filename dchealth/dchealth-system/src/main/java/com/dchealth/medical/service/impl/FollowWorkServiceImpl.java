@@ -52,7 +52,6 @@ import com.dchealth.warn.domain.WarnMedicalEarlyCondition;
 import com.dchealth.warn.domain.vo.WarnConditionValueVO;
 import com.dchealth.warn.mapper.WarnEarlyRecordMapper;
 import com.dchealth.warn.mapper.WarnMedicalEarlyConditionMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +61,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -1309,7 +1303,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
      *
      * @param patientInfo
      */
-    private void clearFollowRecord(PatientInfo patientInfo) {
+    public void clearFollowRecord(PatientInfo patientInfo) {
         List<PatientRecordTemplate> patientRecordTemplates =
                 patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(patientInfo.getResearchId());
         if (patientRecordTemplates != null && !patientRecordTemplates.isEmpty()) {
@@ -1358,7 +1352,8 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         });
     }
 
-    private void createPopNotice(ResearchInfo researchInfo, String patientId) {
+    @Override
+    public void createPopNotice(ResearchInfo researchInfo, String patientId) {
         SysPopNotice sysPopNotice = new SysPopNotice();
         sysPopNotice.setResearchName(researchInfo.getProjectName());
         sysPopNotice.setUserId(patientId);

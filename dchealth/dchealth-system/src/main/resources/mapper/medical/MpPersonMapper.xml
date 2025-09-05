@@ -210,4 +210,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update mp_person set phone_number = #{mobile} where person_id = #{personId}
     </update>
 
+    <select id="selectMpPersonByCardId"  resultMap="MpPersonResult">
+        <include refid="selectMpPersonVo"/>
+        where card_id = #{cardId} and phone_number = #{mobile}
+    </select>
+
 </mapper>
