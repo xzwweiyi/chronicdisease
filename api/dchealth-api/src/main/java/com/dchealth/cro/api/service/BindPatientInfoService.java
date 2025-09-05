@@ -1,6 +1,7 @@
 package com.dchealth.cro.api.service;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.mapper.PatientAccountMapper;
@@ -21,9 +22,10 @@ import com.dchealth.cro.his.domain.PatMasterIndex;
 import com.dchealth.cro.his.mapper.PatMasterIndexMapper;
 import com.dchealth.cro.medical.domain.AppLoginRecord;
 import com.dchealth.cro.medical.domain.PatientInfo;
-import com.dchealth.cro.medical.form.BindPatientForm;
+import com.dchealth.cro.medical.domain.PatientInformed;
 import com.dchealth.cro.medical.mapper.AppLoginRecordMapper;
 import com.dchealth.cro.medical.mapper.PatientInfoMapper;
+import com.dchealth.cro.medical.mapper.PatientInformedMapper;
 import com.dchealth.cro.research.domain.ResearchInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,10 +74,29 @@ public class BindPatientInfoService {
     @Resource
     private AppLoginRecordMapper appLoginRecordMapper;
 
+    @Resource
+    private PatientInformedMapper patientInformedMapper;
+
 
     @Transactional
     public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatient(BindPatientVo bindPatientForm) {
         DchealthCloudResponseEntity<PatientAccountInfoVO> result = new DchealthCloudResponseEntity<>();
+
+        // 添加了知情同意书的获取需要添加知情同意书的确认日志
+        PatientInformed patientInformed = new PatientInformed();
+        patientInformed.setPersonId(Long.parseLong(bindPatientForm.getPersonId()));
+
+        List<PatientInformed> patientInformeds = patientInformedMapper.selectPatientInformedList(patientInformed);
+        if (ObjectUtil.isEmpty(patientInformeds)) {
+            patientInformed.setCard(bindPatientForm.getCard());
+            patientInformed.setMobile(bindPatientForm.getMobile());
+            patientInformed.setDeptCode(bindPatientForm.getDeptCode());
+            patientInformed.setIsAgree(bindPatientForm.getIsAgree());
+            patientInformed.setCreateTime(new Date());
+            patientInformedMapper.insertPatientInformed(patientInformed);
+        } else {
+            log.info("患者已同意知情同意书！{}", JSON.toJSONString(bindPatientForm));
+        }
 
         String bindResult = "成功绑定患者信息";
         //注册

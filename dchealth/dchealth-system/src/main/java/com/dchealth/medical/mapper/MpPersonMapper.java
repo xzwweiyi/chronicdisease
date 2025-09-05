@@ -3,10 +3,9 @@ package com.dchealth.medical.mapper;
 import com.dchealth.medical.domain.MpPerson;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
 
 /**
  * 患者信息-对应omopMapper接口
@@ -89,4 +88,6 @@ public interface MpPersonMapper{
      * @return 更新结果
      */
     Integer updateMobile(@Param("personId") String personId, @Param("mobile") String mobile);
+
+    MpPerson selectMpPersonByCardId(@Param("cardId")String cardId, @Param("mobile")String mobile);
 }

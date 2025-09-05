@@ -288,7 +288,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      * @return
      */
     public Boolean isDefault(String requestPath) {
-        String[] excludeUrls = new String[]{"/user/*", "/article/*", "/system/*", "/research/*", "/doctor/updatePasswordByOldPassword", "/patientAccount/*", "/doctorAccount/*", "/cmsDoctor/*", "/cmsPatient/*"};//使用默认签名地址
+        String[] excludeUrls = new String[]{"/user/*", "/article/*", "/system/*", "/research/*", "/doctor/updatePasswordByOldPassword", "/patientAccount/*", "/doctorAccount/*", "/cmsDoctor/*", "/cmsPatient/*", "/api/*"};//使用默认签名地址
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
                 if (excludeUrl.lastIndexOf("*") != -1) {
@@ -314,7 +314,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      */
 
     public Boolean isExclude(String requestPath) {
-        String[] excludeUrls = new String[]{"/min_program/detailStandard", "/doctor/testMessagePush", "/transfer/sms/*", "/getIsShow", "/myQueue/*", "/medical/*"};//不需要验签的接口
+        String[] excludeUrls = new String[]{"/min_program/detailStandard", "/doctor/testMessagePush", "/transfer/sms/*", "/getIsShow", "/myQueue/*", "/medical/*", "/api/*"};//不需要验签的接口
 //		String[] excludeUrls = new String[] {  "/*"};//不需要验签的接口
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
@@ -362,7 +362,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      * 中转项目验签的接口
      */
     public Boolean isTransferProgram(String requestPath) {
-        String[] excludeUrls = new String[]{"/transfer/recordOutbound/*", "/transfer/accountNotice/*" ,"/api/*"};//走中转服务验签
+        String[] excludeUrls = new String[]{"/transfer/recordOutbound/*", "/transfer/accountNotice/*"};//走中转服务验签
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
                 if (excludeUrl.lastIndexOf("*") != -1) {

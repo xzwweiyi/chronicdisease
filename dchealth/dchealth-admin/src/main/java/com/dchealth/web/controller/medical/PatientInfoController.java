@@ -14,6 +14,8 @@ import com.dchealth.compatibility.vo.MpDrugExposureVO;
 import com.dchealth.listener.FollowTreeEvent;
 import com.dchealth.medical.domain.MpPerson;
 import com.dchealth.medical.domain.PatientInfo;
+import com.dchealth.medical.domain.vo.EnrollmentListVo;
+import com.dchealth.medical.domain.vo.MoveEnrollmentVo;
 import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
 import com.dchealth.medical.service.IPatientInfoService;
 import com.dchealth.system.service.ISysUserService;
@@ -25,16 +27,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
 /**
  * 患者信息Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-03-21
  */
 @RestController
 @RequestMapping("/medical/patientInfo")
-public class PatientInfoController extends BaseController
-{
+public class PatientInfoController extends BaseController {
     @Autowired
     private IPatientInfoService patientInfoService;
     @Autowired
@@ -52,15 +54,14 @@ public class PatientInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:info:list')")
     @GetMapping("/list")
-    public TableDataInfo list(PatientInfo patientInfo)
-    {
+    public TableDataInfo list(PatientInfo patientInfo) {
         patientInfo.setEnrollmentHandlerStatus("3");
         SysUser sysUser = sysUserService.selectUserById(getUserId());
 //        patientInfo.setDeptId(sysUser.getDeptId());
-        if("1".equals(sysUser.getIsAlldeptResearch())){
+        if ("1".equals(sysUser.getIsAlldeptResearch())) {
             patientInfo.setUserId(null);
             patientInfo.setDeptId(sysUser.getDeptId());
-        }else{
+        } else {
             patientInfo.setUserId(sysUser.getUserId());
         }
         startPage();
@@ -74,8 +75,7 @@ public class PatientInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:info:export')")
     @Log(title = "患者信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, PatientInfo patientInfo)
-    {
+    public void export(HttpServletResponse response, PatientInfo patientInfo) {
         List<PatientInfo> list = patientInfoService.selectPatientInfoList(patientInfo);
         ExcelUtil<PatientInfo> util = new ExcelUtil<PatientInfo>(PatientInfo.class);
         util.exportExcel(response, list, "患者信息数据");
@@ -86,8 +86,7 @@ public class PatientInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:info:query')")
     @GetMapping(value = "/{patientId}")
-    public AjaxResult getInfo(@PathVariable("patientId") Long patientId)
-    {
+    public AjaxResult getInfo(@PathVariable("patientId") Long patientId) {
         return AjaxResult.success(patientInfoService.selectPatientInfoByPatientId(patientId));
     }
 
@@ -97,8 +96,7 @@ public class PatientInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:info:add')")
     @Log(title = "患者信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PatientInfo patientInfo)
-    {
+    public AjaxResult add(@RequestBody PatientInfo patientInfo) {
         return toAjax(patientInfoService.insertPatientInfo(patientInfo));
     }
 
@@ -108,8 +106,7 @@ public class PatientInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:info:edit')")
     @Log(title = "患者信息", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody PatientInfo patientInfo)
-    {
+    public AjaxResult edit(@RequestBody PatientInfo patientInfo) {
         return toAjax(patientInfoService.updatePatientInfo(patientInfo));
     }
 
@@ -118,9 +115,8 @@ public class PatientInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:info:remove')")
     @Log(title = "患者信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{patientIds}")
-    public AjaxResult remove(@PathVariable Long[] patientIds)
-    {
+    @DeleteMapping("/{patientIds}")
+    public AjaxResult remove(@PathVariable Long[] patientIds) {
         return toAjax(patientInfoService.deletePatientInfoByPatientIds(patientIds));
     }
 
@@ -129,8 +125,7 @@ public class PatientInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:info:treeList')")
     @GetMapping("/treeList")
-    public AjaxResult treeList(PatientInfo patientInfo)
-    {
+    public AjaxResult treeList(PatientInfo patientInfo) {
         return AjaxResult.success(patientInfoService.selectPatientInfoTreeList(patientInfo));
     }
 
@@ -139,8 +134,7 @@ public class PatientInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:info:list')")
     @GetMapping("/enrollment")
-    public TableDataInfo enrollment(PatientInfo patientInfo)
-    {
+    public TableDataInfo enrollment(PatientInfo patientInfo) {
         startPage();
         List<PatientEnrollmentVo> list = patientInfoService.selectEnrollmentPatientInfoList(patientInfo);
         return getDataTable(list);
@@ -151,8 +145,7 @@ public class PatientInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:info:list')")
     @GetMapping("/noEnrollment")
-    public TableDataInfo noEnrollment(PatientInfo patientInfo)
-    {
+    public TableDataInfo noEnrollment(PatientInfo patientInfo) {
         startPage();
         List<PatientEnrollmentVo> list = patientInfoService.selectNoEnrollmentPatientInfoList(patientInfo);
         return getDataTable(list);
@@ -162,8 +155,7 @@ public class PatientInfoController extends BaseController
      * 查看患者用药信息
      */
     @PostMapping("/drugInfo")
-    public AjaxResult drugInfo(@Validated @RequestBody MpDrugExposureVO mpDrugExposureVO)
-    {
+    public AjaxResult drugInfo(@Validated @RequestBody MpDrugExposureVO mpDrugExposureVO) {
         MpDrugExposure mpDrugExposure = new MpDrugExposure();
         mpDrugExposure.setPersonId(mpDrugExposureVO.getPersonId());
         logger.info("查看患者用药信息 {}", mpDrugExposure);
@@ -173,51 +165,68 @@ public class PatientInfoController extends BaseController
 
     /**
      * 计划入组患者确认入组按钮
+     *
      * @param patientInfo
      * @return
      */
     @PreAuthorize("@ss.hasPermi('system:info:add')")
     @PostMapping("/confirmEnrollment")
-    public AjaxResult confirmEnrollment(@RequestBody PatientInfo patientInfo)
-    {
+    public AjaxResult confirmEnrollment(@RequestBody PatientInfo patientInfo) {
         return patientInfoService.confirmEnrollment(patientInfo);
     }
 
 
     /**
      * 导入入组患者
+     *
      * @param patientBaseInfos
      * @return
      */
     @PreAuthorize("@ss.hasPermi('system:info:add')")
     @PostMapping("/importEnrollment")
-    public AjaxResult importEnrollment(@RequestBody List<MpPerson> patientBaseInfos)
-    {
+    public AjaxResult importEnrollment(@RequestBody List<MpPerson> patientBaseInfos) {
 //        Long userId = getUserId();
 //        redisCache.deleteObject(Constants.FOLLOW_TREE_KEY + userId);
         // todo 若是速度慢, 异步添加缓存, 并吧添加的能力提出出来 (定时&事件触发)
-        int num = patientInfoService.importEnrollment(patientBaseInfos,getUsername());
+        int num = patientInfoService.importEnrollment(patientBaseInfos, getUsername());
         applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId()));
-        return AjaxResult.success("入组"+num+"个患者");
+        return AjaxResult.success("入组" + num + "个患者");
 
     }
 
     /**
      * 删除入组患者
+     *
      * @param patientIds
      * @return
      */
     @PreAuthorize("@ss.hasPermi('system:info:delete')")
     @DeleteMapping("/deleteEnrollment/{patientIds}")
-    public AjaxResult deleteEnrollment(@PathVariable Long[] patientIds)
-    {
+    public AjaxResult deleteEnrollment(@PathVariable Long[] patientIds) {
         // 判断权限
-        if (!patientInfoService.canDelete(getUserId(),patientIds)){
+        if (!patientInfoService.canDelete(getUserId(), patientIds)) {
             return AjaxResult.error("当前患者只能由队列创建者删除或者管理员删除");
         }
         int num = patientInfoService.deleteEnrollment(patientIds);
         applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId()));
-        return AjaxResult.success("删除入组"+num+"个患者");
+        return AjaxResult.success("删除入组" + num + "个患者");
 
+    }
+
+    @PostMapping("/moveEnrollment")
+    public AjaxResult moveEnrollment(@RequestBody List<MoveEnrollmentVo> moveEnrollmentVos) {
+        int num = 0;
+        for (MoveEnrollmentVo moveEnrollmentVo : moveEnrollmentVos) {
+            int i = patientInfoService.moveEnrollment(moveEnrollmentVo);
+            num += i;
+        }
+        return AjaxResult.success("移动入组" + num + "个患者");
+    }
+
+    @PostMapping("/enrollmentList")
+    public AjaxResult enrollmentList(@RequestBody MoveEnrollmentVo moveEnrollmentVo) {
+
+        List<EnrollmentListVo> list = patientInfoService.enrollmentList(moveEnrollmentVo);
+        return AjaxResult.success(list);
     }
 }

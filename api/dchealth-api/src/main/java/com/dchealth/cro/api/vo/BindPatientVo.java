@@ -25,4 +25,7 @@ public class BindPatientVo {
 
     @NotNull(message = "科室编码不能为空")
     private String deptCode;
+
+    @NotNull(message = "是否同意不能为空")
+    private Long isAgree;
 }
