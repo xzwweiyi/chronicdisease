@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.notice.mapper.HisNoticeMapper">
+    <insert id="batchInsert" parameterType="java.util.List">
+
+        INSERT IGNORE INTO message_info (
+        info_no,
+        insert_time,
+        send_time,
+        patient_id,
+        contact_phone,
+        contact_phone1,
+        contact_phone2,
+        info_content,
+        info_sources,
+        info_status,
+        info_title,
+        miniprogramAppid,
+        miniprogramUrl,
+        openId,
+        redirectUrl,
+        sendType,
+        patientName,
+        miniprogramOriginalId
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.infoNo},
+            #{item.insertTime},
+            #{item.sendTime},
+            #{item.patientId},
+            #{item.contactPhone},
+            #{item.contactPhone1},
+            #{item.contactPhone2},
+            #{item.infoContent},
+            #{item.infoSources},
+            #{item.infoStatus},
+            #{item.infoTitle},
+            #{item.miniprogramAppid},
+            #{item.miniprogramUrl},
+            #{item.openId},
+            #{item.redirectUrl},
+            #{item.sendType},
+            #{item.patientName},
+            #{item.miniprogramOriginalId}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

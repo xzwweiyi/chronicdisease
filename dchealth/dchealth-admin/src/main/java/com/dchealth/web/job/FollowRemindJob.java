@@ -3,30 +3,31 @@ package com.dchealth.web.job;
 import com.dchealth.account.domain.AccountNotice;
 import com.dchealth.account.mapper.AccountNoticeMapper;
 import com.dchealth.account.service.impl.UmpushService;
-import com.dchealth.common.constant.Constants;
 import com.dchealth.common.utils.DateUtils;
 import com.dchealth.common.utils.SplitListUtils;
-import com.dchealth.medical.contants.MedicalContants;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.PatientRecord;
 import com.dchealth.medical.domain.PatientRecordTemplate;
-import com.dchealth.medical.domain.vo.AccountNoticeVo;
 import com.dchealth.medical.mapper.PatientInfoMapper;
 import com.dchealth.medical.mapper.PatientRecordMapper;
 import com.dchealth.medical.mapper.PatientRecordTemplateMapper;
+import com.dchealth.notice.noticevo.HisNoticeVo;
+import com.dchealth.notice.service.HisNoticeService;
 import com.dchealth.research.domain.ResearchInfo;
 import com.dchealth.research.domain.ResearchOutbound;
 import com.dchealth.research.mapper.ResearchInfoMapper;
 import com.dchealth.research.mapper.ResearchOutboundMapper;
+import com.dchealth.system.domain.PatientAccount;
+import com.dchealth.system.mapper.PatientAccountMapper;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -59,6 +60,12 @@ public class FollowRemindJob {
 
     @Autowired
     private PatientInfoMapper patientInfoMapper;
+
+    @Resource
+    private PatientAccountMapper ppatientAccountMapper;
+
+    @Resource
+    private HisNoticeService hisNoticeService;
 
 
     /**
@@ -112,10 +119,29 @@ public class FollowRemindJob {
         int u=0;
         if (allThreadsIsDone) {
             if (!insertRecord.isEmpty() && u==0){
+
                 accountNoticeMapper.batchInsertList(insertRecord);
+
+                List<HisNoticeVo> hisNoticeVos = new ArrayList<>();
                 for(AccountNotice a:insertRecord){
+                    PatientAccount patientAccount = ppatientAccountMapper.selectPatientAccountByAccountId(a.getAccountId());
+                    // 同步his微信站内消息
+                    HisNoticeVo hisNoticeVo = new HisNoticeVo();
+                    hisNoticeVo.setInfoNo("tdmbsf"+ System.currentTimeMillis());
+                    hisNoticeVo.setInsertTime(new Date());
+                    hisNoticeVo.setPatientId(String.valueOf(patientAccount.getRegistrySigns()));
+                    hisNoticeVo.setContactPhone(patientAccount.getMobile());
+                    hisNoticeVo.setInfoContent(a.getContent());
+                    hisNoticeVo.setInfoSources("tdmbsfxt");
+                    hisNoticeVo.setInfoStatus("1");
+                    hisNoticeVo.setInfoTitle(a.getTitle());
+                    hisNoticeVo.setPatientName(patientAccount.getName());
+                    hisNoticeVos.add(hisNoticeVo);
                     sendPush(2,a);
                 }
+
+                int i = hisNoticeService.batchInsert(hisNoticeVos);
+                log.info("His消息通知批量插入结果:"+i);
                 resultStr = "操作成功,共插入"+insertRecord.size()+"条";
                 XxlJobHelper.log("App站内信随访提醒和超窗提醒{}",resultStr);
                 u++;

@@ -76,6 +76,14 @@ spring:
             url:
             username:
             password:
+
+        hismysql:
+          enabled: true
+          url: jdbc:mysql://10.10.10.27:23001/messageplat?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+          username: mbsf
+          password: mbsf
+          driver-class-name: com.mysql.cj.jdbc.Driver
+
         # 初始连接数
         initialSize: 5
         # 最小连接池数量
