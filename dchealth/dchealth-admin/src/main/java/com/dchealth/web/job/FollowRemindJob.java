@@ -3,8 +3,10 @@ package com.dchealth.web.job;
 import com.dchealth.account.domain.AccountNotice;
 import com.dchealth.account.mapper.AccountNoticeMapper;
 import com.dchealth.account.service.impl.UmpushService;
+import com.dchealth.common.enums.DataSourceType;
 import com.dchealth.common.utils.DateUtils;
 import com.dchealth.common.utils.SplitListUtils;
+import com.dchealth.framework.datasource.DynamicDataSourceContextHolder;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.PatientRecord;
 import com.dchealth.medical.domain.PatientRecordTemplate;
@@ -140,8 +142,16 @@ public class FollowRemindJob {
                     sendPush(2,a);
                 }
 
-                int i = hisNoticeService.batchInsert(hisNoticeVos);
-                log.info("His消息通知批量插入结果:"+i);
+                DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.HISMYSQL.name());
+                try {
+                    // 执行数据库操作
+                    int i = hisNoticeService.batchInsert(hisNoticeVos);
+                    log.info("His消息通知批量插入结果:"+i);
+                } finally {
+                    // 恢复默认数据源
+                    DynamicDataSourceContextHolder.clearDataSourceType();
+                }
+
                 resultStr = "操作成功,共插入"+insertRecord.size()+"条";
                 XxlJobHelper.log("App站内信随访提醒和超窗提醒{}",resultStr);
                 u++;
