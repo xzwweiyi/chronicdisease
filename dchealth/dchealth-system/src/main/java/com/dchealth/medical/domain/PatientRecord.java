@@ -262,6 +262,8 @@ public class PatientRecord extends BaseEntity{
 
     private Double formComplentRate;
 
+    private String personId;
+
     public PatientRecord(){}
 
     /**
@@ -272,6 +274,7 @@ public class PatientRecord extends BaseEntity{
     public PatientRecord(PatientRecord old, PatientRecordTemplate recordTemplate){
         this.researchId = old.getResearchId();
         this.patientId = old.getPatientId();
+        this.personId = old.getPersonId();
         this.followTipStatus = 1;
         //当前节点是基线，模板是随访1的
         if (old.getFollowId().longValue() != recordTemplate.getFollowId().longValue()){
