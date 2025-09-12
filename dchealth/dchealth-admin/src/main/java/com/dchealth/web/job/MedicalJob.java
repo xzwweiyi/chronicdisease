@@ -17,13 +17,20 @@ import com.dchealth.research.domain.ResearchInfo;
 import com.dchealth.research.domain.ResearchUserRole;
 import com.dchealth.research.mapper.ResearchInfoMapper;
 import com.dchealth.research.mapper.ResearchUserRoleMapper;
+import com.dchealth.template.domain.FMedicalProperty;
+import com.dchealth.template.domain.FollowProperty;
+import com.dchealth.template.domain.TextData;
+import com.dchealth.template.mapper.FMedicalPropertyMapper;
+import com.dchealth.template.mapper.FollowPropertyMapper;
 import com.dchealth.web.job.form.FollowUpPlanJobHandlerForm;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import io.lettuce.core.ScriptOutputType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +63,14 @@ public class MedicalJob {
     private ResearchUserRoleMapper researchUserRoleMapper;
     @Autowired
     private AccountNoticeMapper accountNoticeMapper;
+
+    @Autowired
+    private FMedicalPropertyMapper medicalPropertyMapper;
+
+    @Autowired
+    private FollowPropertyMapper followPropertyMapper;
+
+
 
     /**
      * 随访计划
@@ -231,7 +246,16 @@ public class MedicalJob {
                     }
                 });
                 if(insertList.size()>0){
-                    patientRecordMapper.batchInsertPatientRecord(insertList);
+                    //肥胖综合征
+                    if (2407==researchId){
+                        for (PatientRecord record : insertList) {
+                        patientRecordMapper.insertPatientRecord(record);
+                        logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                        getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                        }
+                    }else{
+                        patientRecordMapper.batchInsertPatientRecord(insertList);
+                    }
                     XxlJobHelper.log("----------------------------------------队列id:{}插入周期数量:{}-----------------",researchId,insertList.size());
                 }
             }
@@ -266,6 +290,7 @@ public class MedicalJob {
                            List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
                            PatientRecordTemplate recordTemplate,PatientInfo patient) {
         patientRecord.setStageAddNum(patientRecord.getStageAddNum()+1);
+        patientRecord.setPersonId(patient.getPersonId());
         // 没设置次数且间隔为0天
         if(recordTemplate.getFollowTotal()==null && recordTemplate.getFollowInterval()==0){
             int index = patientRecordTemplates.indexOf(recordTemplate);
@@ -308,6 +333,7 @@ public class MedicalJob {
             logger.info("生成随访计划,队列ID{}随访规则ID{}followTotal没有值", researchInfo.getId(), recordTemplate.getFollowId());
             return;
         }
+        patientRecord.setPersonId(patient.getPersonId());
         patientRecord.setStageAddNum(patientRecord.getStageAddNum()+1);
         if (patientRecord.getStageNum().intValue() == recordTemplate.getFollowTotal().intValue()){//完成当前周期的随访节点进入下一个随访节点
             int index = patientRecordTemplates.indexOf(recordTemplate);
@@ -357,6 +383,7 @@ public class MedicalJob {
             recordTemplate = patientRecordTemplates.get(1);
         }
         patientRecord.setStageAddNum(1);
+        patientRecord.setPersonId(patientInfo.getPersonId());
         if ("1".equals(recordTemplate.getFollowFrequency())){
             //限制频次
             if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1){
@@ -607,5 +634,70 @@ public class MedicalJob {
         System.out.println("XxlJobHelper.getJobId() = " + XxlJobHelper.getJobId());
         System.out.println("XxlJobHelper.handleResult() = " + XxlJobHelper.handleResult(1,""));
     }
+
+
+    /**
+     * 同步随访数据
+     */
+   public void getFollowDate(Long followId,String personId,Long researchId,Long recordId) {//
+//        Long followId=92L;
+//        Long personId=10003930L;
+//        Long researchId=44L;
+//        Long recordId=1266L;
+       List<TextData> dataList = new ArrayList<>();
+       //根绝followId获取随访表单内容
+       List<FMedicalProperty> medicalPropertyList=medicalPropertyMapper.selectFMedicalPropertyByFollowId(followId);
+       //根据属性查询表
+       List<String> propertyCodeList=medicalPropertyList.stream().map(FMedicalProperty::getPropertyCode).collect(Collectors.toList());
+      //获取需要拉取的属性
+       List<FollowProperty> tableList=followPropertyMapper.getFollowProperty(followId,propertyCodeList);
+       if (CollectionUtils.isNotEmpty(tableList)){
+           Map<String,FMedicalProperty> medicalPropertMap=medicalPropertyList.stream().collect(Collectors.toMap(FMedicalProperty::getPropertyCode,fMedicalProperty->fMedicalProperty));
+
+           Map<String,List<FollowProperty>> tableMap = tableList.stream().collect(Collectors.groupingBy(FollowProperty::getPropertyTable));
+           for (Map.Entry<String, List<FollowProperty>> entry : tableMap.entrySet()) {
+               String tableName = entry.getKey();
+               List<FollowProperty> propertyList = entry.getValue();
+               //String columns=propertyList.stream().map(FollowProperty::getPropertyCode).collect(Collectors.joining(","));
+              StringBuilder condition= new StringBuilder();
+              for (FollowProperty property : propertyList) {
+                  if (StringUtils.isNotEmpty(property.getConditions())) {
+                      condition.append(property.getConditions()).append(" or ");
+                  }
+              }
+              condition.delete(condition.length()-3, condition.length());
+             List<Map<String,Object>>  result = followPropertyMapper.getResult(tableName, condition.toString(),personId);
+              if (result!=null){
+                  for (Map<String,Object> map : result) {
+                      for (FollowProperty property : propertyList) {
+                          System.out.println(map.get("propertyName"));
+                          System.out.println(property.getPropertyName());
+                          String propertyName = String.valueOf(map.get("propertyName")).trim();
+                          if (property.getPropertyName().equals(propertyName)) {
+                              TextData textData = new TextData();
+                              textData.setPropertyValue(String.valueOf(map.get(property.getColumnName())));
+                              textData.setPropertyId(medicalPropertMap.get(property.getPropertyCode()).getId());
+                              textData.setPropertyCode(property.getPropertyCode());
+                              textData.setFormId(medicalPropertMap.get(property.getPropertyCode()).getMedicalFormId());
+                              dataList.add(textData);
+                          }
+                      }
+
+                  }
+
+              }
+           }
+       }
+
+      if (CollectionUtils.isNotEmpty(dataList)){
+          followPropertyMapper.insertTextData(researchId,recordId,dataList);
+      }
+
+
+   }
+
+
+
+
 
 }
