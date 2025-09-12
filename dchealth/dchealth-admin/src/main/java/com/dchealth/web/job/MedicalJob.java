@@ -247,7 +247,8 @@ public class MedicalJob {
                 });
                 if(insertList.size()>0){
                     //肥胖综合征
-                    if (2407==researchId){
+                    List<Long> list=followPropertyMapper.getDict("research");
+                    if (list.contains(researchId)){
                         for (PatientRecord record : insertList) {
                         patientRecordMapper.insertPatientRecord(record);
                         logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());

@@ -42,18 +42,24 @@
             form_id,
             property_code,
             property_value,
-            property_id
+            property_id,
+            type
         ) VALUES
         <foreach collection="list" item="item" separator=",">
             (#{recordId},
              #{item.formId},
              #{item.propertyCode},
              #{item.propertyValue},
-             #{item.propertyId})
+             #{item.propertyId},
+             1
+             )
         </foreach>
 
     </select>
 
 
+    <select id="getDict" resultType="java.lang.Long">
+        select distinct dict_value from sys_dict_data where dict_type=#{dictType}
+    </select>
 
 </mapper>

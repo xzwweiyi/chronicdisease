@@ -15,4 +15,5 @@ public interface FollowPropertyMapper {
     void insertTextData(@Param("researchId") Long researchId, @Param("recordId") Long recordId, @Param("list") List<TextData> list);
 
 
+    List<Long> getDict(@Param("dictType")String dictType);
 }
