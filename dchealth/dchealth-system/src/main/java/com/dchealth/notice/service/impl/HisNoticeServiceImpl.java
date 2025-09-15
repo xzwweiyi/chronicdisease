@@ -29,24 +29,8 @@ public class HisNoticeServiceImpl implements HisNoticeService {
     @Override
 //    @DataSource(DataSourceType.HISMYSQL)
     public int batchInsert(List<HisNoticeVo> hisNoticeVo) {
-
-        List<HisNoticeVo> hisNoticeVos = new ArrayList<>();
-        // 同步his微信站内消息
-        HisNoticeVo vo = new HisNoticeVo();
-        vo.setInfoNo("tdmbsf" + System.currentTimeMillis());
-        vo.setInsertTime(new Date());
-        vo.setPatientId("22222");
-        vo.setContactPhone("patientAccount.getMobile()");
-        vo.setInfoContent("a.getContent()");
-        vo.setInfoSources("tdmbsfxt");
-        vo.setInfoStatus("1");
-        vo.setInfoTitle("a.getTitle()");
-        vo.setPatientName("patientAccount.getName()");
-        hisNoticeVos.add(vo);
-
-
-        int count = hisNoticeMapper.batchInsert(hisNoticeVos);
+        int count = hisNoticeMapper.batchInsert(hisNoticeVo);
         log.info("批量插入数据成功，数据量：{}", count);
-        return 0;
+        return count;
     }
 }

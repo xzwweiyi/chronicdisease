@@ -3,7 +3,7 @@
 <mapper namespace="com.dchealth.notice.mapper.HisNoticeMapper">
     <insert id="batchInsert" parameterType="java.util.List">
 
-        INSERT IGNORE INTO message_info (
+        INSERT IGNORE INTO message (
         info_no,
         insert_time,
         send_time,

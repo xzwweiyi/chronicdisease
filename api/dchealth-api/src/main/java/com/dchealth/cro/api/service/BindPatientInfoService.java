@@ -86,6 +86,7 @@ public class BindPatientInfoService {
         PatientInformed patientInformed = new PatientInformed();
         patientInformed.setPersonId(Long.parseLong(bindPatientForm.getPersonId()));
 
+        String informed = null;
         List<PatientInformed> patientInformeds = patientInformedMapper.selectPatientInformedList(patientInformed);
         if (ObjectUtil.isEmpty(patientInformeds)) {
             patientInformed.setCard(bindPatientForm.getCard());
@@ -94,7 +95,9 @@ public class BindPatientInfoService {
             patientInformed.setIsAgree(bindPatientForm.getIsAgree());
             patientInformed.setCreateTime(new Date());
             patientInformedMapper.insertPatientInformed(patientInformed);
+            informed = "同意书已签署。";
         } else {
+            informed = "同意书已签署。";
             log.info("患者已同意知情同意书！{}", JSON.toJSONString(bindPatientForm));
         }
 
@@ -114,7 +117,7 @@ public class BindPatientInfoService {
         //停用
         if ("1".equals(patientAccount.getStatus())) {
             result.setCode(CroApiCodeConstant.BLOCK_UP_ERROR.getCode());
-            bindResult = CroApiCodeConstant.BLOCK_UP_ERROR.getMsg();
+            bindResult = informed + CroApiCodeConstant.BLOCK_UP_ERROR.getMsg() ;
             insertAppRecordLog(patientAccount, "", bindResult);
             return result;
         }
@@ -126,7 +129,7 @@ public class BindPatientInfoService {
             PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
             patientAccountInfoVO.setPersonId(personId);
             result.setData(patientAccountInfoVO);
-            bindResult = CroApiCodeConstant.ALREADY_BINDING.getMsg();
+            bindResult =  informed + CroApiCodeConstant.ALREADY_BINDING.getMsg();
             insertAppRecordLog(patientAccount, "", bindResult);
             return result;
         }
@@ -138,14 +141,14 @@ public class BindPatientInfoService {
             patientAccountInfoVO.setPersonId(personId);
             patientAccountInfoVO.setIdCard(patientAccount.getIdCard());
             result.setData(patientAccountInfoVO);
-            bindResult = CroApiCodeConstant.ALREADY_BINDING_OTHER.getMsg();
+            bindResult = informed +  CroApiCodeConstant.ALREADY_BINDING_OTHER.getMsg();
             insertAppRecordLog(patientAccount, "", bindResult);
             return result;
         }
         MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountByAccountId(patientAccount.getAccountId());
         if (mpPatientAccount != null) {
             result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
-            bindResult = CroApiCodeConstant.ALREADY_BINDING_ERROR.getMsg();
+            bindResult = informed +  CroApiCodeConstant.ALREADY_BINDING_ERROR.getMsg();
             insertAppRecordLog(patientAccount, "", bindResult);
             return result;
         }
@@ -156,7 +159,7 @@ public class BindPatientInfoService {
             MpPatientAccount mpa = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientBaseInfos.getPersonId());
             if (mpa != null && !(mpa.getAccountId().longValue() == patientAccount.getAccountId().longValue())) {
                 result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
-                bindResult = CroApiCodeConstant.ALREADY_BINDING_ERROR.getMsg();
+                bindResult = informed +  CroApiCodeConstant.ALREADY_BINDING_ERROR.getMsg();
                 insertAppRecordLog(patientAccount, "", bindResult);
                 return result;
             }
@@ -166,7 +169,7 @@ public class BindPatientInfoService {
             PatMasterIndex patMasterIndex = patMasterIndexMapper.selectByIdNoAndPatientId(bindPatientForm.getCard(), bindPatientForm.getPersonId());
             if (patMasterIndex == null) {
                 result.setCode(CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getCode());
-                bindResult = CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getMsg();
+                bindResult = informed +  CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getMsg();
                 insertAppRecordLog(patientAccount, "", bindResult);
                 return result;
             }
@@ -231,12 +234,6 @@ public class BindPatientInfoService {
         }
 
         insertAppRecordLog(patientAccount, "", bindResult);
-
-        // 只对肥胖门诊患者进行默认入组
-        if (StringUtils.isNotBlank(bindPatientForm.getDeptCode()) && !"150002".equals(bindPatientForm.getDeptCode())) {
-            result.setMsg("绑定成功");
-            return result;
-        }
 
         // 指定 部门内分泌科肥胖课题专属
         ResearchInfo researchInfo = patientInfoService.autoEnrollmentList(BindDeptEnum.getSzCode("150002"));

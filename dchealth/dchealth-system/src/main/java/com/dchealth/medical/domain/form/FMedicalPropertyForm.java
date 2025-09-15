@@ -42,4 +42,11 @@ public class FMedicalPropertyForm {
     /** 是否动态表格0否1是 */
     private String dynamic;
 
+
+
+    /**
+     * 其它属性值
+     */
+    private String other;
+
 }

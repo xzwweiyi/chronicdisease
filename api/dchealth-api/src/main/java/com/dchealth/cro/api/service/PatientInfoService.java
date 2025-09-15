@@ -172,14 +172,14 @@ public class PatientInfoService {
 
         ResearchInfo researchInfo = new ResearchInfo();
         researchInfo.setDeptId(Long.valueOf(deptId));
+        researchInfo.setId(Long.valueOf("2407"));
         researchInfo.setDelFlag("0");
-        List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoList(researchInfo);
 
-        if (researchInfos.isEmpty()) {
-            return new ResearchInfo();
-        }
+//        if (researchInfos.isEmpty()) {
+//            return new ResearchInfo();
+//        }
 
-        return researchInfos.stream().min(Comparator.comparing(ResearchInfo::getCreateTime)).get();
+        return researchInfoMapper.selectResearchInfoById(Long.valueOf("2407")); //researchInfos.stream().min(Comparator.comparing(ResearchInfo::getCreateTime)).get();
     }
 
 
