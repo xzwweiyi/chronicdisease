@@ -137,7 +137,7 @@ public class DynamicSql {
     /**
      * 小文本
      */
-    private final List<String> textFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id, other"}).collect(Collectors.toList());
+    private final List<String> textFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id", "other"}).collect(Collectors.toList());
 
     private String textFieldsStr(){
         return textFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
@@ -186,7 +186,7 @@ public class DynamicSql {
                     .append("'").append(m.getPropertyCode()).append("'").append(",")
                     .append("'").append(m.getPropertyValue()).append("'").append(",")
                     .append(m.getPropertyId().longValue()).append(",")
-                    .append("''")
+                    .append("'").append(m.getOther()).append("'")
                     .append("),");
         });
         return insertSql.toString().substring(0,insertSql.length()-1);
