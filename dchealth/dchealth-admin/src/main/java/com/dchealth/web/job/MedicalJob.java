@@ -698,7 +698,27 @@ public class MedicalJob {
    }
 
 
-
+    /**
+     * 肥胖症基线数据拉取
+     */
+    @XxlJob("getBaseData")
+    public void getBaseData(){
+        XxlJobHelper.log("肥胖症基线数据拉取定时任务日期{}开始",DateUtils.getTime());
+        //进行中的队列
+        List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByStatus2();
+        if (researchInfos == null || researchInfos.isEmpty()){
+            XxlJobHelper.log("没查到相关队列信息");
+        }
+        for(ResearchInfo researchInfo:researchInfos){
+            //查询需要拉取的患者
+            List<PatientRecord> patientRecordList = patientRecordMapper.selectPatientRecordByResearchId(researchInfo.getId());
+            for (PatientRecord record : patientRecordList) {
+                patientRecordMapper.insertPatientRecord(record);
+                logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchInfo.getId(),record.getRecordId());
+                getFollowDate(record.getFollowId(),record.getPersonId(),researchInfo.getId(),record.getRecordId());
+            }
+        }
+    }
 
 
 }

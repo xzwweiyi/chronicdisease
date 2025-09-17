@@ -139,4 +139,6 @@ public interface ResearchInfoMapper
      * @return
      */
     int updateResearchInfoStatus(@Param("id") Long id, @Param("status") String status);
+
+    List<ResearchInfo> selectResearchInfoByStatus2();
 }

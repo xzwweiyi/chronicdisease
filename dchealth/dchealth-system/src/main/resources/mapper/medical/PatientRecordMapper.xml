@@ -1054,4 +1054,15 @@
         </if>
         AND patientRecord.follow_status = 0 and patientRecord.over_time_status in (1,2,3)
     </select>
+
+
+    <select id="selectPatientRecordByResearchId" resultMap="PatientRecordResult">
+        SELECT pr.*
+        FROM patient_record pr
+        inner join patient_info pi on pi.patient_id=pr.patient_id
+        WHERE pr.research_id = #{researchId} and pr.name='基线'
+          and pr.stage_num=1 and pr.stage_add_num=1 and is_edit!=1
+    </select>
+
+
 </mapper>
