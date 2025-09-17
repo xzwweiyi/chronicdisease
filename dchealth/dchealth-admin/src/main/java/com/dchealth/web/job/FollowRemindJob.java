@@ -77,6 +77,7 @@ public class FollowRemindJob {
     @XxlJob("remindMailJobHandler")
 //    @Scheduled(cron = "0 0/2 * * * ?")
     public void remindMailJobHandler() throws Exception {
+        log.info("App站内信随访提醒和超窗提醒任务开始");
         XxlJobHelper.log("App站内信随访提醒和超窗提醒任务日期{}开始",DateUtils.getTime());
         //进行中的队列
         ResearchInfo ri = new ResearchInfo();
@@ -126,15 +127,16 @@ public class FollowRemindJob {
 
                 List<HisNoticeVo> hisNoticeVos = new ArrayList<>();
                 for(AccountNotice a:insertRecord){
+                    log.info("院内消息推送开始。");
                     PatientAccount patientAccount = ppatientAccountMapper.selectPatientAccountByAccountId(a.getAccountId());
                     // 同步his微信站内消息
                     HisNoticeVo hisNoticeVo = new HisNoticeVo();
-                    hisNoticeVo.setInfoNo("tdmbsf"+ System.currentTimeMillis());
+                    hisNoticeVo.setInfoNo("MBSF"+ System.currentTimeMillis());
                     hisNoticeVo.setInsertTime(new Date());
                     hisNoticeVo.setPatientId(String.valueOf(patientAccount.getRegistrySigns()));
                     hisNoticeVo.setContactPhone(patientAccount.getMobile());
                     hisNoticeVo.setInfoContent(a.getContent());
-                    hisNoticeVo.setInfoSources("tdmbsfxt");
+                    hisNoticeVo.setInfoSources("MBSF");
                     hisNoticeVo.setInfoStatus("1");
                     hisNoticeVo.setInfoTitle(a.getTitle());
                     hisNoticeVo.setPatientName(patientAccount.getName());
@@ -142,11 +144,15 @@ public class FollowRemindJob {
                     sendPush(2,a);
                 }
 
+                log.info("His站内消息批量插入数据开始。{}", hisNoticeVos);
+
                 DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.HISMYSQL.name());
                 try {
                     // 执行数据库操作
                     int i = hisNoticeService.batchInsert(hisNoticeVos);
-                    log.info("His消息通知批量插入结果:"+i);
+                    log.info("His消息通知批量插入结果: {}", i);
+                } catch (Exception e) {
+                    log.error("批量插入数据失败: {}", e.getMessage());
                 } finally {
                     // 恢复默认数据源
                     DynamicDataSourceContextHolder.clearDataSourceType();
@@ -162,9 +168,42 @@ public class FollowRemindJob {
             if (allThreadsIsDone) {
                 if (!insertRecord.isEmpty() && u==0){
                     accountNoticeMapper.batchInsertList(insertRecord);
+
+                    List<HisNoticeVo> hisNoticeVos = new ArrayList<>();
                     for(AccountNotice a:insertRecord){
+                        log.info("院内消息推送开始。");
+                        PatientAccount patientAccount = ppatientAccountMapper.selectPatientAccountByAccountId(a.getAccountId());
+                        // 同步his微信站内消息
+                        HisNoticeVo hisNoticeVo = new HisNoticeVo();
+                        hisNoticeVo.setInfoNo("MBSF"+ System.currentTimeMillis());
+                        hisNoticeVo.setInsertTime(new Date());
+                        hisNoticeVo.setPatientId(String.valueOf(patientAccount.getRegistrySigns()));
+                        hisNoticeVo.setContactPhone(patientAccount.getMobile());
+                        hisNoticeVo.setInfoContent(a.getContent());
+                        hisNoticeVo.setInfoSources("MBSF");
+                        hisNoticeVo.setInfoStatus("1");
+                        hisNoticeVo.setInfoTitle(a.getTitle());
+                        hisNoticeVo.setPatientName(patientAccount.getName());
+                        hisNoticeVos.add(hisNoticeVo);
                         sendPush(2,a);
                     }
+
+                    log.info("His站内消息批量插入数据开始。{}", hisNoticeVos);
+
+                    DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.HISMYSQL.name());
+                    try {
+                        log.info("切换数据源~");
+                        // 执行数据库操作
+                        int i = hisNoticeService.batchInsert(hisNoticeVos);
+                        log.info("His消息通知批量插入结果: {}", i);
+                    } catch (Exception e) {
+                        log.error("批量插入数据失败: {}", e.getMessage());
+                    } finally {
+                        // 恢复默认数据源
+                        log.info("恢复数据源");
+                        DynamicDataSourceContextHolder.clearDataSourceType();
+                    }
+
                     resultStr = "操作成功,共插入"+insertRecord.size()+"条";
                     XxlJobHelper.log("App站内信随访提醒和超窗提醒{}",resultStr);
                     u++;

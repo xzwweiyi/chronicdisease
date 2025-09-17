@@ -21,8 +21,8 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // 针对哪些API路径
                         .allowedOrigins(
-                                "https://test.dchealthclinical.com",
-                                "https://td.dchealthclinical.com"
+                                "http://10.1.1.57",
+                                "http://td.dchealthclinical.com"
                         ) // 允许的来源
                         .allowedMethods("GET", "POST", "PUT", "DELETE");
             }
