@@ -70,11 +70,11 @@ public interface AccountLeaveMessageMapper {
      * @param userId
      * @return
      */
-    List<AccountLeaveMessage>  selectUpdateReadStatus(@Param("personId")Long personId, @Param("userId") Long userId);
+    List<AccountLeaveMessage>  selectUpdateReadStatus(@Param("personId")String personId, @Param("userId") String userId);
 
 
     /**
      * 根据personId查询
      */
-    List<UserMessageListVO> selectLeaveMessageByPersonId(Long personId);
+    List<UserMessageListVO> selectLeaveMessageByPersonId(String personId);
 }

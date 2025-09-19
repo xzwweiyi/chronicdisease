@@ -72,6 +72,6 @@ public interface ILeaveMessageService
      */
     Long sendMessage(UserMessageListReq messageListReq);
 
-    Boolean updateReadStatus(Long personId);
+    Boolean updateReadStatus(String personId);
 
 }

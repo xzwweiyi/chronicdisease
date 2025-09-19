@@ -29,12 +29,12 @@ public class AccountLeaveMessage implements Serializable {
     /**
      * 发送方id
      */
-    private Long senderId;
+    private String senderId;
 
     /**
      * 接收方id
      */
-    private Long receiverId;
+    private String receiverId;
 
     /**
      * 发送时间

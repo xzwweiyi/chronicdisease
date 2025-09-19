@@ -10,6 +10,8 @@ import com.dchealth.cro.api.vo.AutoEnrollmentHandleVo;
 import com.dchealth.cro.common.constant.FollowTipStatusConstants;
 import com.dchealth.cro.common.exception.base.ServiceException;
 import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.core.service.SysDictDataService;
+import com.dchealth.cro.core.vo.DictVO;
 import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPersonMapper;
 import com.dchealth.cro.medical.domain.PatientInfo;
@@ -34,6 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @Author: wangpf
@@ -75,6 +79,9 @@ public class PatientInfoService {
     @Autowired
     private SysPopNoticeMapper sysPopNoticeMapper;
 
+    @Autowired
+    private SysDictDataService sysDictDataService;
+
 
     @Transactional
     public int importEnrollment(String mobile, String cardId, String userName, PatientAccount patientAccount, ResearchInfo researchInfo) {
@@ -89,13 +96,50 @@ public class PatientInfoService {
             researchIds.add(researchInfo.getId());
             PatientInfo info = new PatientInfo();
             info.setPersonId(mpPerson.getPersonId());
+            //                info.setPersonId(baseInfo.getPersonId());
             info.setResearchId(researchId);
+
             List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(info);
-            if (patientInfos.isEmpty()) {
+            Map<String, PatientInfo> infoMap = patientInfos.stream().collect(Collectors.toMap(PatientInfo::getPersonId, Function.identity()));
+
+
+            if (infoMap.get(mpPerson.getPersonId()) == null) {
                 PatientInfo patientInfo = new PatientInfo();
                 if (patientAccount.getAccountId() != null) {
-                    patientInfo.setAccountId(patientAccount.getAccountId());
+                    patientInfo.setAccountId(Long.valueOf(patientAccount.getAccountId()));
                 }
+
+                // 对肥胖门诊的队列进行判断 不同的手术、生活方式
+                List<DictVO> dictDataList = sysDictDataService.getDictVO("patient_code");
+                Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(DictVO::getDictLabel, DictVO::getDictValue));
+                map.forEach((k, v) -> {
+                    if (researchId.toString().equals(v) && k.equals("肥胖门诊用药队列")) {
+                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                        if (patientInfos == null || patientInfos.isEmpty()) {
+                            patientInfo.setPatientCode(String.format("D-%04d", 1));
+                        } else {
+                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                            patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
+                        }
+
+                    } else if (researchId.toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
+                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                        if (patientInfos == null || patientInfos.isEmpty()) {
+                            patientInfo.setPatientCode(String.format("L-%04d", 1));
+                        } else {
+                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                            patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                        }
+                    } else if (researchId.toString().equals(v) && k.equals("肥胖门诊手术队列")) {
+                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                        if (patientInfos == null || patientInfos.isEmpty()) {
+                            patientInfo.setPatientCode(String.format("S-%04d", 1));
+                        } else {
+                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                            patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
+                        }
+                    }
+                });
                 patientInfo.setResearchId(researchId);
                 patientInfo.setPlanResearchId(researchId);
                 patientInfo.setPatientName(mpPerson.getPersonName());
@@ -152,10 +196,7 @@ public class PatientInfoService {
                 autoEnrollmentHandleVo.setResearchId(researchInfo.getId());
                 enrollmentHandle(autoEnrollmentHandleVo, patientInfo);
             }
-
-
         }
-
 
 //        //此处为了适配唐都要求在队列未发布的情况下需要患者可以填写基线因此创建需要的表
 //        if(!CollectionUtils.isEmpty(researchIds)) {
@@ -164,6 +205,51 @@ public class PatientInfoService {
 
         return num;
     }
+
+    private static PatientInfo getFirstPatientCode(List<PatientInfo> patientInfos) {
+        List<PatientInfo> result = patientInfos.stream()
+                .sorted((p1, p2) -> {
+                    // 处理 p1 的 code
+                    int num1;
+                    try {
+                        num1 = Integer.parseInt(p1.getPatientCode().split("-")[1]);
+                    } catch (Exception e) {
+                        num1 = 0; // 默认值
+                    }
+
+                    // 处理 p2 的 code
+                    int num2;
+                    try {
+                        num2 = Integer.parseInt(p2.getPatientCode().split("-")[1]);
+                    } catch (Exception e) {
+                        num2 = 0; // 默认值
+                    }
+
+                    return Integer.compare(num2, num1); // 降序排序
+                })
+                .collect(Collectors.toList());
+
+        PatientInfo patientInfo1 = result.get(0);
+        return patientInfo1;
+    }
+
+    /**
+     * 从编码中提取数字部分（如 "D-0001" → 1）
+     */
+    private static int extractNumber(String code) {
+        String numberStr = code.split("-")[1];  // 拆分后取第二部分
+        return Integer.parseInt(numberStr);      // 转为整数
+    }
+
+    /**
+     * 生成下一个编码（如 "D-0010" → "D-0011"）
+     */
+    private static String generateNextCode(String flag, String currentMaxCode) {
+        int currentNumber = extractNumber(currentMaxCode);
+        int nextNumber = currentNumber + 1;
+        return String.format(flag + "-%04d", nextNumber);  // 格式化为 4 位数字
+    }
+
 
     /**
      * 根据部门信息查看队列信息，取队列中的第一个队列为默认队列对患者进行自动入组 自动入组到第一个队列

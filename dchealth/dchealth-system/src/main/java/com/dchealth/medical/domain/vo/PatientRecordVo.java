@@ -98,6 +98,8 @@ public class PatientRecordVo extends BaseEntity
 
     private Double formComplentRate;
 
+    private String patientCode;
+
     public PatientRecordVo(){}
 
 }

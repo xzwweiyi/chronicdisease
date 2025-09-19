@@ -143,12 +143,12 @@ public class LeaveMessageServiceImpl implements ILeaveMessageService {
         Long userId = SecurityUtils.getLoginUser().getUserId();
         Date now = new Date();
         LeaveMessage leaveMessage = new LeaveMessage();
-        leaveMessage.setRecordId(messageListReq.getPersonId())
+        leaveMessage.setRecordId(Long.valueOf(messageListReq.getPersonId()))
                 .setAccountId(messageListReq.getFromUserId())
                 .setPersonId(messageListReq.getPersonId())
                 .setSenderId(userId)
                 .setSendTime(now)
-                .setReceiverId(messageListReq.getPersonId())
+                .setReceiverId(Long.valueOf(messageListReq.getPersonId()))
 
                 .setUserType("1")
                 .setContentType(messageListReq.getMsgType());
@@ -166,7 +166,7 @@ public class LeaveMessageServiceImpl implements ILeaveMessageService {
     }
 
     @Override
-    public Boolean updateReadStatus(Long personId) {
+    public Boolean updateReadStatus(String personId) {
         Long userId = SecurityUtils.getUserId();
         AtomicReference<Boolean> result = new AtomicReference<>(true);
         List<LeaveMessage> leaveMessage = userLeaveMessageMapper.selectUpdateReadStatus(personId, personId);

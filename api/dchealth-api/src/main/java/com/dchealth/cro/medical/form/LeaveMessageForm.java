@@ -23,7 +23,7 @@ public class LeaveMessageForm
     private Long recordId;
 
     @NotNull(message = "患者ID不能为空")
-    private Long personId;
+    private String personId;
 
     /** 用户ID */
     @NotNull(message = "用户ID不能为空")

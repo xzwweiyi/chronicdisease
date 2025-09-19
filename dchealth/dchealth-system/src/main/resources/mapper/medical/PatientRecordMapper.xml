@@ -89,6 +89,7 @@
         <result property="createBy" column="create_by"/>
         <result property="enrollmentTime" column="enrollment_time"/>
         <result property="formComplentRate" column="form_complent_rate"/>
+        <result property="followNum" column="follow_num"/>
 
     </resultMap>
 
@@ -131,6 +132,7 @@
         <result property="followName" column="follow_name"/>
         <result property="followStatus" column="follow_status"/>
         <result property="formComplentRate" column="form_complent_rate"/>
+        <result property="patientCode" column="patient_code"/>
     </resultMap>
     <resultMap type="com.dchealth.msgTip.domain.MsgSend" id="msgSendResult">
         <result property="diseaseId" column="disease_id"/>
@@ -223,6 +225,7 @@
                re.lock_visit_time,
                re.edc_status,
                i.patient_name,
+               i.patient_code,
                te.follow_name,
                re.follow_opinion,
                re.follow_status,
@@ -358,7 +361,7 @@
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate
+        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate, prt.follow_num
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id

@@ -69,5 +69,5 @@ public interface UserLeaveMessageMapper
      * @param userId
      * @return
      */
-    List<LeaveMessage>  selectUpdateReadStatus(@Param("personId")Long personId, @Param("senderId")Long senderId);
+    List<LeaveMessage>  selectUpdateReadStatus(@Param("personId")String personId, @Param("senderId")String senderId);
 }
