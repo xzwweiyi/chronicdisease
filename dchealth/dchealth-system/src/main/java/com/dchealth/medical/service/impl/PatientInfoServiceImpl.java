@@ -16,15 +16,18 @@ import com.dchealth.common.core.domain.model.LoginUser;
 import com.dchealth.common.exception.ServiceException;
 import com.dchealth.common.utils.*;
 import com.dchealth.medical.domain.*;
+import com.dchealth.medical.domain.form.FollowWorkListCmdForm;
 import com.dchealth.medical.domain.vo.*;
 import com.dchealth.medical.mapper.*;
 import com.dchealth.medical.service.IFollowWorkService;
 import com.dchealth.medical.service.IPatientInfoService;
 import com.dchealth.research.domain.ResearchInfo;
+import com.dchealth.research.domain.SysPopNotice;
 import com.dchealth.research.domain.vo.ResearchDiseasesVO;
 import com.dchealth.research.domain.vo.ResearchInfoVo;
 import com.dchealth.research.mapper.ResearchDiseasesMapper;
 import com.dchealth.research.mapper.ResearchInfoMapper;
+import com.dchealth.research.mapper.SysPopNoticeMapper;
 import com.dchealth.research.service.IResearchInfoService;
 import com.dchealth.system.mapper.SysUserMapper;
 import com.dchealth.system.service.ISysDictDataService;
@@ -103,6 +106,9 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
 
     @Autowired
     private ISysDictDataService sysDictDataService;
+    
+    @Autowired
+    private SysPopNoticeMapper sysPopNoticeMapper;
 
     /**
      * 查询患者信息
@@ -456,36 +462,37 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                     SysDictData sysDictData = new SysDictData();
                     sysDictData.setDictType("patient_code");
                     List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
-                    Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
-                    map.forEach((k, v) -> {
-                        if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊用药队列")) {
-                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                            if (patientInfos == null || patientInfos.isEmpty()) {
-                                patientInfo.setPatientCode(String.format("D-%04d", 1));
-                            } else {
-                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                                patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
-                            }
+                    if (ObjectUtil.isNotEmpty(dictDataList)) {
+                        Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
+                        map.forEach((k, v) -> {
+                            if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊用药队列")) {
+                                // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                                if (patientInfos == null || patientInfos.isEmpty()) {
+                                    patientInfo.setPatientCode(String.format("D-%04d", 1));
+                                } else {
+                                    PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                    patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
+                                }
 
-                        } else if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
-                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                            if (patientInfos == null || patientInfos.isEmpty()) {
-                                patientInfo.setPatientCode(String.format("L-%04d", 1));
-                            } else {
-                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                                patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                            } else if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
+                                // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                                if (patientInfos == null || patientInfos.isEmpty()) {
+                                    patientInfo.setPatientCode(String.format("L-%04d", 1));
+                                } else {
+                                    PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                    patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                                }
+                            } else if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊手术队列")) {
+                                // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                                if (patientInfos == null || patientInfos.isEmpty()) {
+                                    patientInfo.setPatientCode(String.format("S-%04d", 1));
+                                } else {
+                                    PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                    patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
+                                }
                             }
-                        } else if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊手术队列")) {
-                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                            if (patientInfos == null || patientInfos.isEmpty()) {
-                                patientInfo.setPatientCode(String.format("S-%04d", 1));
-                            } else {
-                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                                patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
-                            }
-                        }
-                    });
-
+                        });
+                    }
 
                     patientInfo.setResearchId(baseInfo.getResearchId());
                     patientInfo.setPlanResearchId(baseInfo.getResearchId());
@@ -730,35 +737,38 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 SysDictData sysDictData = new SysDictData();
                 sysDictData.setDictType("patient_code");
                 List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
-                Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
-                map.forEach((k, v) -> {
-                    if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊用药队列")) {
-                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos == null || patientInfos.isEmpty()) {
-                            patientInfo.setPatientCode(String.format("D-%04d", 1));
-                        } else {
-                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                            patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
-                        }
+                if (ObjectUtil.isNotEmpty(dictDataList)) {
+                    Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
+                    map.forEach((k, v) -> {
+                        if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊用药队列")) {
+                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                            if (patientInfos == null || patientInfos.isEmpty()) {
+                                patientInfo.setPatientCode(String.format("D-%04d", 1));
+                            } else {
+                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
+                            }
 
-                    } else if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
-                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos == null || patientInfos.isEmpty()) {
-                            patientInfo.setPatientCode(String.format("L-%04d", 1));
-                        } else {
-                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                            patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                        } else if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
+                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                            if (patientInfos == null || patientInfos.isEmpty()) {
+                                patientInfo.setPatientCode(String.format("L-%04d", 1));
+                            } else {
+                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                            }
+                        } else if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊手术队列")) {
+                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                            if (patientInfos == null || patientInfos.isEmpty()) {
+                                patientInfo.setPatientCode(String.format("S-%04d", 1));
+                            } else {
+                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
+                            }
                         }
-                    } else if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊手术队列")) {
-                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos == null || patientInfos.isEmpty()) {
-                            patientInfo.setPatientCode(String.format("S-%04d", 1));
-                        } else {
-                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                            patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
-                        }
-                    }
-                });
+                    });
+                }
+
                 patientInfo.setResearchId(moveEnrollmentVo.getResearchId());
                 patientInfo.setPlanResearchId(moveEnrollmentVo.getResearchId());
                 patientInfo.setPatientName(mpPerson.getPersonName());
@@ -812,6 +822,9 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 moveEnrollmentVo.setHandleType("3");
                 moveEnrollmentVo.setResearchId(moveEnrollmentVo.getResearchId());
                 enrollmentHandle(moveEnrollmentVo, patientInfo);
+                log.info("患者pc端入组成功");
+
+                patientConfirmEnrollment(moveEnrollmentVo, patientInfo);
             }
 
 
@@ -827,6 +840,88 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
         return num;
 
     }
+
+    /**
+     * 患者确认入组
+     * @param moveEnrollmentVo
+     * @param patientInfo
+     */
+    private void patientConfirmEnrollment(MoveEnrollmentVo moveEnrollmentVo, PatientInfo patientInfo) {
+        //患者确认入组
+        PatientInfo pio = patientInfoMapper.selectPatientInfoByPatientId(patientInfo.getPatientId());
+        if (pio == null) {
+            throw new ServiceException("该患者不存在");
+        }
+        if (!"2".equals(pio.getEnrollmentHandlerStatus())) {
+            //当前状态不许变更
+            log.info("邀请已失效, 原因: 当前处理状态"+pio.getEnrollmentHandlerStatus());
+            throw new ServiceException("邀请已失效");
+        }
+        //更新弹框消息
+        SysPopNotice query = new  SysPopNotice();
+        query.setUserId(String.valueOf(pio.getPatientId()));
+        query.setIsread(0);
+        query.setResearchId(moveEnrollmentVo.getResearchId());
+
+        List<SysPopNotice> sysPopNotices = sysPopNoticeMapper.selectSysPopNoticeList(query);
+        if(sysPopNotices.size() > 0){
+            SysPopNotice sysPopNotice = sysPopNotices.get(0);
+            sysPopNotice.setIsread(1);
+            sysPopNotice.setUpdateTime(new Date());
+            sysPopNotice.setId(sysPopNotice.getId());
+            sysPopNoticeMapper.updateSysPopNotice(sysPopNotice);
+        }else {
+            throw new ServiceException("邀请已被医生取消");
+        }
+
+        PatientInfo info1 = new PatientInfo();
+        info1.setPatientId(patientInfo.getPatientId());
+        info1.setEnrollmentResult("3");
+        //确认完成入组
+        info1.setEnrollmentStatus("1");
+        info1.setEnrollmentHandlerStatus("3");
+        info1.setEnrollmentTime(new Date());
+        info1.setResearchId(moveEnrollmentVo.getResearchId());
+        info1.setEnrollmentResultContent("确认入组");
+        //清理随访
+        clearFollowRecord(info1);
+//            generateBaseRecord(patientInfo);
+        patientInfoMapper.updatePatientInfo(info1);
+
+        PatientRecord prd = patientRecordMapper.selectOldByPatientId(patientInfo.getPatientId());
+
+        String msgContent = "您已加入随访队列，可查看队列详情";
+        prd.setAccountId(pio.getAccountId());
+        AccountNotice accountNotice = new AccountNotice(prd,msgContent,"11");
+        accountNoticeMapper.insertAccountNotice(accountNotice);
+    }
+
+    /**.
+     * 清理随访
+     *
+     * @param patientInfo
+     */
+    private void clearFollowRecord(PatientInfo patientInfo) {
+        List<PatientRecordTemplate> patientRecordTemplates =
+                patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(patientInfo.getResearchId());
+        if (patientRecordTemplates != null && !patientRecordTemplates.isEmpty()) {
+            for (PatientRecordTemplate patientRecordTemplate : patientRecordTemplates) {
+                if (patientRecordTemplate.getFollowNum() != 0) {
+                    FollowWorkListCmdForm followWorkListCmdForm = new FollowWorkListCmdForm();
+                    followWorkListCmdForm.setFollowId(patientRecordTemplate.getFollowId());
+                    followWorkListCmdForm.setResearchId(patientRecordTemplate.getResearchId());
+                    followWorkListCmdForm.setPatientId(patientInfo.getPatientId());
+                    if (followWorkListCmdForm.getFollowId()!=null
+                            && followWorkListCmdForm.getResearchId()!=null
+                            && followWorkListCmdForm.getPatientId()!=null){
+                        patientRecordMapper.deletePatientRecord(followWorkListCmdForm);
+                    }
+                }
+            }
+
+        }
+    }
+    
 
     @Override
     public List<EnrollmentListVo> enrollmentList(MoveEnrollmentVo moveEnrollmentVo) {

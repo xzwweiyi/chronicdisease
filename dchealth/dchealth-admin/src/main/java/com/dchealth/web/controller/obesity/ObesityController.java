@@ -1,6 +1,7 @@
 package com.dchealth.web.controller.obesity;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.core.domain.entity.SysDictData;
 import com.dchealth.system.service.ISysDictDataService;
@@ -32,6 +33,9 @@ public class ObesityController {
         SysDictData sysDictData = new SysDictData();
         sysDictData.setDictType("research");
         List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
+        if (ObjectUtil.isEmpty(dictDataList)) {
+            return AjaxResult.success(Boolean.FALSE);
+        }
         List<String> result = dictDataList.stream().map(SysDictData::getDictValue).collect(Collectors.toList());
         return AjaxResult.success(result.contains(researchId)) ;
     }
