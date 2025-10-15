@@ -90,8 +90,6 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
     @Autowired
     private PatientRecordMapper patientRecordMapper;
 
-    @Autowired
-    private IResearchInfoService researchInfoService;
 
 
 
@@ -159,9 +157,7 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
         //此处为了适配唐都要求在队列未发布的情况下需要患者可以填写基线因此创建需要的表
         List<Long> researchIds = new ArrayList<>();
         researchIds.add(researchInfo.getId());
-        researchIds.forEach(researchId -> {
-            researchInfoService.createTableInAddUser(researchId);
-        });
+        researchIds.forEach(this::createTableInAddUser);
 
         //创建队列之后初始化队列-角色-资源
         //查询资源
