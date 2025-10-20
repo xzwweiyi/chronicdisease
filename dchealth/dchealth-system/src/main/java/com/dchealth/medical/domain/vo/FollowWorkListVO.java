@@ -27,6 +27,11 @@ public class FollowWorkListVO {
     private String patientName;
 
     /**
+     * 患者编号
+     */
+    private String patientCode;
+
+    /**
      * 阶段名称
      */
     private String stageName;
@@ -160,5 +165,7 @@ public class FollowWorkListVO {
      * 表单填写比率 form_complent_rate
      */
     private Double formComplentRate;
+
+    private Integer followNum;
 
 }

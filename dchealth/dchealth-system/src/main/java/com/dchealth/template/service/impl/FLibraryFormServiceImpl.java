@@ -1,14 +1,15 @@
 package com.dchealth.template.service.impl;
 
-import java.util.List;
 import com.dchealth.common.utils.DateUtils;
+import com.dchealth.template.domain.FLibraryForm;
 import com.dchealth.template.domain.FLibraryProperty;
+import com.dchealth.template.mapper.FLibraryFormMapper;
 import com.dchealth.template.mapper.FLibraryPropertyMapper;
+import com.dchealth.template.service.IFLibraryFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.dchealth.template.mapper.FLibraryFormMapper;
-import com.dchealth.template.domain.FLibraryForm;
-import com.dchealth.template.service.IFLibraryFormService;
+
+import java.util.List;
 
 /**
  * 属性库单Service业务层处理
@@ -48,6 +49,9 @@ public class FLibraryFormServiceImpl implements IFLibraryFormService
             FLibraryProperty property = new FLibraryProperty();
             property.setLibraryId(libraryId);
             List<FLibraryProperty> fLibraryProperties = fLibraryPropertyMapper.selectFLibraryPropertyList(property);
+            fLibraryProperties.forEach(item->{
+                item.setId(null);
+            });
 
             fLibraryForm.setLibraryProperties(fLibraryProperties);
         }

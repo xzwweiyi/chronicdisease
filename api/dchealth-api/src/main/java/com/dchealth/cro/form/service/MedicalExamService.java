@@ -1,25 +1,7 @@
 package com.dchealth.cro.form.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.dchealth.cro.ApiApplication;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import com.dchealth.cro.cms.domain.CmsArticle;
 import com.dchealth.cro.cms.mapper.CmsArticleMapper;
 import com.dchealth.cro.common.base.CommonResult;
@@ -28,18 +10,12 @@ import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.form.common.DynamicSql;
 import com.dchealth.cro.form.constant.PropertyType;
-import com.dchealth.cro.form.domain.DynamicCommonProperty;
-import com.dchealth.cro.form.domain.FMedicalExamForm;
-import com.dchealth.cro.form.domain.FMedicalExamItem;
-import com.dchealth.cro.form.domain.FMedicalExamRes;
-import com.dchealth.cro.form.domain.FMedicalExamSubject;
-import com.dchealth.cro.form.domain.PatientExamRecord;
+import com.dchealth.cro.form.domain.*;
 import com.dchealth.cro.form.domain.form.DynamicForm;
-import com.dchealth.cro.form.mapper.DynamicCommonMapper;
-import com.dchealth.cro.form.mapper.FMedicalExamFromMapper;
-import com.dchealth.cro.form.mapper.FMedicalExamItemMapper;
-import com.dchealth.cro.form.mapper.FMedicalExamSubjectMapper;
-import com.dchealth.cro.form.mapper.PatientExamRecordMapper;
+import com.dchealth.cro.form.mapper.*;
+import com.dchealth.cro.form.vo.form.FormItemVo;
+import com.dchealth.cro.form.vo.form.ProblemFromVo;
+import com.dchealth.cro.form.vo.form.ProblemOptionVo;
 import com.dchealth.cro.medical.contants.MedicalContants;
 import com.dchealth.cro.medical.domain.PatientRecordFiles;
 import com.dchealth.cro.medical.form.PatientRecordFilesForm;
@@ -50,6 +26,20 @@ import com.dchealth.cro.research.domain.ResearchInfoArticle;
 import com.dchealth.cro.research.domain.ResearchInfoArticlePatient;
 import com.dchealth.cro.research.mapper.ResearchInfoArticleMapper;
 import com.dchealth.cro.research.mapper.ResearchInfoArticlePatientMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 问卷相关
@@ -89,6 +79,8 @@ public class MedicalExamService {
     private CmsArticleSetEvaluationMapper cmsArticleSetEvaluationMapper;
 
     private static final Logger log = LoggerFactory.getLogger(MedicalExamService.class);
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 查询问卷详情
@@ -142,7 +134,7 @@ public class MedicalExamService {
                                 JSONObject jsonObject1 = JSON.parseObject(attribute);
                                 List<JSONObject> children = (List<JSONObject>) jsonObject1.get("children");
                                 List<PatientRecordFiles> recordFiles = patientRecordFilesMapper.selectPatientRecordFiles(null, examRecordId);
-                                log.info("查询出来问题组图片文件："+JSON.toJSONString(recordFiles));
+                                log.info("查询出来问题组图片文件：" + JSON.toJSONString(recordFiles));
                                 Map<String, PatientRecordFiles> recordFilesByProCode = recordFiles.stream().filter(item -> item.getPropertyCode() != null)
                                         .collect(Collectors.toMap(PatientRecordFiles::getPropertyCode, item -> item));
                                 for (JSONObject jsonObject : children) {
@@ -160,13 +152,13 @@ public class MedicalExamService {
                                     }
                                 }
                                 subject.setAttribute(JSON.toJSONString(jsonObject1));
-                            }else {
+                            } else {
                                 if (properties != null && !properties.isEmpty()) {
 //                                Map<Long, List<DynamicCommonProperty>> collect = properties.stream().collect
 //                                (Collectors.groupingBy(DynamicCommonProperty::getPropertyId));
                                     try {
                                         Map<Long, DynamicCommonProperty> collect =
-                                                properties.stream().filter(x->!Objects.isNull(x.getPropertyId())).collect(Collectors.toMap(DynamicCommonProperty::getPropertyId, item -> item));
+                                                properties.stream().filter(x -> !Objects.isNull(x.getPropertyId())).collect(Collectors.toMap(DynamicCommonProperty::getPropertyId, item -> item));
                                         if (collect != null && !collect.isEmpty() && collect.containsKey(subject.getId())) {
                                             DynamicCommonProperty commonProperties = collect.get(subject.getId());
                                             subject.setPropertyValue(commonProperties.getPropertyValue());
@@ -183,8 +175,8 @@ public class MedicalExamService {
 
 
                                 }
-                                if(PropertyType.eq(PropertyType.CHECKBOX, subject.getPropertyType())){
-                                    if(subject.getOther() == null) subject.setOther("");
+                                if (PropertyType.eq(PropertyType.CHECKBOX, subject.getPropertyType())) {
+                                    if (subject.getOther() == null) subject.setOther("");
                                 }
                             }
 
@@ -251,8 +243,8 @@ public class MedicalExamService {
                         }
                         jsonObject.put("children", children);
                         examSubject.setAttribute(JSON.toJSONString(jsonObject));
-                    }else{
-                        if(StringUtils.isEmpty(examSubject.getPropertyValue())) examSubject.setPropertyValue("");
+                    } else {
+                        if (StringUtils.isEmpty(examSubject.getPropertyValue())) examSubject.setPropertyValue("");
                     }
                 }
 //                log.info("问卷详情：" + JSON.toJSONString(examSubjects));
@@ -268,7 +260,7 @@ public class MedicalExamService {
     private void handleIsShowAgain(Long articleId, Long accountId, FMedicalExamForm fMedicalExamForm) {
         // 该患者在哪几个队列中能看到该问卷，只要有一个队列能看到该问卷，“再来一次”按钮就显示
         // 至于当后台有队列删该问卷，App上就应该把删除该问卷的队列对应的问卷不展示，这个 别的逻辑 会处理。
-        if(!Objects.isNull(accountId)){
+        if (!Objects.isNull(accountId)) {
             List<ResearchInfoArticle> researchInfoArticleList =
                     researchInfoArticleMapper.queryByArticleIdAndAccountId(articleId, accountId);
             if (!CollectionUtils.isEmpty(researchInfoArticleList) && researchInfoArticleList.size() > 0) {
@@ -385,11 +377,56 @@ public class MedicalExamService {
                         }
                     } else if ("Radio".equalsIgnoreCase(subject.getPropertyType())) {
                         for (FMedicalExamItem examItem : examItemList) {
-                            if (subject.getId()!=null&&subject.getId().equals(examItem.getPropertyId()) &&subject.getPropertyValue()!=null&& subject.getPropertyValue().equals(examItem.getItemValue()) && examItem.getItemScores() != null) {
+                            if (subject.getId() != null && subject.getId().equals(examItem.getPropertyId()) && subject.getPropertyValue() != null && subject.getPropertyValue().equals(examItem.getItemValue()) && examItem.getItemScores() != null) {
                                 //如果是同一个属性，且有分值
                                 scores.updateAndGet(v -> v + examItem.getItemScores());
                             }
                         }
+                    }
+                }
+                if (PropertyType.eq(PropertyType.FORM, subject.getPropertyType())) {
+                    try {
+                        // 获取原始的 attribute 字符串
+                        String attributeJson = subject.getAttribute();
+
+                        if (attributeJson == null || attributeJson.trim().isEmpty()) {
+                            log.warn("attribute 为空");
+                            return;
+                        }
+
+                        // 处理可能的引号包裹和转义字符
+                        attributeJson = attributeJson.trim();
+                        if (attributeJson.startsWith("\"") && attributeJson.endsWith("\"")) {
+                            attributeJson = attributeJson.substring(1, attributeJson.length() - 1);
+                            // 处理转义的双引号
+                            attributeJson = attributeJson.replace("\\\"", "\"");
+                        }
+                        Gson gson = new Gson();
+                        ProblemFromVo problemFromVo = gson.fromJson(attributeJson, ProblemFromVo.class);
+                        List<FormItemVo> children = problemFromVo.getChildren();
+                        children.forEach(formItem -> {
+//                            if ("Checkbox".equalsIgnoreCase(formItem.getPropertyType())) {
+
+                            List<ProblemOptionVo> options = formItem.getOptions();
+                            options.forEach(option -> {
+                                if (formItem.getPropertyValue().equals(option.getValue()) && option.getItemScores() != null) {
+                                    scores.updateAndGet(v -> v + option.getItemScores());
+                                }
+                            });
+
+//                            } else if ("Radio".equalsIgnoreCase(formItem.getPropertyType())) {
+//                                List<ProblemOptionVo> options = formItem.getOptions();
+//                                options.forEach(option -> {
+//                                    if (formItem.getPropertyValue().equals(option.getValue()) && option.getItemScores() != null) {
+//                                        scores.updateAndGet(v -> v + option.getItemScores());
+//                                    }
+//                                });
+//                            }
+                        });
+
+
+                    } catch (Exception e) {
+                        log.error("doAfterReturing obj to json exception obj={},msg={}", subject, e.getMessage());
                     }
                 }
             });
@@ -576,7 +613,6 @@ public class MedicalExamService {
         patientExamRecordMapper.updatePatientExamRecord(examRecord);
     }
 
-  
 
     private void handleImagesAndExamSubjectList(FMedicalExamForm examForm, Long examRecordId, String examTable) {
         examForm.setExamRecordId(examRecordId);
@@ -591,7 +627,7 @@ public class MedicalExamService {
                     List<JSONObject> jsonObjects = (List<JSONObject>) o;
                     for (JSONObject json : jsonObjects) {
                         FMedicalExamSubject fMedicalExamSubject = new FMedicalExamSubject();
-                        BeanUtils.copyProperties(json,fMedicalExamSubject);
+                        BeanUtils.copyProperties(json, fMedicalExamSubject);
                         FMedicalExamSubject user = JSON.parseObject(json.toString(), FMedicalExamSubject.class);
                         user.setMedicalFormId(subject.getMedicalFormId());
                         user.setId(subject.getId());
@@ -612,7 +648,7 @@ public class MedicalExamService {
                         }
                     }
                 }
-            }else{
+            } else {
                 //题目类型判断--是否图片、文件
                 if (PropertyType.eq(PropertyType.UPLOAD, subject.getPropertyType())) {
                     if (Objects.nonNull(examForm) && Objects.nonNull(examForm.getImageUrls())) {

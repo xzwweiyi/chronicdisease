@@ -22,8 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 队列基础信息Service业务层处理
@@ -91,6 +92,7 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
 
 
 
+
     /**
      * 查询队列基础信息
      * 
@@ -151,6 +153,11 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
             researchUserRole.setResearchId(researchInfo.getId());
             researchUserRoleMapper.insertResearchUserRole(researchUserRole);
         }
+
+        //此处为了适配唐都要求在队列未发布的情况下需要患者可以填写基线因此创建需要的表
+        List<Long> researchIds = new ArrayList<>();
+        researchIds.add(researchInfo.getId());
+        researchIds.forEach(this::createTableInAddUser);
 
         //创建队列之后初始化队列-角色-资源
         //查询资源

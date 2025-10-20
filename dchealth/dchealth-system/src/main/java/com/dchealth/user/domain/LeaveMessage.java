@@ -58,7 +58,7 @@ public class LeaveMessage extends BaseEntity{
 
     /** 患者id */
     @Excel(name = "患者id")
-    private Long personId;
+    private String personId;
 
     /** 患者名称 */
     @Excel(name = "用户名称")

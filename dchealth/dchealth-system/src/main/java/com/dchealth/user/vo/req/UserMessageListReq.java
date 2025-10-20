@@ -17,7 +17,7 @@ public class UserMessageListReq {
     /**
      * 档案ID
      */
-    private Long personId;
+    private String personId;
 
     /** 会话id */
     private Long warnGuideConverId;

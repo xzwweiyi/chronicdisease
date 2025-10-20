@@ -216,4 +216,6 @@ public interface PatientRecordMapper
      * @return 超窗患者档案总数
      */
     Integer selectOverRecordCount(StatisticsParam statisticsParam);
+
+    List<PatientRecord> selectPatientRecordByResearchId(Long id);
 }

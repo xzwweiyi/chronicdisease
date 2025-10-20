@@ -297,4 +297,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+
+    <select id="selectResearchInfoByStatus2" parameterType="String" resultMap="ResearchInfoResult">
+        select id, dept_id, image_url, project_name, research_synopsis, patient_num, hospital_num, research_status,
+               disease_type_id, research_type, stage
+        from research_info
+        where id in (select distinct dict_value from sys_dict_data where dict_type='research') and del_flag='0'
+    </select>
+
+
+
 </mapper>

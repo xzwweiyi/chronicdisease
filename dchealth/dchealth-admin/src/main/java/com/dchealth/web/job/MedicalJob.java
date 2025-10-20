@@ -25,12 +25,10 @@ import com.dchealth.template.mapper.FollowPropertyMapper;
 import com.dchealth.web.job.form.FollowUpPlanJobHandlerForm;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
-import io.lettuce.core.ScriptOutputType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,18 +94,16 @@ public class MedicalJob {
         List<List<ResearchInfo>> splitList = SplitListUtils.splitList(researchInfoList, 10);
         //记录单个任务的执行次数
         CountDownLatch countDownLatch = new CountDownLatch(splitList.size());
-        for (List<ResearchInfo> splist : splitList) {
-            threadPoolExecutor.execute(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for(int i=0;i<splist.size();i++) {
-                        ResearchInfo r = splist.get(i);
-                        insertRecordJob(r.getId(),insertRecord);
+        for (List<ResearchInfo> subList : splitList) {
+            threadPoolExecutor.execute(() -> {
+                try {
+                    for (ResearchInfo r : subList) {
+                        insertRecordJob(r.getId(), insertRecord);
                     }
+                } finally {
+                    countDownLatch.countDown(); // 确保无论如何都会递减计数器
                 }
-            }));
-            // 任务个数 - 1, 直至为0时唤醒await()
-            countDownLatch.countDown();
+            });
         }
         try {
             // 让当前线程处于阻塞状态，直到锁存器计数为零
@@ -698,7 +694,27 @@ public class MedicalJob {
    }
 
 
-
+    /**
+     * 肥胖症基线数据拉取
+     */
+    @XxlJob("getBaseData")
+    public void getBaseData(){
+        XxlJobHelper.log("肥胖症基线数据拉取定时任务日期{}开始",DateUtils.getTime());
+        //进行中的队列
+        List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByStatus2();
+        if (researchInfos == null || researchInfos.isEmpty()){
+            XxlJobHelper.log("没查到相关队列信息");
+        }
+        for(ResearchInfo researchInfo:researchInfos){
+            //查询需要拉取的患者
+            List<PatientRecord> patientRecordList = patientRecordMapper.selectPatientRecordByResearchId(researchInfo.getId());
+            for (PatientRecord record : patientRecordList) {
+                patientRecordMapper.insertPatientRecord(record);
+                logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchInfo.getId(),record.getRecordId());
+                getFollowDate(record.getFollowId(),record.getPersonId(),researchInfo.getId(),record.getRecordId());
+            }
+        }
+    }
 
 
 }

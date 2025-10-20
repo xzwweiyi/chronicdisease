@@ -10,22 +10,27 @@ import com.dchealth.cms.mapper.CmsArticleMapper;
 import com.dchealth.common.annotation.DataScope;
 import com.dchealth.common.constant.FollowTipStatusConstants;
 import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.core.domain.entity.SysDictData;
 import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.core.domain.model.LoginUser;
 import com.dchealth.common.exception.ServiceException;
 import com.dchealth.common.utils.*;
 import com.dchealth.medical.domain.*;
+import com.dchealth.medical.domain.form.FollowWorkListCmdForm;
 import com.dchealth.medical.domain.vo.*;
 import com.dchealth.medical.mapper.*;
 import com.dchealth.medical.service.IFollowWorkService;
 import com.dchealth.medical.service.IPatientInfoService;
 import com.dchealth.research.domain.ResearchInfo;
+import com.dchealth.research.domain.SysPopNotice;
 import com.dchealth.research.domain.vo.ResearchDiseasesVO;
 import com.dchealth.research.domain.vo.ResearchInfoVo;
 import com.dchealth.research.mapper.ResearchDiseasesMapper;
 import com.dchealth.research.mapper.ResearchInfoMapper;
+import com.dchealth.research.mapper.SysPopNoticeMapper;
 import com.dchealth.research.service.IResearchInfoService;
 import com.dchealth.system.mapper.SysUserMapper;
+import com.dchealth.system.service.ISysDictDataService;
 import com.dchealth.template.domain.FMedicalForm;
 import com.dchealth.template.mapper.FMedicalFormMapper;
 import com.dchealth.user.domain.LeaveMessage;
@@ -40,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -97,6 +103,12 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
 
     @Autowired
     private TencentService tencentService;
+
+    @Autowired
+    private ISysDictDataService sysDictDataService;
+    
+    @Autowired
+    private SysPopNoticeMapper sysPopNoticeMapper;
 
     /**
      * 查询患者信息
@@ -212,7 +224,7 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 setSearchType(requestPatientInfo.getPatientStatus(), info);
 
                 // 添加留言功能 设置未读标识
-                List<LeaveMessage> leaveMessages = userLeaveMessageMapper.selectUpdateReadStatus(Long.valueOf(info.getPersonId()), Long.valueOf(info.getPersonId()));
+                List<LeaveMessage> leaveMessages = userLeaveMessageMapper.selectUpdateReadStatus(info.getPersonId(), info.getPersonId());
                 if (leaveMessages != null) {
                     int size = leaveMessages.size();
                     info.setMessageNums(size);
@@ -433,14 +445,55 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
             for (MpPerson baseInfo : patientBaseInfo) {
                 researchIds.add(baseInfo.getResearchId());
                 PatientInfo info = new PatientInfo();
-                info.setPersonId(baseInfo.getPersonId());
+//                info.setPersonId(baseInfo.getPersonId());
                 info.setResearchId(baseInfo.getResearchId());
+
                 List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(info);
-                if (patientInfos.size() == 0) {
+                Map<String, PatientInfo> infoMap = patientInfos.stream().collect(Collectors.toMap(PatientInfo::getPersonId, Function.identity()));
+
+
+                if (infoMap.get(baseInfo.getPersonId()) == null) {
                     PatientInfo patientInfo = new PatientInfo();
                     if (baseInfo.getAccountId() != null) {
                         patientInfo.setAccountId(Long.valueOf(baseInfo.getAccountId()));
                     }
+
+                    // 对肥胖门诊的队列进行判断 不同的手术、生活方式
+                    SysDictData sysDictData = new SysDictData();
+                    sysDictData.setDictType("patient_code");
+                    List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
+                    if (ObjectUtil.isNotEmpty(dictDataList)) {
+                        Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
+                        map.forEach((k, v) -> {
+                            if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊用药队列")) {
+                                // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                                if (patientInfos == null || patientInfos.isEmpty()) {
+                                    patientInfo.setPatientCode(String.format("D-%04d", 1));
+                                } else {
+                                    PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                    patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
+                                }
+
+                            } else if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
+                                // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                                if (patientInfos == null || patientInfos.isEmpty()) {
+                                    patientInfo.setPatientCode(String.format("L-%04d", 1));
+                                } else {
+                                    PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                    patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                                }
+                            } else if (baseInfo.getResearchId().toString().equals(v) && k.equals("肥胖门诊手术队列")) {
+                                // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                                if (patientInfos == null || patientInfos.isEmpty()) {
+                                    patientInfo.setPatientCode(String.format("S-%04d", 1));
+                                } else {
+                                    PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                    patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
+                                }
+                            }
+                        });
+                    }
+
                     patientInfo.setResearchId(baseInfo.getResearchId());
                     patientInfo.setPlanResearchId(baseInfo.getResearchId());
                     patientInfo.setPatientName(baseInfo.getPatientName());
@@ -501,6 +554,50 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
 
 
         return num;
+    }
+
+    private static PatientInfo getFirstPatientCode(List<PatientInfo> patientInfos) {
+        List<PatientInfo> result = patientInfos.stream()
+                .sorted((p1, p2) -> {
+                    // 处理 p1 的 code
+                    int num1;
+                    try {
+                        num1 = Integer.parseInt(p1.getPatientCode().split("-")[1]);
+                    } catch (Exception e) {
+                        num1 = 0; // 默认值
+                    }
+
+                    // 处理 p2 的 code
+                    int num2;
+                    try {
+                        num2 = Integer.parseInt(p2.getPatientCode().split("-")[1]);
+                    } catch (Exception e) {
+                        num2 = 0; // 默认值
+                    }
+
+                    return Integer.compare(num2, num1); // 降序排序
+                })
+                .collect(Collectors.toList());
+
+        PatientInfo patientInfo1 = result.get(0);
+        return patientInfo1;
+    }
+
+    /**
+     * 从编码中提取数字部分（如 "D-0001" → 1）
+     */
+    private static int extractNumber(String code) {
+        String numberStr = code.split("-")[1];  // 拆分后取第二部分
+        return Integer.parseInt(numberStr);      // 转为整数
+    }
+
+    /**
+     * 生成下一个编码（如 "D-0010" → "D-0011"）
+     */
+    private static String generateNextCode(String flag, String currentMaxCode) {
+        int currentNumber = extractNumber(currentMaxCode);
+        int nextNumber = currentNumber + 1;
+        return String.format(flag + "-%04d", nextNumber);  // 格式化为 4 位数字
     }
 
 
@@ -623,14 +720,55 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
         if (mpPerson != null) {
             researchIds.add(moveEnrollmentVo.getResearchId());
             PatientInfo info = new PatientInfo();
-            info.setPersonId(mpPerson.getPersonId());
+//                info.setPersonId(baseInfo.getPersonId());
             info.setResearchId(moveEnrollmentVo.getResearchId());
+
             List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(info);
-            if (patientInfos.isEmpty()) {
+            Map<String, PatientInfo> infoMap = patientInfos.stream().collect(Collectors.toMap(PatientInfo::getPersonId, Function.identity()));
+
+
+            if (infoMap.get(mpPerson.getPersonId()) == null) {
                 PatientInfo patientInfo = new PatientInfo();
                 if (moveEnrollmentVo.getAccountId() != null) {
-                    patientInfo.setAccountId(moveEnrollmentVo.getAccountId());
+                    patientInfo.setAccountId(Long.valueOf(moveEnrollmentVo.getAccountId()));
                 }
+
+                // 对肥胖门诊的队列进行判断 不同的手术、生活方式
+                SysDictData sysDictData = new SysDictData();
+                sysDictData.setDictType("patient_code");
+                List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
+                if (ObjectUtil.isNotEmpty(dictDataList)) {
+                    Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
+                    map.forEach((k, v) -> {
+                        if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊用药队列")) {
+                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                            if (patientInfos == null || patientInfos.isEmpty()) {
+                                patientInfo.setPatientCode(String.format("D-%04d", 1));
+                            } else {
+                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
+                            }
+
+                        } else if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
+                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                            if (patientInfos == null || patientInfos.isEmpty()) {
+                                patientInfo.setPatientCode(String.format("L-%04d", 1));
+                            } else {
+                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+                            }
+                        } else if (moveEnrollmentVo.getResearchId().toString().equals(v) && k.equals("肥胖门诊手术队列")) {
+                            // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+                            if (patientInfos == null || patientInfos.isEmpty()) {
+                                patientInfo.setPatientCode(String.format("S-%04d", 1));
+                            } else {
+                                PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+                                patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
+                            }
+                        }
+                    });
+                }
+
                 patientInfo.setResearchId(moveEnrollmentVo.getResearchId());
                 patientInfo.setPlanResearchId(moveEnrollmentVo.getResearchId());
                 patientInfo.setPatientName(mpPerson.getPersonName());
@@ -684,19 +822,106 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 moveEnrollmentVo.setHandleType("3");
                 moveEnrollmentVo.setResearchId(moveEnrollmentVo.getResearchId());
                 enrollmentHandle(moveEnrollmentVo, patientInfo);
+                log.info("患者pc端入组成功");
+
+                patientConfirmEnrollment(moveEnrollmentVo, patientInfo);
             }
 
 
         }
 
         //此处为了适配唐都要求在队列未发布的情况下需要患者可以填写基线因此创建需要的表
-        if(!CollectionUtils.isEmpty(researchIds)) {
-            researchIds.forEach(researchId -> {researchInfoService.createTableInAddUser(researchId);});
+        if (!CollectionUtils.isEmpty(researchIds)) {
+            researchIds.forEach(researchId -> {
+                researchInfoService.createTableInAddUser(researchId);
+            });
         }
 
         return num;
 
     }
+
+    /**
+     * 患者确认入组
+     * @param moveEnrollmentVo
+     * @param patientInfo
+     */
+    private void patientConfirmEnrollment(MoveEnrollmentVo moveEnrollmentVo, PatientInfo patientInfo) {
+        //患者确认入组
+        PatientInfo pio = patientInfoMapper.selectPatientInfoByPatientId(patientInfo.getPatientId());
+        if (pio == null) {
+            throw new ServiceException("该患者不存在");
+        }
+        if (!"2".equals(pio.getEnrollmentHandlerStatus())) {
+            //当前状态不许变更
+            log.info("邀请已失效, 原因: 当前处理状态"+pio.getEnrollmentHandlerStatus());
+            throw new ServiceException("邀请已失效");
+        }
+        //更新弹框消息
+        SysPopNotice query = new  SysPopNotice();
+        query.setUserId(String.valueOf(pio.getPatientId()));
+        query.setIsread(0);
+        query.setResearchId(moveEnrollmentVo.getResearchId());
+
+        List<SysPopNotice> sysPopNotices = sysPopNoticeMapper.selectSysPopNoticeList(query);
+        if(sysPopNotices.size() > 0){
+            SysPopNotice sysPopNotice = sysPopNotices.get(0);
+            sysPopNotice.setIsread(1);
+            sysPopNotice.setUpdateTime(new Date());
+            sysPopNotice.setId(sysPopNotice.getId());
+            sysPopNoticeMapper.updateSysPopNotice(sysPopNotice);
+        }else {
+            throw new ServiceException("邀请已被医生取消");
+        }
+
+        PatientInfo info1 = new PatientInfo();
+        info1.setPatientId(patientInfo.getPatientId());
+        info1.setEnrollmentResult("3");
+        //确认完成入组
+        info1.setEnrollmentStatus("1");
+        info1.setEnrollmentHandlerStatus("3");
+        info1.setEnrollmentTime(new Date());
+        info1.setResearchId(moveEnrollmentVo.getResearchId());
+        info1.setEnrollmentResultContent("确认入组");
+        //清理随访
+        clearFollowRecord(info1);
+//            generateBaseRecord(patientInfo);
+        patientInfoMapper.updatePatientInfo(info1);
+
+        PatientRecord prd = patientRecordMapper.selectOldByPatientId(patientInfo.getPatientId());
+
+        String msgContent = "您已加入随访队列，可查看队列详情";
+        prd.setAccountId(pio.getAccountId());
+        AccountNotice accountNotice = new AccountNotice(prd,msgContent,"11");
+        accountNoticeMapper.insertAccountNotice(accountNotice);
+    }
+
+    /**.
+     * 清理随访
+     *
+     * @param patientInfo
+     */
+    private void clearFollowRecord(PatientInfo patientInfo) {
+        List<PatientRecordTemplate> patientRecordTemplates =
+                patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(patientInfo.getResearchId());
+        if (patientRecordTemplates != null && !patientRecordTemplates.isEmpty()) {
+            for (PatientRecordTemplate patientRecordTemplate : patientRecordTemplates) {
+                if (patientRecordTemplate.getFollowNum() != 0) {
+                    FollowWorkListCmdForm followWorkListCmdForm = new FollowWorkListCmdForm();
+                    followWorkListCmdForm.setFollowId(patientRecordTemplate.getFollowId());
+                    followWorkListCmdForm.setResearchId(patientRecordTemplate.getResearchId());
+                    followWorkListCmdForm.setPatientId(patientInfo.getPatientId());
+                    if (followWorkListCmdForm.getFollowId()!=null
+                            && followWorkListCmdForm.getResearchId()!=null
+                            && followWorkListCmdForm.getPatientId()!=null){
+                        patientRecordMapper.deletePatientRecord(followWorkListCmdForm);
+                    }
+                }
+            }
+
+        }
+    }
+    
 
     @Override
     public List<EnrollmentListVo> enrollmentList(MoveEnrollmentVo moveEnrollmentVo) {
@@ -709,7 +934,7 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
             return new ArrayList<>();
         }
         List<EnrollmentListVo> results = new ArrayList<>();
-        researchInfos.forEach(item ->{
+        researchInfos.forEach(item -> {
             EnrollmentListVo vo = new EnrollmentListVo();
             vo.setResearchId(item.getId());
             vo.setProjectName(item.getProjectName());

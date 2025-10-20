@@ -26,7 +26,7 @@ public class UserLeaveMessageController extends BaseController {
 
 //    @PreAuthorize("@ss.hasPermi('system:message:query')")
     @GetMapping(value = "/{personId}")
-    public AjaxResult getInfo(@PathVariable("personId") Long personId)
+    public AjaxResult getInfo(@PathVariable("personId") String personId)
     {
         LeaveMessage leaveMessage = new LeaveMessage();
         leaveMessage.setPersonId(personId);
@@ -68,7 +68,7 @@ public class UserLeaveMessageController extends BaseController {
      * 更新聊天消息状态
      */
     @GetMapping("/updateReadStatus/{personId}")
-    public AjaxResult updateReadStatus(@PathVariable("personId") Long personId) {
+    public AjaxResult updateReadStatus(@PathVariable("personId") String personId) {
         return AjaxResult.success(leaveMessageService.updateReadStatus(personId));
     }
 

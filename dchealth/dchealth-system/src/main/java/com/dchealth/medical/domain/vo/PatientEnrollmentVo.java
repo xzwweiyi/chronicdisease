@@ -90,4 +90,6 @@ public class PatientEnrollmentVo {
      */
     private Long visitOccurrenceId;
 
+    private String patientCode;
+
 }

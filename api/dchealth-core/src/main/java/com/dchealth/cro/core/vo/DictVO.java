@@ -11,4 +11,6 @@ public class DictVO {
 
 	private String orderNum;
 
+	private String dictLabel;
+
 }
