@@ -355,6 +355,8 @@
         </if>
     </select>
 
+    <!--随访超窗待处理的具体患者信息-->
+
     <select id="selectFollowWorkPatientRecordList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm"
             resultMap="FollowWorkListVOResult">
         select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
@@ -423,6 +425,8 @@
         <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
     </select>
 
+    <!-- 随访超窗人数 -->
+
     <select id="selectFollowWorkPatientRecordListNew"
             parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
         select r.research_id, r.follow_status, r.warn_status, r.over_time_status
@@ -430,6 +434,7 @@
                  INNER JOIN patient_info p on p.patient_id = r.patient_id
                  INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
         where prt.follow_num > 0
+        and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
 
     </select>
 
@@ -1066,6 +1071,5 @@
         WHERE pr.research_id = #{researchId} and pr.name='基线'
           and pr.stage_num=1 and pr.stage_add_num=1 and is_edit!=1
     </select>
-
 
 </mapper>

@@ -29,6 +29,36 @@ public interface IFollowWorkService {
      */
     public FollowWorkTree tree(Long userId);
 
+//    //lys
+//    /**
+//     * 任务树根节点
+//     * @return
+//     */
+//    FollowWorkTree treeRoot(Long userId);
+//
+//    /**
+//     * 任务树子节点
+//     * @param userId
+//     * @param parentNodeId
+//     * @return
+//     */
+//    List<FollowWorkTree> treeChildren(Long userId, String parentNodeId);
+//    //lys
+
+    //lys2
+    /**
+     * 根节点和病种节点树
+     * @return
+     */
+    public FollowWorkTree rootTree(Long userId);
+
+    /**
+     * 根据病种ID加载子树
+     * @return
+     */
+    public FollowWorkTree diseaseTree(Long userId, Long diseaseId);
+    //lys2
+
     /**
      * 评价任务树
      * @return

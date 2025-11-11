@@ -81,25 +81,95 @@ public class FollowWorkController extends BaseController {
 		return AjaxResult.success(followWorkService.saveOrUpdatePatientRecord(detailsForm,loginUser));
 	}
 
-	/**
-	 * 随访任务树
-	 * 
+//	/**
+//	 * 随访任务树
+//	 *
+//	 * @return
+//	 */
+//	@GetMapping("/tree")
+//	public AjaxResult tree() {
+//		Long userId = getUserId();
+//		FollowWorkTree followWorkTree = redisCache.getCacheObject(Constants.FOLLOW_TREE_KEY + userId);
+////		FollowWorkTree followWorkTree = null;
+//
+//		if (Objects.isNull(followWorkTree)){
+//			logger.info("followWorkTree:"+userId+"查询数据库");
+//			followWorkTree = followWorkService.tree(userId);
+//			redisCache.setCacheObject(Constants.FOLLOW_TREE_KEY + userId,followWorkTree);
+//		}
+//		return AjaxResult.success(followWorkTree);
+//
+//	}
+
+	/*//lys
+	*//**
+	 * 随访任务树节点子节点
+	 *
 	 * @return
-	 */
-	@GetMapping("/tree")
-	public AjaxResult tree() {
+	 *//*
+	@GetMapping("/tree/children")
+	public AjaxResult treeChildren(@RequestParam String parentNodeId) {
+		Long userId = getUserId();
+		List<FollowWorkTree> children = followWorkService.treeChildren(userId, parentNodeId);
+		return AjaxResult.success(children);
+	}
+
+	*//**
+	 * 随访任务树根节点
+	 *
+	 * @return
+	 *//*
+	@GetMapping("/tree/root")
+	public AjaxResult treeRoot() {
 		Long userId = getUserId();
 		FollowWorkTree followWorkTree = redisCache.getCacheObject(Constants.FOLLOW_TREE_KEY + userId);
-//		FollowWorkTree followWorkTree = null;
-
+		//FollowWorkTree followWorkTree = null;
 		if (Objects.isNull(followWorkTree)){
 			logger.info("followWorkTree:"+userId+"查询数据库");
-			followWorkTree = followWorkService.tree(userId);
-			redisCache.setCacheObject(Constants.FOLLOW_TREE_KEY + userId,followWorkTree);
+			followWorkTree = followWorkService.treeRoot(userId);
+			redisCache.setCacheObject(Constants.FOLLOW_TREE_KEY + userId, followWorkTree);
 		}
 		return AjaxResult.success(followWorkTree);
-
 	}
+	//lys*/
+	//lys2
+	/**
+	 * 随访任务树根节点和病种节点
+	 *
+	 * @return
+	 */
+	@GetMapping("/rootTree")
+	public AjaxResult rootTree() {
+		Long userId = getUserId();
+		FollowWorkTree followWorkTree = redisCache.getCacheObject(Constants.FOLLOW_TREE_ROOT_KEY + userId);
+
+		if (Objects.isNull(followWorkTree)){
+			logger.info("followWorkTree root:"+userId+"查询数据库");
+			followWorkTree = followWorkService.rootTree(userId);
+			redisCache.setCacheObject(Constants.FOLLOW_TREE_ROOT_KEY + userId, followWorkTree);
+		}
+		return AjaxResult.success(followWorkTree);
+	}
+
+	/**
+	 * 根据病种ID加载子树
+	 *
+	 * @return
+	 */
+	@GetMapping("/diseaseTree/{diseaseId}")
+	public AjaxResult diseaseTree(@PathVariable Long diseaseId) {
+		Long userId = getUserId();
+		String cacheKey = Constants.FOLLOW_TREE_DISEASE_KEY + userId + ":" + diseaseId;
+		FollowWorkTree diseaseSubTree = redisCache.getCacheObject(cacheKey);
+
+		if (Objects.isNull(diseaseSubTree)){
+			logger.info("diseaseTree:"+userId+"-"+diseaseId+"查询数据库");
+			diseaseSubTree = followWorkService.diseaseTree(userId, diseaseId);
+			redisCache.setCacheObject(cacheKey, diseaseSubTree);
+		}
+		return AjaxResult.success(diseaseSubTree);
+	}
+	//lys2
 
 	/**
 	 * 评价管理树

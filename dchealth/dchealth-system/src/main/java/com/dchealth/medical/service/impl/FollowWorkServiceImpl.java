@@ -579,6 +579,356 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         return recordDetailVo;
     }
 
+//    //lys
+//    @Override
+//    public FollowWorkTree treeRoot(Long userId) {
+//        try {
+//            log.info("加载用户{}的随访树根节点", userId);
+//            long startTime = System.currentTimeMillis();
+//            SysUser sysUser = sysUserMapper.selectUserById(userId);
+//            List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
+//            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+//                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+//            } else {
+//                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+//            }
+//
+//            List<ResearchInfo> researchInfos = new ArrayList<>();
+//            TreeForm treeForm = new TreeForm();
+//            treeForm.setType("1");
+//            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+//                treeForm.setDeptId(sysUser.getDeptId());
+//                researchInfos = researchInfoMapper.selectResearchInfoByAuth(treeForm);
+//            } else {
+//                treeForm.setUserId(userId);
+//                researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
+//            }
+//            log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+//
+//            // 只加载第一层数据，不加载详细的任务数据
+//            Map<String, List<FollowWorkListVO>> emptyMap = new HashMap<>();
+//            FollowWorkTree followWorkTree = new FollowWorkTree(researchDiseasesList, researchInfos, emptyMap, true);
+//            log.info("to generate root tree over cost time: {}ms", (System.currentTimeMillis() - startTime));
+//            return followWorkTree;
+//        } catch (Exception e) {
+//            log.error("加载随访树根节点异常", e);
+//            throw new RuntimeException(e);
+//        }
+//    }
+//
+//    @Override
+//    public List<FollowWorkTree> treeChildren(Long userId, String parentNodeId) {
+//        try {
+//            log.info("加载用户{}的随访树子节点，父节点ID: {}", userId, parentNodeId);
+//            long startTime = System.currentTimeMillis();
+//
+//            // 解析父节点ID获取层级信息
+//            String[] nodeParts = parentNodeId.split("_");
+//
+//            // 根据父节点层级决定加载哪些数据
+//            if (nodeParts.length == 1 && "0".equals(nodeParts[0])) {
+//                // 根节点的子节点 - 疾病节点
+//                return loadDiseaseLevelChildren(userId, parentNodeId);
+//            } else if (nodeParts.length == 2) {
+//                // 疾病节点的子节点 - 队列节点
+//                return loadResearchLevelChildren(userId, parentNodeId, Long.parseLong(nodeParts[1]));
+//            } else if (nodeParts.length == 3) {
+//                // 队列节点的子节点 - 任务类型节点
+//                return loadTaskTypeLevelChildren(userId, parentNodeId, Long.parseLong(nodeParts[2]));
+//            } else if (nodeParts.length == 4) {
+//                // 任务类型节点的子节点 - 状态节点
+//                return loadStatusLevelChildren(userId, parentNodeId, nodeParts[3], Long.parseLong(nodeParts[2]));
+//            }
+//
+//            return new ArrayList<>();
+//        } catch (Exception e) {
+//            log.error("加载随访树子节点异常", e);
+//            throw new RuntimeException(e);
+//        }
+//    }
+//
+//    private List<FollowWorkTree> loadDiseaseLevelChildren(Long userId, String parentNodeId) {
+//        SysUser sysUser = sysUserMapper.selectUserById(userId);
+//        List<ResearchDiseases> researchDiseasesList = "1".equals(sysUser.getIsAlldeptResearch())
+//                ? researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId())
+//                : researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+//
+//        return researchDiseasesList.stream()
+//                .map(disease -> new FollowWorkTree(parentNodeId, disease))
+//                .collect(Collectors.toList());
+//    }
+//
+//    private List<FollowWorkTree> loadResearchLevelChildren(Long userId, String parentNodeId, Long diseaseId) {
+//        SysUser sysUser = sysUserMapper.selectUserById(userId);
+//        List<ResearchInfo> researchInfos = new ArrayList<>();
+//        TreeForm treeForm = new TreeForm();
+//        treeForm.setType("1");
+//
+//        if ("1".equals(sysUser.getIsAlldeptResearch())) {
+//            treeForm.setDeptId(sysUser.getDeptId());
+//            researchInfos = researchInfoMapper.selectResearchInfoByAuth(treeForm);
+//        } else {
+//            treeForm.setUserId(userId);
+//            researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
+//        }
+//
+//        // 过滤当前疾病下的队列
+//        List<ResearchInfo> filteredResearch = researchInfos.stream()
+//                .filter(info -> diseaseId.equals(info.getDiseaseTypeId()))
+//                .collect(Collectors.toList());
+//
+//        // 使用 FollowWorkTree 的静态方法创建队列节点
+//        return FollowWorkTree.createDiseaseChildren(parentNodeId, filteredResearch);
+//    }
+//
+//    private List<FollowWorkTree> loadTaskTypeLevelChildren(Long userId, String parentNodeId, Long researchId) {
+//        // 获取队列的研究状态
+//        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
+//        if (researchInfo == null) {
+//            return new ArrayList<>();
+//        }
+//
+//        // 异步加载任务数据
+//        Map<String, List<FollowWorkListVO>> mapInfo = loadTaskData(userId, researchId);
+//
+//        // 使用 FollowWorkTree 的静态方法创建任务类型节点
+//        return FollowWorkTree.createResearchChildren(parentNodeId, researchId, researchInfo.getResearchStatus(), mapInfo);
+//    }
+//
+//    private List<FollowWorkTree> loadStatusLevelChildren(Long userId, String parentNodeId, String nodeType, Long researchId) {
+//        // 使用 FollowWorkTree 的静态方法创建状态节点
+//        return FollowWorkTree.createTaskTypeChildren(parentNodeId, nodeType, researchId);
+//    }
+//
+//    private Map<String, List<FollowWorkListVO>> loadTaskData(Long userId, Long researchId) {
+//        long startTime = System.currentTimeMillis();
+//
+//        try {
+//            // 使用异步方式加载任务数据
+//            Future<List<FollowWorkListVO>> enrollmentFuture = executorService.submit(() -> {
+//                FollowWorkListForm form = new FollowWorkListForm();
+//                form.setEnrollmentHandlerStatus(1);
+//                form.setAllocatedStatus(0);
+//                return patientInfoMapper.enrollmentListNew(form);
+//            });
+//
+//            Future<List<FollowWorkListVO>> allFuture = executorService.submit(() ->
+//                    selectFollowWorkPatientRecordListNew()
+//            );
+//
+//            Future<List<FollowWorkListVO>> allocatedFuture = executorService.submit(() -> {
+//                FollowWorkListForm form = new FollowWorkListForm();
+//                form.setAllocatedHandlerStatus("1");
+//                SysUser sysUser = sysUserMapper.selectUserById(userId);
+//                form.setDeptId(sysUser.getDeptId());
+//                return patientInfoMapper.allocatedList(form);
+//            });
+//
+//            Future<List<FollowWorkListVO>> baseFuture = executorService.submit(() ->
+//                    selectFollowWorkBasePatientRecordList()
+//            );
+//
+//            // 获取结果
+//            List<FollowWorkListVO> base = baseFuture.get();
+//            List<FollowWorkListVO> all = allFuture.get();
+//            List<FollowWorkListVO> handle = new ArrayList<>();
+//            List<FollowWorkListVO> over = new ArrayList<>();
+//            List<FollowWorkListVO> warn = new ArrayList<>();
+//
+//            for (FollowWorkListVO vo : all) {
+//                if ("1".equals(vo.getFollowStatus())) {
+//                    handle.add(vo);
+//                }
+//                if ("1".equals(vo.getOverTimeStatus()) && "0".equals(vo.getFollowStatus())) {
+//                    over.add(vo);
+//                }
+//                if ("1".equals(vo.getWarnStatus())) {
+//                    warn.add(vo);
+//                }
+//            }
+//
+//            List<FollowWorkListVO> logoutAudit = patientInfoMapper.findAuditList();
+//            List<FollowWorkListVO> follow = enrollmentFuture.get();
+//            List<FollowWorkListVO> allocateds = allocatedFuture.get();
+//
+//            Map<String, List<FollowWorkListVO>> map = new HashMap<>();
+//            map.put("follow", follow);
+//            map.put("handle", handle);
+//            map.put("over", over);
+//            map.put("warn", warn);
+//            map.put("allocated", allocateds);
+//            map.put("baseline", base);
+//            map.put("logoutAudit", logoutAudit);
+//
+//            log.info("load task data for research {} cost time: {}ms", researchId, (System.currentTimeMillis() - startTime));
+//            return map;
+//        } catch (Exception e) {
+//            log.error("加载任务数据异常", e);
+//            return new HashMap<>();
+//        }
+//    }
+//    //lys
+
+    //lys2
+    @Override
+    public FollowWorkTree rootTree(Long userId) {
+        try {
+            log.info("加载用户{}的随访根树", userId);
+            long startTime = System.currentTimeMillis();
+            SysUser sysUser = sysUserMapper.selectUserById(userId);
+            List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
+            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+            } else {
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+            }
+
+            // 只构建根节点和病种节点，不加载队列和任务数据
+            FollowWorkTree rootTree = new FollowWorkTree();
+            rootTree.setNodeId("0");
+            rootTree.setParentNodeId("0");
+            rootTree.setNodeName("随访任务");
+            rootTree.setNodeLevel("0");
+            rootTree.setNodeLevelType("0");
+            rootTree.setNodeType("0");
+            rootTree.setNodeTypeStatus("0");
+
+            // 构建病种节点
+            List<FollowWorkTree> diseaseNodes = researchDiseasesList.stream()
+                    .map(disease -> {
+                        FollowWorkTree diseaseNode = new FollowWorkTree();
+                        diseaseNode.setNodeId("0_" + disease.getDiseaseId().longValue());
+                        diseaseNode.setParentNodeId("0");
+                        diseaseNode.setNodeName(disease.getDiseaseName());
+                        diseaseNode.setNodeLevel("1");
+                        diseaseNode.setNodeLevelType("1");
+                        diseaseNode.setNodeType("0");
+                        diseaseNode.setNodeTypeStatus("0");
+                        diseaseNode.setHasChildren(true); // 标记有子节点需要懒加载
+                        return diseaseNode;
+                    })
+                    .collect(Collectors.toList());
+
+
+            List<FollowWorkTree> allNodes = new ArrayList<>();
+            allNodes.addAll(diseaseNodes);
+
+            rootTree.setChildrenList(allNodes);
+
+            log.info("根树构建完成 cost time: {}ms", (System.currentTimeMillis() - startTime));
+            return rootTree;
+        } catch (Exception e) {
+            log.error("构建根树异常", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public FollowWorkTree diseaseTree(Long userId, Long diseaseId) {
+        try {
+            log.info("加载用户{}病种{}的子树", userId, diseaseId);
+            long startTime = System.currentTimeMillis();
+            SysUser sysUser = sysUserMapper.selectUserById(userId);
+
+            // 获取指定病种信息
+            ResearchDiseases disease = researchDiseasesMapper.selectResearchDiseasesByDiseaseId(diseaseId);
+            if (disease == null) {
+                throw new RuntimeException("病种不存在");
+            }
+
+            List<ResearchInfo> researchInfos = new ArrayList<>();
+            TreeForm treeForm = new TreeForm();
+            treeForm.setType("1");
+            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+                treeForm.setDeptId(sysUser.getDeptId());
+                researchInfos = researchInfoMapper.selectResearchInfoByAuth(treeForm);
+            } else {
+                treeForm.setUserId(userId);
+                researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
+            }
+
+            // 过滤出当前病种的队列
+            researchInfos = researchInfos.stream()
+                    .filter(info -> info.getDiseaseTypeId().equals(diseaseId))
+                    .collect(Collectors.toList());
+
+            log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+
+            // 异步获取任务状态数据（与原来tree方法中的相同）
+            Future<List<FollowWorkListVO>> submit = executorService.submit(() -> {
+                FollowWorkListForm followWorkListForm = new FollowWorkListForm();
+                followWorkListForm.setEnrollmentHandlerStatus(1);
+                followWorkListForm.setAllocatedStatus(0);
+                List<FollowWorkListVO> follow = patientInfoMapper.enrollmentListNew(followWorkListForm);
+                log.info("1-到待处理患者查询完, count: {}条 cost time: {}ms", follow.size(), (System.currentTimeMillis() - startTime));
+                return follow;
+            });
+
+            Future<List<FollowWorkListVO>> submit1 = executorService.submit(() -> {
+                List<FollowWorkListVO> all = selectFollowWorkPatientRecordListNew();
+                log.info("2-到查询所有档案完, count: {}条, cost time: {}ms", all.size(), (System.currentTimeMillis() - startTime));
+                return all;
+            });
+
+            Future<List<FollowWorkListVO>> submit2 = executorService.submit(() -> {
+                FollowWorkListForm form = new FollowWorkListForm();
+                form.setAllocatedHandlerStatus("1");
+                form.setDeptId(sysUser.getDeptId());
+                List<FollowWorkListVO> allocated = patientInfoMapper.allocatedList(form);
+                log.info("3-到查入组状态待处理完, count: {}条,cost time: {}ms", allocated.size(), (System.currentTimeMillis() - startTime));
+                return allocated;
+            });
+
+            Future<List<FollowWorkListVO>> submit3 = executorService.submit(() -> {
+                List<FollowWorkListVO> base = selectFollowWorkBasePatientRecordList();
+                log.info(" 查询所有基线, count: {}条, cost time: {}ms", base.size(), (System.currentTimeMillis() - startTime));
+                return base;
+            });
+
+            List<FollowWorkListVO> base = submit3.get();
+            List<FollowWorkListVO> handle = new ArrayList<>();
+            List<FollowWorkListVO> over = new ArrayList<>();
+            List<FollowWorkListVO> warn = new ArrayList<>();
+            List<FollowWorkListVO> all = submit1.get();
+            for (FollowWorkListVO followWorkListVO : all) {
+                if ("1".equals(followWorkListVO.getFollowStatus())) {
+                    handle.add(followWorkListVO);
+                }
+                if ("1".equals(followWorkListVO.getOverTimeStatus()) && "0".equals(followWorkListVO.getFollowStatus())) {
+                    over.add(followWorkListVO);
+                }
+                if ("1".equals(followWorkListVO.getWarnStatus())) {
+                    warn.add(followWorkListVO);
+                }
+            }
+
+            List<FollowWorkListVO> logoutAudit = patientInfoMapper.findAuditList();
+            List<FollowWorkListVO> follow = submit.get();
+            List<FollowWorkListVO> allocateds = submit2.get();
+
+            Map<String, List<FollowWorkListVO>> map = new HashMap<>();
+            map.put("follow", follow);
+            map.put("handle", handle);
+            map.put("over", over);
+            map.put("warn", warn);
+            map.put("allocated", allocateds);
+            map.put("baseline", base);
+            map.put("logoutAudit", logoutAudit);
+            log.info("to map handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+
+            // 构建病种子树
+            List<ResearchDiseases> diseaseList = Collections.singletonList(disease);
+            FollowWorkTree diseaseTree = new FollowWorkTree(diseaseList, researchInfos, map);
+            log.info("病种{}子树构建完成 cost time: {}ms", diseaseId, (System.currentTimeMillis() - startTime));
+            return diseaseTree;
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("构建病种子树异常", e);
+            throw new RuntimeException(e);
+        }
+    }
+    //lys2
+
+
     @Override
     public FollowWorkTree tree(Long userId) {
         try {
