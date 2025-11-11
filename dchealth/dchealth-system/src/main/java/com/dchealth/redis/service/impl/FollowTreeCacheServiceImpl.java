@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 @Component
 public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
 
@@ -26,7 +28,7 @@ public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
         return null;
     }
 
-    @Override
+    /*@Override
     public Boolean cacheFollowTree(Long userId) {
         log.info("cacheFollowTree");
         try {
@@ -41,10 +43,44 @@ public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
             throw new RuntimeException();
         }
         return Boolean.TRUE;
-    }
+    }*/
 
     @Override
     public Boolean clearCacheFollowTree() {
         return null;
+    }
+
+//    @Override
+//    public Boolean cacheFollowTree(Long userId) {
+//        log.info("cacheFollowTree");
+//        try {
+//            // 改为只缓存根节点
+//            FollowWorkTree followerWorkTree = followWorkService.treeRoot(userId);
+//            redisCache.setCacheObject(Constants.FOLLOW_TREE_KEY + userId, followerWorkTree);
+//        }catch(Exception ex){
+//            log.info("随访树任务异常:{}", ex.getMessage());
+//            throw new RuntimeException();
+//        }
+//        return Boolean.TRUE;
+//    }
+//lys2
+    @Override
+    public Boolean cacheFollowTree(Long userId) {
+        log.info("cacheFollowTree");
+        try {
+            // 缓存根树
+            FollowWorkTree rootTree = followWorkService.rootTree(userId);
+            redisCache.setCacheObject(Constants.FOLLOW_TREE_ROOT_KEY + userId, rootTree);
+
+            // 清除病种子树缓存
+            Collection<String> diseaseKeys = redisCache.keys(Constants.FOLLOW_TREE_DISEASE_KEY + userId + ":*");
+            for (String diseaseKey : diseaseKeys) {
+                redisCache.deleteObject(diseaseKey);
+            }
+        }catch(Exception ex){
+            log.info("随访树任务异常:{}", ex.getMessage());
+            throw new RuntimeException();
+        }
+        return Boolean.TRUE;
     }
 }

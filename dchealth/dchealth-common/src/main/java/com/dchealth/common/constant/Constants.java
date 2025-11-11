@@ -203,4 +203,17 @@ public class Constants
      */
     protected static final String[] JOB_ERROR_STR = { "java.net.URL", "javax.naming.InitialContext", "org.yaml.snakeyaml",
             "org.springframework", "org.apache", "com.dchealth.common.utils.file" };
+
+
+    //lys2
+    /**
+     * 随访树根节点缓存Key
+     */
+    public static final String FOLLOW_TREE_ROOT_KEY = "follow_tree_root:";
+
+    /**
+     * 病种子树缓存Key
+     */
+    public static final String FOLLOW_TREE_DISEASE_KEY = "follow_tree_disease:";
+    //lys2
 }
