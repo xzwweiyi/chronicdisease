@@ -4,7 +4,6 @@ package com.dchealth.cro.account.form.req;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -19,7 +18,7 @@ public class UserMessageListReq {
      * 档案ID
      */
 //    @NotNull(message = "患者ID不能为空")
-    private Long personId;
+    private String personId;
 
     /** 会话id */
     private Long warnGuideConverId;

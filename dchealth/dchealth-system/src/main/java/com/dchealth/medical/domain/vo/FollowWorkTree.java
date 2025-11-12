@@ -1148,10 +1148,6 @@ import com.dchealth.research.domain.ResearchInfo;
 import lombok.Data;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -1218,6 +1214,12 @@ public class FollowWorkTree {
      */
     private Boolean hasChildren = false;
 
+    /**
+     * 病种id
+     * @return
+     */
+    private Long diseaseId;
+
     // 添加getter和setter
     public Boolean getHasChildren() {
         return hasChildren;
@@ -1256,55 +1258,33 @@ public class FollowWorkTree {
         this.setHandleNum(sum);
     }
 
-//    public FollowWorkTree(List<ResearchDiseases> researchDiseases, List<ResearchInfo> researchInfos, Map<String,List<FollowWorkListVO>> mapInfo){
-//        this.setNodeId("0");
-//        this.setParentNodeId("0");
-//        this.setNodeName("随访任务");
-//        this.setNodeLevel("0");
-//        this.setNodeLevelType("0");
-//        this.setNodeType("0");
-//        this.setNodeTypeStatus("0");
-//
-//        Map<Long, List<ResearchInfo>> researchMap = null;
-//        if (researchInfos != null && !researchInfos.isEmpty()){
-//            researchMap = researchInfos.stream().collect(Collectors.groupingBy(ResearchInfo :: getDiseaseTypeId));
-//        }
-//        final Map<Long, List<ResearchInfo>> map = researchMap;
-//        if (researchDiseases != null && !researchDiseases.isEmpty()){
-//            List<FollowWorkTree> level2 = researchDiseases.stream().map(x->{
-//                FollowWorkTree followWorkTree = new FollowWorkTree(this.getNodeId(), x);
-//                List<ResearchInfo> researchInfoList = null;
-//                if (map != null){
-//                    researchInfoList = map.get(x.getDiseaseId());
-//                    if (researchInfoList != null && !researchInfoList.isEmpty()){
-//                        List<FollowWorkTree> children = researchInfoList.stream().map(y->new FollowWorkTree(followWorkTree.getNodeId(), y, mapInfo)).collect(Collectors.toList());
-//                        followWorkTree.setChildrenList(children);
-//                        int sum = children.stream().filter(vo ->vo.getHandleNum() != null).mapToInt(FollowWorkTree::getHandleNum).sum();
-//                        followWorkTree.setHandleNum(sum);
-//                    }
-//                }
-//                return followWorkTree;
-//            }).collect(Collectors.toList());
-//            this.childrenList = level2;
-//        }
+    public FollowWorkTree(List<ResearchDiseases> researchDiseases,
+                          List<ResearchInfo> researchInfos,
+                          Map<String, List<FollowWorkListVO>> mapInfo, String m) {
 
-    /// /        FollowWorkTree pend = new FollowWorkTree();
-    /// /        pend.setNodeId(this.nodeId+"_01");
-    /// /        pend.setParentNodeId(this.nodeId);
-    /// /        pend.setNodeName("待分配患者");
-    /// /        pend.setNodeLevel("1");
-    /// /        pend.setNodeLevelType("2");
-    /// /        pend.setNodeType("0");
-    /// /        pend.setNodeTypeStatus("0");
-    /// /        pend.setChildrenList(createNodeLevel4(pend.getNodeId(),"2", "2", "0", new String[]{"1","3"}, null));
-    /// /        if (this.childrenList == null){
-    /// /            this.childrenList = new ArrayList<>();
-    /// /        }
-    /// /        //待分配患者数量-待处理
-    /// /        List<FollowWorkListVO> allocated = mapInfo.get("allocated");
-    /// /        pend.setHandleNum(allocated != null ? allocated.size() : null);
-    /// /        this.childrenList.add(pend);
-//    }
+//
+//        // 提前处理researchInfos分组，使用ConcurrentHashMap提高并发性能
+////        final Map<Long, List<ResearchInfo>> researchMap = researchInfos.stream()
+////                .filter(Objects::nonNull)
+////                .collect(Collectors.groupingByConcurrent(ResearchInfo::getDiseaseTypeId));
+//
+//        // 优化疾病节点处理
+//        this.childrenList = researchDiseases.stream()
+//                .filter(Objects::nonNull)
+//                .map(disease -> createDiseaseNode(disease, researchMap, mapInfo))
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.toList());
+//
+        List<FollowWorkTree> children = researchInfos.stream()
+                .map(info -> new FollowWorkTree(m, info, mapInfo))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        this.handleNum = children.stream().mapToInt(FollowWorkTree::getHandleNum).sum();
+
+        this.childrenList = children;
+
+    }
 
     // 优化树构建的构造函数
     public FollowWorkTree(List<ResearchDiseases> researchDiseases,

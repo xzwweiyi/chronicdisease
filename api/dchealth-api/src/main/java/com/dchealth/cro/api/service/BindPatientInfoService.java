@@ -70,7 +70,6 @@ public class BindPatientInfoService {
     @Resource
     private PatientInfoService patientInfoService;
 
-
     @Resource
     private AppLoginRecordMapper appLoginRecordMapper;
 

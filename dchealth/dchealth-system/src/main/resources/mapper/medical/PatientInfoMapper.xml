@@ -427,6 +427,7 @@
         <if test="allocatedStatus != null "> and p.allocated_status = #{allocatedStatus}</if>
         <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and p.account_id = 0 </if>
         <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and p.account_id != 0 </if>
+        <if test="diseaseTypeId != null "> and i.disease_type_id = #{diseaseTypeId}</if>
     </select>
 
     <select id="allocatedList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
@@ -437,6 +438,7 @@
         where p.allocated_status='1' and p.allocated_handler_status = #{allocatedHandlerStatus}
         <if test="researchId != null "> and p.plan_research_id = #{researchId}</if>
         <if test="deptId != null and deptId!='100'.toString() "> and p.dept_id = #{deptId} and i.dept_id = #{deptId}</if>
+        <if test="diseaseTypeId != null "> and i.disease_type_id = #{diseaseTypeId}</if>
     </select>
 
     <insert id="insertPatientInfo" parameterType="PatientInfo" useGeneratedKeys="true" keyProperty="patientId">

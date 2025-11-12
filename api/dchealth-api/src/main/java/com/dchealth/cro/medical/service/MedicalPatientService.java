@@ -71,6 +71,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -162,7 +163,8 @@ public class MedicalPatientService {
 
     @Value("${image.newDomain}")
     private String newDomain;
-
+    @Autowired
+    private UrlBasedViewResolver urlBasedViewResolver;
 
 
     /**
@@ -1256,8 +1258,26 @@ public class MedicalPatientService {
                             patientRecordFiles.stream().filter(f -> f.getMedicalFormId() != null).collect(Collectors.groupingBy(PatientRecordFiles::getMedicalFormId, Collectors.mapping(PatientRecordFiles::getImageUrl, Collectors.toList())));
                     if (filesMap != null && !filesMap.isEmpty()) {//图片
                         formVOS.stream().filter(f -> "2".equals(f.getFormType())).forEach(f -> {
+
+
                             if (filesMap.containsKey(f.getMedicalFormId())) {
-                                f.setImageUrls(filesMap.get(f.getMedicalFormId()));
+
+
+                                List<String> urlBasedViewResolver = filesMap.get(f.getMedicalFormId());
+
+                                List<String> images = new ArrayList<>();
+                                for (String url : urlBasedViewResolver) {
+                                    if (StrUtil.isNotEmpty(url) && url.contains(oldDomain)) {
+                                        String image = url.replace(oldDomain, newDomain);
+                                        images.add(image);
+                                    }
+                                }
+
+                                if (images.isEmpty()) {
+                                    f.setImageUrls(urlBasedViewResolver);
+                                } else {
+                                    f.setImageUrls(images);
+                                }
                             }
                         });
                     }
@@ -1361,7 +1381,23 @@ public class MedicalPatientService {
                 for (MedicalPropertyVO p : propertyVOS) {
                     if (PropertyType.eq(p.getPropertyType(), PropertyType.UPLOAD)) {
                         if (filesMap != null && !filesMap.isEmpty() && filesMap.containsKey(p.getId())) {
-                            p.setImageUrls(filesMap.get(p.getId()));
+
+                            List<String> urlBasedViewResolver = filesMap.get(p.getId());
+
+                            List<String> images = new ArrayList<>();
+                            for (String url : urlBasedViewResolver) {
+                                if (StrUtil.isNotEmpty(url) && url.contains(oldDomain)) {
+                                    String image = url.replace(oldDomain, newDomain);
+                                    images.add(image);
+                                }
+                            }
+                            if (images.isEmpty()) {
+                                p.setImageUrls(urlBasedViewResolver);
+                            } else {
+                                p.setImageUrls(images);
+                            }
+
+
                         }
                     } else {
                         if (dp != null && !dp.isEmpty() && dp.containsKey(p.getId())) {

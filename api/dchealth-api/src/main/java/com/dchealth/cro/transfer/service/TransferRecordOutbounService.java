@@ -161,7 +161,7 @@ public class TransferRecordOutbounService {
 
     private String uploadImFile(InputStream is,String fileName) throws IOException {
         try{
-            String httpUrl = croCoreConfig.getFastPath() + "ngupload/nonCompressFile";
+            String httpUrl = croCoreConfig.getFastPath() + "ngupload/single";
             String filesResult = HttpClientUtil.getInstance().sendHttpPostWav(httpUrl, is,fileName);
             if (StringUtils.isNotEmpty(filesResult)) {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(filesResult);

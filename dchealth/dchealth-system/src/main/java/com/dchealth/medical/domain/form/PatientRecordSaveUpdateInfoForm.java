@@ -69,4 +69,6 @@ public class PatientRecordSaveUpdateInfoForm {
      */
     private Integer isSubmit;
 
+    private Long diseaseId;
+
 }

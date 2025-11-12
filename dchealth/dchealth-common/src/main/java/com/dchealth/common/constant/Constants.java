@@ -4,37 +4,36 @@ import io.jsonwebtoken.Claims;
 
 /**
  * 通用常量信息
- * 
+ *
  * @author ruoyi
  */
-public class Constants
-{
+public class Constants {
 
     public static final String AES_KEY = "Kuds72&kdsalq202";
-    public static final String  RAS_DEFAULT_PRIVATE_KEY = "d1f7606da81eabbfb8b1e27622284e75ad4ef99dfd743f09196d8f2dedd22ba8";
+    public static final String RAS_DEFAULT_PRIVATE_KEY = "d1f7606da81eabbfb8b1e27622284e75ad4ef99dfd743f09196d8f2dedd22ba8";
 
     //讯飞参数
-    public static final String  XUNFEI_APP_ID = "7f4bb3b21dff40db8419953b743dda40";
+    public static final String XUNFEI_APP_ID = "7f4bb3b21dff40db8419953b743dda40";
 
-    public static final String  XUNFEI_SECRET_KEY = "Ah7EH5v2NiH3ru7D";
+    public static final String XUNFEI_SECRET_KEY = "Ah7EH5v2NiH3ru7D";
 
     //查询电话模版列表
-    public static final String  XUNFEI_SPEECH_LIST = "/speech-api/v1/pb/openapi/speech-list";
+    public static final String XUNFEI_SPEECH_LIST = "/speech-api/v1/pb/openapi/speech-list";
 
     //外呼开放接口（用电话模版）
-    public static final String  XUNFEI_CALL_TASK = "/speech-api/v1/pb/openapi/call-task";
+    public static final String XUNFEI_CALL_TASK = "/speech-api/v1/pb/openapi/call-task";
 
     //外呼开放接口（用短信）
-    public static final String  XUNFEI_SMS_TASK = "/speech-api/v1/pb/openapi/sms-task";
+    public static final String XUNFEI_SMS_TASK = "/speech-api/v1/pb/openapi/sms-task";
 
     //查询电话模板自定义变量
-    public static final String  XUNFEI_SPEECH_VARIABLE = "/speech-api/v1/pb/openapi/speech-variable";
+    public static final String XUNFEI_SPEECH_VARIABLE = "/speech-api/v1/pb/openapi/speech-variable";
 
     //查询批次汇总数据
-    public static final String  XUNFEI_BATCH_LIST = "/report-api/v2/pb/openapi/batch-list";
+    public static final String XUNFEI_BATCH_LIST = "/report-api/v2/pb/openapi/batch-list";
 
     //查询电话记录详情
-    public static final String  XUNFEI_RECORD_DETAIL = "/report-api/v2/pb/openapi/record-detail";
+    public static final String XUNFEI_RECORD_DETAIL = "/report-api/v2/pb/openapi/record-detail";
 
     /**
      * UTF-8 字符集
@@ -187,7 +186,7 @@ public class Constants
     /**
      * 定时任务白名单配置（仅允许访问的包名，如其他需要可以自行添加）
      */
-    protected static final String[] JOB_WHITELIST_STR = { "com.dchealth" };
+    protected static final String[] JOB_WHITELIST_STR = {"com.dchealth"};
 
     /**
      * 队列树key
@@ -201,19 +200,29 @@ public class Constants
     /**
      * 定时任务违规的字符
      */
-    protected static final String[] JOB_ERROR_STR = { "java.net.URL", "javax.naming.InitialContext", "org.yaml.snakeyaml",
-            "org.springframework", "org.apache", "com.dchealth.common.utils.file" };
+    protected static final String[] JOB_ERROR_STR = {"java.net.URL", "javax.naming.InitialContext", "org.yaml.snakeyaml",
+            "org.springframework", "org.apache", "com.dchealth.common.utils.file"};
+
+    /**
+     * 二级树节点的条目数缓存key
+     */
+    public static final String TOTAL_TREE_LEVEL_NUM = "total_tree_level_num:";
+
+    /**
+     * 一级树节点的条目数缓存key
+     */
+    public static final String ONE_TREE_LEVEL_NUM = "one_tree_level_num:";
 
 
     //lys2
-    /**
-     * 随访树根节点缓存Key
-     */
-    public static final String FOLLOW_TREE_ROOT_KEY = "follow_tree_root:";
-
-    /**
-     * 病种子树缓存Key
-     */
-    public static final String FOLLOW_TREE_DISEASE_KEY = "follow_tree_disease:";
+//    /**
+//     * 随访树根节点缓存Key
+//     */
+//    public static final String FOLLOW_TREE_ROOT_KEY = "follow_tree_root:";
+//
+//    /**
+//     * 病种子树缓存Key
+//     */
+//    public static final String FOLLOW_TREE_DISEASE_KEY = "follow_tree_disease:";
     //lys2
 }
