@@ -21,6 +21,8 @@ public class BaseInfoVo {
 
     private String patientName;
 
+    private String mobile;
+
     private List<ResearchInfoVo> researchInfoVos;
 
 

@@ -147,6 +147,7 @@ public class AgentInfoService {
         baseInfoVo.setPatientName(patientInfos.get(0).getPatientName());
         baseInfoVo.setAccountId(String.valueOf(patientInfos.get(0).getAccountId()));
         baseInfoVo.setPersonId(personId);
+        baseInfoVo.setMobile(patientInfos.get(0).getPatientMobile());
         baseInfoVo.setResearchInfoVos(researchInfoVos);
 
         return baseInfoVo;
