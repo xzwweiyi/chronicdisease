@@ -85,6 +85,7 @@
         <result property="patientStatus"    column="patient_status"    />
         <result property="researchId"    column="research_id"    />
         <result property="patientCode" column="patient_code"/>
+        <result property="cardId" column="card_id"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.PatientEnrollmentVo" id="PatientEnrollmentVOResult">
@@ -398,7 +399,7 @@
     <select id="enrollmentList2" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
         select p.patient_id,p.patient_code, p.patient_name, i.project_name, p.create_time, p.enrollment_result, p.enrollment_result_content,
         p.research_id plan_research_id, p.enrollment_time,p.channel_type,p.account_id,p.refuse_count,p.sms_send_count,
-        pa.mobile,p.person_id,p.enrollment_handler_status,p.enrollment_status,mp.phone_number base_mobile
+        pa.mobile,p.person_id,p.enrollment_handler_status,p.enrollment_status,mp.phone_number base_mobile, mp.card_id card_id
         from patient_info p
         INNER JOIN research_info i on i.id=p.research_id
         left JOIN patient_account pa on p.account_id=pa.account_id
