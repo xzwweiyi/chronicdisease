@@ -43,12 +43,11 @@ import com.dchealth.research.mapper.ResearchOutboundMapper;
 import com.dchealth.research.mapper.ResearchUserRoleMapper;
 import com.dchealth.research.service.ISysPopNoticeService;
 import com.dchealth.system.mapper.SysUserMapper;
+import com.dchealth.template.domain.FMedicalExamSetEvaluation;
 import com.dchealth.template.domain.FMedicalExamSubject;
 import com.dchealth.template.domain.FMedicalForm;
 import com.dchealth.template.domain.FMedicalProperty;
-import com.dchealth.template.mapper.FMedicalExamSubjectMapper;
-import com.dchealth.template.mapper.FMedicalFormMapper;
-import com.dchealth.template.mapper.FMedicalPropertyMapper;
+import com.dchealth.template.mapper.*;
 import com.dchealth.warn.domain.WarnEarlyRecord;
 import com.dchealth.warn.domain.WarnMedicalEarlyCondition;
 import com.dchealth.warn.domain.vo.WarnConditionValueVO;
@@ -146,6 +145,12 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             new SynchronousQueue<Runnable>());
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private FMedicalExamItemMapper fMedicalExamItemMapper;
+
+    @Autowired
+    private FMedicalExamSetEvaluationMapper fMedicalExamSetEvaluationMapper;
 
 
     @Override
@@ -2017,6 +2022,10 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
         patientRecord.setAccountId(patientInfo.getAccountId());
 
+        // 获取到总分值，查到对应的评估结果
+//        List<SelfAssessmentForm> forms = infoForm.getSelfAssessmentForms().stream().filter(item -> item.getCode().equals("3")).collect(Collectors.toList());
+
+        dealScoresInfo(infoForm.getSelfAssessmentForms());
 
         // 属性值集合处理
         handlePropertyFormsInfo(infoForm, patientRecord);
@@ -2045,6 +2054,50 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
 
 
         return AjaxResult.success();
+    }
+
+    private void dealScoresInfo(List<SelfAssessmentForm> forms) {
+        if (ObjectUtil.isEmpty(forms)) {
+            return;
+        }
+
+        for (SelfAssessmentForm form : forms) {
+            //计算评价结果
+            FMedicalExamSetEvaluation fMedicalExamSetEvaluation = new FMedicalExamSetEvaluation();
+            fMedicalExamSetEvaluation.setMedicalFormId(Long.valueOf(form.getMedicalFormId()));
+
+            List<FMedicalExamSetEvaluation> evaluations =
+                    fMedicalExamSetEvaluationMapper.selectFMedicalExamSetEvaluationList(fMedicalExamSetEvaluation);
+
+            //最高档评价结果，处理极端情况
+            FMedicalExamSetEvaluation setEvaluationMax = null;
+            for (FMedicalExamSetEvaluation evaluation : evaluations) {
+                if (Long.parseLong(form.getScores()) >= evaluation.getMinValue() && Long.parseLong(form.getScores()) < evaluation.getMaxValue()) {
+                    form.setEvaluationResult(evaluation.getEvaluationResult());
+                    break;
+                }
+                if (setEvaluationMax == null) {
+                    setEvaluationMax = new FMedicalExamSetEvaluation();
+                    setEvaluationMax.setMaxValue(evaluation.getMaxValue());
+                    setEvaluationMax.setEvaluationResult(evaluation.getEvaluationResult());
+                } else {
+                    if (evaluation.getMaxValue() > setEvaluationMax.getMaxValue()) {
+                        setEvaluationMax.setMaxValue(evaluation.getMaxValue());
+                        setEvaluationMax.setEvaluationResult(evaluation.getEvaluationResult());
+                    }
+                }
+                if (Long.parseLong(form.getScores()) >= setEvaluationMax.getMaxValue()) {
+                    form.setEvaluationResult(setEvaluationMax.getEvaluationResult());
+                }
+            }
+
+            FMedicalForm fMedicalForm = new FMedicalForm();
+            fMedicalForm.setMedicalFormId(Long.valueOf(form.getMedicalFormId()));
+            fMedicalForm.setEvaluationResult(form.getEvaluationResult());
+            fMedicalForm.setEvaluationScores(form.getScores());
+            fMedicalFormMapper.updateFMedicalForm(fMedicalForm);
+        }
+
     }
 
     private void handlePropertyFormsInfo(PatientRecordSaveUpdateInfoForm infoForm, PatientRecord patientRecord) {

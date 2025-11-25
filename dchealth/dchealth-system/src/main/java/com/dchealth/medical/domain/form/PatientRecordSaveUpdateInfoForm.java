@@ -71,4 +71,9 @@ public class PatientRecordSaveUpdateInfoForm {
 
     private Long diseaseId;
 
+    /**
+     * 自评量表分值
+     */
+    private List<SelfAssessmentForm> selfAssessmentForms;
+
 }

@@ -102,6 +102,10 @@ public class PropertyType {
      */
     public static final String DEPARTMENTS = "departments";
 
+    private static final String STATISTIC = "Statistic";
+
+
+    public static final String FORM = "form";
     /**
      * 是否包含小文本
      * @param propertyTypes
@@ -131,6 +135,7 @@ public class PropertyType {
                 || propertyType.contains(TIMEPICKER.toUpperCase())
                 || propertyType.contains(TIMENUMERAL.toUpperCase())
                 || propertyType.contains(PROVINCE.toUpperCase())
+                || propertyType.contains(STATISTIC.toUpperCase())
                 || propertyType.contains(DEPARTMENTS.toUpperCase());
     }
 
