@@ -98,5 +98,4 @@ public class MedicalFormVO extends FormVO{
 
     private String evaluationResult;
 
-    private String evaluationScores;
 }

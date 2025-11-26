@@ -25,10 +25,14 @@ import com.dchealth.cro.enums.FollowTipStatusEnum;
 import com.dchealth.cro.form.common.DynamicSql;
 import com.dchealth.cro.form.constant.PropertyType;
 import com.dchealth.cro.form.domain.DynamicCommonProperty;
+import com.dchealth.cro.form.domain.FMedicalExamSetEvaluation;
 import com.dchealth.cro.form.domain.FMedicalForm;
+import com.dchealth.cro.form.domain.FMedicalFormEvalResult;
 import com.dchealth.cro.form.domain.form.DynamicForm;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
 import com.dchealth.cro.form.mapper.DynamicCommonMapper;
+import com.dchealth.cro.form.mapper.FMedicalExamSetEvaluationMapper;
+import com.dchealth.cro.form.mapper.FMedicalFormEvalResultMapper;
 import com.dchealth.cro.form.mapper.FMedicalFormMapper;
 import com.dchealth.cro.form.service.MedicalFormService;
 import com.dchealth.cro.form.vo.MedicalFormVO;
@@ -77,6 +81,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -143,9 +148,9 @@ public class MedicalPatientService {
     private ResearchUserRoleMapper researchUserRoleMapper;
 
     @Value("${xunfei.requestUrl}")
-    private String baseUrl ;
+    private String baseUrl;
     @Autowired
-	private CroCoreConfig croCoreConfig;
+    private CroCoreConfig croCoreConfig;
     @Autowired
     private MpPatientAccountMapper mpPatientAccountMapper;
 
@@ -165,6 +170,12 @@ public class MedicalPatientService {
     private String newDomain;
     @Autowired
     private UrlBasedViewResolver urlBasedViewResolver;
+
+    @Resource
+    private FMedicalExamSetEvaluationMapper fMedicalExamSetEvaluationMapper;
+
+    @Resource
+    private FMedicalFormEvalResultMapper fMedicalFormEvalResultMapper;
 
 
     /**
@@ -199,7 +210,7 @@ public class MedicalPatientService {
         }
         PatientRecord record = new PatientRecord();
         //质疑处理  患者回复质疑只处理质疑的逻辑不修改提交的逻辑
-        if(infoForm.getQuestionRecordForm() != null && !Objects.isNull(infoForm.getQuestionRecordForm().getQuestionId())) {
+        if (infoForm.getQuestionRecordForm() != null && !Objects.isNull(infoForm.getQuestionRecordForm().getQuestionId())) {
             handleRequestionRecordFormInfo(infoForm, record);
             record.setRecordId(patientRecord.getRecordId());
             record.setFollowTipStatus(FollowTipStatusEnum.FOLLOW_UP_VISIT_SUBMISSION_REMINDER.getIndex());
@@ -212,9 +223,74 @@ public class MedicalPatientService {
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
         patientRecord.setAccountId(patientInfo.getAccountId());
 
+        // 处理自评量表有表单分数计算的模块
+        infoForm.getPropertyForms().stream().filter(item -> item.getPropertyType().equals("Statistic")).forEach(form -> {
+
+            //计算评价结果
+            FMedicalExamSetEvaluation fMedicalExamSetEvaluation = new FMedicalExamSetEvaluation();
+            fMedicalExamSetEvaluation.setMedicalFormId(form.getMedicalFormId());
+
+            List<FMedicalExamSetEvaluation> evaluations =
+                    fMedicalExamSetEvaluationMapper.selectFMedicalExamSetEvaluationList(fMedicalExamSetEvaluation);
+
+            //最高档评价结果，处理极端情况
+            FMedicalExamSetEvaluation setEvaluationMax = null;
+            Map<String, String> map = new HashMap<>();
+            for (FMedicalExamSetEvaluation evaluation : evaluations) {
+                // 将字符串转换为 BigDecimal 并保留两位小数
+                BigDecimal formValue = new BigDecimal(form.getPropertyValue()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal minValue = BigDecimal.valueOf(evaluation.getMinValue()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal maxValue = BigDecimal.valueOf(evaluation.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+
+                if (formValue.compareTo(minValue) >= 0 && formValue.compareTo(maxValue) < 0) {
+                    map.put(String.valueOf(form.getMedicalFormId()), evaluation.getEvaluationResult());
+                    break;
+                }
+                if (setEvaluationMax == null) {
+                    setEvaluationMax = new FMedicalExamSetEvaluation();
+                    setEvaluationMax.setMaxValue(evaluation.getMaxValue());
+                    setEvaluationMax.setEvaluationResult(evaluation.getEvaluationResult());
+                } else {
+                    BigDecimal currentMaxValue = BigDecimal.valueOf(evaluation.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal setEvaluationMaxValue = BigDecimal.valueOf(setEvaluationMax.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+
+                    if (currentMaxValue.compareTo(setEvaluationMaxValue) > 0) {
+                        setEvaluationMax.setMaxValue(evaluation.getMaxValue());
+                        setEvaluationMax.setEvaluationResult(evaluation.getEvaluationResult());
+                    }
+                }
+                BigDecimal setEvaluationMaxValue = BigDecimal.valueOf(setEvaluationMax.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+                if (formValue.compareTo(setEvaluationMaxValue) >= 0) {
+                    map.put(String.valueOf(form.getMedicalFormId()), setEvaluationMax.getEvaluationResult());
+                }
+            }
+
+
+            FMedicalFormEvalResult fMedicalFormEvalResult = new FMedicalFormEvalResult();
+            fMedicalFormEvalResult.setRecordId(infoForm.getRecordId());
+            fMedicalFormEvalResult.setMedicalFormId(form.getMedicalFormId());
+
+            List<FMedicalFormEvalResult> fMedicalFormEvalResults = fMedicalFormEvalResultMapper.selectFMedicalFormEvalResultList(fMedicalFormEvalResult);
+            if (fMedicalFormEvalResults != null && !fMedicalFormEvalResults.isEmpty()) {
+                fMedicalFormEvalResult.setId(fMedicalFormEvalResults.get(0).getId());
+                fMedicalFormEvalResult.setEvaluationScores(form.getPropertyValue());
+                fMedicalFormEvalResult.setEvaluationResult(map.get(String.valueOf(form.getMedicalFormId())));
+
+                fMedicalFormEvalResultMapper.updateFMedicalFormEvalResult(fMedicalFormEvalResult);
+            } else {
+                // 新增操作
+                fMedicalFormEvalResult.setMedicalFormId(form.getMedicalFormId());
+
+                fMedicalFormEvalResult.setEvaluationScores(form.getPropertyValue());
+                fMedicalFormEvalResult.setEvaluationResult(map.get(String.valueOf(form.getMedicalFormId())));
+                fMedicalFormEvalResult.setCreateTime(new Date());
+                fMedicalFormEvalResultMapper.insertFMedicalFormEvalResult(fMedicalFormEvalResult);
+            }
+        });
 
         // 属性值集合处理
         handlePropertyFormsInfo(infoForm, patientRecord);
+
         //上传文件[图片]
         handleFileImagesInfo(infoForm, patientRecord);
 
@@ -244,7 +320,7 @@ public class MedicalPatientService {
         try {
             List<FMedicalPropertyForm> visitSourceValue = propertyForms.stream().filter(fMedicalPropertyForm -> fMedicalPropertyForm.getPropertyCode().contains("VISIT_SOURCE_VALUE"))
                     .collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(visitSourceValue)){
+            if (!CollectionUtils.isEmpty(visitSourceValue)) {
                 FMedicalPropertyForm fMedicalPropertyForm = visitSourceValue.get(0);
                 String propertyValue = fMedicalPropertyForm.getPropertyValue();
                 PatientInfo pi = new PatientInfo();
@@ -274,7 +350,7 @@ public class MedicalPatientService {
                 pi.setPatientId(patientId);
                 pi.setProvinceId(Long.parseLong(jsonArray.getString(0)));
                 pi.setCityId(Long.parseLong(cityId));
-                pi.setAreaId(Long.parseLong(jsonArray.getString(jsonArray.size()-1)));
+                pi.setAreaId(Long.parseLong(jsonArray.getString(jsonArray.size() - 1)));
                 patientInfoMapper.updatePatientInfo(pi);
             }
         } catch (Exception e) {
@@ -283,11 +359,11 @@ public class MedicalPatientService {
 
     }
 
-    private void handlePatientInfo(PatientRecord patientRecord, PatientRecord record){
+    private void handlePatientInfo(PatientRecord patientRecord, PatientRecord record) {
 
         if (record.getIsSubmit() == 1) {
             String patientStatus = "1";
-            if(!"基线".equals(patientRecord.getName())){
+            if (!"基线".equals(patientRecord.getName())) {
                 patientStatus = "2";
             }
             PatientInfo pi = new PatientInfo();
@@ -310,7 +386,7 @@ public class MedicalPatientService {
             record.setFollowTipStatus(patientRecord.getFollowTipStatus());
             record = setFollowTipStatusInfo(record);
             record.setFollowSubmitTime(new Date());
-            if(!"基线".equals(record.getName())){
+            if (!"基线".equals(record.getName())) {
                 saveAccountNotice(patientRecord);
             } else if ("基线".equals(record.getName())) {
                 record.setFollowStatus("3");
@@ -324,10 +400,10 @@ public class MedicalPatientService {
 
     private void saveAccountNotice(PatientRecord patientRecord) {
         List<ResearchUserRole> researchUserRoleList = researchUserRoleMapper.findUserRoleByResearchId(patientRecord.getResearchId());
-        if(researchUserRoleList.size()>0){
+        if (researchUserRoleList.size() > 0) {
             String doctorMsgContent = "患者提交新的随访请尽快处理";
-            for(ResearchUserRole r:researchUserRoleList){
-                AccountNotice an = new AccountNotice(patientRecord,doctorMsgContent,"16",r.getUserId());
+            for (ResearchUserRole r : researchUserRoleList) {
+                AccountNotice an = new AccountNotice(patientRecord, doctorMsgContent, "16", r.getUserId());
                 accountNoticeMapper.insertAccountNotice(an);
             }
         }
@@ -484,9 +560,9 @@ public class MedicalPatientService {
                                     WarnEarlyRecord warnEarlyRecord = new WarnEarlyRecord();
                                     warnEarlyRecord.setRecordId(patientRecord.getRecordId());
                                     warnEarlyRecord.setWarnMedicalEarlyConditionId(wec.getId());
-                                    if(StringUtils.isNotBlankAndNotEmpty(wec.getWarnPreDesc())){
+                                    if (StringUtils.isNotBlankAndNotEmpty(wec.getWarnPreDesc())) {
                                         warnEarlyRecord.setWarnDesc(wec.getWarnPreDesc());
-                                    }else {
+                                    } else {
                                         warnEarlyRecord.setWarnDesc(warnDesc);
                                     }
                                     String propertyDesc = getWarnSelectDesc(fMedicalPropertyForm.getPropertyValue(),
@@ -517,9 +593,9 @@ public class MedicalPatientService {
                                             String conditionStr = getWarnConditionDesc(wec.getConditionType(),
                                                     wec.getEarlyWarnValue(), wec.getEarlyWarnStart(),
                                                     wec.getEarlyWarnEnd());
-                                            if(StringUtils.isNotBlankAndNotEmpty(wec.getWarnPreDesc())){
+                                            if (StringUtils.isNotBlankAndNotEmpty(wec.getWarnPreDesc())) {
                                                 warnEarlyRecord.setWarnDesc(wec.getWarnPreDesc());
-                                            }else {
+                                            } else {
                                                 warnEarlyRecord.setWarnDesc(conditionStr);
                                             }
                                             warnEarlyRecord.setPropertyValue(fMedicalPropertyForm.getPropertyValue());
@@ -541,9 +617,9 @@ public class MedicalPatientService {
                                 warnEarlyRecord.setWarnMedicalEarlyConditionId(wec.getId());
                                 String conditionStr = getWarnConditionDesc(wec.getConditionType(),
                                         wec.getEarlyWarnValue(), wec.getEarlyWarnStart(), wec.getEarlyWarnEnd());
-                                if(StringUtils.isNotBlankAndNotEmpty(wec.getWarnPreDesc())){
+                                if (StringUtils.isNotBlankAndNotEmpty(wec.getWarnPreDesc())) {
                                     warnEarlyRecord.setWarnDesc(wec.getWarnPreDesc());
-                                }else {
+                                } else {
                                     warnEarlyRecord.setWarnDesc(conditionStr);
                                 }
                                 warnEarlyRecord.setPropertyValue(fMedicalPropertyForm.getPropertyValue());
@@ -563,26 +639,26 @@ public class MedicalPatientService {
                 patientRecordMapper.updatePatientRecord(patientRecord);
                 //触发预警发送推送和站内信 患者端
                 String msgContent = "您有一条随访预警记录请及时查看";
-                AccountNotice accountNotice = new AccountNotice(patientRecord,msgContent,"8");
+                AccountNotice accountNotice = new AccountNotice(patientRecord, msgContent, "8");
                 accountNoticeMapper.insertAccountNotice(accountNotice);
 //                umpushService.sendCustomizedcastMessage(2,String.valueOf(accountNotice.getAccountId()),accountNotice.getContent(),
 //                        accountNotice.getExtendJson());
 
                 //医生端应该收到的通知
                 List<ResearchUserRole> researchUserRoleList = researchUserRoleMapper.findUserRoleByResearchId(patientInfo.getResearchId());
-                if(researchUserRoleList.size()>0){
+                if (researchUserRoleList.size() > 0) {
                     String doctorMsgContent = "患者有新的预警请尽快处理";
-                    for(ResearchUserRole r:researchUserRoleList){
-                        AccountNotice an = new AccountNotice(patientRecord,doctorMsgContent,"18",r.getUserId());
+                    for (ResearchUserRole r : researchUserRoleList) {
+                        AccountNotice an = new AccountNotice(patientRecord, doctorMsgContent, "18", r.getUserId());
                         accountNoticeMapper.insertAccountNotice(an);
                     }
 
                 }
 
                 //触发预警，发送电话外呼
-                try{
+                try {
                     callByRecordId(patientRecord.getRecordId());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -711,25 +787,25 @@ public class MedicalPatientService {
         PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(recordId);
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
         MpPerson patientBaseInfo = mpPersonMapper.selectPersonByPersonId(patientInfo.getPersonId());
-        ResearchOutbound researchOutbound = researchOutboundMapper.selectByResearchIdAndType(patientRecord.getResearchId(),"1");
-        if(researchOutbound!=null && patientBaseInfo!=null){
-            PatientRecordOutbound patientRecordOutbound = patientRecordOutboundWarn(patientRecord,researchOutbound,"1");
+        ResearchOutbound researchOutbound = researchOutboundMapper.selectByResearchIdAndType(patientRecord.getResearchId(), "1");
+        if (researchOutbound != null && patientBaseInfo != null) {
+            PatientRecordOutbound patientRecordOutbound = patientRecordOutboundWarn(patientRecord, researchOutbound, "1");
             ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(patientInfo.getResearchId());
             patientRecordOutbound.setProjectName(researchInfo.getProjectName());
 //            sendXunfeiCallWarn(patientRecordOutbound,patientRecord,researchOutbound,patientBaseInfo);
             patientRecordOutboundMapper.insertPatientRecordOutbound(patientRecordOutbound);
         }
-        PatientRecordOutbound patientRecordOutboundOver = patientRecordOutboundWarn(patientRecord,null,"2");
+        PatientRecordOutbound patientRecordOutboundOver = patientRecordOutboundWarn(patientRecord, null, "2");
 //            sendXunfeiSmsOver(patientRecordOutboundOver,patientRecord,researchOutbound,patientBaseInfo);
         patientRecordOutboundMapper.insertPatientRecordOutbound(patientRecordOutboundOver);
 
     }
 
-    public PatientRecordOutbound patientRecordOutboundWarn(PatientRecord patientRecord,ResearchOutbound researchOutbound,String outboundType){
+    public PatientRecordOutbound patientRecordOutboundWarn(PatientRecord patientRecord, ResearchOutbound researchOutbound, String outboundType) {
         PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
         patientRecordOutbound.setRecordId(patientRecord.getRecordId());
         patientRecordOutbound.setResearchId(patientRecord.getResearchId());
-        if(researchOutbound!=null){
+        if (researchOutbound != null) {
             patientRecordOutbound.setOutboundId(researchOutbound.getId());
             patientRecordOutbound.setSpeechId(researchOutbound.getWarnSpeechId());
         }
@@ -737,13 +813,13 @@ public class MedicalPatientService {
         patientRecordOutbound.setRemindType("3");//预警
         patientRecordOutbound.setStatus("1");
         patientRecordOutbound.setCreateTime(DateUtils.getNowDate());
-        patientRecordOutbound.setName("随访"+String.format("%02d", patientRecord.getStageAddNum()));
+        patientRecordOutbound.setName("随访" + String.format("%02d", patientRecord.getStageAddNum()));
         patientRecordOutbound.setStageNum(patientRecord.getStageAddNum());
         patientRecordOutbound.setOutboundTime(DateUtils.getNowDate());
         return patientRecordOutbound;
     }
 
-    public void sendXunfeiCallWarn(PatientRecordOutbound patientRecordOutbound,PatientRecord patientRecord,ResearchOutbound researchOutbound,MpPerson patientBaseInfo){
+    public void sendXunfeiCallWarn(PatientRecordOutbound patientRecordOutbound, PatientRecord patientRecord, ResearchOutbound researchOutbound, MpPerson patientBaseInfo) {
         XunfeiReq xunfeiReq = new XunfeiReq();
         List<Dweller> dwellerList = new ArrayList<>();
 
@@ -752,37 +828,37 @@ public class MedicalPatientService {
         dweller.setDwellerName(patientBaseInfo.getPersonName());
         dweller.setTelephone(patientBaseInfo.getPhoneNumber());
         dweller.setIdCard(patientBaseInfo.getCardId());
-        dweller.setRelationId(patientRecord.getRecordId()+"");
+        dweller.setRelationId(patientRecord.getRecordId() + "");
         dwellerList.add(dweller);
 
         xunfeiReq.setDwellers(dwellerList);
         xunfeiReq.setSpeechId(Long.parseLong(researchOutbound.getWarnSpeechId()));
 //                xunfeiReq.setPlanName("");//任务名称，非必填
         xunfeiReq.setType(1);//1即呼
-        if(!"0".equals(researchOutbound.getWarnReplay()) && researchOutbound.getWarnReplay()!=null){
-            Recall recall = new Recall(Integer.parseInt(researchOutbound.getWarnReplay()),researchOutbound.getWarnReplaySpaceMinute());
+        if (!"0".equals(researchOutbound.getWarnReplay()) && researchOutbound.getWarnReplay() != null) {
+            Recall recall = new Recall(Integer.parseInt(researchOutbound.getWarnReplay()), researchOutbound.getWarnReplaySpaceMinute());
             xunfeiReq.setRecall(recall);
         }
-        List<Var> vars = getVarList(researchOutbound.getWarnSpeechId(),patientRecordOutbound);
+        List<Var> vars = getVarList(researchOutbound.getWarnSpeechId(), patientRecordOutbound);
         xunfeiReq.setVars(vars);
         L.info("讯飞呼叫随访请求参数{}", JSONObject.toJSONString(xunfeiReq));
 //        String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(Constants.XUNFEI_CALL_TASK,xunfeiReq);
-        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"xunfei/callTask",xunfeiReq);
-        L.info("讯飞呼叫随访返回结果{}",result);
+        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl + "xunfei/callTask", xunfeiReq);
+        L.info("讯飞呼叫随访返回结果{}", result);
         JSONObject jsonObject = JSON.parseObject(result);
         String code = jsonObject.getString("code");
-        if(result!=null && ("1000".equals(code) || "0".equals(code))){
-            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"),XunfeiRes.class);
+        if (result != null && ("1000".equals(code) || "0".equals(code))) {
+            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"), XunfeiRes.class);
             String batch = xunfeiRes.getBatch()[0];
             List<TaskRelationVo> taskRelationVoList = xunfeiRes.getTaskRelation();
-            Map<String,TaskRelationVo> taskRelationVoMap = new HashMap<>();
-            if(taskRelationVoList.size()>0){
-                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId,Function.identity(), (key1, key2) -> key2));
+            Map<String, TaskRelationVo> taskRelationVoMap = new HashMap<>();
+            if (taskRelationVoList.size() > 0) {
+                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId, Function.identity(), (key1, key2) -> key2));
             }
 
             patientRecordOutbound.setStatus("2");//执行中
             patientRecordOutbound.setBatch(batch);
-            if(taskRelationVoMap.containsKey(String.valueOf(patientRecord.getRecordId()))){
+            if (taskRelationVoMap.containsKey(String.valueOf(patientRecord.getRecordId()))) {
                 TaskRelationVo relationVo = taskRelationVoMap.get(String.valueOf(patientRecord.getRecordId()));
                 patientRecordOutbound.setTaskId(relationVo.getTaskId());
             }
@@ -791,59 +867,59 @@ public class MedicalPatientService {
         }
     }
 
-    public List<Var> getVarList(String followSpeechId,PatientRecordOutbound pro){
+    public List<Var> getVarList(String followSpeechId, PatientRecordOutbound pro) {
         List<Var> varList = new ArrayList<>();
-        if("772939646279680".equals(followSpeechId)){
-            Var var1 = new Var("主治医生","唐都医院");
-            Var var2 = new Var("单位名称","唐都医院");
-            Var var3 = new Var("医院名称","唐都医院");
+        if ("772939646279680".equals(followSpeechId)) {
+            Var var1 = new Var("主治医生", "唐都医院");
+            Var var2 = new Var("单位名称", "唐都医院");
+            Var var3 = new Var("医院名称", "唐都医院");
             varList.add(var1);
             varList.add(var2);
             varList.add(var3);
-        }else if("216442646339584".equals(followSpeechId)){
-            Var var1 = new Var("期间","住院");
-            Var var2 = new Var("单位名称","唐都医院");
+        } else if ("216442646339584".equals(followSpeechId)) {
+            Var var1 = new Var("期间", "住院");
+            Var var2 = new Var("单位名称", "唐都医院");
             varList.add(var1);
             varList.add(var2);
-        }else if("214084533133312".equals(followSpeechId)){
-            Var var1 = new Var("自我介绍","唐都医院");
+        } else if ("214084533133312".equals(followSpeechId)) {
+            Var var1 = new Var("自我介绍", "唐都医院");
             varList.add(var1);
-        }else if("74459".equals(followSpeechId)){
-            Var var1 = new Var("体检单位","唐都医院");
-            Var var2 = new Var("体检项目","身高、体重、视力和血常规等检查");
-            Var var3 = new Var("携带物品","背包");
-            Var var4 = new Var("体检时间","每周一至周五全天");
-            Var var5 = new Var("自我介绍","唐都医院");
+        } else if ("74459".equals(followSpeechId)) {
+            Var var1 = new Var("体检单位", "唐都医院");
+            Var var2 = new Var("体检项目", "身高、体重、视力和血常规等检查");
+            Var var3 = new Var("携带物品", "背包");
+            Var var4 = new Var("体检时间", "每周一至周五全天");
+            Var var5 = new Var("自我介绍", "唐都医院");
             varList.add(var1);
             varList.add(var2);
             varList.add(var3);
             varList.add(var4);
             varList.add(var5);
-        }else if("213577374679040".equals(followSpeechId)){
-            Var var1 = new Var("自我介绍","唐都医院");
-            Var var2 = new Var("未体检宣教","未体检宣教");
-            Var var3 = new Var("体检类型","体检");
+        } else if ("213577374679040".equals(followSpeechId)) {
+            Var var1 = new Var("自我介绍", "唐都医院");
+            Var var2 = new Var("未体检宣教", "未体检宣教");
+            Var var3 = new Var("体检类型", "体检");
             varList.add(var1);
             varList.add(var2);
             varList.add(var3);
-        }else if("1530318155456512".equals(followSpeechId)){
+        } else if ("1530318155456512".equals(followSpeechId)) {
             //医院-随访提醒
-            Var var1 = new Var("队列名称",pro.getProjectName());
-            Var var2 = new Var("具体日期",DateUtils.dateTimeDays(pro.getPlanVisitTime()));
-            Var var3 = new Var("外呼机构","唐都医院");
+            Var var1 = new Var("队列名称", pro.getProjectName());
+            Var var2 = new Var("具体日期", DateUtils.dateTimeDays(pro.getPlanVisitTime()));
+            Var var3 = new Var("外呼机构", "唐都医院");
             varList.add(var1);
             varList.add(var2);
             varList.add(var3);
-        }else if("1530319925452800".equals(followSpeechId)){
+        } else if ("1530319925452800".equals(followSpeechId)) {
             //医院-超窗提醒
-            Var var1 = new Var("外呼机构","唐都医院");
-            Var var2 = new Var("队列名称",pro.getProjectName());
+            Var var1 = new Var("外呼机构", "唐都医院");
+            Var var2 = new Var("队列名称", pro.getProjectName());
             varList.add(var1);
             varList.add(var2);
-        }else if("1530309037039616".equals(followSpeechId)){
+        } else if ("1530309037039616".equals(followSpeechId)) {
             //预警提醒
-            Var var1 = new Var("外呼机构","唐都医院");
-            Var var2 = new Var("具体日期",DateUtils.dateTimeDays(DateUtils.getNowDate()));
+            Var var1 = new Var("外呼机构", "唐都医院");
+            Var var2 = new Var("具体日期", DateUtils.dateTimeDays(DateUtils.getNowDate()));
             varList.add(var1);
             varList.add(var2);
         }
@@ -851,7 +927,7 @@ public class MedicalPatientService {
     }
 
 
-    public void sendXunfeiSmsOver(PatientRecordOutbound patientRecordOutbound,PatientRecord patientRecord,ResearchOutbound researchOutbound,MpPerson patientBaseInfo){
+    public void sendXunfeiSmsOver(PatientRecordOutbound patientRecordOutbound, PatientRecord patientRecord, ResearchOutbound researchOutbound, MpPerson patientBaseInfo) {
         XunfeiReq xunfeiReq = new XunfeiReq();
         List<Dweller> dwellerList = new ArrayList<>();
 
@@ -860,7 +936,7 @@ public class MedicalPatientService {
         dweller.setDwellerName(patientBaseInfo.getPersonName());
         dweller.setTelephone(patientBaseInfo.getPhoneNumber());
         dweller.setIdCard(patientBaseInfo.getCardId());
-        dweller.setRelationId(patientRecord.getRecordId()+"");
+        dweller.setRelationId(patientRecord.getRecordId() + "");
         dwellerList.add(dweller);
 
         xunfeiReq.setDwellers(dwellerList);
@@ -870,22 +946,22 @@ public class MedicalPatientService {
         xunfeiReq.setVars(vars);
         L.info("讯飞短信提醒随访请求参数{}", JSONObject.toJSONString(xunfeiReq));
 //        String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(Constants.XUNFEI_CALL_TASK,xunfeiReq);
-        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"xunfei/smsTask",xunfeiReq);
-        L.info("讯飞短信提醒随访返回结果{}",result);
+        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl + "xunfei/smsTask", xunfeiReq);
+        L.info("讯飞短信提醒随访返回结果{}", result);
         JSONObject jsonObject = JSON.parseObject(result);
         String code = jsonObject.getString("code");
-        if(result!=null && ("1000".equals(code) || "0".equals(code))){
-            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"),XunfeiRes.class);
+        if (result != null && ("1000".equals(code) || "0".equals(code))) {
+            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"), XunfeiRes.class);
             String batch = xunfeiRes.getBatch()[0];
             List<TaskRelationVo> taskRelationVoList = xunfeiRes.getTaskRelation();
-            Map<String,TaskRelationVo> taskRelationVoMap = new HashMap<>();
-            if(taskRelationVoList.size()>0){
-                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId,Function.identity(), (key1, key2) -> key2));
+            Map<String, TaskRelationVo> taskRelationVoMap = new HashMap<>();
+            if (taskRelationVoList.size() > 0) {
+                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId, Function.identity(), (key1, key2) -> key2));
             }
 
             patientRecordOutbound.setStatus("2");//执行中
             patientRecordOutbound.setBatch(batch);
-            if(taskRelationVoMap.containsKey(String.valueOf(patientRecord.getRecordId()))){
+            if (taskRelationVoMap.containsKey(String.valueOf(patientRecord.getRecordId()))) {
                 TaskRelationVo relationVo = taskRelationVoMap.get(String.valueOf(patientRecord.getRecordId()));
                 patientRecordOutbound.setTaskId(relationVo.getTaskId());
             }
@@ -894,11 +970,11 @@ public class MedicalPatientService {
         }
     }
 
-    public List<Var> getSmsVarList(String patientName){
+    public List<Var> getSmsVarList(String patientName) {
         List<Var> varList = new ArrayList<>();
-        Var var1 = new Var("dwellerName",patientName);
-        Var var2 = new Var("content",DateUtils.dateTimeDays(DateUtils.getNowDate()));
-        Var var3 = new Var("center","唐都医院");
+        Var var1 = new Var("dwellerName", patientName);
+        Var var2 = new Var("content", DateUtils.dateTimeDays(DateUtils.getNowDate()));
+        Var var3 = new Var("center", "唐都医院");
         varList.add(var1);
         varList.add(var2);
         varList.add(var3);
@@ -912,7 +988,7 @@ public class MedicalPatientService {
      * @param recordId
      * @return
      */
-    public DchealthCloudResponseEntity<PatientRecordDetailForm> patientRecordDetail(Long recordId,String detailType,
+    public DchealthCloudResponseEntity<PatientRecordDetailForm> patientRecordDetail(Long recordId, String detailType,
                                                                                     HttpServletRequest request) {
         DchealthCloudResponseEntity<PatientRecordDetailForm> result = new DchealthCloudResponseEntity<>();
         PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(recordId);
@@ -935,18 +1011,18 @@ public class MedicalPatientService {
         patientRecordDetailForm.setCreateTimeStr(DateUtils.dateTime(patientRecord.getCreateTime()));
         patientRecordDetailForm.setResearchId(patientRecord.getResearchId());
         patientRecordDetailForm.setFollowTipStatus(patientRecord.getFollowTipStatus());
-        if(patientRecord.getVisitTime()!= null) {
+        if (patientRecord.getVisitTime() != null) {
             patientRecordDetailForm.setVisitTime(DateUtils.parseDateToStrFull(patientRecord.getVisitTime()));
         }
         List<MedicalFormVO> datas = medicalFormService.followForms(patientRecord.getFollowId(),
                 patientRecord.getRecordId(), patientRecord.getFollowStatus(), (formVOS, propertyVOS, propertyTypes) -> {
-            List<PatientRecordFiles> patientRecordFiles =
-                    patientRecordFilesMapper.selectPatientRecordFilesByRecordId(recordId);
-            CompletableFuture<Void> pcf = getPcf(recordId, patientRecord, propertyVOS, propertyTypes,
-                    patientRecordFiles);
-            CompletableFuture<Void> fcf = getFcf(recordId, patientRecord, formVOS, propertyVOS, patientRecordFiles);
-            CompletableFuture.allOf(pcf, fcf).join();
-        });
+                    List<PatientRecordFiles> patientRecordFiles =
+                            patientRecordFilesMapper.selectPatientRecordFilesByRecordId(recordId);
+                    CompletableFuture<Void> pcf = getPcf(recordId, patientRecord, propertyVOS, propertyTypes,
+                            patientRecordFiles);
+                    CompletableFuture<Void> fcf = getFcf(recordId, patientRecord, formVOS, propertyVOS, patientRecordFiles);
+                    CompletableFuture.allOf(pcf, fcf).join();
+                });
 
         // 处理预警源
         dealWarnSource(recordId, datas);
@@ -966,7 +1042,7 @@ public class MedicalPatientService {
         patientRecordDetailForm.setPersonId(patientInfo.getPersonId());
         patientRecordDetailForm.setPatientName(patientInfo.getPatientName());
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(patientInfo.getAccountId());
-        if(patientAccount!=null){
+        if (patientAccount != null) {
             patientRecordDetailForm.setPatientMobile(patientAccount.getMobile());
         }
 
@@ -977,7 +1053,7 @@ public class MedicalPatientService {
         }
 
         MpPerson pb = mpPersonMapper.selectPersonByAccountId(patientInfo.getAccountId());
-        if(pb!=null){
+        if (pb != null) {
             patientRecordDetailForm.setSex(HealthUtils.getSex(pb.getCardId()));
         }
 
@@ -1010,14 +1086,12 @@ public class MedicalPatientService {
         patientRecordDetailForm.setOverEvaluateReplyBack(patientRecord.getOverEvaluateReplyBack());
 
 
-
-
         //预警
         WarnEarlyRecord warnEarlyRecord = new WarnEarlyRecord();
         warnEarlyRecord.setRecordId(patientRecord.getRecordId());
         List<WarnEarlyRecord> warnEarlyRecordList = warnEarlyRecordMapper.selectListByRecordId(warnEarlyRecord);
-        if(warnEarlyRecordList!=null && warnEarlyRecordList.size()>0){
-            Integer wer = warnEarlyRecordList.stream().filter(f -> f.getEarlyWarnLevel()!="").mapToInt(w -> dictToValue(w.getEarlyWarnLevel())).max().getAsInt();
+        if (warnEarlyRecordList != null && warnEarlyRecordList.size() > 0) {
+            Integer wer = warnEarlyRecordList.stream().filter(f -> f.getEarlyWarnLevel() != "").mapToInt(w -> dictToValue(w.getEarlyWarnLevel())).max().getAsInt();
             patientRecordDetailForm.setEarlyWarnLevel(String.valueOf(wer));
         }
         patientRecordDetailForm.setWarnEarlyRecordList(warnEarlyRecordList);
@@ -1054,7 +1128,7 @@ public class MedicalPatientService {
         //设置随访记录状态信息
         setFollowTipAndGetNextNodeInfo(patientRecord, patientInfo, request);
 
-        if("3".equals(detailType) && "1".equals(patientRecord.getOverTimeStatus())){
+        if ("3".equals(detailType) && "1".equals(patientRecord.getOverTimeStatus())) {
             //超窗查看详情且是待处理，需要修改成进行中
             patientRecord.setOverTimeStatus("2");
             patientRecordMapper.updatePatientRecord(patientRecord);
@@ -1063,28 +1137,28 @@ public class MedicalPatientService {
     }
 
     private Integer dictToValue(String dictName) {
-        if(StringUtils.isBlank(dictName)) {
+        if (StringUtils.isBlank(dictName)) {
             return 0;
         }
-        if(dictName.equals("一级")) {
+        if (dictName.equals("一级")) {
             return 1;
-        } else if(dictName.equals("二级")) {
+        } else if (dictName.equals("二级")) {
             return 2;
-        } else if(dictName.equals("三级")) {
+        } else if (dictName.equals("三级")) {
             return 3;
-        } else if(dictName.equals("轻度")) {
+        } else if (dictName.equals("轻度")) {
             return 1;
-        } else if(dictName.equals("中度")) {
+        } else if (dictName.equals("中度")) {
             return 2;
-        } else if(dictName.equals("重度")) {
+        } else if (dictName.equals("重度")) {
             return 3;
-        } else if(dictName.equals("弱阳性")) {
+        } else if (dictName.equals("弱阳性")) {
             return 1;
-        } else if(dictName.equals("阳性")) {
+        } else if (dictName.equals("阳性")) {
             return 3;
-        } else if(dictName.equals("异常")) {
+        } else if (dictName.equals("异常")) {
             return 1;
-        } else if(dictName.equals("危急")) {
+        } else if (dictName.equals("危急")) {
             return 3;
         } else {
             return 0;
@@ -1101,17 +1175,17 @@ public class MedicalPatientService {
             // 标记 预警源
             if (!CollectionUtils.isEmpty(warnConditionValueVOS)) {
                 for (MedicalFormVO x : medicalFormVOSResult) {
-                    if(!x.getFormType().equals("4")){ // 4：预警填报
+                    if (!x.getFormType().equals("4")) { // 4：预警填报
                         continue;
                     }
                     List<MedicalFormVO> childMedicalFormVOS = x.getChildrens();
                     boolean isWarnSource = false;
-                    if(!CollectionUtils.isEmpty(childMedicalFormVOS)){
+                    if (!CollectionUtils.isEmpty(childMedicalFormVOS)) {
                         isWarnSource = markWarnSource(collect, x, childMedicalFormVOS);
-                    }else {
+                    } else {
                         List<MedicalPropertyVO> propertyVOS = x.getPropertyVOS();
-                        for(MedicalPropertyVO medicalPropertyVO : propertyVOS){
-                            if(collect.contains(medicalPropertyVO.getMedicalFormId().longValue())){
+                        for (MedicalPropertyVO medicalPropertyVO : propertyVOS) {
+                            if (collect.contains(medicalPropertyVO.getMedicalFormId().longValue())) {
                                 isWarnSource = true;
                             }
                         }
@@ -1127,12 +1201,12 @@ public class MedicalPatientService {
     private boolean markWarnSource(Set<Long> collect, MedicalFormVO x, List<MedicalFormVO> childMedicalFormVOS) {
         for (MedicalFormVO y : childMedicalFormVOS) {
             List<MedicalFormVO> yChildMedicalFormVOS = y.getChildrens();
-            if(!CollectionUtils.isEmpty(yChildMedicalFormVOS)){
+            if (!CollectionUtils.isEmpty(yChildMedicalFormVOS)) {
                 markWarnSource(collect, y, yChildMedicalFormVOS);
-            }else {
+            } else {
                 List<MedicalPropertyVO> propertyVOS = y.getPropertyVOS();
-                for(MedicalPropertyVO medicalPropertyVO : propertyVOS){
-                    if(collect.contains(medicalPropertyVO.getMedicalFormId().longValue())){
+                for (MedicalPropertyVO medicalPropertyVO : propertyVOS) {
+                    if (collect.contains(medicalPropertyVO.getMedicalFormId().longValue())) {
                         return true;
                     }
                 }
@@ -1143,6 +1217,7 @@ public class MedicalPatientService {
 
     /**
      * 医生查看患者档案详情
+     *
      * @param recordId
      * @param
      * @return
@@ -1178,7 +1253,7 @@ public class MedicalPatientService {
         //获取患者信息
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
         patientRecordDetailForm.setPatientId(patientInfo.getPatientId());
-        if(StringUtils.equals(patientInfo.getAdjustType(),"2")){
+        if (StringUtils.equals(patientInfo.getAdjustType(), "2")) {
             patientRecordDetailForm.setIsEditable(false);
         }
         patientRecordDetailForm.setPatientName(patientInfo.getPatientName());
@@ -1217,7 +1292,7 @@ public class MedicalPatientService {
                         x.setUserName(sysUser.getNickName() == null ? "" : sysUser.getNickName());
                     }
                 } else if ("2".equals(x.getUserType())) {
-                	MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(x.getAccountId());
+                    MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(x.getAccountId());
                     if (patientBaseInfo != null) {
                         x.setHeadImage(croCoreConfig.getUserHead());
                         x.setUserName(patientBaseInfo.getPersonName());
@@ -1233,6 +1308,7 @@ public class MedicalPatientService {
 //        setFollowTipAndGetNextNodeInfo(patientRecord, patientInfo, request);
         return result;
     }
+
     private String getFirstDoctorId(PatientRecord patientRecord, Long accountId) {
         WarnDoctorPatient warnDoctorPatient = new WarnDoctorPatient();
         warnDoctorPatient.setPatientId(patientRecord.getPatientId());
@@ -1305,20 +1381,20 @@ public class MedicalPatientService {
 
                                         Map<String, List<MedicalPropertyVO>> dynamicTable =
                                                 listMap.get(f.getMedicalFormId()).stream().collect(Collectors.groupingBy(DynamicCommonProperty::getNumber)).entrySet().stream().collect(Collectors.toMap(key -> String.valueOf(key.getKey()), item -> {
-                                            List<DynamicCommonProperty> ds = item.getValue();
-                                            if (ds == null || ds.isEmpty()) return new ArrayList<>();
+                                                    List<DynamicCommonProperty> ds = item.getValue();
+                                                    if (ds == null || ds.isEmpty()) return new ArrayList<>();
 
-                                            List<MedicalPropertyVO> ps = pMap.get(f.getMedicalFormId());
-                                            List<MedicalPropertyVO> nps = BeanUtils.copyList(ps,
-                                                    MedicalPropertyVO::new);
-                                            return nps.stream().map(pv -> {
-                                                ds.stream().filter(m -> Objects.equals(pv.getId(), m.getPropertyId())).forEach(m2 -> {
-                                                    pv.setPropertyValue(m2.getPropertyValue());
-                                                    pv.setOther(m2.getOther());
-                                                });
-                                                return pv;
-                                            }).collect(Collectors.toList());
-                                        }, (oldValue, newValue) -> newValue, LinkedHashMap::new));
+                                                    List<MedicalPropertyVO> ps = pMap.get(f.getMedicalFormId());
+                                                    List<MedicalPropertyVO> nps = BeanUtils.copyList(ps,
+                                                            MedicalPropertyVO::new);
+                                                    return nps.stream().map(pv -> {
+                                                        ds.stream().filter(m -> Objects.equals(pv.getId(), m.getPropertyId())).forEach(m2 -> {
+                                                            pv.setPropertyValue(m2.getPropertyValue());
+                                                            pv.setOther(m2.getOther());
+                                                        });
+                                                        return pv;
+                                                    }).collect(Collectors.toList());
+                                                }, (oldValue, newValue) -> newValue, LinkedHashMap::new));
                                         f.setDynamicTable(dynamicTable);
                                     } else {
                                         if (pMap.containsKey(f.getMedicalFormId())) {
@@ -1454,40 +1530,40 @@ public class MedicalPatientService {
             result.setData(patientAccountInfoVO);
             return result;
         }
-        MpPatientAccount mpPatientAccount =  mpPatientAccountMapper.selectMpPatientAccountByAccountId(bindPatientForm.getAccountId());
-       if(mpPatientAccount != null) {
-    	   result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
-           return result; 
-       }
+        MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountByAccountId(bindPatientForm.getAccountId());
+        if (mpPatientAccount != null) {
+            result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
+            return result;
+        }
         // 只处理未绑定的状态
-       PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
-       MpPerson patientBaseInfos = mpPersonMapper.selectMpPersonByPersonIdCardId(bindPatientForm.getRegistrySigns(),bindPatientForm.getIdCardNo());
-        if(patientBaseInfos!=null){
+        PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
+        MpPerson patientBaseInfos = mpPersonMapper.selectMpPersonByPersonIdCardId(bindPatientForm.getRegistrySigns(), bindPatientForm.getIdCardNo());
+        if (patientBaseInfos != null) {
             MpPatientAccount mpa = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientBaseInfos.getPersonId());
-            if(mpa!=null && !(mpa.getAccountId().longValue()==bindPatientForm.getAccountId().longValue())){
+            if (mpa != null && !(mpa.getAccountId().longValue() == bindPatientForm.getAccountId().longValue())) {
                 result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
                 return result;
             }
         }
 
-       if (patientBaseInfos == null  ) {
-           PatMasterIndex patMasterIndex = patMasterIndexMapper.selectByIdNoAndPatientId(bindPatientForm.getIdCardNo(), bindPatientForm.getRegistrySigns());
-           if(patMasterIndex == null ) {
-        	   result.setCode(CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getCode());
-               return result;
-           }
-           //此处因为患者多手机多就诊号暂时加入手机号查询
-           MpPerson patientBaseInfo = mpPersonMapper.selectMpPersonByCardId(bindPatientForm.getIdCardNo(), patientAccount.getMobile());
-           if (Objects.nonNull(patientBaseInfo)) {
-               // 多个身份证~ 发布事件后, 设置主号, 然后
-               Map<String, String> json = new HashMap<>();
-               json.put("idCard",bindPatientForm.getIdCardNo());
-               json.put("personId",bindPatientForm.getRegistrySigns());
-               redisPublishService.convertAndSend("patientCard", JSON.toJSONString(json));
+        if (patientBaseInfos == null) {
+            PatMasterIndex patMasterIndex = patMasterIndexMapper.selectByIdNoAndPatientId(bindPatientForm.getIdCardNo(), bindPatientForm.getRegistrySigns());
+            if (patMasterIndex == null) {
+                result.setCode(CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getCode());
+                return result;
+            }
+            //此处因为患者多手机多就诊号暂时加入手机号查询
+            MpPerson patientBaseInfo = mpPersonMapper.selectMpPersonByCardId(bindPatientForm.getIdCardNo(), patientAccount.getMobile());
+            if (Objects.nonNull(patientBaseInfo)) {
+                // 多个身份证~ 发布事件后, 设置主号, 然后
+                Map<String, String> json = new HashMap<>();
+                json.put("idCard", bindPatientForm.getIdCardNo());
+                json.put("personId", bindPatientForm.getRegistrySigns());
+                redisPublishService.convertAndSend("patientCard", JSON.toJSONString(json));
 //               if(bindPatientForm.getAccountId().equals()) {
 //
 //               }
-               patientBaseInfos = patientBaseInfo;
+                patientBaseInfos = patientBaseInfo;
 
 //               L.info("患者存在多个就诊号={}", JSON.toJSONString(patientBaseInfos));
 //               result.setCode(CroApiCodeConstant.PATIENT_ALREADY_EXIST.getCode());
@@ -1497,15 +1573,15 @@ public class MedicalPatientService {
 //               patientAccountInfoVO2.setIdCard(bindPatientForm.getIdCardNo());
 //               result.setData(patientAccountInfoVO2);
 //               return result;
-           }else{
-               patientBaseInfos = insertMpPerson(patMasterIndex);
-           }
-       }
-        
-    	MpPatientAccount  patientAccount2 = new MpPatientAccount();
-    	patientAccount2.setPersonId(String.valueOf(patientBaseInfos.getPersonId()));
-    	patientAccount2.setAccountId(bindPatientForm.getAccountId());
-    	mpPatientAccountMapper.insertMpPatientAccount(patientAccount2);
+            } else {
+                patientBaseInfos = insertMpPerson(patMasterIndex);
+            }
+        }
+
+        MpPatientAccount patientAccount2 = new MpPatientAccount();
+        patientAccount2.setPersonId(String.valueOf(patientBaseInfos.getPersonId()));
+        patientAccount2.setAccountId(bindPatientForm.getAccountId());
+        mpPatientAccountMapper.insertMpPatientAccount(patientAccount2);
         patientAccount.setBindStatus("1");
         patientAccount.setRegistrySigns(bindPatientForm.getRegistrySigns());
         patientAccount.setIdCard(bindPatientForm.getIdCardNo());
@@ -1524,7 +1600,7 @@ public class MedicalPatientService {
 //        patientInfo.setEnrollmentStatus("0");
         List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(patientInfo);
         List<PatientInfo> filterPatientInfos = patientInfos.stream().filter(info -> info.getAccountId() == 0).collect(Collectors.toList());
-        if (!CollectionUtils.isEmpty(filterPatientInfos)){
+        if (!CollectionUtils.isEmpty(filterPatientInfos)) {
             for (PatientInfo info : filterPatientInfos) {
                 PatientInfo patientInfoVo = new PatientInfo();
                 patientInfoVo.setPatientId(info.getPatientId());
@@ -1536,8 +1612,7 @@ public class MedicalPatientService {
         result.setData(patientAccountInfoVO);
         return result;
     }
-    
-  
+
 
     /**
      * 申请队列
@@ -1589,7 +1664,7 @@ public class MedicalPatientService {
             researchPatientMapper.insertResearchPatient(researchPatient);
 
             genBasePatientRecord(applyResearchForm, patientInfo);
-        }else {
+        } else {
             PatientInfo patient = patientInfos.get(0);
             String enrollmentHandlerStatus = patient.getEnrollmentHandlerStatus(); //1,2,3
             String enrollmentStatus = patient.getEnrollmentStatus();//0,1
@@ -1621,14 +1696,14 @@ public class MedicalPatientService {
 
     private Long getResearchOwnerId(Long researchId) {
         ResearchInfo researchInfo = researchInfoMapper.selectResearchOwnerById(researchId);
-        L.info("队列owner={}",JSON.toJSONString(researchInfo));
+        L.info("队列owner={}", JSON.toJSONString(researchInfo));
         return researchInfo.getUserId();
     }
 
     public DchealthCloudResponseEntity<MpPerson> selectPatientBaseInfoByAccountId(Long accountId) {
         DchealthCloudResponseEntity<MpPerson> result = new DchealthCloudResponseEntity<>();
         MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(accountId);
-        if(patientBaseInfo==null){
+        if (patientBaseInfo == null) {
 //        	 result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
             result.setData(new MpPerson());
             return result;
@@ -1654,7 +1729,7 @@ public class MedicalPatientService {
                 //此处因为需要小程序看到未发布的队列暂时去掉此判断 ||"0".equals(researchInfo2.getResearchStatus())
                 if ("1".equals(researchInfo2.getDelFlag())) {
                     //跳过
-                } else if("0".equals(researchInfo2.getResearchStatus())) {
+                } else if ("0".equals(researchInfo2.getResearchStatus())) {
                     //切换了队列
                     if (!Objects.isNull(patientInfo.getPlanResearchId()) && !Objects.equals(patientInfo.getPlanResearchId(), patientInfo.getResearchId())) {
                         ResearchInfo researchInfo1 = patientInfo.getResearchInfo();
@@ -1665,8 +1740,7 @@ public class MedicalPatientService {
                     } else {
                         newPatientInfoList.add(patientInf);
                     }
-                }
-                 else if ("1".equals(researchInfo2.getResearchStatus())||"2".equals(researchInfo2.getResearchStatus())) {
+                } else if ("1".equals(researchInfo2.getResearchStatus()) || "2".equals(researchInfo2.getResearchStatus())) {
                     //切换了队列
                     if (!Objects.isNull(patientInfo.getPlanResearchId()) && !Objects.equals(patientInfo.getPlanResearchId(), patientInfo.getResearchId())) {
                         ResearchInfo researchInfo1 = patientInfo.getResearchInfo();
@@ -1685,13 +1759,13 @@ public class MedicalPatientService {
         return result;
     }
 
-   
+
     private PatientInfo handleResearchInfo(PatientInfo patientInfo, ResearchInfo info) {
 
         ResearchInfo researchInfo = researchInfoMapper.selectByIdAndStatus(info);
         int pendingTasksNum = getPendingTasksNum(patientInfo);
         //此处因为需要小程序看到未发布的队列暂时去掉此判断 ||"0".equals(researchInfo.getResearchStatus())
-        if (Objects.isNull(researchInfo)||"1".equals(researchInfo.getDelFlag())) {
+        if (Objects.isNull(researchInfo) || "1".equals(researchInfo.getDelFlag())) {
             L.error("队列信息查询为空:{}", JSON.toJSONString(researchInfo));
         } else {
             researchInfo.setPendingTasksNum(pendingTasksNum);
@@ -1700,7 +1774,6 @@ public class MedicalPatientService {
         return patientInfo;
     }
 
-  
 
     private int getPendingTasksNum(PatientInfo patientInfo) {
 //        有新的随访到期，有新的随访质疑，有新的随访意见 这三个数量和
@@ -1757,19 +1830,19 @@ public class MedicalPatientService {
                 }
             }
             //后端失访和前端状态对应不上，后台1,2,3，api接口用0,1,2
-            if("1".equals(s.getLoseType())){
+            if ("1".equals(s.getLoseType())) {
                 s.setLoseType("0");
-            }else if("2".equals(s.getLoseType())){
+            } else if ("2".equals(s.getLoseType())) {
                 s.setLoseType("1");
-            }else if("3".equals(s.getLoseType())){
+            } else if ("3".equals(s.getLoseType())) {
                 s.setLoseType("2");
-            }else if("4".equals(s.getLoseType())){
+            } else if ("4".equals(s.getLoseType())) {
                 s.setLoseType("3");
             }
             PatientRecord patientRecord = setFollowTipAndGetNextNodeInfo(s, patientInfo, patientRecords,
                     maxFollowIdPr, patientRecordTemplates);
 
-            if (!Objects.isNull(patientRecord)&&!"4".equals(patientInfo.getPatientStatus())) {
+            if (!Objects.isNull(patientRecord) && !"4".equals(patientInfo.getPatientStatus())) {
                 nextNodeAtomic.set(patientRecord);
             }
         });
@@ -1821,7 +1894,7 @@ public class MedicalPatientService {
             record.setResearchId(patientRecord.getResearchId());
             record.setPatientId(patientInfo.getOldPatientId());
             List<PatientRecord> patientRecordList = patientRecordMapper.selectPatientRecordList(record);
-            if(!CollectionUtils.isEmpty(patientRecordList)){
+            if (!CollectionUtils.isEmpty(patientRecordList)) {
                 for (PatientRecord patientRecord1 : patientRecordList) {
                     patientRecord1.setIsEditable(false);
                     changeResearchTip(patientRecord1, patientInfo);
@@ -2058,9 +2131,9 @@ public class MedicalPatientService {
         // 7失访提醒
         if (Objects.equals(patientRecord.getFollowTipStatus(), FollowTipStatusEnum.MISSING_VISIT_REMINDER.getIndex()) && StringUtils.equals(patientRecord.getOverTimeHandleStatus(), "3")) {
             String loseReason = patientRecord.getLoseReason();
-            if(StringUtils.isBlank(loseReason) && "0".equals(patientRecord.getLoseType())){
+            if (StringUtils.isBlank(loseReason) && "0".equals(patientRecord.getLoseType())) {
                 loseReason = "不再参与";
-            }else if(StringUtils.isBlank(loseReason) && "1".equals(patientRecord.getLoseType())){
+            } else if (StringUtils.isBlank(loseReason) && "1".equals(patientRecord.getLoseType())) {
                 loseReason = "失联";
             }
             patientRecord.setFollowTipStatusDesc(FollowTipStatusEnum.getStatusDesc(patientRecord.getFollowTipStatus()
@@ -2237,7 +2310,6 @@ public class MedicalPatientService {
 //        return patientHealthRecordVO;
 //    }
 
-   
 
     @Transactional
     public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatientDetail(BindPatientDetailForm bindPatientForm) {
@@ -2254,7 +2326,7 @@ public class MedicalPatientService {
         }
         PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
         MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(bindPatientForm.getAccountId());
-        if (patientBaseInfo != null ) {
+        if (patientBaseInfo != null) {
             patientAccountInfoVO.setPersonId(patientBaseInfo.getPersonId());
             patientAccountInfoVO.setPersonName(patientBaseInfo.getPersonName());
             patientAccountInfoVO.setBindStatus(patientAccount.getBindStatus());
@@ -2345,7 +2417,7 @@ public class MedicalPatientService {
         patientInfo.setResearchId(reSearchForm.getResearchId());
 //        patientInfo.setDeptId(applyResearchForm.getDeptId());
         ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(reSearchForm.getResearchId());
-        if (researchInfo == null||"1".equals(researchInfo.getDelFlag())) {
+        if (researchInfo == null || "1".equals(researchInfo.getDelFlag())) {
             result.setCode(CroApiCodeConstant.PROJECT_NOT_EXIST.getCode());
             return result;
         }
@@ -2399,46 +2471,46 @@ public class MedicalPatientService {
         }
 
     }
-    
-    
+
+
     private MpPerson insertMpPerson(PatMasterIndex patMasterIndex) {
-    	MpPerson  mpPerson  = new MpPerson();
-    	mpPerson.setLocationId(dealOracleString(patMasterIndex.getMailingAddress()));
-    	mpPerson.setCardId(patMasterIndex.getIdNo());
-    	mpPerson.setCardType("1");
-    	mpPerson.setCareSiteId("TDYY");
-    	mpPerson.setContactsName(dealOracleString(patMasterIndex.getNextOfKin()));
-    	
-    	mpPerson.setContactsPhone(patMasterIndex.getNextOfKinPhone());
-    	mpPerson.setPhoneNumber(patMasterIndex.getPhoneNumberHome());
-    	mpPerson.setCreateTime(DateUtils.getNowDate());
-    	mpPerson.setPersonName(dealOracleString(patMasterIndex.getName()));
-    	mpPerson.setAddress(dealOracleString(patMasterIndex.getNextOfKinAddr()));
-    	mpPerson.setPersonId(patMasterIndex.getPatientId());
-    	if(StringUtils.isNotBlankAndNotEmpty(patMasterIndex.getIdNo())) {
-            if(HealthUtils.getSex(patMasterIndex.getIdNo()).intValue() == 1){
+        MpPerson mpPerson = new MpPerson();
+        mpPerson.setLocationId(dealOracleString(patMasterIndex.getMailingAddress()));
+        mpPerson.setCardId(patMasterIndex.getIdNo());
+        mpPerson.setCardType("1");
+        mpPerson.setCareSiteId("TDYY");
+        mpPerson.setContactsName(dealOracleString(patMasterIndex.getNextOfKin()));
+
+        mpPerson.setContactsPhone(patMasterIndex.getNextOfKinPhone());
+        mpPerson.setPhoneNumber(patMasterIndex.getPhoneNumberHome());
+        mpPerson.setCreateTime(DateUtils.getNowDate());
+        mpPerson.setPersonName(dealOracleString(patMasterIndex.getName()));
+        mpPerson.setAddress(dealOracleString(patMasterIndex.getNextOfKinAddr()));
+        mpPerson.setPersonId(patMasterIndex.getPatientId());
+        if (StringUtils.isNotBlankAndNotEmpty(patMasterIndex.getIdNo())) {
+            if (HealthUtils.getSex(patMasterIndex.getIdNo()).intValue() == 1) {
                 mpPerson.setGenderSourceValue("男");
-            }else {
+            } else {
                 mpPerson.setGenderSourceValue("女");
             }
-    	}
-    	mpPersonMapper.insertMpPerson(mpPerson);
-    	return mpPerson;
+        }
+        mpPersonMapper.insertMpPerson(mpPerson);
+        return mpPerson;
     }
-    
-    
-    private String dealOracleString(String s ) {
-    	if(StringUtils.isNotBlankAndNotEmpty(s)) {
-			try {
-				String newStr = new String(s.getBytes("ISO-8859-1"),"GBK");
-				L.error("newStr{} ", newStr);
-	    		return newStr;
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-    		
-    	}
-    	return null;
+
+
+    private String dealOracleString(String s) {
+        if (StringUtils.isNotBlankAndNotEmpty(s)) {
+            try {
+                String newStr = new String(s.getBytes("ISO-8859-1"), "GBK");
+                L.error("newStr{} ", newStr);
+                return newStr;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return null;
     }
 
     /**

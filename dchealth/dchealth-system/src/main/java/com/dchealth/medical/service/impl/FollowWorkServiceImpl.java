@@ -43,10 +43,7 @@ import com.dchealth.research.mapper.ResearchOutboundMapper;
 import com.dchealth.research.mapper.ResearchUserRoleMapper;
 import com.dchealth.research.service.ISysPopNoticeService;
 import com.dchealth.system.mapper.SysUserMapper;
-import com.dchealth.template.domain.FMedicalExamSetEvaluation;
-import com.dchealth.template.domain.FMedicalExamSubject;
-import com.dchealth.template.domain.FMedicalForm;
-import com.dchealth.template.domain.FMedicalProperty;
+import com.dchealth.template.domain.*;
 import com.dchealth.template.mapper.*;
 import com.dchealth.warn.domain.WarnEarlyRecord;
 import com.dchealth.warn.domain.WarnMedicalEarlyCondition;
@@ -62,6 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
@@ -151,6 +149,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
 
     @Autowired
     private FMedicalExamSetEvaluationMapper fMedicalExamSetEvaluationMapper;
+
+    @Autowired
+    private FMedicalFormEvalResultMapper fMedicalFormEvalResultMapper;
 
 
     @Override
@@ -278,11 +279,19 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 }
 
                 if ("3".equals(medicalFormVO.getFormType())) {
+
+                    // 查看患者是否存在自评量表评分记录
+                    FMedicalFormEvalResult fMedicalFormEvalResult = new FMedicalFormEvalResult();
+                    fMedicalFormEvalResult.setMedicalFormId(medicalFormVO.getMedicalFormId());
+                    fMedicalFormEvalResult.setRecordId(followWorkDetailsForm.getRecordId());
+                    FMedicalFormEvalResult result = fMedicalFormEvalResultMapper.selectFMedicalFormEvalResultList(fMedicalFormEvalResult).stream().findFirst().orElse(new FMedicalFormEvalResult());
+
+                    medicalFormVO.setEvaluationResult(result.getEvaluationResult());
+
                     medicalFormExamVOSResult.add(medicalFormVO);
                 } else {
                     medicalFormVOSResult.add(medicalFormVO);
                 }
-
 
                 //随访工作站详情页面判断模板id是否默认选中
                 if (formMap.containsKey(medicalFormVO.getMedicalFormId())) {
@@ -2025,7 +2034,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         // 获取到总分值，查到对应的评估结果
 //        List<SelfAssessmentForm> forms = infoForm.getSelfAssessmentForms().stream().filter(item -> item.getCode().equals("3")).collect(Collectors.toList());
 
-        dealScoresInfo(infoForm.getSelfAssessmentForms());
+        dealScoresInfo(infoForm.getSelfAssessmentForms(), infoForm.getRecordId());
 
         // 属性值集合处理
         handlePropertyFormsInfo(infoForm, patientRecord);
@@ -2056,7 +2065,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         return AjaxResult.success();
     }
 
-    private void dealScoresInfo(List<SelfAssessmentForm> forms) {
+    private void dealScoresInfo(List<SelfAssessmentForm> forms, Long recordId) {
         if (ObjectUtil.isEmpty(forms)) {
             return;
         }
@@ -2071,8 +2080,13 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
 
             //最高档评价结果，处理极端情况
             FMedicalExamSetEvaluation setEvaluationMax = null;
+// 将字符串转换为 BigDecimal 并保留两位小数
+            BigDecimal formScore = new BigDecimal(form.getScores()).setScale(2, RoundingMode.HALF_UP);
             for (FMedicalExamSetEvaluation evaluation : evaluations) {
-                if (Long.parseLong(form.getScores()) >= evaluation.getMinValue() && Long.parseLong(form.getScores()) < evaluation.getMaxValue()) {
+                BigDecimal minValue = BigDecimal.valueOf(evaluation.getMinValue()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal maxValue = BigDecimal.valueOf(evaluation.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+
+                if (formScore.compareTo(minValue) >= 0 && formScore.compareTo(maxValue) < 0) {
                     form.setEvaluationResult(evaluation.getEvaluationResult());
                     break;
                 }
@@ -2081,21 +2095,37 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                     setEvaluationMax.setMaxValue(evaluation.getMaxValue());
                     setEvaluationMax.setEvaluationResult(evaluation.getEvaluationResult());
                 } else {
-                    if (evaluation.getMaxValue() > setEvaluationMax.getMaxValue()) {
+                    BigDecimal currentMaxValue = BigDecimal.valueOf(evaluation.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal setEvaluationMaxValue = BigDecimal.valueOf(setEvaluationMax.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+
+                    if (currentMaxValue.compareTo(setEvaluationMaxValue) > 0) {
                         setEvaluationMax.setMaxValue(evaluation.getMaxValue());
                         setEvaluationMax.setEvaluationResult(evaluation.getEvaluationResult());
                     }
                 }
-                if (Long.parseLong(form.getScores()) >= setEvaluationMax.getMaxValue()) {
+                BigDecimal setEvaluationMaxValue = BigDecimal.valueOf(setEvaluationMax.getMaxValue()).setScale(2, RoundingMode.HALF_UP);
+                if (formScore.compareTo(setEvaluationMaxValue) >= 0) {
                     form.setEvaluationResult(setEvaluationMax.getEvaluationResult());
                 }
             }
 
-            FMedicalForm fMedicalForm = new FMedicalForm();
-            fMedicalForm.setMedicalFormId(Long.valueOf(form.getMedicalFormId()));
-            fMedicalForm.setEvaluationResult(form.getEvaluationResult());
-            fMedicalForm.setEvaluationScores(form.getScores());
-            fMedicalFormMapper.updateFMedicalForm(fMedicalForm);
+
+            FMedicalFormEvalResult fMedicalFormEvalResult = new FMedicalFormEvalResult();
+            fMedicalFormEvalResult.setRecordId(recordId);
+
+            List<FMedicalFormEvalResult> fMedicalFormEvalResults = fMedicalFormEvalResultMapper.selectFMedicalFormEvalResultList(fMedicalFormEvalResult);
+            fMedicalFormEvalResult.setMedicalFormId(Long.valueOf(form.getMedicalFormId()));
+            fMedicalFormEvalResult.setEvaluationResult(form.getEvaluationResult());
+            fMedicalFormEvalResult.setEvaluationScores(form.getScores());
+
+            if (fMedicalFormEvalResults != null && !fMedicalFormEvalResults.isEmpty()) {
+
+                fMedicalFormEvalResultMapper.updateFMedicalFormEvalResult(fMedicalFormEvalResult);
+            } else {
+                // 新增操作
+                fMedicalFormEvalResult.setCreateTime(new Date());
+                fMedicalFormEvalResultMapper.insertFMedicalFormEvalResult(fMedicalFormEvalResult);
+            }
         }
 
     }

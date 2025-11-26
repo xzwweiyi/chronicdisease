@@ -30,8 +30,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="openCollapse"    column="open_collapse"    />
         <result property="selfEvaluationType" column="self_evaluation_type"/>
         <result property="healthManageType" column="health_manage_type"/>
-        <result property="evaluationScores" column="evaluation_scores"/>
-        <result property="evaluationResult" column="evaluation_result"/>
     </resultMap>
 
     <sql id="selectFMedicalFormVo">
@@ -127,8 +125,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sortNum != null">#{sortNum},</if>
             <if test="selfEvaluationType != null">#{selfEvaluationType},</if>
             <if test="healthManageType != null">#{healthManageType},</if>
-            <if test="evaluationResult != null and evaluationResult != ''">#{evaluationResult},</if>
-            <if test="evaluationScores != null and evaluationScores != ''">#{evaluationScores},</if>
         </trim>
     </insert>
 
@@ -157,8 +153,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sortNum != null">sort_num = #{sortNum},</if>
             <if test="selfEvaluationType != null">self_evaluation_type = #{selfEvaluationType},</if>
             <if test="healthManageType != null">health_manage_type = #{healthManageType},</if>
-            <if test="evaluationResult != null and evaluationResult != ''">evaluation_result = #{evaluationResult},</if>
-            <if test="evaluationScores != null and evaluationScores != ''">evaluation_scores = #{evaluationScores},</if>
         </trim>
         where medical_form_id = #{medicalFormId}
     </update>
