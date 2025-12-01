@@ -884,14 +884,27 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 throw new RuntimeException("病种不存在");
             }
 
-            List<ResearchInfo> researchInfos = new ArrayList<>();
-//            TreeForm treeForm = new TreeForm();
-//            treeForm.setType("1");
-            ResearchInfo researchInfo = new ResearchInfo();
 
-            researchInfo.setDeptId(sysUser.getDeptId());
-            researchInfo.setDiseaseTypeId(disease.getDiseaseId());
-            researchInfos = researchInfoMapper.selectResearchInfoList(researchInfo);
+            List<ResearchInfo> researchInfos = new ArrayList<>();
+
+            TreeForm treeForm = new TreeForm();
+            treeForm.setType("1");
+            if ("1".equals(sysUser.getIsAlldeptResearch())) {
+                treeForm.setDeptId(sysUser.getDeptId());
+                researchInfos = researchInfoMapper.selectResearchInfoByAuth(treeForm);
+            } else {
+                treeForm.setUserId(userId);
+                researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
+            }
+
+//            List<ResearchInfo> researchInfos = new ArrayList<>();
+////            TreeForm treeForm = new TreeForm();
+////            treeForm.setType("1");
+//            ResearchInfo researchInfo = new ResearchInfo();
+//
+//            researchInfo.setDeptId(sysUser.getDeptId());
+//            researchInfo.setDiseaseTypeId(disease.getDiseaseId());
+//            researchInfos = researchInfoMapper.selectResearchInfoList(researchInfo);
 
             // 过滤出当前病种的队列
 //            researchInfos = researchInfos.stream()

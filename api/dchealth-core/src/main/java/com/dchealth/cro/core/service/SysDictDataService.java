@@ -1,11 +1,5 @@
 package com.dchealth.cro.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.common.cache.RedisCache;
 import com.dchealth.cro.common.constant.RedisConstants;
@@ -15,6 +9,11 @@ import com.dchealth.cro.core.domain.SysDictData;
 import com.dchealth.cro.core.mapper.HospitalMapper;
 import com.dchealth.cro.core.mapper.SysDictDataMapper;
 import com.dchealth.cro.core.vo.DictVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SysDictDataService {
@@ -40,7 +39,7 @@ public class SysDictDataService {
 			result = JSON.parseArray(cacheValue, DictVO.class);
 		} else {
 			List<SysDictData> list = sysDictDataMapper.selectDictDataByType(dictType);
-			if (list != null && list.size() > 0) {
+			if (list != null && !list.isEmpty()) {
 				for (SysDictData sysDictData : list) {
 					DictVO dictVO = new DictVO();
 					dictVO.setDictKey(sysDictData.getDictValue());
