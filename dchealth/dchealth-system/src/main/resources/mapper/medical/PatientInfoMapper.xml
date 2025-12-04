@@ -85,6 +85,7 @@
         <result property="patientStatus"    column="patient_status"    />
         <result property="researchId"    column="research_id"    />
         <result property="patientCode" column="patient_code"/>
+        <result property="cardId" column="card_id"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.PatientEnrollmentVo" id="PatientEnrollmentVOResult">
@@ -398,7 +399,7 @@
     <select id="enrollmentList2" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
         select p.patient_id,p.patient_code, p.patient_name, i.project_name, p.create_time, p.enrollment_result, p.enrollment_result_content,
         p.research_id plan_research_id, p.enrollment_time,p.channel_type,p.account_id,p.refuse_count,p.sms_send_count,
-        pa.mobile,p.person_id,p.enrollment_handler_status,p.enrollment_status,mp.phone_number base_mobile
+        pa.mobile,p.person_id,p.enrollment_handler_status,p.enrollment_status,mp.phone_number base_mobile, mp.card_id card_id
         from patient_info p
         INNER JOIN research_info i on i.id=p.research_id
         left JOIN patient_account pa on p.account_id=pa.account_id
@@ -427,6 +428,7 @@
         <if test="allocatedStatus != null "> and p.allocated_status = #{allocatedStatus}</if>
         <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and p.account_id = 0 </if>
         <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and p.account_id != 0 </if>
+        <if test="diseaseTypeId != null "> and i.disease_type_id = #{diseaseTypeId}</if>
     </select>
 
     <select id="allocatedList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
@@ -437,6 +439,7 @@
         where p.allocated_status='1' and p.allocated_handler_status = #{allocatedHandlerStatus}
         <if test="researchId != null "> and p.plan_research_id = #{researchId}</if>
         <if test="deptId != null and deptId!='100'.toString() "> and p.dept_id = #{deptId} and i.dept_id = #{deptId}</if>
+        <if test="diseaseTypeId != null "> and i.disease_type_id = #{diseaseTypeId}</if>
     </select>
 
     <insert id="insertPatientInfo" parameterType="PatientInfo" useGeneratedKeys="true" keyProperty="patientId">

@@ -4,6 +4,8 @@ import com.dchealth.medical.domain.form.DynamicForm;
 import com.dchealth.medical.domain.form.FMedicalPropertyForm;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,7 +21,7 @@ public class DynamicSql {
     /**
      * 大文本
      */
-    private final List<String> largeTextFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id"}).collect(Collectors.toList());
+    private final List<String> largeTextFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id","create_time"}).collect(Collectors.toList());
 
     private String largeTextFieldsStr(){
         return largeTextFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
@@ -54,6 +56,8 @@ public class DynamicSql {
         if (medicalPropertyForms == null || medicalPropertyForms.isEmpty()){
             return null;
         }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = sdf.format(new Date());
         StringBuffer insertSql = new StringBuffer();
         insertSql.append("insert into "+RES_LARGE_TEXT+dynamicForm.getResearchId().longValue())
                 .append("(")
@@ -67,7 +71,8 @@ public class DynamicSql {
                     .append("'").append(dynamicForm.getType()).append("'").append(",")
                     .append("'").append(m.getPropertyCode()).append("'").append(",")
                     .append("'").append(m.getPropertyValue()).append("'").append(",")
-                    .append(m.getPropertyId().longValue())
+                    .append(m.getPropertyId().longValue()).append(",")
+                    .append("'").append(formattedDate).append("'")
                     .append("),");
         });
         return insertSql.toString().substring(0,insertSql.length()-1);
@@ -137,7 +142,7 @@ public class DynamicSql {
     /**
      * 小文本
      */
-    private final List<String> textFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id", "other"}).collect(Collectors.toList());
+    private final List<String> textFields = Stream.of(new String[]{"record_id","form_id","type","property_code","property_value","property_id", "other", "create_time"}).collect(Collectors.toList());
 
     private String textFieldsStr(){
         return textFields.stream().map(String :: valueOf).collect(Collectors.joining(","));
@@ -172,6 +177,9 @@ public class DynamicSql {
         if (medicalPropertyForms == null || medicalPropertyForms.isEmpty()){
             return null;
         }
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = sdf.format(date);
         StringBuffer insertSql = new StringBuffer();
         insertSql.append("insert into "+RES_TEXT+dynamicForm.getResearchId().longValue())
                 .append("(")
@@ -186,7 +194,8 @@ public class DynamicSql {
                     .append("'").append(m.getPropertyCode()).append("'").append(",")
                     .append("'").append(m.getPropertyValue()).append("'").append(",")
                     .append(m.getPropertyId().longValue()).append(",")
-                    .append("'").append(m.getOther()).append("'")
+                    .append("'").append(m.getOther()).append("'").append( ",")
+                    .append("'").append(formattedDate).append("'")
                     .append("),");
         });
         return insertSql.toString().substring(0,insertSql.length()-1);

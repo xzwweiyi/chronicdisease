@@ -1,16 +1,5 @@
 package com.dchealth.web.controller.system;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import com.dchealth.listener.FollowTreeEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import com.dchealth.common.constant.Constants;
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.core.domain.entity.SysMenu;
@@ -20,6 +9,15 @@ import com.dchealth.common.utils.SecurityUtils;
 import com.dchealth.framework.web.service.SysLoginService;
 import com.dchealth.framework.web.service.SysPermissionService;
 import com.dchealth.system.service.ISysMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 登录验证
@@ -67,10 +65,10 @@ public class SysLoginController
     public AjaxResult getInfo()
     {
         SysUser user = SecurityUtils.getLoginUser().getUser();
-        if (!Objects.isNull(user)) {
-            Long userId = user.getUserId();
-            applicationContext.publishEvent(new FollowTreeEvent(this,userId));
-        }
+//        if (!Objects.isNull(user)) {
+//            Long userId = user.getUserId();
+//            applicationContext.publishEvent(new FollowTreeEvent(this,userId, Boolean.FALSE));
+//        }
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合

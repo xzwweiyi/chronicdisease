@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cro.form.mapper.FMedicalFormEvalResultMapper">
+    
+    <resultMap type="com.dchealth.cro.form.domain.FMedicalFormEvalResult" id="FMedicalFormEvalResultResult">
+        <result property="id"    column="id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="evaluationResult"    column="evaluation_result"    />
+        <result property="evaluationScores"    column="evaluation_scores"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectFMedicalFormEvalResultVo">
+        select id, medical_form_id, record_id, evaluation_result, evaluation_scores, create_by, create_time from f_medical_form_eval_result
+    </sql>
+
+    <select id="selectFMedicalFormEvalResultList" parameterType="com.dchealth.cro.form.domain.FMedicalFormEvalResult" resultMap="FMedicalFormEvalResultResult">
+        <include refid="selectFMedicalFormEvalResultVo"/>
+        <where>  
+            <if test="medicalFormId != null "> and medical_form_id = #{medicalFormId}</if>
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="evaluationResult != null  and evaluationResult != ''"> and evaluation_result = #{evaluationResult}</if>
+            <if test="evaluationScores != null  and evaluationScores != ''"> and evaluation_scores = #{evaluationScores}</if>
+        </where>
+    </select>
+    
+    <select id="selectFMedicalFormEvalResultById" parameterType="Long" resultMap="FMedicalFormEvalResultResult">
+        <include refid="selectFMedicalFormEvalResultVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFMedicalFormEvalResult" parameterType="com.dchealth.cro.form.domain.FMedicalFormEvalResult" useGeneratedKeys="true" keyProperty="id">
+        insert into f_medical_form_eval_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="recordId != null">record_id,</if>
+            <if test="evaluationResult != null">evaluation_result,</if>
+            <if test="evaluationScores != null">evaluation_scores,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="recordId != null">#{recordId},</if>
+            <if test="evaluationResult != null">#{evaluationResult},</if>
+            <if test="evaluationScores != null">#{evaluationScores},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFMedicalFormEvalResult" parameterType="com.dchealth.cro.form.domain.FMedicalFormEvalResult">
+        update f_medical_form_eval_result
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="evaluationResult != null">evaluation_result = #{evaluationResult},</if>
+            <if test="evaluationScores != null">evaluation_scores = #{evaluationScores},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFMedicalFormEvalResultById" parameterType="Long">
+        delete from f_medical_form_eval_result where id = #{id}
+    </delete>
+
+    <delete id="deleteFMedicalFormEvalResultByIds" parameterType="String">
+        delete from f_medical_form_eval_result where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

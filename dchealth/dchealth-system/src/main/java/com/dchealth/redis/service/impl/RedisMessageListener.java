@@ -1,11 +1,9 @@
 package com.dchealth.redis.service.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.dchealth.common.utils.SecurityUtils;
 import com.dchealth.listener.FollowTreeEvent;
 import com.dchealth.system.domain.PatientCardInfo;
 import com.dchealth.system.service.IPatientCardInfoService;
-import com.dchealth.system.service.impl.PatientCardInfoServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -45,10 +43,10 @@ public class RedisMessageListener implements MessageListener {
         if ("followTree".equals(new String(pattern))) {
             //  deserialize队列所有者id + admin
             if (Long.valueOf(deserialize.toString()).equals(1L)) {
-                applicationContext.publishEvent(new FollowTreeEvent(JSON.toJSONString(deserialize), 1L));
+                applicationContext.publishEvent(new FollowTreeEvent(JSON.toJSONString(deserialize), 1L, Boolean.FALSE));
             } else {
-                applicationContext.publishEvent(new FollowTreeEvent(JSON.toJSONString(deserialize), 1L));
-                applicationContext.publishEvent(new FollowTreeEvent(JSON.toJSONString(deserialize), Long.valueOf(deserialize.toString())));
+                applicationContext.publishEvent(new FollowTreeEvent(JSON.toJSONString(deserialize), 1L,Boolean.FALSE));
+                applicationContext.publishEvent(new FollowTreeEvent(JSON.toJSONString(deserialize), Long.valueOf(deserialize.toString()), Boolean.FALSE));
             }
         } else if ("patientCard".equals(new String(pattern))) {
             PatientCardInfo patientCardInfo = JSON.parseObject((String) deserialize, PatientCardInfo.class);

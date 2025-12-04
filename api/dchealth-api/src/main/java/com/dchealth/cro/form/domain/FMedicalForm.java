@@ -1,11 +1,10 @@
 package com.dchealth.cro.form.domain;
 
+import com.dchealth.cro.warn.domain.WarnConfig;
+import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
-
-import com.dchealth.cro.warn.domain.WarnConfig;
-
-import lombok.Data;
 
 /**
  * 单模板对象 f_medical_form

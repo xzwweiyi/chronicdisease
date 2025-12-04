@@ -97,4 +97,6 @@ public class FMedicalForm extends BaseEntity
 
 
     private Integer healthManageType;
+
+
 }

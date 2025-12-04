@@ -110,4 +110,9 @@ public class FollowWorkListForm {
      * 患者状态 1查询患者状态
      */
     private String patientStatus;
+
+    /**
+     * 疾病id
+     */
+    private Long diseaseTypeId;
 }

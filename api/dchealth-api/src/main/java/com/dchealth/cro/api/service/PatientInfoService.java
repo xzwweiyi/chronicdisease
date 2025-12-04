@@ -106,7 +106,7 @@ public class PatientInfoService {
             if (infoMap.get(mpPerson.getPersonId()) == null) {
                 PatientInfo patientInfo = new PatientInfo();
                 if (patientAccount.getAccountId() != null) {
-                    patientInfo.setAccountId(Long.valueOf(patientAccount.getAccountId()));
+                    patientInfo.setAccountId(patientAccount.getAccountId());
                 }
 
                 // 对肥胖门诊的队列进行判断 不同的手术、生活方式
@@ -115,7 +115,7 @@ public class PatientInfoService {
                 map.forEach((k, v) -> {
                     if (researchId.toString().equals(v) && k.equals("肥胖门诊用药队列")) {
                         // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos == null || patientInfos.isEmpty()) {
+                        if (patientInfos.isEmpty()) {
                             patientInfo.setPatientCode(String.format("D-%04d", 1));
                         } else {
                             PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
@@ -124,7 +124,7 @@ public class PatientInfoService {
 
                     } else if (researchId.toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
                         // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos == null || patientInfos.isEmpty()) {
+                        if (patientInfos.isEmpty()) {
                             patientInfo.setPatientCode(String.format("L-%04d", 1));
                         } else {
                             PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
@@ -132,7 +132,7 @@ public class PatientInfoService {
                         }
                     } else if (researchId.toString().equals(v) && k.equals("肥胖门诊手术队列")) {
                         // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos == null || patientInfos.isEmpty()) {
+                        if (patientInfos.isEmpty()) {
                             patientInfo.setPatientCode(String.format("S-%04d", 1));
                         } else {
                             PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);

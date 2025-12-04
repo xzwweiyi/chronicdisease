@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectFMedicalFormVo">
-        select medical_form_id, medical_code, medical_name, parent_id, open_image, open_property, open_multiple, attribute,article_id,form_source,form_type,scores_total_val,follow_id, create_time, update_time, create_by, update_by,dynamic, lock_flag, open_collapse,health_manage_type, sort_num
+        select medical_form_id, medical_code, medical_name, parent_id, open_image, open_property, open_multiple, attribute,article_id,form_source,form_type,scores_total_val,follow_id, create_time, update_time, create_by, update_by,dynamic, lock_flag, open_collapse,health_manage_type, sort_num,evaluation_scores,evaluation_result
         from f_medical_form
     </sql>
 

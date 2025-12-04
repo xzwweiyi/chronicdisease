@@ -1,11 +1,10 @@
 package com.dchealth.cro.form.vo;
 
-import java.util.List;
-
 import com.dchealth.cro.form.domain.FMedicalExamItem;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * 随访表单属性
@@ -67,5 +66,7 @@ public class MedicalPropertyVO extends PropertyVO{
     //为展示自评量表新添加的字段 subjectScores fMedicalExamItemList
     private Integer subjectScores;
     private List<FMedicalExamItem> fMedicalExamItemList;
+
+    private String evaluationResult;
 
 }

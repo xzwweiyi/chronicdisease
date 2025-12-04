@@ -117,6 +117,8 @@ public class PropertyType {
      */
     public static final String DEPARTMENTS = "departments";
 
+    private static final String STATISTIC = "Statistic";
+
 
     /**
      * 是否包含小文本
@@ -134,6 +136,7 @@ public class PropertyType {
                 || propertyTypes.contains(COLORPICKER.toUpperCase()) || propertyTypes.contains(TIMEPICKER.toUpperCase())
                 || propertyTypes.contains(DISEASES.toUpperCase()) || propertyTypes.contains(NATION.toUpperCase())
                 || propertyTypes.contains(PROVINCE.toUpperCase()) || propertyTypes.contains(DEPARTMENTS.toUpperCase())
+                || propertyTypes.contains(STATISTIC.toUpperCase())
                 || propertyTypes.contains(TIMENUMERAL.toUpperCase());
     }
 
@@ -148,6 +151,7 @@ public class PropertyType {
                 || propertyType.equals(COLORPICKER.toUpperCase()) || propertyType.equals(TIMEPICKER.toUpperCase())
                 || propertyType.equals(DISEASES.toUpperCase()) || propertyType.equals(NATION.toUpperCase())
                 || propertyType.equals(PROVINCE.toUpperCase()) || propertyType.equals(DEPARTMENTS.toUpperCase())
+                || propertyType.equals(STATISTIC.toUpperCase())
                 || propertyType.equals(TIMENUMERAL.toUpperCase());
     }
 

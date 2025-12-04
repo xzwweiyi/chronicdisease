@@ -1,37 +1,26 @@
 package com.dchealth.web.controller.research;
 
-import java.util.Date;
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-
-import cn.hutool.core.date.DateUtil;
-import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.annotation.Log;
+import com.dchealth.common.core.controller.BaseController;
+import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.core.page.TableDataInfo;
+import com.dchealth.common.enums.BusinessType;
+import com.dchealth.common.utils.poi.ExcelUtil;
 import com.dchealth.es.service.SyncRecordDataESService;
 import com.dchealth.listener.FollowTreeEvent;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.vo.ResearchPatientVO;
 import com.dchealth.medical.service.IPatientInfoService;
 import com.dchealth.research.domain.vo.ResearchInfoVo;
-import com.xxl.job.core.handler.annotation.XxlJob;
+import com.dchealth.research.service.IResearchInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import com.dchealth.common.annotation.Log;
-import com.dchealth.common.core.controller.BaseController;
-import com.dchealth.common.core.domain.AjaxResult;
-import com.dchealth.common.enums.BusinessType;
-import com.dchealth.research.service.IResearchInfoService;
-import com.dchealth.common.utils.poi.ExcelUtil;
-import com.dchealth.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 队列基础信息Controller
@@ -131,7 +120,7 @@ public class ResearchInfoController extends BaseController
         vo.setCreateBy(getUsername());
         vo.setUserId(getUserId());
         vo.setCreateTime(new Date());
-        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId()));
+        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId(), Boolean.FALSE));
         return AjaxResult.success(researchInfoService.insertResearchInfo(vo));
     }
 
@@ -147,7 +136,7 @@ public class ResearchInfoController extends BaseController
             return AjaxResult.error("队列名称不能为空");
         }
 
-        applicationContext.publishEvent(new FollowTreeEvent(getUserId(),getUserId()));
+        applicationContext.publishEvent(new FollowTreeEvent(getUserId(),getUserId(), Boolean.FALSE));
         return toAjax(researchInfoService.updateResearchInfo(vo));
     }
 
@@ -175,7 +164,7 @@ public class ResearchInfoController extends BaseController
             return AjaxResult.error("当前患者只能由队列创建者删除或者管理员删除");
         }
         int i = researchInfoService.updateInfoDelFlagById(id);
-        applicationContext.publishEvent(new FollowTreeEvent(this,getUserId()));
+        applicationContext.publishEvent(new FollowTreeEvent(this,getUserId(), Boolean.FALSE));
         return toAjax(i);
     }
 
@@ -212,7 +201,7 @@ public class ResearchInfoController extends BaseController
     public AjaxResult publishResearch(@PathVariable Long id, @PathVariable String status)
     {
         AjaxResult ajax = toAjax(researchInfoService.updateResearchInfoStatus(id, status));
-        applicationContext.publishEvent(new FollowTreeEvent(this,getUserId()));
+        applicationContext.publishEvent(new FollowTreeEvent(this,getUserId(), Boolean.FALSE));
         return ajax;
     }
 

@@ -449,7 +449,7 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 info.setResearchId(baseInfo.getResearchId());
 
                 List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(info);
-                Map<String, PatientInfo> infoMap = patientInfos.stream().collect(Collectors.toMap(PatientInfo::getPersonId, Function.identity()));
+                Map<String, PatientInfo> infoMap = patientInfos.stream().collect(Collectors.toMap(PatientInfo::getPersonId, Function.identity(), (k1, k2) -> k2));
 
 
                 if (infoMap.get(baseInfo.getPersonId()) == null) {

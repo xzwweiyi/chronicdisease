@@ -168,4 +168,6 @@ public class FollowWorkListVO {
 
     private Integer followNum;
 
+    private String cardId;
+
 }

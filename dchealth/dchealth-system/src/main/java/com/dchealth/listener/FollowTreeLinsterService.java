@@ -1,7 +1,6 @@
 package com.dchealth.listener;
 
 import com.alibaba.fastjson2.JSON;
-import com.dchealth.common.core.redis.RedisCache;
 import com.dchealth.redis.service.FollowTreeCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,16 @@ public class FollowTreeLinsterService {
     @Autowired
     private FollowTreeCacheService followTreeCacheService;
 
-
     @EventListener(FollowTreeEvent.class)
     @Async
-    public void hander(FollowTreeEvent followTreeEvent){
+    public void hander(FollowTreeEvent followTreeEvent) {
         // 时间参数
         log.info("监听到随访树改动事件:{}", JSON.toJSONString(followTreeEvent));
-        Boolean b = followTreeCacheService.cacheFollowTree(followTreeEvent.getUserId());
-        if(b){
+
+        Boolean b = followTreeCacheService.cacheFollowTree(followTreeEvent);
+        if (b) {
             log.info("随访树缓存成功");
-        }else{
+        } else {
             log.info("随访树缓存失败");
         }
     }

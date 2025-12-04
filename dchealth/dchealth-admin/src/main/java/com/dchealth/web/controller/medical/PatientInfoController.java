@@ -189,7 +189,7 @@ public class PatientInfoController extends BaseController {
 //        redisCache.deleteObject(Constants.FOLLOW_TREE_KEY + userId);
         // todo 若是速度慢, 异步添加缓存, 并吧添加的能力提出出来 (定时&事件触发)
         int num = patientInfoService.importEnrollment(patientBaseInfos, getUsername());
-        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId()));
+        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId(), false));
         return AjaxResult.success("入组" + num + "个患者");
 
     }
@@ -208,7 +208,7 @@ public class PatientInfoController extends BaseController {
             return AjaxResult.error("当前患者只能由队列创建者删除或者管理员删除");
         }
         int num = patientInfoService.deleteEnrollment(patientIds);
-        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId()));
+        applicationContext.publishEvent(new FollowTreeEvent(getUserId(), getUserId(), false));
         return AjaxResult.success("删除入组" + num + "个患者");
 
     }

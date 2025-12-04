@@ -95,4 +95,7 @@ public class MedicalFormVO extends FormVO{
      * 是否预警源 false：否   true：是
      */
     private boolean isWarnSource;
+
+    private String evaluationResult;
+
 }

@@ -105,7 +105,10 @@
                         m.create_by,
                         m.update_by,
                         if(q.question_id, 1, 0) as checked,
-                        open_collapse
+                        open_collapse,
+                        m.evaluation_scores,
+                        m.evaluation_result,
+                        m.health_manage_type
         from f_medical_form m
                  left join question_record_form q on q.medical_form_id = m.medical_form_id and q.record_id = #{recordId}
         where m.follow_id = #{followId} and m.form_type != '5'
@@ -185,6 +188,8 @@
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="evaluationScores != null">evaluation_scores = #{evaluationScores},</if>
+            <if test="evaluationResult != null">evaluation_result = #{evaluationResult},</if>
         </trim>
         where medical_form_id = #{medicalFormId}
     </update>

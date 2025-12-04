@@ -5,9 +5,11 @@ import com.dchealth.cro.common.utils.bean.BeanUtils;
 import com.dchealth.cro.enums.FollowTipStatusEnum;
 import com.dchealth.cro.form.domain.FMedicalExamSubject;
 import com.dchealth.cro.form.domain.FMedicalForm;
+import com.dchealth.cro.form.domain.FMedicalFormEvalResult;
 import com.dchealth.cro.form.domain.FMedicalProperty;
 import com.dchealth.cro.form.function.FormConsumer;
 import com.dchealth.cro.form.mapper.FMedicalExamSubjectMapper;
+import com.dchealth.cro.form.mapper.FMedicalFormEvalResultMapper;
 import com.dchealth.cro.form.mapper.FMedicalFormMapper;
 import com.dchealth.cro.form.mapper.FMedicalPropertyMapper;
 import com.dchealth.cro.form.vo.MedicalFormVO;
@@ -41,6 +43,9 @@ public class MedicalFormService {
     @Autowired
     private FMedicalExamSubjectMapper fMedicalExamSubjectMapper;
 
+    @Autowired
+    private FMedicalFormEvalResultMapper fMedicalFormEvalResultMapper;
+
 
     /**
      * 获取随访表单内容
@@ -49,6 +54,7 @@ public class MedicalFormService {
      */
     public List<MedicalFormVO> followForms(Long followId, Long recordId, String followStatus, FormConsumer<List<MedicalFormVO>, List<MedicalPropertyVO>, Set<String>> fun) {
         List<FMedicalForm> formList = fMedicalFormMapper.selectFMedicalFormJoinByMedicalFollowId(followId, recordId);
+
       /*  if ("2".equals(followStatus)){
             formList = fMedicalFormMapper.selectFMedicalFormJoinByMedicalFollowId(followId, recordId);
         }else{
@@ -107,6 +113,25 @@ public class MedicalFormService {
                 if (warnConfigMaps != null && warnConfigMaps.containsKey(x.getMedicalFormId())) {
                     x.setWarnConfigVOS(warnConfigMaps.get(x.getMedicalFormId()));
                 }
+            }
+        }
+
+        // 处理自评结果
+
+        if (medicalFormVOS != null) {
+            List<MedicalFormVO> formVOS = medicalFormVOS.stream().filter(x -> "3".equals(x.getFormType())).collect(Collectors.toList());
+            for (MedicalFormVO formVO : formVOS) {
+                formVO.getPropertyVOS().stream().forEach(x -> {
+                    if (x.getPropertyType().equals("Statistic")) {
+                        // 查对应的自评结果
+                        FMedicalFormEvalResult fMedicalFormEvalResult = new FMedicalFormEvalResult();
+                        fMedicalFormEvalResult.setRecordId(recordId);
+                        fMedicalFormEvalResult.setMedicalFormId(x.getMedicalFormId());
+                        FMedicalFormEvalResult result = fMedicalFormEvalResultMapper.selectFMedicalFormEvalResultList(fMedicalFormEvalResult).stream().findFirst().orElse(new FMedicalFormEvalResult());
+
+                        formVO.setEvaluationResult(result.getEvaluationResult());
+                    }
+                });
             }
         }
 

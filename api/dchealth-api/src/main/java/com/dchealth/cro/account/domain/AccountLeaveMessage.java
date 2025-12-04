@@ -55,7 +55,7 @@ public class AccountLeaveMessage implements Serializable {
 
 
     /** 患者id */
-    private Long personId;
+    private String personId;
 
     /** 患者名称 */
     private String accountName;
