@@ -2333,6 +2333,7 @@ public class MedicalPatientService {
             patientAccountInfoVO.setSex(HealthUtils.getSex(patientBaseInfo.getCardId()));
             patientAccountInfoVO.setIdCard(patientBaseInfo.getCardId());
             patientAccountInfoVO.setMobile(patientBaseInfo.getPhoneNumber());
+            patientAccountInfoVO.setLoginMobile(patientAccount.getMobile());
         }
         patientAccountInfoVO.setAccountId(bindPatientForm.getAccountId());
 

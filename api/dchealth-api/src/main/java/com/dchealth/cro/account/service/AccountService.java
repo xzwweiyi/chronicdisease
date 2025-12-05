@@ -1,18 +1,5 @@
 package com.dchealth.cro.account.service;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.account.constant.AccountContants;
 import com.dchealth.cro.account.domain.SysUser;
@@ -47,6 +34,18 @@ import com.dchealth.cro.core.contants.DictConstant;
 import com.dchealth.cro.core.domain.SysDept;
 import com.dchealth.cro.core.mapper.SysDeptMapper;
 import com.dchealth.cro.core.service.SysDictDataService;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -658,5 +657,6 @@ public class AccountService {
 		result.setData(userInfoVO);
 		return result;
 	}
+
 
 }

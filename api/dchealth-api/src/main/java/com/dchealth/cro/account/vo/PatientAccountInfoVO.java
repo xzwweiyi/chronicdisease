@@ -37,7 +37,12 @@ public class PatientAccountInfoVO {
     /** 入组状态：0待分配1已入组  */
     private String enrollmentStatus;
     /**
-     * 手机号
+     * 随访手机号
      */
     private String mobile;
+
+    /**
+     * 登录手机号
+     */
+    private String loginMobile;
 }
