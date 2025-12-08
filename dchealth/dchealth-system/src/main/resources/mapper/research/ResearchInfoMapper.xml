@@ -139,21 +139,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
       <select id="selectResearchInfoByAuth" parameterType="com.dchealth.medical.domain.form.TreeForm" resultMap="ResearchInfoResult">
-        select r.disease_type_id,r.id,r.project_name, r.research_status
-        <if test="type != null and type == '2'.toString()">
-         ,pr.follow_status,pr.evaluate_status_back,pr.warn_status,pr.warn_evaluate_status_back,pr.over_time_status,pr.over_evaluate_status_back,pr.evaluate_status
-           </if>
-        from research_diseases d,research_info r,sys_dept s
-         <if test="type != null and type == '2'.toString()">  
-           ,patient_record pr,patient_info pi
-         </if>
-        where r.disease_type_id=d.disease_id and r.dept_id=s.dept_id and (r.research_status='1' or r.research_status=0)
+          select r.disease_type_id,r.id,r.project_name, r.research_status
+          <if test="type != null and type == '2'.toString()">
+              ,pr.follow_status,pr.evaluate_status_back,pr.warn_status,pr.warn_evaluate_status_back,pr.over_time_status,pr.over_evaluate_status_back,pr.evaluate_status
+          </if>
+          from research_diseases d,research_info r,sys_dept s
+          <if test="type != null and type == '2'.toString()">
+              ,patient_record pr,patient_info pi
+          </if>
+          where r.disease_type_id=d.disease_id and r.dept_id=s.dept_id and (r.research_status='1' or
+          r.research_status=0)
           and d.is_deleted='0' and s.del_flag=0 and r.del_flag=0
-         <if test="type != null and type == '2'.toString()"> 
-          and pr.research_id=r.id and pi.patient_activity_status = '1' and pr.patient_id=pi.patient_id 
-         </if>
-        <if test="deptId != null and deptId!='100'.toString() "> and d.dept_id = #{deptId} and r.dept_id = #{deptId} </if>
-    </select>
+          <if test="type != null and type == '2'.toString()">
+              and pr.research_id=r.id and pi.patient_activity_status = '1' and pr.patient_id=pi.patient_id
+          </if>
+          <if test="deptId != null and deptId!='100'.toString() ">and d.dept_id = #{deptId} and r.dept_id = #{deptId}
+          </if>
+          <if test="diseaseId != null">
+              and d.disease_id = #{diseaseId}
+          </if>
+      </select>
 
 
     <select id="selectResearchInfoByUserId" parameterType="com.dchealth.medical.domain.form.TreeForm" resultMap="ResearchInfoResult">
@@ -175,6 +180,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </if>
         <if test="userId != null  and userId != '' and userId!='1'.toString()">
             and  r.id=ru.research_id
+        </if>
+        <if test="diseaseId != null">
+            and d.disease_id = #{diseaseId}
         </if>
     </select>
 

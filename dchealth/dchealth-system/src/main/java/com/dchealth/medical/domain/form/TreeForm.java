@@ -13,4 +13,6 @@ public class TreeForm {
     private Long deptId;
 
     private Long userId;
+
+    private Long diseaseId;
 }

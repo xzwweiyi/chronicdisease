@@ -138,9 +138,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
     @Autowired
     private TencentService tencentService;
 
-    ExecutorService executorService = new ThreadPoolExecutor(0, 6,
+    ExecutorService executorService = new ThreadPoolExecutor(10, 20,
             60L, TimeUnit.SECONDS,
-            new SynchronousQueue<Runnable>());
+            new LinkedBlockingQueue<Runnable>(100));
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -888,6 +888,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             List<ResearchInfo> researchInfos = new ArrayList<>();
 
             TreeForm treeForm = new TreeForm();
+            treeForm.setDiseaseId(diseaseId);
             treeForm.setType("1");
             if ("1".equals(sysUser.getIsAlldeptResearch())) {
                 treeForm.setDeptId(sysUser.getDeptId());
