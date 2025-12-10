@@ -10,8 +10,8 @@ import com.dchealth.cro.api.vo.AutoEnrollmentHandleVo;
 import com.dchealth.cro.common.constant.FollowTipStatusConstants;
 import com.dchealth.cro.common.exception.base.ServiceException;
 import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.core.mapper.SysDictDataMapper;
 import com.dchealth.cro.core.service.SysDictDataService;
-import com.dchealth.cro.core.vo.DictVO;
 import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPersonMapper;
 import com.dchealth.cro.medical.domain.PatientInfo;
@@ -82,6 +82,9 @@ public class PatientInfoService {
     @Autowired
     private SysDictDataService sysDictDataService;
 
+    @Autowired
+    private SysDictDataMapper sysDictDataMapper;
+
 
     @Transactional
     public int importEnrollment(String mobile, String cardId, String userName, PatientAccount patientAccount, ResearchInfo researchInfo) {
@@ -109,37 +112,37 @@ public class PatientInfoService {
                     patientInfo.setAccountId(patientAccount.getAccountId());
                 }
 
-                // 对肥胖门诊的队列进行判断 不同的手术、生活方式
-                List<DictVO> dictDataList = sysDictDataService.getDictVO("patient_code");
-                Map<String, String> map = dictDataList.stream().collect(Collectors.toMap(DictVO::getDictLabel, DictVO::getDictValue));
-                map.forEach((k, v) -> {
-                    if (researchId.toString().equals(v) && k.equals("肥胖门诊用药队列")) {
-                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos.isEmpty()) {
-                            patientInfo.setPatientCode(String.format("D-%04d", 1));
-                        } else {
-                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                            patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
-                        }
-
-                    } else if (researchId.toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
-                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos.isEmpty()) {
-                            patientInfo.setPatientCode(String.format("L-%04d", 1));
-                        } else {
-                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                            patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
-                        }
-                    } else if (researchId.toString().equals(v) && k.equals("肥胖门诊手术队列")) {
-                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
-                        if (patientInfos.isEmpty()) {
-                            patientInfo.setPatientCode(String.format("S-%04d", 1));
-                        } else {
-                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
-                            patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
-                        }
-                    }
-                });
+//                // 对肥胖门诊的队列进行判断 不同的手术、生活方式
+//                List<SysDictData> list = sysDictDataMapper.selectDictDataByType("patient_code");
+//                Map<String, String> map = list.stream().collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
+//                map.forEach((k, v) -> {
+//                    if (researchId.toString().equals(v) && k.equals("肥胖门诊用药队列")) {
+//                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+//                        if (patientInfos.isEmpty()) {
+//                            patientInfo.setPatientCode(String.format("D-%04d", 1));
+//                        } else {
+//                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+//                            patientInfo.setPatientCode(generateNextCode("D", patientInfo1.getPatientCode()));
+//                        }
+//
+//                    } else if (researchId.toString().equals(v) && k.equals("肥胖门诊生活方式队列")) {
+//                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+//                        if (patientInfos.isEmpty()) {
+//                            patientInfo.setPatientCode(String.format("L-%04d", 1));
+//                        } else {
+//                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+//                            patientInfo.setPatientCode(generateNextCode("L", patientInfo1.getPatientCode()));
+//                        }
+//                    } else if (researchId.toString().equals(v) && k.equals("肥胖门诊手术队列")) {
+//                        // 该队列中是否有患者编码为空的如果有 将患者进行编码， 最新的患者编码为最大编码 + 1
+//                        if (patientInfos.isEmpty()) {
+//                            patientInfo.setPatientCode(String.format("S-%04d", 1));
+//                        } else {
+//                            PatientInfo patientInfo1 = getFirstPatientCode(patientInfos);
+//                            patientInfo.setPatientCode(generateNextCode("S", patientInfo1.getPatientCode()));
+//                        }
+//                    }
+//                });
                 patientInfo.setResearchId(researchId);
                 patientInfo.setPlanResearchId(researchId);
                 patientInfo.setPatientName(mpPerson.getPersonName());
