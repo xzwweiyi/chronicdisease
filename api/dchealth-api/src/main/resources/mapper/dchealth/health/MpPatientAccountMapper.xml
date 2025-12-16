@@ -49,7 +49,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where person_id = #{personId}
     </update>
 
-    <delete id="deleteMpPatientAccountBypersonId" parameterType="String">
+    <update id="updateMpPatientAccountByAccountId" parameterType="com.dchealth.cro.health.domain.MpPatientAccount">
+        update mp_patient_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personId != null">person_id = #{personId},</if>
+        </trim>
+        where account_id = #{accountId}
+    </update>
+
+    <delete id="deleteMpPatientAccountByPatientId" parameterType="String">
         delete from mp_patient_account where person_id = #{personId}
     </delete>
 

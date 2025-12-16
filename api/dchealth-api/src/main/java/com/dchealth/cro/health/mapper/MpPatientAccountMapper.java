@@ -1,10 +1,9 @@
 package com.dchealth.cro.health.mapper;
 
-import java.util.List;
-
+import com.dchealth.cro.health.domain.MpPatientAccount;
 import org.springframework.stereotype.Repository;
 
-import com.dchealth.cro.health.domain.MpPatientAccount;
+import java.util.List;
 
 /**
  * 患者用户关联Mapper接口
@@ -49,6 +48,14 @@ public interface MpPatientAccountMapper
      * @return 结果
      */
     public int updateMpPatientAccount(MpPatientAccount mpPatientAccount);
+
+    /**
+     * 修改患者用户关联
+     *
+     * @param mpPatientAccount 患者用户关联
+     * @return 结果
+     */
+    public int updateMpPatientAccountByAccountId(MpPatientAccount mpPatientAccount);
 
     /**
      * 删除患者用户关联

@@ -94,5 +94,22 @@ public class MpDrugExposure
     /** 反映是否药品及何类药品：1-西药2-中草药 3-中成药 5-辅料 6-试剂 9-其它 */
     private String drugMaterialType;
 
+    /**
+     * 就诊时间
+     */
+    private Date visitDate;
+
+    /**
+     * 订单科室名称
+     */
+    private String orderedByDept;
+
+    /**
+     * 订单医生名称
+     */
+    private String orderedByDoctor;
+
+
+
    
 }

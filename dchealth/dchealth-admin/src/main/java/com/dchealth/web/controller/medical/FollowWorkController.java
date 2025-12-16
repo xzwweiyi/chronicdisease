@@ -159,12 +159,12 @@ public class FollowWorkController extends BaseController {
 
         // 获取子节点的条数
         List<FollowWorkTree> childrenList = followWorkTree.getChildrenList();
-        Object total = redisCache.getCacheObject(Constants.TOTAL_TREE_LEVEL_NUM + userId);
-        if (total != null) {
-            followWorkTree.setHandleNum(Integer.valueOf(total.toString()));
-        } else {
-            applicationContext.publishEvent(new FollowTreeEvent(this, userId, Boolean.TRUE));
-        }
+//        Object total = redisCache.getCacheObject(Constants.TOTAL_TREE_LEVEL_NUM + userId);
+//        if (total != null) {
+//            followWorkTree.setHandleNum(Integer.valueOf(total.toString()));
+//        } else {
+//            applicationContext.publishEvent(new FollowTreeEvent(this, userId, Boolean.TRUE));
+//        }
         childrenList.forEach(children -> {
             Object one = redisCache.getCacheObject(Constants.ONE_TREE_LEVEL_NUM + userId + ":" + children.getDiseaseId());
             if (ObjectUtil.isNotNull(one)) {

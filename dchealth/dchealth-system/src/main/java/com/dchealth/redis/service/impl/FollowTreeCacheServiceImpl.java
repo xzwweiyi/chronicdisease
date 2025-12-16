@@ -39,8 +39,6 @@ public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
         try {
             if (followTreeEvent.getFlag()) {
                 // 监听到编辑操作，进行缓存更新，二级树节点对应的待处理条数 - 1
-//                Collection<String> keys = redisCache.keys(Constants.TOTAL_TREE_LEVEL_NUM + followTreeEvent.getUserId());
-
 
                 if (followTreeEvent.getDiseasesId() == null) {
                     log.info("随访树缓存异常，病种ID为空");
@@ -49,14 +47,14 @@ public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
 
                     redisCache.setCacheObject(Constants.ONE_TREE_LEVEL_NUM + followTreeEvent.getUserId() + ":" + followTreeEvent.getDiseasesId(), followTreeEvent.getNum());
                     Collection<String> keys = redisCache.keys(Constants.ONE_TREE_LEVEL_NUM + followTreeEvent.getUserId() + ":" + "*");
-                    int total = keys.stream().mapToInt(key -> {
-                        return redisCache.getCacheObject(key);
-                    }).sum();
-                    redisCache.setCacheObject(Constants.TOTAL_TREE_LEVEL_NUM + followTreeEvent.getUserId(), total);
+//                    int total = keys.stream().mapToInt(key -> {
+//                        return redisCache.getCacheObject(key);
+//                    }).sum();
+//                    redisCache.setCacheObject(Constants.TOTAL_TREE_LEVEL_NUM + followTreeEvent.getUserId(), total);
                 }
 
             } else {
-                // 如果false， 重新加载一级树节点
+                // 如果false， 重新加载一级树节
                 if (CurrentOneSum(followTreeEvent)) return Boolean.TRUE;
             }
 
@@ -84,9 +82,9 @@ public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
             redisCache.setCacheObject(Constants.ONE_TREE_LEVEL_NUM + followTreeEvent.getUserId() + ":" + l, String.valueOf(sum));
             total.add(sum);
         }
-
-        int result = total.stream().mapToInt(Integer::intValue).sum();
-        redisCache.setCacheObject(Constants.TOTAL_TREE_LEVEL_NUM + followTreeEvent.getUserId(), String.valueOf(result));
+//
+//        int result = total.stream().mapToInt(Integer::intValue).sum();
+//        redisCache.setCacheObject(Constants.TOTAL_TREE_LEVEL_NUM + followTreeEvent.getUserId(), String.valueOf(result));
         return true;
     }
 

@@ -20,7 +20,7 @@ public class UpdateUserInfoReq {
     /**
      * 患者i d
      */
-    private Long personId;
+    private String personId;
 
     /**
      * 登录手机

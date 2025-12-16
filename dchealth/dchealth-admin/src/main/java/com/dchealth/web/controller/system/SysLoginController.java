@@ -8,6 +8,7 @@ import com.dchealth.common.core.domain.model.LoginBody;
 import com.dchealth.common.utils.SecurityUtils;
 import com.dchealth.framework.web.service.SysLoginService;
 import com.dchealth.framework.web.service.SysPermissionService;
+import com.dchealth.listener.FollowTreeEvent;
 import com.dchealth.system.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -65,10 +67,10 @@ public class SysLoginController
     public AjaxResult getInfo()
     {
         SysUser user = SecurityUtils.getLoginUser().getUser();
-//        if (!Objects.isNull(user)) {
-//            Long userId = user.getUserId();
-//            applicationContext.publishEvent(new FollowTreeEvent(this,userId, Boolean.FALSE));
-//        }
+        if (!Objects.isNull(user)) {
+            Long userId = user.getUserId();
+            applicationContext.publishEvent(new FollowTreeEvent(this,userId, Boolean.FALSE));
+        }
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合

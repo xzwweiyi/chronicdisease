@@ -30,6 +30,14 @@ public class ObesityController {
     @GetMapping("/isShow/{researchId}")
     public AjaxResult isShow(@PathVariable("researchId") String researchId){
 
+//        if (ObjUtil.isEmpty(researchId)) {
+//            // 如果是肥胖门诊直接返回true否则返回false
+//            Long deptId = SecurityUtils.getDeptId();
+//
+//
+//
+//        }
+
         SysDictData sysDictData = new SysDictData();
         sysDictData.setDictType("research");
         List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
