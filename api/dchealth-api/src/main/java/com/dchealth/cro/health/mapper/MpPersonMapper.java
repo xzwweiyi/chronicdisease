@@ -1,8 +1,8 @@
 package com.dchealth.cro.health.mapper;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.dchealth.cro.health.domain.MpPerson;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 患者信息-对应omopMapper接口
@@ -10,6 +10,7 @@ import com.dchealth.cro.health.domain.MpPerson;
  * @author GeneMax
  * @date 2023-11-04
  */
+@Mapper
 public interface MpPersonMapper 
 {
 

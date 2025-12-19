@@ -5,13 +5,18 @@ import cn.hutool.core.util.ObjUtil;
 import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.form.req.UpdateUserInfoReq;
 import com.dchealth.cro.account.mapper.PatientAccountMapper;
+import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.exception.base.ServiceException;
 import com.dchealth.cro.health.domain.MpPatientAccount;
+import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPatientAccountMapper;
+import com.dchealth.cro.health.mapper.MpPersonMapper;
 import com.dchealth.cro.medical.domain.PatientInfo;
 import com.dchealth.cro.medical.mapper.PatientInfoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,6 +38,9 @@ public class WxAccountService {
     @Autowired
     private MpPatientAccountMapper mpPatientAccountMapper;
 
+    @Autowired
+    private MpPersonMapper mpPersonMapper;
+
     public Boolean updateLoginPhone(UpdateUserInfoReq updateUserInfoReq, String channel) {
 
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountId());
@@ -40,24 +48,47 @@ public class WxAccountService {
             throw new RuntimeException("用户不存在");
         }
 
-        patientAccount.setMobile(updateUserInfoReq.getLoginPhone());
+        patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
         patientAccountMapper.updatePatientAccount(patientAccount);
 
         log.info("更新用户手机号成功");
         return true;
     }
 
-    public Object updatePatientInfo(UpdateUserInfoReq updateUserInfoReq, String channel) {
+    @Transactional
+    public DchealthCloudResponseEntity<Boolean> updatePatientInfo(UpdateUserInfoReq updateUserInfoReq, String channel) {
 
+        DchealthCloudResponseEntity<Boolean> result = new DchealthCloudResponseEntity<>();
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountId());
         if (ObjUtil.isNull(patientAccount)) {
-            throw new RuntimeException("用户不存在");
+            throw new ServiceException("用户不存在");
         }
 
         // 判断用户是否加入队列，如果加入队列则不允许修改
         Boolean joinQueue = isJoinQueue(updateUserInfoReq.getAccountId(), channel);
-        if (joinQueue) {
-            throw new RuntimeException("用户已加入队列，不允许修改");
+        if (!joinQueue) {
+            // 判断登录手机号是否发生变化，发生变化则修改手机号，否则不允许修改
+            if (patientAccount.getMobile().equals(updateUserInfoReq.getLoginMobile())) {
+                throw new ServiceException("手机号未发生改变");
+            } else {
+
+                PatientAccount account = patientAccountMapper.selectPatientAccountByMobile(updateUserInfoReq.getLoginMobile());
+                if (account != null) {
+                    throw new ServiceException("修改手机号已存在");
+                }
+
+                patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
+                patientAccountMapper.updatePatientAccount(patientAccount);
+                log.info("更新用户手机号成功");
+                result.setData(true);
+                result.setMsg("更新用户手机号成功");
+                return result;
+            }
+        }
+
+        if (!patientAccount.getMobile().equals(updateUserInfoReq.getLoginMobile())) {
+            patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
+            patientAccountMapper.updatePatientAccount(patientAccount);
         }
 
         //mp_patient_account
@@ -77,22 +108,42 @@ public class WxAccountService {
             }
         }
 
+        MpPerson mpPerson = mpPersonMapper.selectMpPersonByPersonIdCardId(updateUserInfoReq.getPersonId(), updateUserInfoReq.getIdCard());
+        if (mpPerson == null) {
+            throw new ServiceException("请核对就诊号信息或身份证号信息是否正确");
+        }
+
         if (!patientAccount.getRegistrySigns().equals(updateUserInfoReq.getPersonId())) {
+            PatientAccount account = new PatientAccount();
+            account.setRegistrySigns(updateUserInfoReq.getPersonId());
+            List<PatientAccount> patientAccounts = patientAccountMapper.selectPatientAccountList(patientAccount);
+            if (ObjUtil.isNotEmpty(patientAccounts)) {
+                throw new ServiceException("患者就诊号已存在,使用手机号" + patientAccounts.get(0).getMobile());
+            }
             patientAccount.setRegistrySigns(updateUserInfoReq.getPersonId());
         }
-        if (!patientAccount.getIdCard().equals(updateUserInfoReq.getCardNo())) {
-            patientAccount.setIdCard(updateUserInfoReq.getCardNo());
+        if (!patientAccount.getIdCard().equals(updateUserInfoReq.getIdCard())) {
+
+            PatientAccount account = new PatientAccount();
+            account.setIdCard(updateUserInfoReq.getIdCard());
+            List<PatientAccount> patientAccounts = patientAccountMapper.selectPatientAccountList(account);
+            if (ObjUtil.isNotEmpty(patientAccounts)) {
+                throw new ServiceException("修改身份证号已存在,使用手机号" + patientAccounts.get(0).getMobile());
+            }
+            patientAccount.setIdCard(updateUserInfoReq.getIdCard());
         }
         patientAccountMapper.updatePatientAccount(patientAccount);
 
-        return null;
+        result.setData(true);
+        result.setMsg("更新用户信息成功");
+        return result;
     }
 
     public Boolean isJoinQueue(Long accountId, String channel) {
         // 查询patientInfo表
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(accountId);
-        if (ObjUtil.isNotNull(patientAccount)) {
-            throw new RuntimeException("用户不存在");
+        if (ObjUtil.isNull(patientAccount)) {
+            throw new ServiceException("用户不存在");
         }
 
         // 查看patientInfo表

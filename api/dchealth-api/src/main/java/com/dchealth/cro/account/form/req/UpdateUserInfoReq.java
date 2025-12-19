@@ -25,10 +25,10 @@ public class UpdateUserInfoReq {
     /**
      * 登录手机
      */
-    private String loginPhone;
+    private String loginMobile;
 
     /**
      * 身份证号
      */
-    private String cardNo;
+    private String idCard;
 }
