@@ -118,7 +118,7 @@ public class PatientDrugInfoServiceImpl implements IPatientDrugInfoService
     public AjaxResult mpDrugExposureList(MpDrugExposure mpDrugExposure) {
 
         List<MpDrugExposure> patientDrugInfos = mpDrugExposureMapper.selectPatientDrugInfoList(mpDrugExposure);
-        Map<String,List<MpDrugExposure>> map=patientDrugInfos.stream().collect(Collectors.groupingBy(MpDrugExposure::getVisitOccurrenceId));
+        Map<String,List<MpDrugExposure>> map=patientDrugInfos.stream().collect(Collectors.groupingBy(MpDrugExposure::getDepartmentName));
         return AjaxResult.success(map);
     }
 }
