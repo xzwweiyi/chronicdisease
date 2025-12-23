@@ -55,7 +55,7 @@ public class MpDrugExposure
     private String dosageForm;
 
     /** 用药时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date drugExposureStartDate;
 
     /** 用药天数 */
