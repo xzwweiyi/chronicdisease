@@ -97,6 +97,7 @@ public class PatientInfo extends BaseEntity
     /**
      * 入组时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date enrollmentTime;
 
     /** 性别（0:未知，1：男，2：女） */
