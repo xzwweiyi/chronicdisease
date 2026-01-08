@@ -888,8 +888,8 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             List<ResearchInfo> researchInfos = new ArrayList<>();
 
             TreeForm treeForm = new TreeForm();
-            treeForm.setDiseaseId(diseaseId);
             treeForm.setType("1");
+            treeForm.setDiseaseId(disease.getDiseaseId());
             if ("1".equals(sysUser.getIsAlldeptResearch())) {
                 treeForm.setDeptId(sysUser.getDeptId());
                 researchInfos = researchInfoMapper.selectResearchInfoByAuth(treeForm);
