@@ -194,7 +194,7 @@ public class PatientRecordOutboundServiceImpl implements IPatientRecordOutboundS
         }
         TreeForm treeForm = new TreeForm();
         treeForm.setType("1");
-        treeForm.setUserId(userId);
+        treeForm.setUserId(null);
         List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
         PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
         //随访
