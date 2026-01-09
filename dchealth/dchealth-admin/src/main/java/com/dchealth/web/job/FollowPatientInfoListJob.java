@@ -6,10 +6,6 @@ import com.dchealth.medical.domain.MedicalFormProperty;
 import com.dchealth.medical.domain.form.DynamicCommonProperty;
 import com.dchealth.medical.domain.form.DynamicForm;
 import com.dchealth.medical.mapper.MedicalFormPropertyMapper;
-import com.dchealth.medical.mapper.PatientInfoMapper;
-import com.dchealth.medical.mapper.PatientRecordMapper;
-import com.dchealth.template.mapper.FMedicalFormMapper;
-import com.dchealth.template.mapper.FMedicalPropertyMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,20 +26,6 @@ import static com.mysql.cj.util.TimeUtil.DATE_FORMATTER;
 @Slf4j
 @Component
 public class FollowPatientInfoListJob {
-
-
-    @Autowired
-    private PatientInfoMapper patientInfoMapper;
-
-    @Autowired
-    private PatientRecordMapper patientRecordMapper;
-
-
-    @Autowired
-    private FMedicalFormMapper fMedicalFormMapper;
-
-    @Autowired
-    private FMedicalPropertyMapper fMedicalPropertyMapper;
 
     @Autowired
     private DynamicSql dynamicSql;

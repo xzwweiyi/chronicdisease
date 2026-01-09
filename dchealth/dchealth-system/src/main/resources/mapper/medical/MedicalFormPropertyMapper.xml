@@ -146,9 +146,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into medical_form_property (
         <!-- 固定字段列表：包含所有可能的字段，数据库允许为空的字段无需判断 -->
         id,
+        person_id,
         record_id,
         patient_id,
         research_id,
+        research_name,
         follow_id,
         medical_form_id,
         medical_code,
@@ -177,6 +179,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="item.id != null">#{item.id}</if>
             <if test="item.id == null">null</if>,
 
+            <if test="item.personId != null">#{item.personId}</if>
+            <if test="item.personId == null">null</if>,
+
             <if test="item.recordId != null">#{item.recordId}</if>
             <if test="item.recordId == null">null</if>,
 
@@ -185,6 +190,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             <if test="item.researchId != null">#{item.researchId}</if>
             <if test="item.researchId == null">null</if>,
+
+            <if test="item.researchName != null">#{item.researchName}</if>
+            <if test="item.researchName == null">null</if>,
 
             <if test="item.followId != null">#{item.followId}</if>
             <if test="item.followId == null">null</if>,
@@ -298,30 +306,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             parameterType="MedicalFormProperty"
             resultType="com.dchealth.medical.domain.MedicalFormProperty">
 
-        SELECT c.patient_id      patientId,
-               c.record_id       recordId,
-               c.follow_id       followId,
-               c.research_id     researchId,
-               c.warn_status     warnStatus,
-               c.lose_type       loseType,
-               c.lose_reason     loseReason,
-               c.`name`          name,
-               a.medical_form_id medicalFormId,
-               b.medical_code    medicalCode,
-               b.form_type       formType,
-               a.property_code   propertyCode,
-               a.property_type   propertyType,
-               b.medical_name    medicalName,
-               b.attribute       medicalAttribute,
-               a.parent_id       parentId,
-               a.property_name   propertyName,
-               a.attribute       propertyAttribute,
-               c.create_time    createTime,
-               a.id propertyId
+        SELECT c.patient_id patientId,
+        c.record_id recordId,
+        c.follow_id followId,
+        c.research_id researchId,
+        e.project_name researchName,
+        c.warn_status warnStatus,
+        c.lose_type loseType,
+        c.lose_reason loseReason,
+        c.`name` name,
+        a.medical_form_id medicalFormId,
+        b.medical_code medicalCode,
+        b.form_type formType,
+        a.property_code propertyCode,
+        a.property_type propertyType,
+        b.medical_name medicalName,
+        b.attribute medicalAttribute,
+        a.parent_id parentId,
+        a.property_name propertyName,
+        a.attribute propertyAttribute,
+        c.create_time createTime,
+        a.id propertyId,
+        d.person_id personId
         FROM f_medical_property a
-                 left JOIN
-             `f_medical_form` b on a.medical_form_id = b.medical_form_id
-                 left JOIN patient_record c on c.follow_id = b.follow_id
+        left JOIN
+        `f_medical_form` b on a.medical_form_id = b.medical_form_id
+        left JOIN patient_record c on c.follow_id = b.follow_id
+        left JOIN `patient_info` d on c.patient_id = d.patient_id
+        LEFT JOIN research_info e on e.id = d.research_id
         where c.fill_status = '1' and b.form_type in ('0', '1', '3')
         <if test="createTime != null">
             and c.create_time &gt;= #{createTime}
@@ -329,30 +341,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         union all
 
-        SELECT c.patient_id      patientId,
-               c.record_id       recordId,
-               c.follow_id       followId,
-               c.research_id     researchId,
-               c.warn_status     warnStatus,
-               c.lose_type       loseType,
-               c.lose_reason     loseReason,
-               c.`name`          name,
-               a.medical_form_id medicalFormId,
-               b.medical_code    medicalCode,
-               b.form_type       formType,
-               a.property_code   propertyCode,
-               a.property_type   propertyType,
-               b.medical_name    medicalName,
-               b.attribute       medicalAttribute,
-               a.parent_id       parentId,
-               a.property_name   propertyName,
-               a.attribute       propertyAttribute,
-               c.create_time    createTime,
-               a.id propertyId
-        FROM f_medical_exam_subject a
-                 left JOIN
-             `f_medical_form` b on a.medical_form_id = b.medical_form_id
-                 left JOIN patient_record c on c.follow_id = b.follow_id
+        SELECT c.patient_id patientId,
+        c.record_id recordId,
+        c.follow_id followId,
+        c.research_id researchId,
+        e.project_name researchName,
+        c.warn_status warnStatus,
+        c.lose_type loseType,
+        c.lose_reason loseReason,
+        c.`name` name,
+        a.medical_form_id medicalFormId,
+        b.medical_code medicalCode,
+        b.form_type formType,
+        a.property_code propertyCode,
+        a.property_type propertyType,
+        b.medical_name medicalName,
+        b.attribute medicalAttribute,
+        a.parent_id parentId,
+        a.property_name propertyName,
+        a.attribute propertyAttribute,
+        c.create_time createTime,
+        a.id propertyId,
+        d.person_id personId
+        FROM f_medical_property a
+        left JOIN
+        `f_medical_form` b on a.medical_form_id = b.medical_form_id
+        left JOIN patient_record c on c.follow_id = b.follow_id
+        left JOIN `patient_info` d on c.patient_id = d.patient_id
+        LEFT JOIN research_info e on e.id = d.research_id
         where c.fill_status = '1' and b.form_type in ('0', '1', '3')
         <if test="createTime != null">
             and c.create_time &gt;= #{createTime}

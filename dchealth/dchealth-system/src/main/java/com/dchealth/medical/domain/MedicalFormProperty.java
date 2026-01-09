@@ -33,6 +33,10 @@ public class MedicalFormProperty
     @Excel(name = "研究ID")
     private Long researchId;
 
+    private String personId;
+
+    private String researchName;
+
     /** 随访ID */
     @Excel(name = "随访ID")
     private Long followId;
