@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.MedicalFormPropertyMapper">
+    
+    <resultMap type="MedicalFormProperty" id="MedicalFormPropertyResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="medicalCode"    column="medical_code"    />
+        <result property="formType"    column="form_type"    />
+        <result property="propertyCode"    column="property_code"    />
+        <result property="propertyType"    column="property_type"    />
+        <result property="name"    column="name"    />
+        <result property="warnStatus"    column="warn_status"    />
+        <result property="loseType"    column="lose_type"    />
+        <result property="loseReason"    column="lose_reason"    />
+        <result property="medicalName"    column="medical_name"    />
+        <result property="medicalAttribute"    column="medical_attribute"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="propertyName"    column="property_name"    />
+        <result property="propertyAttribute"    column="property_attribute"    />
+        <result property="label"    column="label"    />
+        <result property="value"    column="value"    />
+        <result property="other"    column="other"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectMedicalFormPropertyVo">
+        select id, record_id, patient_id, research_id, follow_id, medical_form_id, medical_code, form_type, property_code, property_type, name, warn_status, lose_type, lose_reason, medical_name, medical_attribute, parent_id, property_name, property_attribute, label, value, other, property_id, create_time, update_time from medical_form_property
+    </sql>
+
+    <select id="selectMedicalFormPropertyList" parameterType="MedicalFormProperty" resultMap="MedicalFormPropertyResult">
+        <include refid="selectMedicalFormPropertyVo"/>
+        <where>
+            <if test="recordId != null ">and record_id = #{recordId}</if>
+            <if test="patientId != null ">and patient_id = #{patientId}</if>
+            <if test="researchId != null ">and research_id = #{researchId}</if>
+            <if test="followId != null ">and follow_id = #{followId}</if>
+            <if test="medicalFormId != null ">and medical_form_id = #{medicalFormId}</if>
+            <if test="medicalCode != null  and medicalCode != ''">and medical_code = #{medicalCode}</if>
+            <if test="formType != null  and formType != ''">and form_type = #{formType}</if>
+            <if test="propertyCode != null  and propertyCode != ''">and property_code = #{propertyCode}</if>
+            <if test="propertyType != null  and propertyType != ''">and property_type = #{propertyType}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="warnStatus != null  and warnStatus != ''">and warn_status = #{warnStatus}</if>
+            <if test="loseType != null  and loseType != ''">and lose_type = #{loseType}</if>
+            <if test="loseReason != null  and loseReason != ''">and lose_reason = #{loseReason}</if>
+            <if test="medicalName != null  and medicalName != ''">and medical_name like concat('%', #{medicalName},
+                '%')
+            </if>
+            <if test="medicalAttribute != null  and medicalAttribute != ''">and medical_attribute =
+                #{medicalAttribute}
+            </if>
+            <if test="parentId != null ">and parent_id = #{parentId}</if>
+            <if test="propertyName != null  and propertyName != ''">and property_name like concat('%', #{propertyName},
+                '%')
+            </if>
+            <if test="propertyAttribute != null  and propertyAttribute != ''">and property_attribute =
+                #{propertyAttribute}
+            </if>
+            <if test="label != null  and label != ''">and label = #{label}</if>
+            <if test="value != null  and value != ''">and value = #{value}</if>
+            <if test="other != null  and other != ''">and other = #{other}</if>
+            <if test="propertyId != null ">and property_id = #{propertyId}</if>
+            <if test="propertyIds != null and propertyIds != ''">
+                and property_id in
+                <foreach item="item" index="index" collection="propertyIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectMedicalFormPropertyById" parameterType="Long" resultMap="MedicalFormPropertyResult">
+        <include refid="selectMedicalFormPropertyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMedicalFormProperty" parameterType="MedicalFormProperty">
+        insert into medical_form_property
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="recordId != null">record_id,</if>
+            <if test="patientId != null">patient_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="followId != null">follow_id,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="medicalCode != null">medical_code,</if>
+            <if test="formType != null">form_type,</if>
+            <if test="propertyCode != null">property_code,</if>
+            <if test="propertyType != null">property_type,</if>
+            <if test="name != null">name,</if>
+            <if test="warnStatus != null">warn_status,</if>
+            <if test="loseType != null">lose_type,</if>
+            <if test="loseReason != null">lose_reason,</if>
+            <if test="medicalName != null">medical_name,</if>
+            <if test="medicalAttribute != null">medical_attribute,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="propertyName != null">property_name,</if>
+            <if test="propertyAttribute != null">property_attribute,</if>
+            <if test="label != null">label,</if>
+            <if test="value != null">value,</if>
+            <if test="other != null">other,</if>
+            <if test="propertyId != null">property_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="recordId != null">#{recordId},</if>
+            <if test="patientId != null">#{patientId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="followId != null">#{followId},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="medicalCode != null">#{medicalCode},</if>
+            <if test="formType != null">#{formType},</if>
+            <if test="propertyCode != null">#{propertyCode},</if>
+            <if test="propertyType != null">#{propertyType},</if>
+            <if test="name != null">#{name},</if>
+            <if test="warnStatus != null">#{warnStatus},</if>
+            <if test="loseType != null">#{loseType},</if>
+            <if test="loseReason != null">#{loseReason},</if>
+            <if test="medicalName != null">#{medicalName},</if>
+            <if test="medicalAttribute != null">#{medicalAttribute},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="propertyName != null">#{propertyName},</if>
+            <if test="propertyAttribute != null">#{propertyAttribute},</if>
+            <if test="label != null">#{label},</if>
+            <if test="value != null">#{value},</if>
+            <if test="other != null">#{other},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <!-- 批量插入医疗表单属性数据 -->
+    <insert id="batchInsertMedicalFormProperty" parameterType="java.util.List">
+        insert into medical_form_property (
+        <!-- 固定字段列表：包含所有可能的字段，数据库允许为空的字段无需判断 -->
+        id,
+        record_id,
+        patient_id,
+        research_id,
+        follow_id,
+        medical_form_id,
+        medical_code,
+        form_type,
+        property_code,
+        property_type,
+        name,
+        warn_status,
+        lose_type,
+        lose_reason,
+        medical_name,
+        medical_attribute,
+        parent_id,
+        property_name,
+        property_attribute,
+        label,
+        value,
+        other,
+        property_id,
+        create_time,
+        update_time
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            <!-- 每个字段对应的值：为空时用 null 填充，保证数量匹配 -->
+            <if test="item.id != null">#{item.id}</if>
+            <if test="item.id == null">null</if>,
+
+            <if test="item.recordId != null">#{item.recordId}</if>
+            <if test="item.recordId == null">null</if>,
+
+            <if test="item.patientId != null">#{item.patientId}</if>
+            <if test="item.patientId == null">null</if>,
+
+            <if test="item.researchId != null">#{item.researchId}</if>
+            <if test="item.researchId == null">null</if>,
+
+            <if test="item.followId != null">#{item.followId}</if>
+            <if test="item.followId == null">null</if>,
+
+            <if test="item.medicalFormId != null">#{item.medicalFormId}</if>
+            <if test="item.medicalFormId == null">null</if>,
+
+            <if test="item.medicalCode != null">#{item.medicalCode}</if>
+            <if test="item.medicalCode == null">null</if>,
+
+            <if test="item.formType != null">#{item.formType}</if>
+            <if test="item.formType == null">null</if>,
+
+            <if test="item.propertyCode != null">#{item.propertyCode}</if>
+            <if test="item.propertyCode == null">null</if>,
+
+            <if test="item.propertyType != null">#{item.propertyType}</if>
+            <if test="item.propertyType == null">null</if>,
+
+            <if test="item.name != null">#{item.name}</if>
+            <if test="item.name == null">null</if>,
+
+            <if test="item.warnStatus != null">#{item.warnStatus}</if>
+            <if test="item.warnStatus == null">null</if>,
+
+            <if test="item.loseType != null">#{item.loseType}</if>
+            <if test="item.loseType == null">null</if>,
+
+            <if test="item.loseReason != null">#{item.loseReason}</if>
+            <if test="item.loseReason == null">null</if>,
+
+            <if test="item.medicalName != null">#{item.medicalName}</if>
+            <if test="item.medicalName == null">null</if>,
+
+            <if test="item.medicalAttribute != null">#{item.medicalAttribute}</if>
+            <if test="item.medicalAttribute == null">null</if>,
+
+            <if test="item.parentId != null">#{item.parentId}</if>
+            <if test="item.parentId == null">null</if>,
+
+            <if test="item.propertyName != null">#{item.propertyName}</if>
+            <if test="item.propertyName == null">null</if>,
+
+            <if test="item.propertyAttribute != null">#{item.propertyAttribute}</if>
+            <if test="item.propertyAttribute == null">null</if>,
+
+            <if test="item.label != null">#{item.label}</if>
+            <if test="item.label == null">null</if>,
+
+            <if test="item.value != null">#{item.value}</if>
+            <if test="item.value == null">null</if>,
+
+            <if test="item.other != null">#{item.other}</if>
+            <if test="item.other == null">null</if>,
+
+            <if test="item.propertyId != null">#{item.propertyId}</if>
+            <if test="item.propertyId == null">null</if>,
+
+            <if test="item.createTime != null">#{item.createTime}</if>
+            <if test="item.createTime == null">null</if>,
+
+            <if test="item.updateTime != null">#{item.updateTime}</if>
+            <if test="item.updateTime == null">null</if>
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateMedicalFormProperty" parameterType="MedicalFormProperty">
+        update medical_form_property
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="followId != null">follow_id = #{followId},</if>
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="medicalCode != null">medical_code = #{medicalCode},</if>
+            <if test="formType != null">form_type = #{formType},</if>
+            <if test="propertyCode != null">property_code = #{propertyCode},</if>
+            <if test="propertyType != null">property_type = #{propertyType},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="warnStatus != null">warn_status = #{warnStatus},</if>
+            <if test="loseType != null">lose_type = #{loseType},</if>
+            <if test="loseReason != null">lose_reason = #{loseReason},</if>
+            <if test="medicalName != null">medical_name = #{medicalName},</if>
+            <if test="medicalAttribute != null">medical_attribute = #{medicalAttribute},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="propertyName != null">property_name = #{propertyName},</if>
+            <if test="propertyAttribute != null">property_attribute = #{propertyAttribute},</if>
+            <if test="label != null">label = #{label},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="other != null">other = #{other},</if>
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMedicalFormPropertyById" parameterType="Long">
+        delete from medical_form_property where id = #{id}
+    </delete>
+
+    <delete id="deleteMedicalFormPropertyByIds" parameterType="String">
+        delete from medical_form_property where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectFollowPatientInfoList"
+            parameterType="MedicalFormProperty"
+            resultType="com.dchealth.medical.domain.MedicalFormProperty">
+
+        SELECT c.patient_id      patientId,
+               c.record_id       recordId,
+               c.follow_id       followId,
+               c.research_id     researchId,
+               c.warn_status     warnStatus,
+               c.lose_type       loseType,
+               c.lose_reason     loseReason,
+               c.`name`          name,
+               a.medical_form_id medicalFormId,
+               b.medical_code    medicalCode,
+               b.form_type       formType,
+               a.property_code   propertyCode,
+               a.property_type   propertyType,
+               b.medical_name    medicalName,
+               b.attribute       medicalAttribute,
+               a.parent_id       parentId,
+               a.property_name   propertyName,
+               a.attribute       propertyAttribute,
+               c.create_time    createTime,
+               a.id propertyId
+        FROM f_medical_property a
+                 left JOIN
+             `f_medical_form` b on a.medical_form_id = b.medical_form_id
+                 left JOIN patient_record c on c.follow_id = b.follow_id
+        where c.fill_status = '1' and b.form_type in ('0', '1', '3')
+        <if test="createTime != null">
+            and c.create_time &gt;= #{createTime}
+        </if>
+
+        union all
+
+        SELECT c.patient_id      patientId,
+               c.record_id       recordId,
+               c.follow_id       followId,
+               c.research_id     researchId,
+               c.warn_status     warnStatus,
+               c.lose_type       loseType,
+               c.lose_reason     loseReason,
+               c.`name`          name,
+               a.medical_form_id medicalFormId,
+               b.medical_code    medicalCode,
+               b.form_type       formType,
+               a.property_code   propertyCode,
+               a.property_type   propertyType,
+               b.medical_name    medicalName,
+               b.attribute       medicalAttribute,
+               a.parent_id       parentId,
+               a.property_name   propertyName,
+               a.attribute       propertyAttribute,
+               c.create_time    createTime,
+               a.id propertyId
+        FROM f_medical_exam_subject a
+                 left JOIN
+             `f_medical_form` b on a.medical_form_id = b.medical_form_id
+                 left JOIN patient_record c on c.follow_id = b.follow_id
+        where c.fill_status = '1' and b.form_type in ('0', '1', '3')
+        <if test="createTime != null">
+            and c.create_time &gt;= #{createTime}
+        </if>
+    </select>
+</mapper>

@@ -2,6 +2,8 @@ package com.dchealth.medical.domain.form;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 动态form
  */
@@ -55,5 +57,7 @@ public class DynamicForm {
     private Long examRecordId;
 
     private String examTable;
+
+    private List<Long> recordIds;
 
 }

@@ -22,14 +22,19 @@
     <select id="selectBySql" parameterType="com.dchealth.medical.domain.form.DynamicForm" resultMap="DynamicCommonPropertyResult">
         ${sql}
         <where>
-            <if test="recordId != null "> and record_id= #{recordId}</if>
-            <if test="formId != null "> and form_id= #{formId}</if>
-            <if test="type != null "> and type= #{type}</if>
-            <if test="articleId != null "> and article_id= #{articleId}</if>
-            <if test="patientId != null "> and patient_id= #{patientId}</if>
-            <if test="researchId != null "> and research_id= #{researchId}</if>
-            <if test="followId != null "> and follow_id= #{followId}</if>
-            <if test="examRecordId != null "> and exam_record_id= #{examRecordId}</if>
+            <if test="recordId != null ">and record_id= #{recordId}</if>
+            <if test="formId != null ">and form_id= #{formId}</if>
+            <if test="type != null ">and type= #{type}</if>
+            <if test="articleId != null ">and article_id= #{articleId}</if>
+            <if test="patientId != null ">and patient_id= #{patientId}</if>
+            <if test="researchId != null ">and research_id= #{researchId}</if>
+            <if test="followId != null ">and follow_id= #{followId}</if>
+            <if test="examRecordId != null ">and exam_record_id= #{examRecordId}</if>
+            <if test="recordIds != null and recordIds.size() &gt; 0">and record_id in
+                <foreach collection="recordIds" item="recordId" open="(" separator="," close=")">
+                    #{recordId}
+                </foreach>
+            </if>
         </where>
     </select>
 

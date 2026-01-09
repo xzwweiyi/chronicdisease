@@ -2,14 +2,11 @@ package com.dchealth.web.job;
 
 
 import com.dchealth.DchealthApplication;
-import com.dchealth.common.enums.DataSourceType;
-import com.dchealth.framework.datasource.DynamicDataSourceContextHolder;
 import com.dchealth.notice.service.HisNoticeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 
 /**
  * @Author: wangpf
@@ -23,17 +20,31 @@ public class TestController {
     @Resource
     private HisNoticeService hisNoticeService;
 
-    @Test
-    public void test(){
-        DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.HISMYSQL.name());
+    @Resource
+    private FollowPatientInfoListJob followPatientInfoListJob;
 
-        try {
+//    @Test
+//    public void test(){
+//        DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.HISMYSQL.name());
+//
+//        try {
+//            // 执行数据库操作
+//            hisNoticeService.batchInsert(new ArrayList<>());
+//        } finally {
+//            // 恢复默认数据源
+//            DynamicDataSourceContextHolder.clearDataSourceType();
+//        }
+//
+//        System.out.println("测试");
+//    }
+
+    @Test
+    public void test1(){
+//        DynamicDataSourceContextHolder.setDataSourceType(DataSourceType.HISMYSQL.name());
+
             // 执行数据库操作
-            hisNoticeService.batchInsert(new ArrayList<>());
-        } finally {
-            // 恢复默认数据源
-            DynamicDataSourceContextHolder.clearDataSourceType();
-        }
+            followPatientInfoListJob.followPatientInfoList();
+
 
         System.out.println("测试");
     }
