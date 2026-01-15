@@ -32,22 +32,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectDeptVo"/>
         where d.del_flag = '0'
 		<if test="deptId != null and deptId != 0">
-			AND dept_id = #{deptId}
+			AND d.dept_id = #{deptId}
 		</if>
 		<if test="deptId2 != null and deptId2 != 100">
-			AND (dept_id = #{deptId2} or dept_id = 100)
+			AND (d.dept_id = #{deptId2} or d.dept_id = 100 or d.parent_id = #{deptId2})
 		</if>
         <if test="parentId != null and parentId != 0">
-			AND parent_id = #{parentId}
+			AND d.parent_id = #{parentId}
 		</if>
 		<if test="deptName != null and deptName != ''">
-			AND dept_name like concat('%', #{deptName}, '%')
+			AND d.dept_name like concat('%', #{deptName}, '%')
 		</if>
 		<if test="status != null and status != ''">
-			AND status = #{status}
+			AND d.status = #{status}
 		</if>
 		<if test="deptType != null and deptType != ''">
-			AND dept_type = #{deptType}
+			AND d.dept_type = #{deptType}
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}

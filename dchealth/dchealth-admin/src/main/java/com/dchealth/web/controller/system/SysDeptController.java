@@ -1,42 +1,28 @@
 package com.dchealth.web.controller.system;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import com.dchealth.cms.domain.CmsArticle;
-import com.dchealth.cms.domain.CmsCategory;
-import com.dchealth.cms.domain.CmsCategoryTree;
-import com.dchealth.cms.domain.CmsDeptArticle;
-import com.dchealth.cms.domain.DeptTreeSelect;
+import com.dchealth.cms.domain.*;
 import com.dchealth.cms.service.ICmsArticleService;
 import com.dchealth.cms.service.ICmsCategoryService;
+import com.dchealth.common.annotation.Log;
+import com.dchealth.common.constant.UserConstants;
+import com.dchealth.common.core.controller.BaseController;
+import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.core.domain.TreeSelect;
+import com.dchealth.common.core.domain.entity.SysDept;
 import com.dchealth.common.core.domain.entity.SysUser;
+import com.dchealth.common.enums.BusinessType;
+import com.dchealth.common.utils.StringUtils;
+import com.dchealth.system.service.ISysDeptService;
 import com.dchealth.system.service.ISysUserService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.dchealth.common.annotation.Log;
-import com.dchealth.common.constant.UserConstants;
-import com.dchealth.common.core.controller.BaseController;
-import com.dchealth.common.core.domain.AjaxResult;
-import com.dchealth.common.core.domain.entity.SysDept;
-import com.dchealth.common.enums.BusinessType;
-import com.dchealth.common.utils.StringUtils;
-import com.dchealth.system.service.ISysDeptService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.dchealth.template.service.impl.FMedicalPropertyServiceImpl.distinctByKey;
 
@@ -111,7 +97,16 @@ public class SysDeptController extends BaseController
         dept.setDeptId2(sysUser.getDeptId());
         dept.setStatus("0");
         List<SysDept> depts = deptService.selectDeptList(dept);
-        return AjaxResult.success(deptService.buildDeptTreeSelect(depts));
+        List<TreeSelect> treeSelects = deptService.buildDeptTreeSelect(depts);
+        List<TreeSelect> collect = treeSelects.stream().filter(i -> i.getId() != 100L).collect(Collectors.toList());
+        List<TreeSelect> result = treeSelects.stream().filter(i -> i.getId() == 100L).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(collect)) {
+            result.get(0).setChildren(collect);
+            return AjaxResult.success(result);
+        } else {
+            return AjaxResult.success(treeSelects);
+        }
+
     }
 
     /**

@@ -2,11 +2,13 @@ package com.dchealth.cro.account.service;
 
 
 import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.form.req.UpdateUserInfoReq;
 import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.exception.base.ServiceException;
+import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.health.domain.MpPatientAccount;
 import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPatientAccountMapper;
@@ -74,21 +76,41 @@ public class WxAccountService {
 
                 PatientAccount account = patientAccountMapper.selectPatientAccountByMobile(updateUserInfoReq.getLoginMobile());
                 if (account != null) {
-                    throw new ServiceException("修改手机号已存在");
-                }
+                    // 如果修改的手机号账号存在则看是否绑定
+                    if (account.getBindStatus().equals("0") && StrUtil.isEmpty(account.getRegistrySigns()) && StrUtil.isEmpty(account.getIdCard())) {
+                        patientAccountMobileUpdate(updateUserInfoReq, account);
+                        result.setData(true);
+                        result.setMsg("更新用户手机号成功");
+                        return result;
+                    } else {
+                        throw new ServiceException("修改手机号已存在");
+                    }
 
-                patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
-                patientAccountMapper.updatePatientAccount(patientAccount);
-                log.info("更新用户手机号成功");
-                result.setData(true);
-                result.setMsg("更新用户手机号成功");
-                return result;
+                } else {
+                    patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
+                    patientAccountMapper.updatePatientAccount(patientAccount);
+                    log.info("更新用户手机号成功");
+                    result.setData(true);
+                    result.setMsg("更新用户手机号成功");
+                    return result;
+                }
             }
         }
 
         if (!patientAccount.getMobile().equals(updateUserInfoReq.getLoginMobile())) {
-            patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
-            patientAccountMapper.updatePatientAccount(patientAccount);
+            PatientAccount account = patientAccountMapper.selectPatientAccountByMobile(updateUserInfoReq.getLoginMobile());
+            if (account != null) {
+                // 如果修改的手机号账号存在则看是否绑定
+                if (account.getBindStatus().equals("1") && StrUtil.isEmpty(account.getRegistrySigns()) && StrUtil.isEmpty(account.getIdCard())) {
+                    patientAccountMobileUpdate(updateUserInfoReq, account);
+                } else {
+                    throw new ServiceException("修改手机号已存在");
+                }
+            } else {
+                patientAccount.setMobile(updateUserInfoReq.getLoginMobile());
+                patientAccountMapper.updatePatientAccount(patientAccount);
+                log.info("更新用户手机号成功");
+            }
         }
 
         //mp_patient_account
@@ -137,6 +159,19 @@ public class WxAccountService {
         result.setData(true);
         result.setMsg("更新用户信息成功");
         return result;
+    }
+
+    private void patientAccountMobileUpdate(UpdateUserInfoReq updateUserInfoReq, PatientAccount account) {
+        patientAccountMapper.deletePatientAccountByAccountId(account.getAccountId());
+        PatientAccount account1 = new PatientAccount();
+        account1.setMobile(updateUserInfoReq.getLoginMobile());
+        account1.setRegistrySigns(updateUserInfoReq.getPersonId());
+        account1.setStatus("0");
+        account1.setBindStatus("1");
+        account1.setCreateTime(DateUtils.getNowDate());
+        account1.setIdCard(updateUserInfoReq.getIdCard());
+        patientAccountMapper.insertPatientAccount(account1);
+        log.info("更新用户手机号成功");
     }
 
     public Boolean isJoinQueue(Long accountId, String channel) {
