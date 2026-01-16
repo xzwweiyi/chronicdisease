@@ -7,7 +7,6 @@ import com.dchealth.common.annotation.Log;
 import com.dchealth.common.constant.UserConstants;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
-import com.dchealth.common.core.domain.TreeSelect;
 import com.dchealth.common.core.domain.entity.SysDept;
 import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.enums.BusinessType;
@@ -28,7 +27,7 @@ import static com.dchealth.template.service.impl.FMedicalPropertyServiceImpl.dis
 
 /**
  * 部门信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -97,15 +96,7 @@ public class SysDeptController extends BaseController
         dept.setDeptId2(sysUser.getDeptId());
         dept.setStatus("0");
         List<SysDept> depts = deptService.selectDeptList(dept);
-        List<TreeSelect> treeSelects = deptService.buildDeptTreeSelect(depts);
-        List<TreeSelect> collect = treeSelects.stream().filter(i -> i.getId() != 100L).collect(Collectors.toList());
-        List<TreeSelect> result = treeSelects.stream().filter(i -> i.getId() == 100L).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(collect)) {
-            result.get(0).setChildren(collect);
-            return AjaxResult.success(result);
-        } else {
-            return AjaxResult.success(treeSelects);
-        }
+        return AjaxResult.success(deptService.buildDeptTreeSelect(depts));
 
     }
 
