@@ -1,12 +1,6 @@
 package com.dchealth.medical.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import cn.hutool.core.util.ObjUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -17,22 +11,21 @@ import com.dchealth.common.utils.DateUtils;
 import com.dchealth.dynamic.mapper.DynamicCommonMapper;
 import com.dchealth.export.domain.PatientMedicalPropertyResVO;
 import com.dchealth.medical.domain.PatientInfo;
+import com.dchealth.medical.domain.PatientRecord;
 import com.dchealth.medical.domain.PatientRecordFiles;
 import com.dchealth.medical.domain.PatientRecordTemplate;
 import com.dchealth.medical.domain.form.DynamicCommonProperty;
 import com.dchealth.medical.domain.form.DynamicForm;
 import com.dchealth.medical.domain.form.Option;
 import com.dchealth.medical.domain.form.PatientRecordDetailForm;
-import com.dchealth.medical.domain.vo.FollowMedicalFromTree;
-import com.dchealth.medical.domain.vo.MedicalFormVO;
-import com.dchealth.medical.domain.vo.MedicalPropertyVO;
-import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
-import com.dchealth.medical.domain.vo.QuestionRecordVO;
+import com.dchealth.medical.domain.vo.*;
 import com.dchealth.medical.mapper.PatientInfoMapper;
 import com.dchealth.medical.mapper.PatientRecordFilesMapper;
+import com.dchealth.medical.mapper.PatientRecordMapper;
 import com.dchealth.medical.mapper.PatientRecordTemplateMapper;
 import com.dchealth.medical.service.IEdcWorkService;
 import com.dchealth.medical.service.IPatientInfoService;
+import com.dchealth.medical.service.IPatientRecordService;
 import com.dchealth.medical.utils.PatientUtils;
 import com.dchealth.question.domain.QuestionRecord;
 import com.dchealth.question.mapper.QuestionRecordMapper;
@@ -48,45 +41,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFDrawing;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
-import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import com.dchealth.medical.mapper.PatientRecordMapper;
-import com.dchealth.medical.domain.PatientRecord;
-import com.dchealth.medical.service.IPatientRecordService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 患者档案Service业务层处理
@@ -1045,145 +1021,148 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
 
 
             PatientEnrollmentVo patientEnrollmentVo = patientInfoMap.get(patientId);
-            for (int j = 0; j < propertyVOS.size(); j++) {
-                MedicalPropertyVO property = propertyVOS.get(j);
+            if (ObjUtil.isNotNull(patientEnrollmentVo)) {
+                for (int j = 0; j < propertyVOS.size(); j++) {
+                    MedicalPropertyVO property = propertyVOS.get(j);
 
-                String propertyType = property.getPropertyType();
-                if (PropertyType.UPLOAD.equalsIgnoreCase(propertyType)) {
-                    continue; //不支持文件类型
-                }
-                Cell tCell = row.createCell(begin);
-                String propertyCode = property.getPropertyCode();
-                PatientMedicalPropertyResVO patientMedicalPropertyResVO = null != propertypeCodeMap.get(propertyCode) ?
-                        propertypeCodeMap.get(propertyCode) : new PatientMedicalPropertyResVO();
+                    String propertyType = property.getPropertyType();
+                    if (PropertyType.UPLOAD.equalsIgnoreCase(propertyType)) {
+                        continue; //不支持文件类型
+                    }
+                    Cell tCell = row.createCell(begin);
+                    String propertyCode = property.getPropertyCode();
+                    PatientMedicalPropertyResVO patientMedicalPropertyResVO = null != propertypeCodeMap.get(propertyCode) ?
+                            propertypeCodeMap.get(propertyCode) : new PatientMedicalPropertyResVO();
 
-                if(propertyCode.equals(BaseInfoCodeNameEnum.NAME.getCode())){
-                    tCell.setCellValue(patientEnrollmentVo.getPatientName());
-                    begin++;
-                    continue;
-                }
+                    if(propertyCode.equals(BaseInfoCodeNameEnum.NAME.getCode())){
+                        tCell.setCellValue(patientEnrollmentVo.getPatientName());
+                        begin++;
+                        continue;
+                    }
 
-                if (propertyCode.equals(BaseInfoCodeNameEnum.SEX.getCode())) {
-                    tCell.setCellValue(PatientUtils.getSexName(patientEnrollmentVo.getSex()));
-                    begin++;
-                    continue;
-                }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.SEX.getCode())) {
+                        tCell.setCellValue(PatientUtils.getSexName(patientEnrollmentVo.getSex()));
+                        begin++;
+                        continue;
+                    }
 
-                if (propertyCode.equals(BaseInfoCodeNameEnum.MOBILE1.getCode())) {
-                    tCell.setCellValue(patientEnrollmentVo.getMobile());
-                    begin++;
-                    continue;
-                }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.MOBILE1.getCode())) {
+                        tCell.setCellValue(patientEnrollmentVo.getMobile());
+                        begin++;
+                        continue;
+                    }
 
-                if (propertyCode.equals(BaseInfoCodeNameEnum.ID_CARD.getCode())) {
-                    tCell.setCellValue(patientEnrollmentVo.getIdCard());
-                    begin++;
-                    continue;
-                }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.ID_CARD.getCode())) {
+                        tCell.setCellValue(patientEnrollmentVo.getIdCard());
+                        begin++;
+                        continue;
+                    }
 
-                if (propertyCode.equals(BaseInfoCodeNameEnum.DATE_OF_BIRTH.getCode())) {
-                    tCell.setCellValue(DateUtils.dateTime(patientEnrollmentVo.getBirthday()));
-                    begin++;
-                    continue;
-                }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.DATE_OF_BIRTH.getCode())) {
+                        tCell.setCellValue(DateUtils.dateTime(patientEnrollmentVo.getBirthday()));
+                        begin++;
+                        continue;
+                    }
 
-                if (propertyCode.equals(BaseInfoCodeNameEnum.SUBMIT_DATE.getCode())) {
-                    tCell.setCellValue(patientMedicalPropertyResVOS1.get(0).getFollowSubmitTime());
-                    begin++;
-                    continue;
-                }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.SUBMIT_DATE.getCode())) {
+                        tCell.setCellValue(patientMedicalPropertyResVOS1.get(0).getFollowSubmitTime());
+                        begin++;
+                        continue;
+                    }
 
-                if (propertyCode.equals(BaseInfoCodeNameEnum.FOLLOW_NAME.getCode())) {
-                    tCell.setCellValue(patientMedicalPropertyResVOS1.get(0).getFollowName());
-                    begin++;
-                    continue;
-                }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.FOLLOW_NAME.getCode())) {
+                        tCell.setCellValue(patientMedicalPropertyResVOS1.get(0).getFollowName());
+                        begin++;
+                        continue;
+                    }
 
-                // 把每一列变成文本格式
-                if ("Select,Checkbox,Radio".contains(propertyType)) {
-                    String attribute = property.getAttribute();
-                    JSONArray jsonArray = (JSONArray) JSONObject.parseObject(attribute).get("options");
-                    List<String> values = new ArrayList();
-                    if (jsonArray != null) {
-                        for (Object obj : jsonArray) {
-                            JSONObject json = (JSONObject) obj;
-                            String label = json.get("label").toString();
-                            values.add(label);
-                            if (json.get("value").toString().equals(patientMedicalPropertyResVO.getPropertyValue())) {
-                                tCell.setCellValue(label);
+                    // 把每一列变成文本格式
+                    if ("Select,Checkbox,Radio".contains(propertyType)) {
+                        String attribute = property.getAttribute();
+                        JSONArray jsonArray = (JSONArray) JSONObject.parseObject(attribute).get("options");
+                        List<String> values = new ArrayList();
+                        if (jsonArray != null) {
+                            for (Object obj : jsonArray) {
+                                JSONObject json = (JSONObject) obj;
+                                String label = json.get("label").toString();
+                                values.add(label);
+                                if (json.get("value").toString().equals(patientMedicalPropertyResVO.getPropertyValue())) {
+                                    tCell.setCellValue(label);
+                                }
+                            }
+//                        tCell.setCellValue(values.get(0));
+                            //设置下拉单选
+                            setDropDownBox(sheet, values.toArray(new String[values.size()]), 3, 500, begin, begin);
+                        }
+                        tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
+                    } else if ("Cascader".contains(propertyType)) {
+                        List<String> resultOptionList = new ArrayList();
+                        String attribute = property.getAttribute();
+                        JSONArray jsonArray = (JSONArray) JSONObject.parseObject(attribute).get("options");
+
+                        if (jsonArray != null) {
+                            jsonArray.stream().forEach(optional -> {
+                                List<String> values = new ArrayList();
+                                Gson gson = new Gson();
+                                JSONObject optionObj = (JSONObject) optional;
+                                Option option = gson.fromJson(optionObj.toJSONString(), Option.class);
+                                resultOptionList.addAll(binaryTreePaths(option, values));
+
+                            });
+
+                            if (CollectionUtils.isNotEmpty(resultOptionList)) {
+                                tCell.setCellValue((null != patientMedicalPropertyResVO) ?
+                                        patientMedicalPropertyResVO.getPropertyValue() : "");
+                                //设置下拉单选
+                                setDropDownBox(sheet, resultOptionList.toArray(new String[resultOptionList.size()]), 3, 500,
+                                        begin, begin);
                             }
                         }
-//                        tCell.setCellValue(values.get(0));
-                        //设置下拉单选
-                        setDropDownBox(sheet, values.toArray(new String[values.size()]), 3, 500, begin, begin);
-                    }
-                    tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
-                } else if ("Cascader".contains(propertyType)) {
-                    List<String> resultOptionList = new ArrayList();
-                    String attribute = property.getAttribute();
-                    JSONArray jsonArray = (JSONArray) JSONObject.parseObject(attribute).get("options");
-
-                    if (jsonArray != null) {
-                        jsonArray.stream().forEach(optional -> {
-                            List<String> values = new ArrayList();
-                            Gson gson = new Gson();
-                            JSONObject optionObj = (JSONObject) optional;
-                            Option option = gson.fromJson(optionObj.toJSONString(), Option.class);
-                            resultOptionList.addAll(binaryTreePaths(option, values));
-
-                        });
-
-                        if (CollectionUtils.isNotEmpty(resultOptionList)) {
-                            tCell.setCellValue((null != patientMedicalPropertyResVO) ?
-                                    patientMedicalPropertyResVO.getPropertyValue() : "");
-                            //设置下拉单选
-                            setDropDownBox(sheet, resultOptionList.toArray(new String[resultOptionList.size()]), 3, 500,
-                                    begin, begin);
+                        tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
+                    } else if ("Date".equalsIgnoreCase(propertyType)) {
+                        sheet.setColumnWidth(begin, 3000);
+                        tCell.setCellStyle((CellStyle) map.get("dateStyle"));
+                        if (propertypeCodeMap.get(property.getPropertyCode()) != null) {
+                            tCell.setCellValue(dateConvert(propertypeCodeMap.get(property.getPropertyCode()).getPropertyValue()));
                         }
-                    }
-                    tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
-                } else if ("Date".equalsIgnoreCase(propertyType)) {
-                    sheet.setColumnWidth(begin, 3000);
-                    tCell.setCellStyle((CellStyle) map.get("dateStyle"));
-                    if (propertypeCodeMap.get(property.getPropertyCode()) != null) {
-                        tCell.setCellValue(dateConvert(propertypeCodeMap.get(property.getPropertyCode()).getPropertyValue()));
-                    }
                     /*tCell.setCellValue((null != patientMedicalPropertyResVO) ?
                             patientMedicalPropertyResVO.getPropertyValue() : "");*/
-                } else if ("Upload,ColorPicker".contains(propertyType)) {
+                    } else if ("Upload,ColorPicker".contains(propertyType)) {
 
-                } else if ("province".contains(propertyType)) {
+                    } else if ("province".contains(propertyType)) {
 //                tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
-                    Map<String, String> area = (Map<String, String>) map.get("areaMap");
-                    String[] areaDictList = (String[]) map.get("areaList");
-                    if (areaDictList.length > 0) {
-                        AtomicInteger sheetHiddenIndex = (AtomicInteger) map.get("sheetHiddenIndex");
+                        Map<String, String> area = (Map<String, String>) map.get("areaMap");
+                        String[] areaDictList = (String[]) map.get("areaList");
+                        if (areaDictList.length > 0) {
+                            AtomicInteger sheetHiddenIndex = (AtomicInteger) map.get("sheetHiddenIndex");
 
-                        setLongHSSFValidation2((SXSSFWorkbook) workbook, areaDictList, (SXSSFSheet) sheet, 1,
-                                areaDictList.length, begin, sheetHiddenIndex);
-                        String propertyValue = patientMedicalPropertyResVO.getPropertyValue();
-                        if (com.dchealth.common.utils.StringUtils.isNotEmpty(propertyValue)) {
-                            String[] areaFullCode = propertyValue.split(",");
-                            tCell.setCellValue(area.get(areaFullCode[areaFullCode.length - 1]));
-                        }
+                            setLongHSSFValidation2((SXSSFWorkbook) workbook, areaDictList, (SXSSFSheet) sheet, 1,
+                                    areaDictList.length, begin, sheetHiddenIndex);
+                            String propertyValue = patientMedicalPropertyResVO.getPropertyValue();
+                            if (com.dchealth.common.utils.StringUtils.isNotEmpty(propertyValue)) {
+                                String[] areaFullCode = propertyValue.split(",");
+                                tCell.setCellValue(area.get(areaFullCode[areaFullCode.length - 1]));
+                            }
 //                        sheetHiddenIndex.addAndGet(1);
-                        map.put("sheetHiddenIndex", sheetHiddenIndex);
-                    }
-                } else if ("timePicker".contains(propertyType)) {
-                    tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
-                    tCell.setCellValue("10:00");
-                } else if ("YEARMONTHDAY".contains(propertyType)) {
+                            map.put("sheetHiddenIndex", sheetHiddenIndex);
+                        }
+                    } else if ("timePicker".contains(propertyType)) {
+                        tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
+                        tCell.setCellValue("10:00");
+                    } else if ("YEARMONTHDAY".contains(propertyType)) {
                     /*tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
                     String value = (null != patientMedicalPropertyResVO) ? patientMedicalPropertyResVO.getPropertyValue() : "";
                     String unit = PatientUtils.getSpecialNameFromType(patientMedicalPropertyResVO.getSpecialType());
                     tCell.setCellValue(value+unit);*/
-                } else {
-                    tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
-                    tCell.setCellValue((null != patientMedicalPropertyResVO) ?
-                            patientMedicalPropertyResVO.getPropertyValue() : "");
+                    } else {
+                        tCell.setCellStyle((CellStyle) map.get("defaultStyle"));
+                        tCell.setCellValue((null != patientMedicalPropertyResVO) ?
+                                patientMedicalPropertyResVO.getPropertyValue() : "");
+                    }
+                    begin++;
                 }
-                begin++;
             }
+
 
             rowIndex++;
         }

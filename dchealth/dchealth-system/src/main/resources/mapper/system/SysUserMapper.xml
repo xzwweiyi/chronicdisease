@@ -364,6 +364,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="roleId != null and roleId != ''">
 			AND r.role_id = #{roleId}
 		</if>
+        <if test="deptIds != null and deptIds.length > 0">
+            AND d.dept_id in
+            <foreach collection="deptIds" item="deptId" open="(" separator="," close=")">
+                #{deptId}
+            </foreach>
+        </if>
 		${params.dataScope}
 		group by u.user_id
 	</select>
