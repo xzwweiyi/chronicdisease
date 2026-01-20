@@ -1,5 +1,6 @@
 package com.dchealth.research.service.impl;
 
+import cn.hutool.core.util.ObjUtil;
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.core.domain.entity.SysDept;
 import com.dchealth.common.core.domain.entity.SysUser;
@@ -24,10 +25,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -127,119 +126,151 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
         return result;
     }
 
-    @Override
-    public List<ResearchDiseasesTreeSelect> selectDiseasesAndResearchInfo(ResearchInfoVo vo) {
-        SysDept sysDept = sysDeptMapper.selectDeptById(100l);
-        ResearchDiseasesTreeSelect researchDiseasesTreeSelect = new ResearchDiseasesTreeSelect(sysDept);
-
-        SysUser sysUser = sysUserMapper.selectUserById(vo.getUserId());
-
-        if("1".equals(sysUser.getIsAlldeptResearch())){
-            vo.setUserId(null);
-            vo.setDeptId(sysUser.getDeptId());
-        }
-
-        List<ResearchDiseasesVO> researchDiseases = researchDiseasesMapper.selectResearchDiseases(vo);
-        List<ResearchDiseasesTreeSelect> result = new ArrayList<>();
-        if (researchDiseases != null && !researchDiseases.isEmpty()){
-            Map<Long, List<ResearchDiseasesVO>> map = researchDiseases.stream().collect(Collectors.groupingBy(ResearchDiseasesVO :: getDeptId));
-            map.forEach((k,v)->result.add(new ResearchDiseasesTreeSelect(v)));
-            calculatePatientInfo(result);
-            result.sort(Comparator.comparing(ResearchDiseasesTreeSelect :: getOrderNum));
-        }
-        researchDiseasesTreeSelect.setChildren(result);
-
-        List<ResearchDiseasesTreeSelect> list = new ArrayList<>();
-        list.add(researchDiseasesTreeSelect);
-        return list;
-    }
-//
-//    @Override
+    //    @Override
 //    public List<ResearchDiseasesTreeSelect> selectDiseasesAndResearchInfo(ResearchInfoVo vo) {
-//        List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
-//        Map<Long, SysDept> deptMap = sysDepts.stream().collect(Collectors.toMap(SysDept::getDeptId, Function.identity()));
-//
-//        SysDept sysDept = deptMap.get(100L);
+//        SysDept sysDept = sysDeptMapper.selectDeptById(100l);
 //        ResearchDiseasesTreeSelect researchDiseasesTreeSelect = new ResearchDiseasesTreeSelect(sysDept);
 //
 //        SysUser sysUser = sysUserMapper.selectUserById(vo.getUserId());
 //
-//        if ("1".equals(sysUser.getIsAlldeptResearch())) {
+//        if("1".equals(sysUser.getIsAlldeptResearch())){
 //            vo.setUserId(null);
 //            vo.setDeptId(sysUser.getDeptId());
 //        }
 //
 //        List<ResearchDiseasesVO> researchDiseases = researchDiseasesMapper.selectResearchDiseases(vo);
-//
-//
 //        List<ResearchDiseasesTreeSelect> result = new ArrayList<>();
-//        if (researchDiseases != null && !researchDiseases.isEmpty()) {
-//
-//
-//            List<Long> collect = researchDiseases.stream().map(ResearchDiseasesVO::getDeptId).collect(Collectors.toList());
-//            List<Long> isChildren = new ArrayList<>();
-//            collect.forEach(p -> {
-//                if (deptMap.get(p).getParentId() != 100L) {
-//                    isChildren.add(deptMap.get(p).getParentId());
-//                }
-//            });
-//
-//            Map<Long, List<ResearchDiseasesVO>> map = researchDiseases.stream().collect(Collectors.groupingBy(ResearchDiseasesVO::getDeptId));
-//
-//            map.forEach((k, v) -> {
-//
-//                Long parentId = deptMap.get(k).getParentId();
-//                SysDept dept = deptMap.get(parentId);
-//                if (parentId != 100L) {
-//
-//                    if (isChildren.contains(k)) {
-//
-//                        // 包含二级项 对应的一级项目下面没有队列信息
-//                        ResearchDiseasesTreeSelect diseasesTreeSelect = new ResearchDiseasesTreeSelect(v, false, null, dept);
-//
-//                        // 计算患者数量
-//                        calculatePatientInfo(diseasesTreeSelect.getChildren());
-//                        result.add(diseasesTreeSelect);
-//
-//                    } else {
-//                        // 包含二级项 对应的一级项目下面没有队列信息
-//                        List<ResearchDiseasesVO> parentVos = map.get(parentId);
-//                        ResearchDiseasesTreeSelect diseasesTreeSelect = new ResearchDiseasesTreeSelect(v, true, parentVos, dept);
-//                        // 计算患者数量
-//                        diseasesTreeSelect.getChildren().forEach(item -> {
-//                            if (item.getNodeId().charAt(0) == 'd') {
-//
-//                                    calculatePatientInfo2(item.getChildren());
-//
-//
-//                            } else {
-//                                ArrayList<ResearchDiseasesTreeSelect> list = new ArrayList<>();
-//                                list.add(item);
-//                                calculatePatientInfo2(list);
-//                            }
-//                        });
-//
-//                        result.add(diseasesTreeSelect);
-//                    }
-//
-//                } else {
-//                    if (!isChildren.contains(k)) {
-//                        ResearchDiseasesTreeSelect diseasesTreeSelect = new ResearchDiseasesTreeSelect(v);
-//                        result.add(diseasesTreeSelect);
-//                        calculatePatientInfo2(diseasesTreeSelect.getChildren());
-//                    }
-//                }
-//            });
-////            calculatePatientInfo(result);
-//            result.sort(Comparator.comparing(ResearchDiseasesTreeSelect::getOrderNum));
+//        if (researchDiseases != null && !researchDiseases.isEmpty()){
+//            Map<Long, List<ResearchDiseasesVO>> map = researchDiseases.stream().collect(Collectors.groupingBy(ResearchDiseasesVO :: getDeptId));
+//            map.forEach((k,v)->result.add(new ResearchDiseasesTreeSelect(v)));
+//            calculatePatientInfo(result);
+//            result.sort(Comparator.comparing(ResearchDiseasesTreeSelect :: getOrderNum));
 //        }
-//
 //        researchDiseasesTreeSelect.setChildren(result);
 //
 //        List<ResearchDiseasesTreeSelect> list = new ArrayList<>();
 //        list.add(researchDiseasesTreeSelect);
 //        return list;
 //    }
+//
+    @Override
+    public List<ResearchDiseasesTreeSelect> selectDiseasesAndResearchInfo(ResearchInfoVo vo) {
+        List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
+        Map<Long, SysDept> deptMap = sysDepts.stream().collect(Collectors.toMap(SysDept::getDeptId, Function.identity()));
+
+        SysDept sysDept = deptMap.get(100L);
+        ResearchDiseasesTreeSelect researchDiseasesTreeSelect = new ResearchDiseasesTreeSelect(sysDept);
+
+        SysUser sysUser = sysUserMapper.selectUserById(vo.getUserId());
+
+        if ("1".equals(sysUser.getIsAlldeptResearch())) {
+            vo.setUserId(null);
+            vo.setDeptId(sysUser.getDeptId());
+        }
+
+        List<ResearchDiseasesVO> researchDiseases = researchDiseasesMapper.selectResearchDiseases(vo);
+
+
+        List<ResearchDiseasesTreeSelect> result = new ArrayList<>();
+        if (researchDiseases != null && !researchDiseases.isEmpty()) {
+
+
+            List<Long> collect = researchDiseases.stream().map(ResearchDiseasesVO::getDeptId).collect(Collectors.toList());
+            List<Long> isChildren = new ArrayList<>();
+            collect.forEach(p -> {
+                if (deptMap.get(p).getParentId() != 100L) {
+                    if (collect.contains(deptMap.get(p).getParentId())) {
+                        isChildren.add(deptMap.get(p).getParentId());
+
+                    }
+                }
+            });
+
+            Map<Long, List<ResearchDiseasesVO>> map = researchDiseases.stream().collect(Collectors.groupingBy(ResearchDiseasesVO::getDeptId));
+
+            List<ResearchDiseasesVO> arrayList = new ArrayList<>();
+            Map<Long, List<ResearchDiseasesVO>> mapVo = new HashMap<>();
+
+            List<ResearchDiseasesVO> arrayList1 = new ArrayList<>();
+            Map<Long, List<ResearchDiseasesVO>> mapVo1 = new HashMap<>();
+
+            map.forEach((k, v) -> {
+
+                Long parentId = deptMap.get(k).getParentId();
+
+                if (parentId != 100L) {
+
+                    if (!isChildren.contains(parentId)) {
+
+                        if (mapVo.containsKey(parentId)) {
+                            mapVo.get(parentId).addAll(map.get(k));
+                        } else {
+                            arrayList.addAll(map.get(k));
+                            mapVo.put(parentId, arrayList);
+                        }
+
+                    } else {
+
+                        if (mapVo1.containsKey(parentId)) {
+                            mapVo1.get(parentId).addAll(map.get(k));
+                        } else {
+                            arrayList1.addAll(map.get(k));
+                            mapVo1.put(parentId, arrayList1);
+                        }
+
+                    }
+
+                } else {
+                    if (!isChildren.contains(k)) {
+                        ResearchDiseasesTreeSelect diseasesTreeSelect = new ResearchDiseasesTreeSelect(v);
+                        result.add(diseasesTreeSelect);
+                        calculatePatientInfo2(diseasesTreeSelect.getChildren());
+                    }
+                }
+            });
+
+            if (ObjUtil.isNotNull(mapVo)) {
+                mapVo.forEach((k, v) -> {
+                    // 包含二级项 对应的一级项目下面没有队列信息
+                    ResearchDiseasesTreeSelect diseasesTreeSelect = new ResearchDiseasesTreeSelect(v, false, null, deptMap.get(k));
+
+                    // 计算患者数量
+                    calculatePatientInfo(diseasesTreeSelect.getChildren());
+                    result.add(diseasesTreeSelect);
+                });
+            }
+            if (ObjUtil.isNotNull(mapVo1)) {
+                mapVo1.forEach((k, v) -> {
+
+                    List<ResearchDiseasesVO> parentVos = map.get(k);
+                    ResearchDiseasesTreeSelect diseasesTreeSelect = new ResearchDiseasesTreeSelect(v, true, parentVos, deptMap.get(k));
+//                 计算患者数量
+                    diseasesTreeSelect.getChildren().forEach(item -> {
+                        if (item.getNodeId().charAt(0) == 'd') {
+
+                            calculatePatientInfo2(item.getChildren());
+
+
+                        } else {
+                            ArrayList<ResearchDiseasesTreeSelect> list = new ArrayList<>();
+                            list.add(item);
+                            calculatePatientInfo2(list);
+                        }
+                    });
+
+                    result.add(diseasesTreeSelect);
+                });
+
+            }
+            result.sort(Comparator.comparing(ResearchDiseasesTreeSelect::getOrderNum));
+        }
+
+        researchDiseasesTreeSelect.setChildren(result);
+
+        List<ResearchDiseasesTreeSelect> list = new ArrayList<>();
+        list.add(researchDiseasesTreeSelect);
+        return list;
+    }
 
 
     private void calculatePatientInfo(List<ResearchDiseasesTreeSelect> result) {
@@ -274,15 +305,15 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
 //                for (ResearchDiseasesTreeSelect t : childList) {
 //                    List<ResearchDiseasesTreeSelect> threeChildList = t.getChildren();
 //                    if (childList != null && childList.size() > 0) {
-                        for (ResearchDiseasesTreeSelect l : childList) {
-                            PatientInfo pi = new PatientInfo();
-                            pi.setResearchId(l.getId());
-                            pi.setEnrollmentHandlerStatus("3");
-                            pi.setEnrollmentStatus("1");
-                            pi.setDeptIdNoZero("1");
-                            List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.selectEnrollmentPatientInfoListLess(pi);
-                            l.setCount(patientEnrollmentVos.size());
-                        }
+                for (ResearchDiseasesTreeSelect l : childList) {
+                    PatientInfo pi = new PatientInfo();
+                    pi.setResearchId(l.getId());
+                    pi.setEnrollmentHandlerStatus("3");
+                    pi.setEnrollmentStatus("1");
+                    pi.setDeptIdNoZero("1");
+                    List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.selectEnrollmentPatientInfoListLess(pi);
+                    l.setCount(patientEnrollmentVos.size());
+                }
 //                    }
 //                }
             }

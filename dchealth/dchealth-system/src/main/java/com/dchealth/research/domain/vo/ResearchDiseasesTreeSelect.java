@@ -159,7 +159,7 @@ public class ResearchDiseasesTreeSelect implements Serializable {
                 // 一级层级下也有病种
                 ResearchDiseasesVO researchDiseasesVO = parentVos.get(0);
                 Map<Long, List<ResearchDiseasesVO>> map2 = parentVos.stream().filter(x -> x.getDiseaseId() != null).collect(Collectors.groupingBy(ResearchDiseasesVO::getDiseaseId));
-                List<ResearchDiseasesTreeSelect> dis2  = getResearchDiseasesTreeSelects(map2, researchDiseasesVO);
+                List<ResearchDiseasesTreeSelect> dis2 = getResearchDiseasesTreeSelects(map2, researchDiseasesVO);
 //                this.setChildren(dis2);
                 this.setCount(dis2.size());
                 children.addAll(dis2);
@@ -167,23 +167,33 @@ public class ResearchDiseasesTreeSelect implements Serializable {
 
         }
 
-        ResearchDiseasesTreeSelect researchDiseasesTreeSelect = new ResearchDiseasesTreeSelect();
-        ResearchDiseasesVO diseasesVO = list.get(0);
-        researchDiseasesTreeSelect.setId(diseasesVO.getDeptId());
-        researchDiseasesTreeSelect.setNodeId("d_" + diseasesVO.getDeptId());
-        researchDiseasesTreeSelect.setParentNodeId("0");
-        researchDiseasesTreeSelect.setType("2");
-        researchDiseasesTreeSelect.setLabel(diseasesVO.getDeptName());
-        researchDiseasesTreeSelect.setOrderNum(diseasesVO.getOrderNum());
+        Map<Long, List<ResearchDiseasesVO>> deptMap = list.stream().collect(Collectors.groupingBy(ResearchDiseasesVO::getDeptId));
 
-        Map<Long, List<ResearchDiseasesVO>> map = list.stream().filter(x -> x.getDiseaseId() != null).collect(Collectors.groupingBy(ResearchDiseasesVO::getDiseaseId));
-        List<ResearchDiseasesTreeSelect> dis = getResearchDiseasesTreeSelects(map, diseasesVO);
-        researchDiseasesTreeSelect.setChildren(dis);
-        researchDiseasesTreeSelect.setCount(dis.size());
-//        assert dis2 != null;
-        children.add(researchDiseasesTreeSelect);
-//        children.add(researchDiseasesTreeSelect);
+        deptMap.forEach((k, v) -> {
 
+
+//        List<ResearchDiseasesTreeSelect> researchDiseasesTreeSelects = new ArrayList<>();
+
+            ResearchDiseasesTreeSelect researchDiseasesTreeSelect = new ResearchDiseasesTreeSelect();
+            ResearchDiseasesVO diseasesVO = v.get(0);
+            researchDiseasesTreeSelect.setId(diseasesVO.getDeptId());
+            researchDiseasesTreeSelect.setNodeId("d_" + diseasesVO.getDeptId());
+            researchDiseasesTreeSelect.setParentNodeId("0");
+            researchDiseasesTreeSelect.setType("2");
+            researchDiseasesTreeSelect.setLabel(diseasesVO.getDeptName());
+            researchDiseasesTreeSelect.setOrderNum(diseasesVO.getOrderNum());
+
+
+            Map<Long, List<ResearchDiseasesVO>> map = v.stream().filter(x -> x.getDiseaseId() != null).collect(Collectors.groupingBy(ResearchDiseasesVO::getDiseaseId));
+            List<ResearchDiseasesTreeSelect> dis = getResearchDiseasesTreeSelects(map, diseasesVO);
+            researchDiseasesTreeSelect.setChildren(dis);
+            researchDiseasesTreeSelect.setCount(dis.size());
+            children.add(researchDiseasesTreeSelect);
+//            researchDiseasesTreeSelects.add(researchDiseasesTreeSelect);
+        });
+
+
+//        children.addAll(collect);
 
         this.children = children;
 
