@@ -782,4 +782,38 @@
     <update id="updatePatientMobile">
         update patient_info set patient_mobile = #{mobile} where person_id = #{personId}
     </update>
+
+    <select id="selectFollowEnrollmentList" resultType="com.dchealth.statistics.domain.StatisticsFollowRateVo">
+        SELECT
+        a.patient_id patientId,
+        a.person_id personId,
+        a.patient_name patientName,
+        a.research_id researchId,
+        a.enrollment_time enrollmentTime,
+        a.dept_id deptId,
+        b.disease_type_id diseaseTypeId
+        FROM
+        patient_info a INNER JOIN research_info b on a.research_id = b.id
+
+        WHERE a.enrollment_status = 1
+
+        <if test="inputStartTime != null">
+            and a.enrollment_time &gt;= #{inputStartTime}
+        </if>
+        <if test="inputEndTime != null">
+            and a.enrollment_time &lt;= #{inputEndTime}
+        </if>
+        <if test="deptId != null">
+            and a.dept_id = #{deptId}
+        </if>
+        <if test="diseaseTypeId != null">
+            and b.disease_type_id = #{diseaseId}
+        </if>
+        <if test="researchId != null">
+            and a.research_id = #{researchId}
+        </if>
+        <if test="userId != null ">and (b.id in (select research_id from research_user_role where user_id = #{userId})
+            or su.user_id = #{userId} )
+        </if>
+    </select>
 </mapper>

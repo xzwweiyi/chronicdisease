@@ -1,9 +1,7 @@
 package com.dchealth.statistics.service.impl;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.dchealth.common.core.domain.entity.SysDept;
-import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.core.domain.model.LoginUser;
 import com.dchealth.common.utils.*;
 import com.dchealth.medical.domain.AppLoginRecord;
@@ -466,6 +464,48 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
         proCityStatisticsMap.put("provinceVos",provinceVos);
         proCityStatisticsMap.put("cityVisitVos",cityVisitVos);
         return proCityStatisticsMap;
+    }
+
+    @Override
+    public StatisticsRateResultVo queryFollowRate(StatisticsFollowRateVo statisticsParam) {
+
+        // 入队列时间和随访时间都为空的时候展示所有的随访率
+        // 如果入队列时间不为空，则计算队列在指定时间内入队列患者和参加随访的患者随访率
+
+        // 如果全部不为空，则计算队列在指定时间内入队列患者和参加随访的患者随访率
+        List<StatisticsFollowRateVo> patientEnrollmentList = patientInfoMapper.selectFollowEnrollmentList(statisticsParam);
+
+        int enrollmentNum = patientEnrollmentList.size();
+
+        List<StatisticsFollowRateVo> patientRecordList = patientRecordMapper.selectFollowListBySuccess(statisticsParam);
+
+        int followNum = patientRecordList.size();
+
+        return getStatisticsRateResultVo(followNum, enrollmentNum);
+    }
+
+    private static StatisticsRateResultVo getStatisticsRateResultVo(int followNum, int enrollmentNum) {
+        double followRate;
+        if (enrollmentNum == 0) {
+            followRate = 0.0; // 当没有入队列患者时，随访率为0
+        } else {
+            followRate = (double) followNum / enrollmentNum;
+        }
+
+        double notFollowRate = 1 - followRate;
+        // 保留两位小数
+        DecimalFormat df = new DecimalFormat("0.00%");
+        String followRateStr = df.format(followRate);
+        String notFollowRateStr = df.format(notFollowRate);
+
+        StatisticsRateResultVo statisticsRateResultVo = new StatisticsRateResultVo();
+        statisticsRateResultVo.setFollowRate(followRateStr);
+        statisticsRateResultVo.setFollowNum(String.valueOf(followNum));
+        statisticsRateResultVo.setTotalNum(String.valueOf(enrollmentNum));
+        statisticsRateResultVo.setFollowRateName("随访率");
+        statisticsRateResultVo.setNotFollowRate(notFollowRateStr);
+        statisticsRateResultVo.setNotFollowRateName("未随访率");
+        return statisticsRateResultVo;
     }
 
     private void dealNum(ResearchStatusOfNumStatisticsVo researchStatusOfNumStatisticsVo, ResearchDiseasesVO researchDiseasesVO) {

@@ -1075,4 +1075,48 @@
           and pr.stage_num=1 and pr.stage_add_num=1 and is_edit!=1
     </select>
 
+    <select id="selectFollowListBySuccess" resultType="com.dchealth.statistics.domain.StatisticsFollowRateVo">
+        SELECT a.record_id recordId,
+        a.patient_id patientId,
+        a.name followName,
+        a.research_id researchId,
+        a.follow_id followId,
+        b.person_id personId,
+        b.patient_name patientName,
+        b.dept_id deptId,
+        c.disease_type_id diseaseTypeId,
+        a.follow_submit_time followSubmitTime
+        FROM
+        patient_record a
+        INNER JOIN patient_info b ON a.patient_id = b.patient_id
+        left JOIN research_info c on a.research_id = c.id
+
+        WHERE
+        a.follow_status != 0
+        AND a.name != '基线'
+
+        <if test="followStartTime != null and followEndTime != null">
+            AND a.follow_submit_time BETWEEN #{followStartTime} and #{followEndTime}
+        </if>
+        <if test="deptId != null ">
+            AND b.dept_id = #{deptId}
+        </if>
+        <if test="researchId != null ">
+            AND a.research_id = #{researchId}
+        </if>
+        <if test="diseaseId != null ">
+            AND c.disease_type_id = #{diseaseId}
+        </if>
+        <if test="inputStartTime != null">
+            AND b.enrollment_time &gt;= #{inputStartTime}
+        </if>
+        <if test="inputEndTime != null">
+            AND b.enrollment_time &lt;= #{inputEndTime}
+        </if>
+        <if test="userId != null ">and (c.id in (select research_id from research_user_role where user_id = #{userId})
+            or su.user_id = #{userId} )
+        </if>
+        GROUP BY a.patient_id
+    </select>
+
 </mapper>

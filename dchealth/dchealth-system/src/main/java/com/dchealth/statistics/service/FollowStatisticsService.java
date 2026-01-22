@@ -1,9 +1,6 @@
 package com.dchealth.statistics.service;
 
-import com.dchealth.statistics.domain.PatientDistribute;
-import com.dchealth.statistics.domain.ResearchStatusOfNumStatisticsVo;
-import com.dchealth.statistics.domain.StatisticsParam;
-import com.dchealth.statistics.domain.StatisticsVo;
+import com.dchealth.statistics.domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -19,4 +16,6 @@ public interface FollowStatisticsService {
     List<ResearchStatusOfNumStatisticsVo> researchStatusNum(StatisticsParam statisticsParam);
 
     Map<String, Object> queryPatientDistribute(PatientDistribute distributeParam);
+
+    StatisticsRateResultVo queryFollowRate(StatisticsFollowRateVo statisticsParam);
 }

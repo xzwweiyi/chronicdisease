@@ -7,9 +7,10 @@ import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
 import com.dchealth.medical.domain.vo.ResearchPatientVO;
 import com.dchealth.statistics.domain.PatientDistribute;
 import com.dchealth.statistics.domain.PatientDistributeVo;
-import java.util.List;
-
+import com.dchealth.statistics.domain.StatisticsFollowRateVo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 患者信息Mapper接口
@@ -164,4 +165,11 @@ public interface PatientInfoMapper
      * @return 结果
      */
     Integer updatePatientMobile(@Param("personId") String personId, @Param("mobile") String mobile);
+
+    /**
+     * 查询指定时间内入组患者信息
+     * @param statisticsParam
+     * @return
+     */
+    List<StatisticsFollowRateVo> selectFollowEnrollmentList(StatisticsFollowRateVo statisticsParam);
 }

@@ -7,6 +7,7 @@ import com.dchealth.medical.domain.form.FollowWorkListForm;
 import com.dchealth.medical.domain.vo.EvaluateVO;
 import com.dchealth.medical.domain.vo.FollowWorkListVO;
 import com.dchealth.medical.domain.vo.PatientRecordVo;
+import com.dchealth.statistics.domain.StatisticsFollowRateVo;
 import com.dchealth.statistics.domain.StatisticsParam;
 import org.apache.ibatis.annotations.Param;
 
@@ -218,4 +219,11 @@ public interface PatientRecordMapper
     Integer selectOverRecordCount(StatisticsParam statisticsParam);
 
     List<PatientRecord> selectPatientRecordByResearchId(Long id);
+
+    /**
+     * 查询已完成随访患者数
+     * @param statisticsParam
+     * @return
+     */
+    List<StatisticsFollowRateVo> selectFollowListBySuccess(StatisticsFollowRateVo statisticsParam);
 }

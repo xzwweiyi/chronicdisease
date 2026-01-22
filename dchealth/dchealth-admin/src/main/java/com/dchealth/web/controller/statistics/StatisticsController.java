@@ -5,10 +5,7 @@ import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.core.domain.model.LoginUser;
-import com.dchealth.statistics.domain.PatientDistribute;
-import com.dchealth.statistics.domain.ResearchStatusOfNumStatisticsVo;
-import com.dchealth.statistics.domain.StatisticsParam;
-import com.dchealth.statistics.domain.StatisticsVo;
+import com.dchealth.statistics.domain.*;
 import com.dchealth.statistics.service.FollowStatisticsService;
 import com.dchealth.system.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -139,4 +136,30 @@ public class StatisticsController extends BaseController {
         log.info("queryPatientDistribute param:{}", JSONObject.toJSONString(distributeParam));
         return AjaxResult.success(statisticsService.queryPatientDistribute(distributeParam));
     }
+
+
+    /**
+     * 随访率
+     * @param statisticsParam
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('statistics:followDistribute:list')")
+    @GetMapping("/queryFollowRate")
+    public AjaxResult queryFollowRate(StatisticsFollowRateVo statisticsParam) {
+        log.info("queryFollowRate param:{}", JSONObject.toJSONString(statisticsParam));
+        LoginUser loginUser = getLoginUser();
+        SysUser sysUser = loginUser.getUser();
+
+        if (!loginUser.getUser().isAdmin()) {
+            statisticsParam.setDeptId(getDeptId());
+            //新增部门权限判断逻辑 如果用户有部门权限则不设置用户id查询部门数据  否则设置用户id查询自己的数据
+            if (!"1".equals(sysUser.getIsAlldeptResearch())) {
+                statisticsParam.setUserId(sysUser.getUserId());
+            }
+        }
+        return AjaxResult.success(statisticsService.queryFollowRate(statisticsParam));
+    }
+
+
+
 }
