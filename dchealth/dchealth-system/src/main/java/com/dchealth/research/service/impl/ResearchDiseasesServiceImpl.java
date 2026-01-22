@@ -188,10 +188,9 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
 
             Map<Long, List<ResearchDiseasesVO>> map = researchDiseases.stream().collect(Collectors.groupingBy(ResearchDiseasesVO::getDeptId));
 
-            List<ResearchDiseasesVO> arrayList = new ArrayList<>();
             Map<Long, List<ResearchDiseasesVO>> mapVo = new HashMap<>();
 
-            List<ResearchDiseasesVO> arrayList1 = new ArrayList<>();
+
             Map<Long, List<ResearchDiseasesVO>> mapVo1 = new HashMap<>();
 
             map.forEach((k, v) -> {
@@ -202,20 +201,26 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
 
                     if (!isChildren.contains(parentId)) {
 
+                        if (mapVo.isEmpty()) {
+                            mapVo.put(parentId, v);
+                        }
+
                         if (mapVo.containsKey(parentId)) {
                             mapVo.get(parentId).addAll(map.get(k));
-                        } else {
-                            arrayList.addAll(map.get(k));
-                            mapVo.put(parentId, arrayList);
+                        } else  {
+                            mapVo.put(parentId, map.get(k));
                         }
 
                     } else {
 
+                        if (mapVo1.isEmpty()) {
+                            mapVo1.put(parentId, v);
+                        }
+
                         if (mapVo1.containsKey(parentId)) {
                             mapVo1.get(parentId).addAll(map.get(k));
-                        } else {
-                            arrayList1.addAll(map.get(k));
-                            mapVo1.put(parentId, arrayList1);
+                        } else  {
+                            mapVo1.put(parentId, map.get(k));
                         }
 
                     }
