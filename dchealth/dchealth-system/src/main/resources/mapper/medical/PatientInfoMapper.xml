@@ -794,7 +794,7 @@
         b.disease_type_id diseaseTypeId
         FROM
         patient_info a INNER JOIN research_info b on a.research_id = b.id
-
+        INNER join sys_user su on su.user_name=b.create_by
         WHERE a.enrollment_status = 1
 
         <if test="inputStartTime != null">
@@ -805,6 +805,9 @@
         </if>
         <if test="deptId != null">
             and a.dept_id = #{deptId}
+        </if>
+        <if test="deptId == null and roleDeptId != null">
+            and a.dept_id = #{roleDeptId}
         </if>
         <if test="diseaseTypeId != null">
             and b.disease_type_id = #{diseaseId}

@@ -5,10 +5,9 @@ import com.dchealth.cro.medical.dto.PatientResearchDto;
 import com.dchealth.cro.medical.form.FollowWorkListCmdForm;
 import com.dchealth.cro.medical.form.FollowWorkListForm;
 import com.dchealth.cro.medical.vo.FollowWorkListVO;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import org.springframework.stereotype.Repository;
 @Repository
 public interface PatientRecordMapper {
 

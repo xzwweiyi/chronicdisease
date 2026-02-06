@@ -409,6 +409,7 @@
         </if>
     </select>
 
+
     <select id="selectFollowWorkPatientRecordList2" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm"
             resultMap="FollowWorkListVOResult">
         select r.research_id
@@ -1090,6 +1091,7 @@
         patient_record a
         INNER JOIN patient_info b ON a.patient_id = b.patient_id
         left JOIN research_info c on a.research_id = c.id
+        INNER join sys_user su on su.user_name=c.create_by
 
         WHERE
         a.follow_status != 0
@@ -1100,6 +1102,9 @@
         </if>
         <if test="deptId != null ">
             AND b.dept_id = #{deptId}
+        </if>
+        <if test="deptId == null and roleDeptId != null ">
+            AND b.dept_id = #{roleDeptId}
         </if>
         <if test="researchId != null ">
             AND a.research_id = #{researchId}

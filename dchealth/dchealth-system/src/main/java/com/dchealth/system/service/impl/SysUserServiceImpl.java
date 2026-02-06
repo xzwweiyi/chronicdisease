@@ -1,29 +1,5 @@
 package com.dchealth.system.service.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.validation.Validator;
-
-import com.dchealth.medical.domain.PatientInfo;
-import com.dchealth.medical.domain.PatientRecord;
-import com.dchealth.medical.domain.PatientRecordOperLog;
-import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
-import com.dchealth.medical.mapper.PatientInfoMapper;
-import com.dchealth.medical.mapper.PatientRecordMapper;
-import com.dchealth.medical.mapper.PatientRecordOperLogMapper;
-import com.dchealth.research.domain.ResearchUserRole;
-import com.dchealth.research.mapper.ResearchUserRoleMapper;
-import com.dchealth.system.domain.vo.MedicalWorkloadVo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import com.dchealth.common.annotation.DataScope;
 import com.dchealth.common.constant.UserConstants;
 import com.dchealth.common.core.domain.entity.SysRole;
@@ -33,17 +9,36 @@ import com.dchealth.common.utils.SecurityUtils;
 import com.dchealth.common.utils.StringUtils;
 import com.dchealth.common.utils.bean.BeanValidators;
 import com.dchealth.common.utils.spring.SpringUtils;
+import com.dchealth.medical.domain.PatientInfo;
+import com.dchealth.medical.domain.PatientRecord;
+import com.dchealth.medical.domain.PatientRecordOperLog;
+import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
+import com.dchealth.medical.mapper.PatientInfoMapper;
+import com.dchealth.medical.mapper.PatientRecordMapper;
+import com.dchealth.medical.mapper.PatientRecordOperLogMapper;
+import com.dchealth.research.domain.ResearchUserRole;
+import com.dchealth.research.mapper.ResearchUserRoleMapper;
 import com.dchealth.system.domain.SysPost;
 import com.dchealth.system.domain.SysUserPost;
 import com.dchealth.system.domain.SysUserRole;
-import com.dchealth.system.mapper.SysPostMapper;
-import com.dchealth.system.mapper.SysRoleMapper;
-import com.dchealth.system.mapper.SysUserMapper;
-import com.dchealth.system.mapper.SysUserPostMapper;
-import com.dchealth.system.mapper.SysUserRoleMapper;
+import com.dchealth.system.domain.vo.MedicalWorkloadVo;
+import com.dchealth.system.mapper.*;
 import com.dchealth.system.service.ISysConfigService;
 import com.dchealth.system.service.ISysUserService;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import javax.validation.Validator;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 用户 业务层处理
@@ -672,7 +667,7 @@ public class SysUserServiceImpl implements ISysUserService
                 //处理随访量
                 if(patientRecordsMap.containsKey(m.getUserId())){
                     List<PatientRecord> patientRecords = patientRecordsMap.get(m.getUserId());
-                    m.setSetOpinionHandleNums(patientRecords.size());
+//                    m.setSetOpinionHandleNums(patientRecords.size());
 
                     //质效评价-回复速度均分
                     Integer prescriptionBackNum=0;
@@ -735,14 +730,18 @@ public class SysUserServiceImpl implements ISysUserService
                     List<PatientRecordOperLog> patientRecordOperLogList = operLogMap.get(m.getUserId());
                     if(patientRecordOperLogList.size()>0){
                         //入组审批
-                        int enrollmentHandleNums = patientRecordOperLogList.stream().filter( s-> s.getFormType().equals("1")).collect(Collectors.toList()).size();
+                        int enrollmentHandleNums = (int) patientRecordOperLogList.stream().filter(s -> s.getFormType().equals("1")).count();
                         //处理预警量
-                        int warnGuideNums = patientRecordOperLogList.stream().filter( s-> s.getFormType().equals("2")).collect(Collectors.toList()).size();
+                        int warnGuideNums = (int) patientRecordOperLogList.stream().filter(s -> s.getFormType().equals("2")).count();
                         //处理超窗量
-                        int visitTimeHandleNums = patientRecordOperLogList.stream().filter( s-> s.getFormType().equals("3")).collect(Collectors.toList()).size();
+                        int visitTimeHandleNums = (int) patientRecordOperLogList.stream().filter(s -> s.getFormType().equals("3")).count();
+
+                        //处理随访量
+                        int setOpinionHandleNums = (int) patientRecordOperLogList.stream().filter(s -> s.getFormType().equals("0")).count();
                         m.setEnrollmentHandleNums(enrollmentHandleNums);
                         m.setWarnGuideNums(warnGuideNums);
                         m.setVisitTimeHandleNums(visitTimeHandleNums);
+                        m.setSetOpinionHandleNums(setOpinionHandleNums);
                     }
                 }
             }

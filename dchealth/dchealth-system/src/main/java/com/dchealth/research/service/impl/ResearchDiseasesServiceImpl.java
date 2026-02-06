@@ -180,8 +180,10 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
             collect.forEach(p -> {
                 if (deptMap.get(p).getParentId() != 100L) {
                     if (collect.contains(deptMap.get(p).getParentId())) {
-                        isChildren.add(deptMap.get(p).getParentId());
+                        if (!isChildren.contains(deptMap.get(p).getParentId())) {
+                            isChildren.add(deptMap.get(p).getParentId());
 
+                        }
                     }
                 }
             });
@@ -203,11 +205,9 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
 
                         if (mapVo.isEmpty()) {
                             mapVo.put(parentId, v);
-                        }
-
-                        if (mapVo.containsKey(parentId)) {
+                        } else if (mapVo.containsKey(parentId)) {
                             mapVo.get(parentId).addAll(map.get(k));
-                        } else  {
+                        } else {
                             mapVo.put(parentId, map.get(k));
                         }
 
@@ -215,11 +215,9 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
 
                         if (mapVo1.isEmpty()) {
                             mapVo1.put(parentId, v);
-                        }
-
-                        if (mapVo1.containsKey(parentId)) {
+                        } else if (mapVo1.containsKey(parentId)) {
                             mapVo1.get(parentId).addAll(map.get(k));
-                        } else  {
+                        } else {
                             mapVo1.put(parentId, map.get(k));
                         }
 

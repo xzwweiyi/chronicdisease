@@ -20,6 +20,8 @@ public class StatisticsFollowRateVo {
 
     private Long deptId;
 
+    private Long roleDeptId;
+
     private Long recordId;
 
     private Long userId;

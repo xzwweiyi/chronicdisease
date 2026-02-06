@@ -19,6 +19,7 @@ import com.dchealth.common.core.domain.model.LoginUser;
 import com.dchealth.common.core.redis.RedisCache;
 import com.dchealth.common.exception.ServiceException;
 import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.SecurityUtils;
 import com.dchealth.common.utils.StringUtils;
 import com.dchealth.common.utils.bean.BeanUtils;
 import com.dchealth.compatibility.utils.HealthUtils;
@@ -1412,7 +1413,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
     }
 
     @Override
-    public List<FollowWorkListVO> overList(FollowWorkListForm followWorkListForm) {
+    public synchronized List<FollowWorkListVO> overList(FollowWorkListForm followWorkListForm) {
         if (Integer.valueOf(0).equals(followWorkListForm.getOverTimeStatus())) {
             followWorkListForm.setOverTimeStatus(1);
         } else if (Integer.valueOf(3).equals(followWorkListForm.getOverTimeStatus())) {
@@ -1426,7 +1427,10 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             followWorkListForm.setPatientStatus("4");
             followWorkListForm.setOverTimeStatus(null);
         }
+
         List<FollowWorkListVO> listVOS = patientRecordMapper.selectFollowWorkPatientRecordList(followWorkListForm);
+//        List<Map<String, Object>> listVOS = patientRecordMapper.selectFollowWorkPatientRecordList22(followWorkListForm);
+        log.info("listVOS:" + listVOS);
         Map<String, String> sysUserMap = getPersonInfoMap(listVOS);
         if (listVOS.size() > 0) {
             for (FollowWorkListVO f : listVOS) {
@@ -1972,6 +1976,8 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         accountNoticeMapper.insertAccountNotice(accountNotice);
 //        umpushService.sendCustomizedcastMessage(2,String.valueOf(patientRecord.getAccountId()),msgContent,accountNotice.getExtendJson());
 
+        // 添加医护工作量日志 属于随访工作量
+        patientRecordOperLogMapper.insertPatientRecordOperLog(new PatientRecordOperLog(SecurityUtils.getUserId(), followWorkHandleForm.getRecordId(), "0", DateUtils.getNowDate()));
         return 1;
     }
 
@@ -2017,6 +2023,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
     }
 
     @Override
+    @Transactional
     public AjaxResult saveOrUpdatePatientRecord(PatientRecordSaveUpdateInfoForm infoForm, LoginUser loginUser) {
         if (StringUtils.isNotBlankAndNotEmpty(infoForm.getImageUrlsJson())) {
             List<PatientRecordFilesForm> list = com.alibaba.fastjson2.JSON.parseArray(infoForm.getImageUrlsJson(), PatientRecordFilesForm.class);
@@ -2031,6 +2038,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             QuestionRecordForm questionRecordForm = com.alibaba.fastjson2.JSON.parseObject(infoForm.getQuestionRecordJson(), QuestionRecordForm.class);
             infoForm.setQuestionRecordForm(questionRecordForm);
         }
+        patientRecordOperLogMapper.insertPatientRecordOperLog(new PatientRecordOperLog(loginUser.getUserId(), infoForm.getRecordId(), "0", DateUtils.getNowDate()));
 
         return saveOrUpdatePatientRecordDetail(infoForm, loginUser);
     }
@@ -2167,12 +2175,12 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             if (otList.isPresent()) {
                 Optional<List<FMedicalPropertyForm>> ltList = otList.map(lt -> {
                     List<FMedicalPropertyForm> l =
-                            lt.stream().filter(f -> PropertyType.largeText(f.getPropertyType())).collect(Collectors.toList());
+                            lt.stream().filter(f -> f.getPropertyType() != null && PropertyType.largeText(f.getPropertyType())).collect(Collectors.toList());
                     return l.isEmpty() ? null : l;
                 });
                 Optional<List<FMedicalPropertyForm>> tList = otList.map(t -> {
                     List<FMedicalPropertyForm> l =
-                            t.stream().filter(f -> PropertyType.text(f.getPropertyType())).collect(Collectors.toList());
+                            t.stream().filter(f -> f.getPropertyType() != null && PropertyType.text(f.getPropertyType())).collect(Collectors.toList());
                     return l.isEmpty() ? null : l;
                 });
                 if (ltList.isPresent()) {
