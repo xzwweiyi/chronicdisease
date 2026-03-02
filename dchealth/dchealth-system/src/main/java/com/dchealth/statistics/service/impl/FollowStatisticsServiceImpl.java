@@ -295,7 +295,10 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
             statisticsVo.setTotal(count);
             statisticsVo.setName(de.getDeptName());
             return statisticsVo;
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        }).filter(Objects::nonNull)
+                .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
+                .limit(10)
+                .collect(Collectors.toList());
         result.put("patientDept", deptList);
 
         // 慢病种种统计
