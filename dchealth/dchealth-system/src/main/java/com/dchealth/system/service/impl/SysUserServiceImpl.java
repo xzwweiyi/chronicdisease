@@ -34,10 +34,12 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Validator;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -255,6 +257,24 @@ public class SysUserServiceImpl implements ISysUserService
     }
 
     /**
+     * 校验身份证是否唯一
+     *
+     * @param user 用户信息
+     * @return
+     */
+    @Override
+    public String checkIdCardNoUnique(SysUser user)
+    {
+        Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
+        SysUser info = userMapper.checkIdCardNoUnique(user.getIdCardNo());
+        if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
+        {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
+    }
+
+    /**
      * 校验用户是否允许操作
      * 
      * @param user 用户信息
@@ -298,6 +318,14 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional
     public int insertUser(SysUser user)
     {
+        //身份证转生日
+        String idCard = user.getIdCardNo();
+        if (StringUtils.isNotBlank(idCard)) {
+            Date birthday = extractBirthdayFromIdCard(idCard);
+            user.setBirthday(birthday);
+        } else {
+            user.setBirthday(null);
+        }
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
@@ -336,9 +364,36 @@ public class SysUserServiceImpl implements ISysUserService
         insertUserRole(user);
         // 删除用户与岗位关联
         userPostMapper.deleteUserPostByUserId(userId);
+        String idCard = user.getIdCardNo();
+        //身份证转生日
+        if (StringUtils.isNotBlank(idCard)) {
+            Date birthday = extractBirthdayFromIdCard(idCard);
+            user.setBirthday(birthday);
+        }
         // 新增用户与岗位管理
         insertUserPost(user);
         return userMapper.updateUser(user);
+    }
+
+    public static Date extractBirthdayFromIdCard(String idCard) {
+        if (idCard == null || idCard.trim().length() != 18) {
+            return null;
+        }
+        try {
+            String year  = idCard.substring(6, 10);
+            String month = idCard.substring(10, 12);
+            String day   = idCard.substring(12, 14);
+
+            LocalDate localDate = LocalDate.of(
+                    Integer.parseInt(year),
+                    Integer.parseInt(month),
+                    Integer.parseInt(day)
+            );
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        }catch (Exception e) {
+            return null;
+        }
     }
 
     /**

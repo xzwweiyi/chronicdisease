@@ -134,6 +134,13 @@ public class SysUser extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
+    /**
+     * 身份证号
+     */
+    private String idCardNo;
+
+
+
     public Date getStartTime() {
         return startTime;
     }
@@ -440,6 +447,14 @@ public class SysUser extends BaseEntity
 
     public String getIsAlldeptResearch() {
         return isAlldeptResearch;
+    }
+
+    public String getIdCardNo() {
+        return idCardNo;
+    }
+
+    public void setIdCardNo(String idCardNo) {
+        this.idCardNo = idCardNo;
     }
 
     @Override

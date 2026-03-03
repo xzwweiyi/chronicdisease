@@ -26,6 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="remark"       column="remark"       />
 		<result property="headImage"       column="head_image"       />
 		<result property="birthday"       column="birthday"       />
+		<result property="idCardNo"     column="id_card_no"   />
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
 	</resultMap>
@@ -51,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<sql id="selectUserVo">
         select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password,
                u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
-               u.head_image,u.birthday,u.is_all_dept_research,
+               u.head_image,u.birthday,u.is_all_dept_research,u.id_card_no,
         d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status,
         r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
         from sys_user u
@@ -61,7 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
     
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
-		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from sys_user u
+		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,u.id_card_no, d.dept_name, d.leader from sys_user u
 		left join sys_dept d on u.dept_id = d.dept_id
 		where u.del_flag = '0'
 		<if test="userId != null and userId != 0">
@@ -204,6 +205,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select user_id, email from sys_user where email = #{email} limit 1
 	</select>
 
+	<select id="checkIdCardNoUnique" parameterType="String" resultMap="SysUserResult">
+		select user_id, id_card_no from sys_user where id_card_no = #{idCardNo} limit 1
+	</select>
+
 	<insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
 		insert into sys_user(
 		<if test="userId != null and userId != 0">user_id,</if>
@@ -220,6 +225,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="remark != null and remark != ''">remark,</if>
 		<if test="isAlldeptResearch != null and isAlldeptResearch != ''">is_all_dept_research,</if>
 		<if test="birthday != null ">birthday,</if>
+		<if test="idCardNo != null and idCardNo != ''">id_card_no,</if>
 		create_time
 		)values(
 		<if test="userId != null and userId != ''">#{userId},</if>
@@ -236,6 +242,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="remark != null and remark != ''">#{remark},</if>
 		<if test="isAlldeptResearch != null and isAlldeptResearch != ''">#{isAlldeptResearch},</if>
 		<if test="birthday != null">#{birthday},</if>
+		<if test="idCardNo != null and idCardNo != ''">#{idCardNo},</if>
 		sysdate()
 		)
 	</insert>
@@ -258,6 +265,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="remark != null">remark = #{remark},</if>
 			<if test="isAlldeptResearch != null">is_all_dept_research = #{isAlldeptResearch},</if>
 			<if test="birthday != null">birthday = #{birthday},</if>
+			<if test="idCardNo != null and idCardNo != ''">id_card_no = #{idCardNo},</if>
 			update_time = sysdate()
 		</set>
 		where user_id = #{userId}

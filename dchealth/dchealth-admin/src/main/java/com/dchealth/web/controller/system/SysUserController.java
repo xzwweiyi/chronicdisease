@@ -158,6 +158,10 @@ public class SysUserController extends BaseController
         {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
+        else if(StringUtils.isNotEmpty(user.getIdCardNo())
+                && UserConstants.NOT_UNIQUE.equals(userService.checkIdCardNoUnique(user))){
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，身份证已存在");
+        }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         if (StringUtils.isEmpty(user.getNickName())) {
@@ -186,6 +190,10 @@ public class SysUserController extends BaseController
                 && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
         {
             return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        else if(StringUtils.isNotEmpty(user.getIdCardNo())
+                && UserConstants.NOT_UNIQUE.equals(userService.checkIdCardNoUnique(user))){
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，身份证已存在");
         }
         user.setUpdateBy(getUsername());
         return toAjax(userService.updateUser(user));

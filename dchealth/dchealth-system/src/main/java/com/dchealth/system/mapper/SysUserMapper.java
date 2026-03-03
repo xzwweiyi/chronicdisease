@@ -146,4 +146,5 @@ public interface SysUserMapper
 
     public List<MedicalWorkloadVo> medicalWorkloadList(SysUser sysUser);
 
+    public SysUser checkIdCardNoUnique(String idCardNo);
 }

@@ -217,4 +217,6 @@ public interface ISysUserService
 
 
     public List<MedicalWorkloadVo> medicalWorkloadList(SysUser user);
+
+    String checkIdCardNoUnique(SysUser user);
 }
