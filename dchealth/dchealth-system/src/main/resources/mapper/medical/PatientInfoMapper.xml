@@ -798,10 +798,10 @@
         WHERE a.enrollment_status = 1 and b.del_flag = '0' and b.research_status != 0 and a.patient_status != 6
 
         <if test="inputStartTime != null">
-            and a.enrollment_time &gt;= #{inputStartTime}
+            and DATE_FORMAT(a.enrollment_time,'%Y-%m-%d') &gt;= #{inputStartTime}
         </if>
         <if test="inputEndTime != null">
-            and a.enrollment_time &lt;= #{inputEndTime}
+            and DATE_FORMAT(a.enrollment_time,'%Y-%m-%d') &lt;= #{inputEndTime}
         </if>
         <if test="deptId != null">
             and a.dept_id = #{deptId}

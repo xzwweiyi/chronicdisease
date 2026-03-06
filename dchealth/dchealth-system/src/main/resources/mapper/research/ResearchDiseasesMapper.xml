@@ -39,11 +39,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectResearchDiseasesList" parameterType="ResearchDiseases" resultMap="ResearchDiseasesResult">
         <include refid="selectResearchDiseasesVo"/>
-        <where>  
-            <if test="diseaseName != null  and diseaseName != ''"> and disease_name like concat('%', #{diseaseName}, '%')</if>
-            <if test="deptId != null "> and dept_id = #{deptId}</if>
-            <if test="isDeleted != null  and isDeleted != ''"> and is_deleted = #{isDeleted}</if>
-            <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+        <where>
+            --
+            <if test="diseaseName != null  and diseaseName != ''">and disease_name like concat('%', #{diseaseName},
+                '%')
+            </if>
+            <if test="diseaseName != null  and diseaseName != ''">and disease_name = #{diseaseName}</if>
+            <if test="deptId != null ">and dept_id = #{deptId}</if>
+            <if test="isDeleted != null  and isDeleted != ''">and is_deleted = #{isDeleted}</if>
+            <if test="sortNum != null ">and sort_num = #{sortNum}</if>
             and is_deleted = '0'
         </where>
     </select>

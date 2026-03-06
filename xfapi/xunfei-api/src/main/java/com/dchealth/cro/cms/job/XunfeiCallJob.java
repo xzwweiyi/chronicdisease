@@ -45,6 +45,7 @@ public class XunfeiCallJob {
 //        maps.put("researchId", "2172");
         String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/recordOutbound/recordOutbound", maps);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
+        logger.info("讯飞呼叫随访或超窗任务结果{}", jsonObject);
         String code = jsonObject.getString("code");
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
