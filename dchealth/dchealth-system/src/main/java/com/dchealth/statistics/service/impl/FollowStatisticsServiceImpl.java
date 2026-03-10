@@ -267,6 +267,16 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
         // 随访科室
         Set<Long> deptIds = patientInfoList.stream().filter(p -> Objects.nonNull(p.getDeptId())).map(PatientInfo::getDeptId).collect(Collectors.toSet());
         result.put("todayFollowDeptNum", CollectionUtils.size(deptIds));
+        
+        // 随访病区（通过ancestors层级区分科室和病区）
+        List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
+        Set<Long> wardIds = sysDepts.stream()
+                .filter(dept -> Objects.nonNull(dept.getAncestors()) && dept.getAncestors().split(",").length == 3)
+                .map(SysDept::getDeptId)
+                .filter(deptIds::contains)
+                .collect(Collectors.toSet());
+        result.put("todayFollowWardNum", CollectionUtils.size(wardIds));
+
         // 随访队列
         Set<Long> researchIds = patientRecords.stream().filter(p -> Objects.nonNull(p.getResearchId())).map(PatientRecord::getResearchId).collect(Collectors.toSet());
         result.put("todayFollowResearchNum", CollectionUtils.size(researchIds));
@@ -284,17 +294,85 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
 
         // 慢病管理患者
         result.put("totalPatientNum", CollectionUtils.size(patientInfoList));
-        // 科室慢病管理情况
-        List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
-        List<StatisticsVo> deptList = sysDepts.stream().map(de -> {
-            long count = patientInfoList.stream().filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().longValue() == de.getDeptId().longValue()).count();
-            if (count == 0) {
+        // // 科室慢病管理情况
+        // List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
+        // List<StatisticsVo> deptList = sysDepts.stream().map(de -> {
+        //     long count = patientInfoList.stream().filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().longValue() == de.getDeptId().longValue()).count();
+        //     if (count == 0) {
+        //         return null;
+        //     }
+        //     StatisticsVo statisticsVo = new StatisticsVo();
+        //     statisticsVo.setTotal(count);
+        //     statisticsVo.setName(de.getDeptName());
+        //     return statisticsVo;
+        // }).filter(Objects::nonNull)
+        //         .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
+        //         .limit(10)
+        //         .collect(Collectors.toList());
+
+        // 科室慢病管理情况（按科室层级统计，包含病区数据）
+        // 通过ancestors层级区分：科室(ancestors层级为2，如"0,100")和病区(ancestors层级为3，如"0,100,102")
+        List<SysDept> deptLevel = new ArrayList<>();
+        List<SysDept> wardLevel = new ArrayList<>();
+
+        for (SysDept dept : sysDepts) {
+            if (Objects.nonNull(dept.getAncestors())) {
+                String[] ancestorArr = dept.getAncestors().split(",");
+                if (ancestorArr.length == 2) {
+                    // 科室层级（ancestors="0,100"）
+                    deptLevel.add(dept);
+                } else if (ancestorArr.length == 3) {
+                    // 病区层级（ancestors="0,100,102"）
+                    wardLevel.add(dept);
+                }
+            }
+        }
+
+        // 按父科室ID分组病区
+        Map<Long, List<SysDept>> wardsByParentId = wardLevel.stream()
+                .filter(w -> Objects.nonNull(w.getParentId()))
+                .collect(Collectors.groupingBy(SysDept::getParentId));
+
+        // 统计科室及其病区数据
+        List<StatisticsVo> deptList = deptLevel.stream().map(dept -> {
+            // 统计科室下所有患者（包括科室本身和其下病区）
+            long deptCount = patientInfoList.stream()
+                    .filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().equals(dept.getDeptId()))
+                    .count();
+
+            // 统计各病区数据
+            List<StatisticsVo> wardList = null;
+            if (wardsByParentId.containsKey(dept.getDeptId())) {
+                wardList = wardsByParentId.get(dept.getDeptId()).stream().map(ward -> {
+                    long wardCount = patientInfoList.stream()
+                            .filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().equals(ward.getDeptId()))
+                            .count();
+                    if (wardCount == 0) {
+                        return null;
+                    }
+                    StatisticsVo wardVo = new StatisticsVo();
+                    wardVo.setName(ward.getDeptName());
+                    wardVo.setTotal(wardCount);
+                    return wardVo;
+                }).filter(Objects::nonNull)
+                .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
+                .collect(Collectors.toList());
+
+                // 累加病区患者数到科室总数
+                if (wardList != null && !wardList.isEmpty()) {
+                    deptCount += wardList.stream().mapToLong(StatisticsVo::getTotal).sum();
+                }
+            }
+
+            if (deptCount == 0) {
                 return null;
             }
-            StatisticsVo statisticsVo = new StatisticsVo();
-            statisticsVo.setTotal(count);
-            statisticsVo.setName(de.getDeptName());
-            return statisticsVo;
+
+            StatisticsVo deptVo = new StatisticsVo();
+            deptVo.setName(dept.getDeptName());
+            deptVo.setTotal(deptCount);
+            deptVo.setChildren(wardList);
+            return deptVo;
         }).filter(Objects::nonNull)
                 .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
                 .limit(10)
@@ -368,6 +446,98 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
         return result;
     }
 
+    /**
+     * 查询当年12个月的月活跃趋势
+     * @return 月活跃趋势数据
+     */
+    @Override
+    public Map<String, Object> queryMonthlyActivityTrend(Integer yearStat) {
+        Map<String, Object> result = new HashMap<>();
+
+        // 如果年份为空 获取当前年份
+        if (Objects.isNull(yearStat)) {
+            Calendar date = Calendar.getInstance();
+            yearStat = date.get(Calendar.YEAR);
+        }
+
+        // 一次性查询当前年份的所有登录记录
+        AppLoginRecord appLoginRecord = new AppLoginRecord();
+        appLoginRecord.setYearStat(yearStat);
+        List<AppLoginRecord> appLoginRecordList = appLoginRecordMapper.selectAppLoginRecordList(appLoginRecord);
+
+        // 按月份分组
+        Map<Integer, List<AppLoginRecord>> monthGroupMap = appLoginRecordList.stream()
+                .filter(record -> Objects.nonNull(record.getMonthStat()))
+                .collect(Collectors.groupingBy(AppLoginRecord::getMonthStat));
+
+        // 初始化12个月的数据
+        List<String> months = new ArrayList<>();
+        List<Integer> monthlyActivityPatients = new ArrayList<>();
+        List<Integer> monthlyActivityNumber = new ArrayList<>();
+
+        // 遍历12个月，统计每月数据
+        for (int month = 1; month <= 12; month++) {
+            months.add(month + "月");
+
+            List<AppLoginRecord> monthRecords = monthGroupMap.getOrDefault(month, new ArrayList<>());
+
+            // 计算月活跃患者数（去重deviceToken）
+            long distinctPatients = monthRecords.stream()
+                    .map(AppLoginRecord::getDeviceToken)
+                    .distinct()
+                    .count();
+            monthlyActivityPatients.add((int) distinctPatients);
+
+            // 计算月活跃数（总登录次数）
+            monthlyActivityNumber.add(monthRecords.size());
+        }
+
+        result.put("months", months);
+        result.put("monthlyActivityPatients", monthlyActivityPatients);
+        result.put("monthlyActivityNumber", monthlyActivityNumber);
+
+        return result;
+    }
+
+    /**
+     * 年龄分布统计（新分段逻辑）
+     * @param statisticsParam 统计参数
+     * @return 年龄分布数据
+     */
+    @Override
+    public List<StatisticsVo> queryAgeDistribution(StatisticsParam statisticsParam) {
+        // 查询患者信息
+        PatientInfo patientInfoQuery = new PatientInfo();
+        patientInfoQuery.setEnrollmentHandlerStatus("3");
+        patientInfoQuery.setEnrollmentStatus("1");
+        patientInfoQuery.setNotPatientStatus("6"); // 排除已退出队列患者
+        patientInfoQuery.setNotResearchStatus("0"); // 排除未发布队列患者
+        List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(patientInfoQuery);
+
+        // 按新的年龄分段统计
+        List<StatisticsVo> ageList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(patientInfos)) {
+            ageList.add(filterAgeByUnit(0, 15, patientInfos, "0-14岁", Calendar.YEAR));
+            ageList.add(filterAgeByUnit(15, 45, patientInfos, "15-44岁", Calendar.YEAR));
+            ageList.add(filterAgeByUnit(45, 60, patientInfos, "45-59岁", Calendar.YEAR));
+            ageList.add(filterAgeByUnit(60, 75, patientInfos, "60-74岁", Calendar.YEAR));
+            ageList.add(filterAgeByUnit(75, 90, patientInfos, "75-89岁", Calendar.YEAR));
+            ageList.add(filterAgeByUnit(90, 150, patientInfos, "90岁及以上", Calendar.YEAR));
+        }
+
+        // 计算未知年龄数量
+        Long ageListSum = ageList.stream().mapToLong(StatisticsVo::getTotal).sum();
+        StatisticsVo statisticsVoAgeOther = new StatisticsVo();
+        statisticsVoAgeOther.setName("未知");
+        statisticsVoAgeOther.setTotal(patientInfos.size() - ageListSum);
+        if (statisticsVoAgeOther.getTotal() > 0) {
+            ageList.add(statisticsVoAgeOther);
+        }
+
+        return ageList;
+    }
+
+
     @Override
     public List<ResearchStatusOfNumStatisticsVo> researchStatusNum(StatisticsParam statisticsParam) {
         Long userId = statisticsParam.getUserId();
@@ -419,9 +589,23 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
             provinceVos.add(provinceVo);
         });
 
+        // 陕西省 行政区划代码
+        Long provinceId = 610000L;
+        //计算省内和省外患者数量
+        long inProvinceCount = 0L;
+        long outProvinceCount = 0L;
+        for (Map.Entry<Long, List<PatientDistributeVo>> entry : map.entrySet()) {
+            long count = entry.getValue().stream().mapToLong(PatientDistributeVo::getPatientCount).sum();
+            if (entry.getKey().equals(provinceId)) {
+                inProvinceCount = count;
+            } else {
+                outProvinceCount += count;
+            }
+        }
+
         //省内慢病患者分布
         PatientDistribute patientDistribute = new PatientDistribute();
-        patientDistribute.setProvinceId(distributeParam.getProvinceId() == null ? 610000L:distributeParam.getProvinceId());
+        patientDistribute.setProvinceId(distributeParam.getProvinceId() == null ? provinceId:distributeParam.getProvinceId());
         List<PatientDistributeVo> provincePatientList = patientInfoMapper.queryPatientDistributeNew(patientDistribute);
         Map<Long, List<PatientDistributeVo>> provincePatientMap = provincePatientList.stream().collect(Collectors.groupingBy(PatientDistributeVo::getCityId));
         //省内当日新增慢病患者分布
@@ -466,6 +650,8 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
         Map<String, Object> proCityStatisticsMap = new HashMap<>();
         proCityStatisticsMap.put("provinceVos",provinceVos);
         proCityStatisticsMap.put("cityVisitVos",cityVisitVos);
+        proCityStatisticsMap.put("inProvinceCount",inProvinceCount);
+        proCityStatisticsMap.put("outProvinceCount",outProvinceCount);
         return proCityStatisticsMap;
     }
 
@@ -957,6 +1143,22 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
             statisticsVo.setName(start + "-" + end + "岁");
         }
         statisticsVo.setTotal(collect.stream().filter(p -> ageInArea(start, end, p, Calendar.YEAR)).count());
+        return statisticsVo;
+    }
+
+    /**
+     * 按新分段逻辑过滤年龄（支持天和岁混合）
+     * @param start 起始值
+     * @param end 结束值
+     * @param collect 患者列表
+     * @param label 显示标签
+     * @param unit 单位（Calendar.DATE表示天，Calendar.YEAR表示岁）
+     * @return 统计结果
+     */
+    private StatisticsVo filterAgeByUnit(int start, int end, List<PatientInfo> collect, String label, int unit) {
+        StatisticsVo statisticsVo = new StatisticsVo();
+        statisticsVo.setName(label);
+        statisticsVo.setTotal(collect.stream().filter(p -> ageInArea(start, end, p, unit)).count());
         return statisticsVo;
     }
 

@@ -2,6 +2,8 @@ package com.dchealth.statistics.domain;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class StatisticsVo {
     private String name;
@@ -25,4 +27,8 @@ public class StatisticsVo {
      * 随访总人次
      */
     private Long total;
+    /**
+     * 子级数据（如病区）
+     */
+    private List<StatisticsVo> children;
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -160,6 +161,25 @@ public class StatisticsController extends BaseController {
         return AjaxResult.success(statisticsService.queryFollowRate(statisticsParam));
     }
 
+    /**
+     * 查询当年12个月的月活跃趋势
+     * @return 月活跃趋势数据
+     */
+    @PreAuthorize("@ss.hasPermi('statistics:patientDistribute:list')")
+    @GetMapping("/monthlyActivityTrend")
+    public AjaxResult queryMonthlyActivityTrend(@RequestParam(required = false) Integer yearStat) {
+        return AjaxResult.success(statisticsService.queryMonthlyActivityTrend(yearStat));
+    }
 
+    /**
+     * 年龄分布统计（新分段逻辑）
+     * @param statisticsParam
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('statistics:patientDistribute:list')")
+    @GetMapping("/ageDistribution")
+    public AjaxResult ageDistribution(StatisticsParam statisticsParam) {
+        return AjaxResult.success(statisticsService.queryAgeDistribution(statisticsParam));
+    }
 
 }
