@@ -46,7 +46,7 @@ public class XunfeiCallJob {
         String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/recordOutbound/recordOutbound", maps);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
         logger.info("讯飞呼叫随访或超窗任务结果{}", jsonObject);
-        String code = jsonObject.getString("code");
+        String code = jsonObject != null ? jsonObject.getString("code") : null;
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         if(httpResult!=null && "1000".equals(code)){
@@ -65,7 +65,11 @@ public class XunfeiCallJob {
                         List<List<PatientRecordOutbound>> followPartition = Lists.partition(followList,500);
                         for(List<PatientRecordOutbound> pros:followPartition){
                             if(researchOutbound!=null && getTimeAccess(researchOutbound.getFollowAdvanceTime(),hour)){
-                                sendXunfeiCallFollow(pros,researchOutbound);
+                                try {
+                                    sendXunfeiCallFollow(pros, researchOutbound);
+                                } catch (Exception e) {
+                                    logger.error("讯飞呼叫随访异常", e);
+                                }
                             }
                         }
                     }
@@ -74,14 +78,22 @@ public class XunfeiCallJob {
                         List<List<PatientRecordOutbound>> overPartition = Lists.partition(overList,500);
                         for(List<PatientRecordOutbound> pros:overPartition){
                             if(researchOutbound!=null && getTimeAccess(researchOutbound.getOverAdvanceTime(),hour)){
-                                sendXunfeiCallOver(pros,researchOutbound);
+                                try {
+                                    sendXunfeiCallOver(pros, researchOutbound);
+                                } catch (Exception e) {
+                                    logger.error("讯飞呼叫超窗异常", e);
+                                }
                             }
                         }
                     }
                     //预警
                     if(warnList.size()>0){
                         for(PatientRecordOutbound pro:warnList){
-                            sendXunfeiCallWarn(pro,researchOutbound);
+                            try {
+                                sendXunfeiCallWarn(pro,researchOutbound);
+                            } catch (Exception e) {
+                                logger.error("讯飞呼叫预警异常", e);
+                            }
                         }
                     }
 
@@ -295,6 +307,9 @@ public class XunfeiCallJob {
         }else if("1530318155456512".equals(followSpeechId)){
             //医院-随访提醒
             Var var1 = new Var("队列名称",pro.getProjectName());
+            if (pro.getPlanVisitTime() == null) {
+                pro.setPlanVisitTime(DateUtils.getNowDate());
+            }
             Var var2 = new Var("具体日期",DateUtils.dateTimeDays(pro.getPlanVisitTime()));
             Var var3 = new Var("外呼机构","唐都医院");
             varList.add(var1);

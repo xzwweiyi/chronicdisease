@@ -65,7 +65,7 @@ public class DoctorAccountService {
         maps.put("mobile", sendVerfiyCodeForm.getMobile());
         String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/sms/patientTencentSmsVO", maps);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
-        String code = jsonObject.getString("code");
+        String code = jsonObject != null ? jsonObject.getString("code") : null;
         if(httpResult!=null && "1000".equals(code)){
             //成功
             SendTencentSmsVO sendTencentSmsVO = JSONObject.parseObject(jsonObject.getString("data"),SendTencentSmsVO.class);

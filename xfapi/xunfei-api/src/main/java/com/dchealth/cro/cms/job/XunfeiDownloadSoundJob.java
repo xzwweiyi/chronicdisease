@@ -1,19 +1,11 @@
 package com.dchealth.cro.cms.job;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.cms.domain.PatientRecordOutbound;
 import com.dchealth.cro.cms.domain.RecordOutboundHttpVO;
-import com.dchealth.cro.cms.form.RecordOutbounUpdateForm;
 import com.dchealth.cro.cms.utils.TdApiHttpClientUtil;
-import com.dchealth.cro.cms.utils.XunfeiConstants;
-import com.dchealth.cro.cms.vo.BatchListReq;
-import com.dchealth.cro.cms.vo.BatchListRes;
-import com.dchealth.cro.cms.vo.RecordDetailReq;
-import com.dchealth.cro.cms.vo.RecordDetailRes;
 import com.dchealth.cro.common.utils.DateUtils;
-import com.dchealth.cro.common.utils.XunfeiHttpClientUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +22,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 /**
@@ -65,7 +55,7 @@ public class XunfeiDownloadSoundJob {
 //        maps.put("researchId", "2172");
         String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/recordOutbound/getDounloadList", maps);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
-        String code = jsonObject.getString("code");
+        String code = jsonObject != null ? jsonObject.getString("code") : null;
          SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
         if(httpResult!=null && "1000".equals(code)){

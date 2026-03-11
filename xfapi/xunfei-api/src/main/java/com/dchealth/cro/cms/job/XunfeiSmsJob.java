@@ -4,15 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.cms.domain.PatientRecordOutbound;
 import com.dchealth.cro.cms.domain.RecordOutboundHttpVO;
-import com.dchealth.cro.cms.domain.RecordOutboundVO;
-import com.dchealth.cro.cms.domain.ResearchOutbound;
 import com.dchealth.cro.cms.form.RecordOutbounUpdateForm;
 import com.dchealth.cro.cms.utils.TdApiHttpClientUtil;
 import com.dchealth.cro.cms.utils.XunfeiConstants;
 import com.dchealth.cro.cms.vo.*;
 import com.dchealth.cro.common.utils.DateUtils;
 import com.dchealth.cro.common.utils.XunfeiHttpClientUtil;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +47,7 @@ public class XunfeiSmsJob {
 //        maps.put("researchId", "2172");
         String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/recordOutbound/getSendSmsList", maps);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
-        String code = jsonObject.getString("code");
+        String code =jsonObject != null ? jsonObject.getString("code") : null;
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         if(httpResult!=null && "1000".equals(code)){

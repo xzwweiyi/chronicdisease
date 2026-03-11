@@ -50,7 +50,7 @@ public class XunfeiGetResultJob {
 //        maps.put("researchId", "2172");
         String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/recordOutbound/resultOutboundList", maps);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
-        String code = jsonObject.getString("code");
+        String code =jsonObject != null ? jsonObject.getString("code") : null;
         if(httpResult!=null && "1000".equals(code)){
             RecordOutboundHttpVO recordOutboundHttpVO = JSONObject.parseObject(jsonObject.getString("data"),RecordOutboundHttpVO.class);
             List<PatientRecordOutbound> list = recordOutboundHttpVO.getRecordOutboundList();

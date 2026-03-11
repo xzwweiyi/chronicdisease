@@ -52,6 +52,6 @@ logging:
 
 
 tdapi:
-  baseUrl: https://td.dchealthclinical.com/tdapi/
+  baseUrl: http://113.140.89.6:8088/tdapi/
 #  baseUrl: https://test.giantcro.com/tdapi/
 
