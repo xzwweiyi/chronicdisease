@@ -809,7 +809,7 @@
         <if test="deptId == null and roleDeptId != null">
             and a.dept_id = #{roleDeptId}
         </if>
-        <if test="diseaseTypeId != null">
+        <if test="diseaseId != null">
             and b.disease_type_id = #{diseaseId}
         </if>
         <if test="researchId != null">

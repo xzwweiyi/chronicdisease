@@ -1099,7 +1099,7 @@
         and c.del_flag = '0' and c.research_status != 0 and b.patient_status != 6
 
         <if test="followStartTime != null and followEndTime != null">
-            AND a.follow_submit_time BETWEEN #{followStartTime} and #{followEndTime}
+            AND DATE_FORMAT(a.follow_submit_time,'%Y-%m-%d') BETWEEN #{followStartTime} and #{followEndTime}
         </if>
         <if test="deptId != null ">
             AND b.dept_id = #{deptId}
@@ -1114,10 +1114,10 @@
             AND c.disease_type_id = #{diseaseId}
         </if>
         <if test="inputStartTime != null">
-            AND b.enrollment_time &gt;= #{inputStartTime}
+            AND DATE_FORMAT(b.enrollment_time,'%Y-%m-%d') &gt;= #{inputStartTime}
         </if>
         <if test="inputEndTime != null">
-            AND b.enrollment_time &lt;= #{inputEndTime}
+            AND DATE_FORMAT(b.enrollment_time,'%Y-%m-%d') &lt;= #{inputEndTime}
         </if>
         <if test="userId != null ">and (c.id in (select research_id from research_user_role where user_id = #{userId})
             or su.user_id = #{userId} )
