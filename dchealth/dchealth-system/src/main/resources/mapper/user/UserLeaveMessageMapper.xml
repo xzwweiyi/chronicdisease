@@ -123,6 +123,9 @@
             <if test="personId != null ">person_id = #{personId},</if>
             <if test="accountName != null  and accountName != ''">account_name = #{accountName},</if>
             <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="receiveTime != null">receive_time = #{receiveTime},</if>
+            <if test="receiverId != null">receiver_id = #{receiverId},</if>
+            update_time=NOW()
         </trim>
         where id = #{id}
     </update>
