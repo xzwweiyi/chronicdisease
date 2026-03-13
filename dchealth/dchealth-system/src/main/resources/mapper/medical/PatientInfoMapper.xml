@@ -281,7 +281,7 @@
     </select>
 
     <select id="selectPatientInfoListLess" parameterType="PatientInfo" resultMap="PatientInfoResult">
-        select g.patient_id, g.enrollment_time,g.dept_id,g.research_id,g.patient_status,g.loss_cause
+        select g.patient_id, g.enrollment_time,g.dept_id,g.research_id,g.patient_status,g.loss_cause, mp.card_id id_card
         from patient_info g
         INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
         INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
