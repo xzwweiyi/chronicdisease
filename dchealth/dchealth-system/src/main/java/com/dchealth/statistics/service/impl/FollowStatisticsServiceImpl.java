@@ -2,6 +2,7 @@ package com.dchealth.statistics.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.dchealth.common.core.domain.entity.SysDept;
+import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.core.domain.model.LoginUser;
 import com.dchealth.common.utils.*;
 import com.dchealth.medical.domain.AppLoginRecord;
@@ -17,6 +18,8 @@ import com.dchealth.research.mapper.ResearchDiseasesMapper;
 import com.dchealth.research.mapper.ResearchInfoMapper;
 import com.dchealth.statistics.domain.*;
 import com.dchealth.statistics.service.FollowStatisticsService;
+import com.dchealth.system.domain.PatientAccount;
+import com.dchealth.system.mapper.PatientAccountMapper;
 import com.dchealth.system.mapper.SysDeptMapper;
 import com.dchealth.system.mapper.SysUserMapper;
 import com.dchealth.warn.domain.WarnEarlyRecord;
@@ -73,6 +76,8 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
     private AppLoginRecordMapper appLoginRecordMapper;
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private PatientAccountMapper patientAccountMapper;
 
 
     @Override
@@ -306,6 +311,18 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
 
         // 累计随访人数
         result.put("totalFollowPatientNum", CollectionUtils.size(patientRecords));
+
+        // 医生端用户数（正常状态且未删除）
+        SysUser doctorQuery = new SysUser();
+        doctorQuery.setStatus("0"); // 0-正常
+        List<SysUser> doctorList = sysUserMapper.selectUserList(doctorQuery);
+        result.put("doctorUserNum", CollectionUtils.size(doctorList));
+
+        // 患者端用户数（正常状态）
+        PatientAccount patientQuery = new PatientAccount();
+        patientQuery.setStatus("0"); // 0-正常
+        List<PatientAccount> patientAccountList = patientAccountMapper.selectPatientAccountList(patientQuery);
+        result.put("patientUserNum", CollectionUtils.size(patientAccountList));
 
 //        PatientInfo patientInfoVo = new PatientInfo();
 //        patientInfoVo.setEnrollmentHandlerStatus("3");

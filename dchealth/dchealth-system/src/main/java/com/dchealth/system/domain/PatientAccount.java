@@ -43,7 +43,7 @@ public class PatientAccount extends BaseEntity {
      * 就诊标识
      */
    // @Excel(name = "就诊标识")
-    private Long registrySigns;
+    private String registrySigns;
 
     /**
      * 身份证号
