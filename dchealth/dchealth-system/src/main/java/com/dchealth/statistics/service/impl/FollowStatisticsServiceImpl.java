@@ -264,18 +264,37 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
         List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoListLess(patientInfo);
         List<PatientInfo> todayEnrollmentPatientList = patientInfoList.stream().filter(p -> Objects.nonNull(p.getEnrollmentTime()) && DateUtils.isSameDay(p.getEnrollmentTime(), getNowDate())).collect(Collectors.toList());
         result.put("todayEnrollmentPatientNum", CollectionUtils.size(todayEnrollmentPatientList));
-        // 随访科室
-        Set<Long> deptIds = patientInfoList.stream().filter(p -> Objects.nonNull(p.getDeptId())).map(PatientInfo::getDeptId).collect(Collectors.toSet());
-        result.put("todayFollowDeptNum", CollectionUtils.size(deptIds));
-        
-        // 随访病区（通过ancestors层级区分科室和病区）
-        List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
-        Set<Long> wardIds = sysDepts.stream()
-                .filter(dept -> Objects.nonNull(dept.getAncestors()) && dept.getAncestors().split(",").length == 3)
-                .map(SysDept::getDeptId)
-                .filter(deptIds::contains)
+        // 查询已发布的队列
+        ResearchInfo publishedQuery = new ResearchInfo();
+        publishedQuery.setResearchStatus("1"); // 1-进行中（已发布）
+        List<ResearchInfo> publishedResearchList = researchInfoMapper.selectResearchInfoList(publishedQuery);
+        Set<Long> publishedDeptAllIds = publishedResearchList.stream()
+                .filter(r -> Objects.nonNull(r.getDeptId()))
+                .map(ResearchInfo::getDeptId)
                 .collect(Collectors.toSet());
-        result.put("todayFollowWardNum", CollectionUtils.size(wardIds));
+        
+        // 查询所有部门信息
+        List<SysDept> sysDepts = sysDeptMapper.selectDeptList(new SysDept());
+        Map<Long, SysDept> deptMap = sysDepts.stream().collect(Collectors.toMap(SysDept::getDeptId, d -> d));
+        
+        // 一次遍历同时统计科室（ancestors层级为2）和病区（ancestors层级为3）
+        Set<Long> publishedDeptIds = new HashSet<>();
+        Set<Long> publishedWardIds = new HashSet<>();
+        for (Long deptId : publishedDeptAllIds) {
+            SysDept dept = deptMap.get(deptId);
+            if (dept != null && dept.getAncestors() != null) {
+                int level = dept.getAncestors().split(",").length;
+                if (level == 2) {
+                    // 科室层级（ancestors="0,100"）
+                    publishedDeptIds.add(deptId);
+                } else if (level == 3) {
+                    // 病区层级（ancestors="0,100,102"）
+                    publishedWardIds.add(deptId);
+                }
+            }
+        }
+        result.put("todayFollowDeptNum", CollectionUtils.size(publishedDeptIds));
+        result.put("todayFollowWardNum", CollectionUtils.size(publishedWardIds));
 
         // 随访队列
         Set<Long> researchIds = patientRecords.stream().filter(p -> Objects.nonNull(p.getResearchId())).map(PatientRecord::getResearchId).collect(Collectors.toSet());
@@ -310,70 +329,56 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
         //         .limit(10)
         //         .collect(Collectors.toList());
 
-        // 科室慢病管理情况（按科室层级统计，包含病区数据）
-        // 通过ancestors层级区分：科室(ancestors层级为2，如"0,100")和病区(ancestors层级为3，如"0,100,102")
-        List<SysDept> deptLevel = new ArrayList<>();
-        List<SysDept> wardLevel = new ArrayList<>();
-
-        for (SysDept dept : sysDepts) {
-            if (Objects.nonNull(dept.getAncestors())) {
-                String[] ancestorArr = dept.getAncestors().split(",");
-                if (ancestorArr.length == 2) {
-                    // 科室层级（ancestors="0,100"）
-                    deptLevel.add(dept);
-                } else if (ancestorArr.length == 3) {
-                    // 病区层级（ancestors="0,100,102"）
-                    wardLevel.add(dept);
-                }
-            }
-        }
-
-        // 按父科室ID分组病区
-        Map<Long, List<SysDept>> wardsByParentId = wardLevel.stream()
+        // 科室慢病管理情况（只统计有已发布队列的科室和病区）
+        // 按父科室ID分组有已发布队列的病区
+        Map<Long, List<SysDept>> wardsByParentId = sysDepts.stream()
+                .filter(w -> publishedWardIds.contains(w.getDeptId()))
                 .filter(w -> Objects.nonNull(w.getParentId()))
                 .collect(Collectors.groupingBy(SysDept::getParentId));
 
-        // 统计科室及其病区数据
-        List<StatisticsVo> deptList = deptLevel.stream().map(dept -> {
-            // 统计科室下所有患者（包括科室本身和其下病区）
-            long deptCount = patientInfoList.stream()
-                    .filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().equals(dept.getDeptId()))
-                    .count();
-
-            // 统计各病区数据
-            List<StatisticsVo> wardList = null;
-            if (wardsByParentId.containsKey(dept.getDeptId())) {
-                wardList = wardsByParentId.get(dept.getDeptId()).stream().map(ward -> {
-                    long wardCount = patientInfoList.stream()
-                            .filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().equals(ward.getDeptId()))
+        // 统计有已发布队列的科室及其病区数据
+        List<StatisticsVo> deptList = sysDepts.stream()
+                .filter(dept -> publishedDeptIds.contains(dept.getDeptId())) // 只统计有已发布队列的科室
+                .map(dept -> {
+                    // 统计科室直属患者
+                    long deptCount = patientInfoList.stream()
+                            .filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().equals(dept.getDeptId()))
                             .count();
-                    if (wardCount == 0) {
+
+                    // 统计该科室下有已发布队列的病区数据
+                    List<StatisticsVo> wardList = null;
+                    if (wardsByParentId.containsKey(dept.getDeptId())) {
+                        wardList = wardsByParentId.get(dept.getDeptId()).stream().map(ward -> {
+                            long wardCount = patientInfoList.stream()
+                                    .filter(p -> Objects.nonNull(p.getDeptId()) && p.getDeptId().equals(ward.getDeptId()))
+                                    .count();
+                            if (wardCount == 0) {
+                                return null;
+                            }
+                            StatisticsVo wardVo = new StatisticsVo();
+                            wardVo.setName(ward.getDeptName());
+                            wardVo.setTotal(wardCount);
+                            return wardVo;
+                        }).filter(Objects::nonNull)
+                        .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
+                        .collect(Collectors.toList());
+
+                        // 累加病区患者数到科室总数
+                        if (wardList != null && !wardList.isEmpty()) {
+                            deptCount += wardList.stream().mapToLong(StatisticsVo::getTotal).sum();
+                        }
+                    }
+
+                    if (deptCount == 0) {
                         return null;
                     }
-                    StatisticsVo wardVo = new StatisticsVo();
-                    wardVo.setName(ward.getDeptName());
-                    wardVo.setTotal(wardCount);
-                    return wardVo;
+
+                    StatisticsVo deptVo = new StatisticsVo();
+                    deptVo.setName(dept.getDeptName());
+                    deptVo.setTotal(deptCount);
+                    deptVo.setChildren(wardList);
+                    return deptVo;
                 }).filter(Objects::nonNull)
-                .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
-                .collect(Collectors.toList());
-
-                // 累加病区患者数到科室总数
-                if (wardList != null && !wardList.isEmpty()) {
-                    deptCount += wardList.stream().mapToLong(StatisticsVo::getTotal).sum();
-                }
-            }
-
-            if (deptCount == 0) {
-                return null;
-            }
-
-            StatisticsVo deptVo = new StatisticsVo();
-            deptVo.setName(dept.getDeptName());
-            deptVo.setTotal(deptCount);
-            deptVo.setChildren(wardList);
-            return deptVo;
-        }).filter(Objects::nonNull)
                 .sorted((vo1, vo2) -> Long.compare(vo2.getTotal(), vo1.getTotal()))
                 .limit(10)
                 .collect(Collectors.toList());
