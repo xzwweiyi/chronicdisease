@@ -355,7 +355,10 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
 
         // 统计有已发布队列的科室及其病区数据
         List<StatisticsVo> deptList = sysDepts.stream()
-                .filter(dept -> publishedDeptIds.contains(dept.getDeptId())) // 只统计有已发布队列的科室
+                .filter(dept -> 
+                    publishedDeptIds.contains(dept.getDeptId()) ||      // 科室自己有已发布队列
+                    wardsByParentId.containsKey(dept.getDeptId())       // 或科室下有病区有已发布队列
+                ) // 统计有已发布队列的科室（包括通过病区间接拥有队列的科室）
                 .map(dept -> {
                     // 统计科室直属患者
                     long deptCount = patientInfoList.stream()
