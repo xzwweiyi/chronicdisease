@@ -4,6 +4,8 @@ package com.dchealth.cro.account.controller;
 import com.dchealth.cro.account.form.req.UpdateUserInfoReq;
 import com.dchealth.cro.account.service.WxAccountService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.medical.form.MobileForm;
+import com.dchealth.cro.medical.service.MedicalPatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ public class WxAccountController extends ApiBaseController {
 
     @Autowired
     private WxAccountService accountService;
+
 
     /**
      * 编辑登录手机号，personId

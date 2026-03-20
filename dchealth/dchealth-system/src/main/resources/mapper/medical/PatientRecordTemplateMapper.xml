@@ -173,7 +173,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join patient_record pr on res.record_id = pr.record_id
         left join patient_info pi2 on pr.patient_id = pi2.patient_id
         left join sys_dept sd on pi2.dept_id = sd.dept_id
-        where prt.research_id = #{researchId}
+        where prt.research_id = #{researchId} and fmp.is_deleted = 0 and fmf.is_deleted = 0
       <!--  <if test="deptIds!=null and deptIds!='' ">
             and pi2.dept_id in (${deptIds})
         </if> -->
@@ -202,7 +202,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join patient_record pr on res.record_id = pr.record_id
         left join patient_info pi2 on pr.patient_id = pi2.patient_id
         left join sys_dept sd on pi2.dept_id = sd.dept_id
-        where prt.research_id = #{researchId}
+        where prt.research_id = #{researchId} and fmf.is_deleted = 0
         <!--  <if test="deptIds!=null and deptIds!='' ">
               and pi2.dept_id in (${deptIds})
           </if> -->

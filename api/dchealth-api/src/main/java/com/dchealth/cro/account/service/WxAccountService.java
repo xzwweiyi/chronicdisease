@@ -14,7 +14,9 @@ import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPatientAccountMapper;
 import com.dchealth.cro.health.mapper.MpPersonMapper;
 import com.dchealth.cro.medical.domain.PatientInfo;
+import com.dchealth.cro.medical.form.MobileForm;
 import com.dchealth.cro.medical.mapper.PatientInfoMapper;
+import com.dchealth.cro.medical.service.MedicalPatientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,9 @@ public class WxAccountService {
 
     @Autowired
     private MpPersonMapper mpPersonMapper;
+
+    @Autowired
+    private MedicalPatientService medicalPatientService;
 
     public Boolean updateLoginPhone(UpdateUserInfoReq updateUserInfoReq, String channel) {
 
@@ -155,7 +160,10 @@ public class WxAccountService {
             patientAccount.setIdCard(updateUserInfoReq.getIdCard());
         }
         patientAccountMapper.updatePatientAccount(patientAccount);
-
+        MobileForm mobileForm = new MobileForm();
+        mobileForm.setMobile(updateUserInfoReq.getMobile());
+        mobileForm.setPersonId(updateUserInfoReq.getPersonId());
+        medicalPatientService.updateMobile(mobileForm);
         result.setData(true);
         result.setMsg("更新用户信息成功");
         return result;

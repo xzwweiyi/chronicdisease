@@ -334,7 +334,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left JOIN patient_record c on c.follow_id = b.follow_id
         left JOIN `patient_info` d on c.patient_id = d.patient_id
         LEFT JOIN research_info e on e.id = d.research_id
-        where c.fill_status = '1' and b.form_type in ('0', '1', '3')
+        where c.fill_status = '1' and b.form_type in ('0', '1', '3') and b.is_deleted = 0 and a.is_deleted = 0
         <if test="createTime != null">
             and c.create_time &gt;= #{createTime}
         </if>
@@ -369,7 +369,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left JOIN patient_record c on c.follow_id = b.follow_id
         left JOIN `patient_info` d on c.patient_id = d.patient_id
         LEFT JOIN research_info e on e.id = d.research_id
-        where c.fill_status = '1' and b.form_type in ('0', '1', '3')
+        where c.fill_status = '1' and b.form_type in ('0', '1', '3') and b.is_deleted = 0 and a.is_deleted = 0
         <if test="createTime != null">
             and c.create_time &gt;= #{createTime}
         </if>

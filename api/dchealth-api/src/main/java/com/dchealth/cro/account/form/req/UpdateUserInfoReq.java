@@ -26,6 +26,10 @@ public class UpdateUserInfoReq {
      * 登录手机
      */
     private String loginMobile;
+    /**
+     * 随访手机号
+     */
+    private String mobile;
 
     /**
      * 身份证号

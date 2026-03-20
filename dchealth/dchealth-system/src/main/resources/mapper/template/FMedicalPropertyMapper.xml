@@ -42,6 +42,7 @@
     <select id="selectFMedicalPropertyList" parameterType="FMedicalProperty" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
         <where>
+            and is_deleted = 0
             <if test="propertyCode != null  and propertyCode != ''">and property_code = #{propertyCode}</if>
             <if test="propertyName != null  and propertyName != ''">and property_name like concat('%', #{propertyName},
                 '%')
@@ -62,24 +63,24 @@
         from f_medical_property g
         LEFT JOIN f_medical_form fmf on g.medical_form_id=fmf.medical_form_id
         <where>
-            fmf.parent_id>0 and fmf.form_type!='2'
+            fmf.parent_id>0 and fmf.form_type!='2' and fmf.is_deleted = 0 and g.is_deleted = 0
             <if test="followId != null ">and fmf.follow_id = #{followId}</if>
         </where>
     </select>
 
     <select id="selectFMedicalPropertyById" parameterType="Long" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        where id = #{id}
+        where id = #{id} and is_deleted = 0
     </select>
 
     <select id="selectFMedicalPropertyByFollowId" parameterType="Long" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        where follow_id = #{followId}
+        where follow_id = #{followId} and is_deleted = 0
     </select>
 
     <select id="selectFMedicalPropertyByMedicalFormId" parameterType="Long" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        where medical_form_id = #{medicalFormId}
+        where medical_form_id = #{medicalFormId} and is_deleted = 0
         order by sort_num
     </select>
 
@@ -146,37 +147,32 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteFMedicalPropertyById" parameterType="Long">
-        delete
-        from f_medical_property
-        where id = #{id}
-    </delete>
+    <update id="deleteFMedicalPropertyById" parameterType="Long">
+        update f_medical_property set is_deleted = 1 where id = #{id}
+    </update>
 
-    <delete id="deleteFMedicalPropertyByMedicalFormId" parameterType="Long">
-        delete
-        from f_medical_property
-        where medical_form_id = #{id}
-    </delete>
+    <update id="deleteFMedicalPropertyByMedicalFormId" parameterType="Long">
+        update f_medical_property set is_deleted = 1 where medical_form_id = #{medicalFormId}
+    </update>
 
     <delete id="deleteFMedicalPropertyByMedicalFollowId" parameterType="Long">
-        delete
-        from f_medical_property
+        update f_medical_property set is_deleted = 1
         where follow_id = #{followId}
     </delete>
 
-    <delete id="deleteFMedicalPropertyByIds" parameterType="String">
-        delete from f_medical_property where id in
+    <update id="deleteFMedicalPropertyByIds" parameterType="String">
+        update f_medical_property set is_deleted = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </update>
 
-    <delete id="deleteFMedicalPropertyByMedicalFormIds" parameterType="Long">
-        delete from f_medical_property where medical_form_id in
+    <update id="deleteFMedicalPropertyByMedicalFormIds" parameterType="Long">
+        update f_medical_property set is_deleted = 1 where medical_form_id in
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </update>
 
     <select id="selectFMedicalPropertyByMedicalFormIds" parameterType="Long" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
@@ -184,6 +180,7 @@
         <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+        and is_deleted = 0
     </select>
 
     <select id="selectFMedicalValues" resultType="com.dchealth.template.domain.vo.FMedicalValueVo">
@@ -192,7 +189,7 @@
 
     <select id="selectFMedicalPropertyByArticleId" parameterType="Long" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        where article_id = #{articleId}
+        where article_id = #{articleId} and is_deleted = 0
     </select>
 
     <insert id="runInsertSql">
@@ -213,6 +210,6 @@
 
     <select id="selectFMedicalProperty" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        where follow_id = #{followId} and medical_form_id=#{medicalFormId}
+        where follow_id = #{followId} and medical_form_id=#{medicalFormId} and is_deleted = 0
     </select>
 </mapper>

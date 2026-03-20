@@ -10,6 +10,5 @@ CREATE TABLE `f_medical_form_eval_result`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-
--- 留言表personid数据类型需要修改为String
+ALTER TABLE f_medical_form ADD is_deleted smallint  default 0 COMMENT '是否删除：1-删除，0-未删除';
+ALTER TABLE f_medical_property ADD is_deleted smallint  default 0 COMMENT '是否删除：1-删除，0-未删除';

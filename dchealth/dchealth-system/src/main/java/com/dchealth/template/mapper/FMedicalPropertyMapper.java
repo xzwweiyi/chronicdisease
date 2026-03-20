@@ -79,7 +79,7 @@ public interface FMedicalPropertyMapper
      */
     public int deleteFMedicalPropertyById(Long id);
 
-    public int deleteFMedicalPropertyByMedicalFormId(Long id);
+    public int deleteFMedicalPropertyByMedicalFormId(Long medicalFormId);
 
     /**
      * 根据followId删除

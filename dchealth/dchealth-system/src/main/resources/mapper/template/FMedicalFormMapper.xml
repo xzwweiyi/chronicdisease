@@ -40,14 +40,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectFMedicalFormOtherVo">
         select f.medical_form_id, f.medical_code, f.medical_name, f.parent_id, f.open_image, f.open_property, f.open_multiple, f.attribute,f.article_id,f.health_manage_type,
         f.form_source,f.form_type,f.scores_total_val,f.follow_id, f.create_time, f.update_time, f.create_by, f.update_by,f.dynamic, f.open_collapse,f.sort_num,
-        (select count(1) from f_medical_property where medical_form_id=f.medical_form_id) property_num,
-        (select count(1) from f_medical_form where parent_id=f.medical_form_id and form_type='2') edc_num
+        (select count(1) from f_medical_property where medical_form_id=f.medical_form_id and is_deleted = 0) property_num,
+        (select count(1) from f_medical_form where parent_id=f.medical_form_id and form_type='2' and is_deleted = 0) edc_num
         from f_medical_form f
     </sql>
 
     <select id="selectFMedicalFormList" parameterType="FMedicalForm" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormOtherVo"/>
         <where>
+            and f.is_deleted = 0
             <if test="medicalCode != null  and medicalCode != ''"> and f.medical_code = #{medicalCode}</if>
             <if test="medicalName != null  and medicalName != ''"> and f.medical_name like concat('%', #{medicalName}, '%')</if>
             <if test="parentId != null "> and f.parent_id = #{parentId}</if>
@@ -67,12 +68,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalFormByMedicalFormId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where medical_form_id = #{medicalFormId}
+        where medical_form_id = #{medicalFormId}  and is_deleted = 0
     </select>
 
     <select id="selectFMedicalFormByFollowId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId} and form_type!='5'
+        where follow_id = #{followId} and form_type!='5' and is_deleted = 0
         order by sort_num,create_time asc
     </select>
 
@@ -161,20 +162,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update f_medical_form set sort_num = #{sortNum} where parent_id = #{parentId}
     </update>
 
-    <delete id="deleteFMedicalFormByMedicalFormId" parameterType="Long">
-        delete from f_medical_form where medical_form_id = #{medicalFormId}
-    </delete>
+    <update id="deleteFMedicalFormByMedicalFormId" parameterType="Long">
+        update f_medical_form set is_deleted = 1 where medical_form_id = #{medicalFormId}
+    </update>
 
     <delete id="deleteFMedicalFormByMedicalFollowId" parameterType="Long">
-        delete from f_medical_form where follow_id = #{followId}
+        delete from f_medical_form  where follow_id = #{followId}
     </delete>
 
-    <delete id="deleteFMedicalFormByMedicalFormIds" parameterType="String">
-        delete from f_medical_form where medical_form_id in
+    <update id="deleteFMedicalFormByMedicalFormIds" parameterType="String">
+        update f_medical_form set is_deleted = 1 where medical_form_id in
         <foreach item="medicalFormId" collection="array" open="(" separator="," close=")">
             #{medicalFormId}
         </foreach>
-    </delete>
+    </update>
 
     <select id="selectFMedicalFormByArticleId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
@@ -188,7 +189,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId}  and form_type != '5'
+        where follow_id = #{followId}  and form_type != '5' and is_deleted = 0
     </select>
 
 <!--    <select id="selectFMedicalFormByMedicalFollowId2" parameterType="Long" resultMap="FMedicalFormResult">-->
@@ -199,13 +200,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalFormByMedicalFollowId2" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId} and form_type != '5'
+        where follow_id = #{followId} and form_type != '5' and is_deleted = 0
         order by sort_num,create_time asc
     </select>
 
     <select id="selectFMedicalFormByMedicalFollowId3" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId}
+        where follow_id = #{followId} and is_deleted = 0
         order by sort_num,create_time asc
     </select>
 
@@ -215,7 +216,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         m.update_time, m.create_by, m.update_by, if(q.question_id, 1, 0) as checked, m.open_collapse
         from f_medical_form m
         left join question_record_form q on q.medical_form_id=m.medical_form_id and q.record_id = #{recordId}
-        where m.follow_id = #{followId}
+        where m.follow_id = #{followId} and m.is_deleted = 0
     </select>
 
     <select id="selectFMedicalFormByFollowIds" parameterType="Long" resultMap="FMedicalFormResult">
@@ -224,6 +225,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach collection="list" item="followId" open="(" separator="," close=")">
             #{followId}
         </foreach>
+        and is_deleted = 0
         order by create_time
     </select>
 
@@ -232,13 +234,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where  follow_id in
         <foreach collection="followIds" item="followId" open="(" separator="," close=")">
             #{followId}
-        </foreach> and parent_id=0 and form_type != '5'
+        </foreach> and parent_id=0 and form_type != '5' and is_deleted = 0
         order by create_time desc
     </select>
 
     <select id="selectFMedicalForm" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId} and medical_form_id=#{medicalFormId} and form_type != '5'
+        where follow_id = #{followId} and medical_form_id=#{medicalFormId} and form_type != '5' and is_deleted = 0
     </select>
 
     <update id="updateScoreByMedicalFormId">
@@ -252,12 +254,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  from f_medical_form g
                           INNER JOIN patient_record pr on g.follow_id=pr.follow_id
                           left JOIN patient_record_edc_status pres on g.medical_form_id=pres.medical_form_id and pres.record_id=pr.record_id
-                 where pr.record_id=#{recordId} and g.follow_id=#{followId} and g.parent_id=0
+                 where pr.record_id=#{recordId} and g.follow_id=#{followId} and g.parent_id=0 and g.is_deleted = 0
              ) k
     </select>
     <select id="selectHealthFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
     <include refid="selectFMedicalFormVo"/>
-    where follow_id = #{followId} and form_type = '5'
+    where follow_id = #{followId} and form_type = '5' and is_deleted = 0
     order by sort_num,create_time asc
     </select>
     <select id="queryFMedicalFormHealthList" resultMap="FMedicalFormResult">
@@ -265,7 +267,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where  follow_id in
         <foreach collection="followIds" item="followId" open="(" separator="," close=")">
             #{followId}
-        </foreach> and parent_id=0 and form_type = '5'
+        </foreach> and parent_id=0 and form_type = '5' and is_deleted = 0
         order by create_time desc
     </select>
 </mapper>
