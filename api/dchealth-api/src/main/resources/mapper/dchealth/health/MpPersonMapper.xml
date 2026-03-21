@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectPersonByPersonId"  resultMap="MpPersonResult"  parameterType="java.lang.String">
      select p.id, p.care_site_id, p.person_id,p.sex,  p.person_name, p.gender_source_value, p.card_id, p.card_type, p.phone_number, p.location_id, p.address, p.contacts_name, 
-     p.contacts_phone, p.person_career, p.marital_status, p.degree_of_education from mp_person p,mp_patient_account a where p.person_id = a.person_id and a.person_id = #{personId} 
+     p.contacts_phone, p.person_career, p.marital_status, p.degree_of_education from mp_persoXn p,mp_patient_account a where p.person_id = a.person_id and a.person_id = #{personId}
     
     </select>
 

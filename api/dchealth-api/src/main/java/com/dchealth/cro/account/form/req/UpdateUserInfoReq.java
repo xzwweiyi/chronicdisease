@@ -35,4 +35,7 @@ public class UpdateUserInfoReq {
      * 身份证号
      */
     private String idCard;
+
+
+    private String verificationCode;
 }

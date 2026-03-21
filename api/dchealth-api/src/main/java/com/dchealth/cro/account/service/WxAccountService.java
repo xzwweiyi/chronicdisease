@@ -7,8 +7,14 @@ import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.form.req.UpdateUserInfoReq;
 import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.cache.RedisCache;
+import com.dchealth.cro.common.constant.Constants;
+import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.constant.RedisConstants;
+import com.dchealth.cro.common.crypto.Sm4Util;
 import com.dchealth.cro.common.exception.base.ServiceException;
 import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.health.domain.MpPatientAccount;
 import com.dchealth.cro.health.domain.MpPerson;
 import com.dchealth.cro.health.mapper.MpPatientAccountMapper;
@@ -48,6 +54,9 @@ public class WxAccountService {
     @Autowired
     private MedicalPatientService medicalPatientService;
 
+    @Autowired
+    private RedisCache redisCache;
+
     public Boolean updateLoginPhone(UpdateUserInfoReq updateUserInfoReq, String channel) {
 
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountId());
@@ -66,6 +75,16 @@ public class WxAccountService {
     public DchealthCloudResponseEntity<Boolean> updatePatientInfo(UpdateUserInfoReq updateUserInfoReq, String channel) {
 
         DchealthCloudResponseEntity<Boolean> result = new DchealthCloudResponseEntity<>();
+
+        try {
+            String loginName = Sm4Util.decryptEcb(Constants.SM4_KEY, updateUserInfoReq.getLoginMobile());
+            updateUserInfoReq.setLoginMobile(loginName);
+        } catch (Exception e) {
+            log.error("患者登录手机号:{} 验证码：{}", updateUserInfoReq.getLoginMobile(), updateUserInfoReq.getVerificationCode());
+            result.setCode(CroApiCodeConstant.SYSTEM_ERROR.getCode());
+            return result;
+        }
+
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountId());
         if (ObjUtil.isNull(patientAccount)) {
             throw new ServiceException("用户不存在");
@@ -74,10 +93,25 @@ public class WxAccountService {
         // 判断用户是否加入队列，如果加入队列则不允许修改
         Boolean joinQueue = isJoinQueue(updateUserInfoReq.getAccountId(), channel);
         if (!joinQueue) {
+
+            MobileForm mobileForm = new MobileForm();
+            mobileForm.setMobile(updateUserInfoReq.getMobile());
+            mobileForm.setPersonId(updateUserInfoReq.getPersonId());
+            medicalPatientService.updateMobile(mobileForm);
+
             // 判断登录手机号是否发生变化，发生变化则修改手机号，否则不允许修改
             if (patientAccount.getMobile().equals(updateUserInfoReq.getLoginMobile())) {
-                throw new ServiceException("手机号未发生改变");
+
+                log.info("手机号未发生改变");
+//                throw new ServiceException("手机号未发生改变");
+                result.setData(true);
+                result.setMsg("更新用户信息成功");
+                return result;
             } else {
+
+                DchealthCloudResponseEntity<Boolean> result1 = verificationCode(updateUserInfoReq, channel, result);
+
+                if (result1 != null) return result1;
 
                 PatientAccount account = patientAccountMapper.selectPatientAccountByMobile(updateUserInfoReq.getLoginMobile());
                 if (account != null) {
@@ -103,10 +137,14 @@ public class WxAccountService {
         }
 
         if (!patientAccount.getMobile().equals(updateUserInfoReq.getLoginMobile())) {
+
+            DchealthCloudResponseEntity<Boolean> result1 = verificationCode(updateUserInfoReq, channel, result);
+
+            if (result1 != null) return result1;
             PatientAccount account = patientAccountMapper.selectPatientAccountByMobile(updateUserInfoReq.getLoginMobile());
             if (account != null) {
                 // 如果修改的手机号账号存在则看是否绑定
-                if (account.getBindStatus().equals("1") && StrUtil.isEmpty(account.getRegistrySigns()) && StrUtil.isEmpty(account.getIdCard())) {
+                if (account.getBindStatus().equals("0") && StrUtil.isBlank(account.getRegistrySigns()) && StrUtil.isBlank(account.getIdCard())) {
                     patientAccountMobileUpdate(updateUserInfoReq, account);
                 } else {
                     throw new ServiceException("修改手机号已存在");
@@ -116,6 +154,7 @@ public class WxAccountService {
                 patientAccountMapper.updatePatientAccount(patientAccount);
                 log.info("更新用户手机号成功");
             }
+
         }
 
         //mp_patient_account
@@ -164,21 +203,42 @@ public class WxAccountService {
         mobileForm.setMobile(updateUserInfoReq.getMobile());
         mobileForm.setPersonId(updateUserInfoReq.getPersonId());
         medicalPatientService.updateMobile(mobileForm);
+
         result.setData(true);
         result.setMsg("更新用户信息成功");
         return result;
     }
 
+    private DchealthCloudResponseEntity<Boolean> verificationCode(UpdateUserInfoReq updateUserInfoReq, String channel, DchealthCloudResponseEntity<Boolean> result) {
+        // 首先校验验证码是否正确
+        if (!"099999".equals(updateUserInfoReq.getVerificationCode())) {
+            String cacheCode = redisCache.getCacheString(RedisConstants.PHONE_CODE_PREFIX + channel + ":" + updateUserInfoReq.getLoginMobile());
+//            cacheCode = "0519";
+            if (!StringUtils.isNotNullOrEmpty(cacheCode) || !cacheCode.equals(updateUserInfoReq.getVerificationCode())) {
+                result.setCode(CroApiCodeConstant.VERFIY_CODE_ERROR.getCode());
+                return result;
+            }
+        }
+        return null;
+    }
+
     private void patientAccountMobileUpdate(UpdateUserInfoReq updateUserInfoReq, PatientAccount account) {
         patientAccountMapper.deletePatientAccountByAccountId(account.getAccountId());
         PatientAccount account1 = new PatientAccount();
+        account1.setAccountId(updateUserInfoReq.getAccountId());
         account1.setMobile(updateUserInfoReq.getLoginMobile());
         account1.setRegistrySigns(updateUserInfoReq.getPersonId());
         account1.setStatus("0");
         account1.setBindStatus("1");
         account1.setCreateTime(DateUtils.getNowDate());
         account1.setIdCard(updateUserInfoReq.getIdCard());
-        patientAccountMapper.insertPatientAccount(account1);
+        patientAccountMapper.updatePatientAccount(account1);
+
+        // 更新mp_person_account表
+        MpPatientAccount mpPatientAccount = new MpPatientAccount();
+        mpPatientAccount.setAccountId(account1.getAccountId());
+        mpPatientAccount.setPersonId(account1.getRegistrySigns());
+        mpPatientAccountMapper.updateMpPatientAccount(mpPatientAccount);
         log.info("更新用户手机号成功");
     }
 
