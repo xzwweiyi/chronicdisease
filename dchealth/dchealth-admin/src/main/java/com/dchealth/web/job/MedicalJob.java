@@ -230,7 +230,7 @@ public class MedicalJob {
                     PatientRecordTemplate recordTemplate = maps.get(patientRecord.getFollowId());
                     XxlJobHelper.log("---------------------------recordId:{}",patientRecord.getRecordId());
                     PatientInfo patientInfo = getPatientInfo(patientRecord);
-                    //说明是基线,为第一次生成随访信息
+                    //说明是基线,会创建随访1的PatientRecord记录
                     if(recordTemplate.getFollowNum()==0){
                         handleBaseLine(listTotal,insertList, researchInfo, now, patientRecordTemplates, patientRecord,
                                 recordTemplate,patientInfo);

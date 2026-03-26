@@ -417,7 +417,7 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
                         return;
                     }
                     PatientRecordTemplate recordTemplate = maps.get(x.getFollowId());
-                    //说明当前是基线,应该去生成第一次生成随访信息
+                    //说明是基线,会创建随访1的PatientRecord记录
                     if (recordTemplate.getFollowNum() == 0) {
                         handleBaseLine(listTotal,insertList, researchInfo, now, patientRecordTemplates, x, recordTemplate);
                     } else {
