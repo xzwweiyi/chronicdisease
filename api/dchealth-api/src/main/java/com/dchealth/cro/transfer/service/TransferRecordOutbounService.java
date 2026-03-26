@@ -104,8 +104,23 @@ public class TransferRecordOutbounService {
         return result;
     }
 
+    public static void main(String[] args) {
+        System.out.println(DateUtils.dateNowTime());
+    }
 
-
+    public DchealthCloudResponseEntity<RecordOutboundHttpVO> getHistoryDounloadList(RecordOutbounForm recordOutbounForm) {
+        DchealthCloudResponseEntity<RecordOutboundHttpVO> result = new DchealthCloudResponseEntity<RecordOutboundHttpVO>();
+        RecordOutboundHttpVO recordOutboundHttpVO = new RecordOutboundHttpVO();
+        PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+        patientRecordOutbound.setResearchId(recordOutbounForm.getResearchId());
+        patientRecordOutbound.setOutboundType("1");//外呼类型0无状态1智能外呼2短信提醒3app站内信
+        patientRecordOutbound.setIsDownloadSound("0");
+        patientRecordOutbound.setIsDownloadSoundCode("0");
+        List<PatientRecordOutbound> recordOutboundList = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+        recordOutboundHttpVO.setRecordOutboundList(recordOutboundList);
+        result.setData(recordOutboundHttpVO);
+        return result;
+    }
     public DchealthCloudResponseEntity<RecordOutboundHttpVO> getDounloadList(RecordOutbounForm recordOutbounForm) {
         DchealthCloudResponseEntity<RecordOutboundHttpVO> result = new DchealthCloudResponseEntity<RecordOutboundHttpVO>();
         RecordOutboundHttpVO recordOutboundHttpVO = new RecordOutboundHttpVO();
@@ -137,7 +152,6 @@ public class TransferRecordOutbounService {
         result.setData(recordOutboundHttpVO);
         return result;
     }
-
 
     public DchealthCloudResponseEntity<Boolean> uploadToLocalWavVo(UploadToLocalWavVo uploadToLocalWavVo, MultipartFile file) {
         DchealthCloudResponseEntity<Boolean> result = new DchealthCloudResponseEntity<Boolean>();

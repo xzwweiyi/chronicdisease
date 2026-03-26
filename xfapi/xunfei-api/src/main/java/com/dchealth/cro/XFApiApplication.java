@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @EnableScheduling
 @EnableDiscoveryClient
 @EnableTransactionManagement
-public class ApiApplication {
+public class XFApiApplication {
 
 	@ResponseBody
 	@RequestMapping(value = "isok", method = RequestMethod.GET)
@@ -27,7 +27,7 @@ public class ApiApplication {
 		return "ok";
 	}
 	public static void main(String[] args) {
-		SpringApplication.run(ApiApplication.class, args);
+		SpringApplication.run(XFApiApplication.class, args);
 	}
 
 }

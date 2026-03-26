@@ -8,5 +8,4 @@ public class RecordOutbounForm {
 
 	private Long researchId;
 
-
 }
