@@ -74,7 +74,7 @@ public class XunfeiDownloadSoundJob {
             if(list.size()>0){
                 String dict = location+"/"+sdf.format(new Date());
                 for(PatientRecordOutbound p:list){
-                    String fileName = dict +"/"+ getUuidAndDataIdFileName(String.valueOf(p.getId()),"wav");
+                    String fileName = dict +"/"+ getUuidFileName("wav");
 
                     File file0 =new File(dict);
                     if (!file0.exists()) {
@@ -143,7 +143,7 @@ public class XunfeiDownloadSoundJob {
             if(list.size()>0){
                 String dict = location+"/"+sdf.format(new Date());
                 for(PatientRecordOutbound p:list){
-                    String fileName = dict +"/"+ getUuidAndDataIdFileName(String.valueOf(p.getId()),"wav");
+                    String fileName = dict +"/"+ getUuidFileName("wav");
 
                     File file0 =new File(dict);
                     if (!file0.exists()) {
@@ -169,9 +169,10 @@ public class XunfeiDownloadSoundJob {
                             String uploadResult = TdApiHttpClientUtil.getInstance().sendFileDefaultHttpPost(baseUrl+
                                     "transfer/recordOutbound/uploadToLocalWavVo", mapOutbound,"file",file);
                         } catch (MalformedURLException e) {
-                            throw new RuntimeException(e);
+                            logger.error("讯飞api呼获取需要下载本地语音文件任务失败,错误日志：" + e.getMessage());
+
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            logger.error("讯飞api呼获取需要下载本地语音文件任务失败,错误日志：" + e.getMessage());
                         }
                     }
                 }
