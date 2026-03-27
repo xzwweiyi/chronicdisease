@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,6 +41,8 @@ public class XunfeiDownloadSoundJob {
     private String location;
 
 
+
+
     /**
      *  处理讯飞语音文件下载到api的服务器上  * * 23 * * ?
      */
@@ -48,6 +51,12 @@ public class XunfeiDownloadSoundJob {
     //每分钟执行一次
 //     @Scheduled(cron = "0 0/1 * * * ?")
 //     @Scheduled(cron = "0 50 17 * * ?")
+
+    /**
+     * 下载讯飞文件
+     * 默认只获取今天和昨天的数据
+     * @throws Exception
+     */
     @Scheduled(cron = "* * 23 * * ?")
     public void xunfeiGetResultJobHandler() throws Exception {
         logger.info("讯飞api呼获取需要下载本地语音文件任务日期{}开始", DateUtils.getTime());
@@ -65,7 +74,7 @@ public class XunfeiDownloadSoundJob {
             if(list.size()>0){
                 String dict = location+"/"+sdf.format(new Date());
                 for(PatientRecordOutbound p:list){
-                    String fileName = dict +"/"+ getUuidFileName("wav");
+                    String fileName = dict +"/"+ getUuidAndDataIdFileName(String.valueOf(p.getId()),"wav");
 
                     File file0 =new File(dict);
                     if (!file0.exists()) {
@@ -107,8 +116,75 @@ public class XunfeiDownloadSoundJob {
         }
          logger.info("讯飞api呼获取需要下载本地语音文件任务结束");
     }
+    @PostConstruct
+    public void runAtStartup() {
+        logger.info("执行每日任务（首次）");
+        xunfeiHistoryGetResultJobHandler();
+    }
+    /**
+     * 下载讯飞文件
+     * 默认获取所有的数据
 
+     * @throws Exception
+     */
+    @Scheduled(cron = "0 0 3 * * ?")
+    public void xunfeiHistoryGetResultJobHandler(){
+        logger.info("------------------讯飞api呼获取需要下载本地语音文件补全历史数据开始------------");
+        Map<String, String> maps = new HashMap<String, String>();
+        String httpResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPost(baseUrl+"transfer/recordOutbound/getHistoryDounloadList", maps);
+        com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(httpResult);
+        String code = jsonObject != null ? jsonObject.getString("code") : null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
+        if(httpResult!=null && "1000".equals(code)){
+            RecordOutboundHttpVO recordOutboundHttpVO = JSONObject.parseObject(jsonObject.getString("data"),RecordOutboundHttpVO.class);
+            List<PatientRecordOutbound> list = recordOutboundHttpVO.getRecordOutboundList();
+
+            if(list.size()>0){
+                String dict = location+"/"+sdf.format(new Date());
+                for(PatientRecordOutbound p:list){
+                    String fileName = dict +"/"+ getUuidAndDataIdFileName(String.valueOf(p.getId()),"wav");
+
+                    File file0 =new File(dict);
+                    if (!file0.exists()) {
+                        file0.mkdirs();
+                    }
+                    if(p.getXunfeiRecordUrl()!=null){
+                        try {
+                            URL url = new URL(p.getXunfeiRecordUrl());
+                            URLConnection con = url.openConnection();
+                            InputStream is = con.getInputStream();
+
+                            FileOutputStream outputStream = new FileOutputStream(fileName);
+                            int bytesRead;
+                            byte[] buffer = new byte[4096];
+                            while ((bytesRead = is.read(buffer))!=-1){
+                                outputStream.write(buffer,0,bytesRead);
+                            }
+                            outputStream.close();
+                            is.close();
+                            Map<String, String> mapOutbound = new HashMap<String, String>();
+                            mapOutbound.put("id", String.valueOf(p.getId()));
+                            File file = new File(fileName);
+                            String uploadResult = TdApiHttpClientUtil.getInstance().sendFileDefaultHttpPost(baseUrl+
+                                    "transfer/recordOutbound/uploadToLocalWavVo", mapOutbound,"file",file);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+
+                File sourceFile = new File(dict);
+                delFile(sourceFile);
+
+            }
+        }else{
+            logger.info("讯飞api呼获取需要下载本地语音文件任务失败");
+        }
+        logger.info("------------------讯飞api呼获取需要下载本地语音文件任务结束------------");
+    }
     public static String getUuidFileName(String imageFormat){
         String fileName = "";
         if (!StringUtils.isNotEmpty(fileName)){
@@ -118,7 +194,13 @@ public class XunfeiDownloadSoundJob {
         fileName += "."+ imageFormat;
         return fileName;
     }
-
+    public static String getUuidAndDataIdFileName(String dataId,String imageFormat){
+        String fileName = "";
+        String uuid = UUID.randomUUID().toString();
+        fileName = uuid.replace("-", "")+"_"+dataId;
+        fileName += "."+ imageFormat;
+        return fileName;
+    }
     /**
      * 删除文件
      */

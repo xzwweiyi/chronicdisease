@@ -417,7 +417,7 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
                         return;
                     }
                     PatientRecordTemplate recordTemplate = maps.get(x.getFollowId());
-                    //说明当前是基线,应该去生成第一次生成随访信息
+                    //说明是基线,会创建随访1的PatientRecord记录
                     if (recordTemplate.getFollowNum() == 0) {
                         handleBaseLine(listTotal,insertList, researchInfo, now, patientRecordTemplates, x, recordTemplate);
                     } else {
@@ -508,20 +508,37 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
 
     //判断生成的下一个随访时间是否在当前时间之前,如果是，可以生成
     public boolean isCreateRecord(Date now, PatientRecord patientRecord, PatientRecordTemplate prt) {
+        if (patientRecord == null || prt == null || patientRecord.getLockVisitTime() == null) {
+            return false;
+        }
         Date nextDate = null;
-        if (StringUtils.equals("1", prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue());
-        } else if ("2".equals(prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() * 7);
-        } else if ("3".equals(prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() * 30);
+        // 根据单位计算下次随访日期
+        String unit = prt.getFollowIntervalUnit();
+        int interval = prt.getFollowInterval() != null ? prt.getFollowInterval().intValue() : 0;
+
+        if ("1".equals(unit)) {
+            // 按天
+            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), interval);
+        } else if ("2".equals(unit)) {
+            // 按周
+            nextDate = DateUtils.addWeeks(patientRecord.getLockVisitTime(), interval);
+        } else if ("3".equals(unit)) {
+            // 按月
+            nextDate = DateUtils.addMonths(patientRecord.getLockVisitTime(), interval);
+        } else {
+            // 未知单位，直接返回 false
+            return false;
         }
-        if (DateUtils.dateTime(now).equals(DateUtils.dateTime(nextDate))) {
+
+        if (nextDate == null) {
+            return false;
+        }
+
+        // 如果今天是生成日或者已经过了生成日
+        if (DateUtils.isSameDay(now, nextDate) || now.after(nextDate)) {
             return true;
         }
-        if (nextDate != null && now.after(nextDate)) {
-            return true;
-        }
+
         return false;
     }
 

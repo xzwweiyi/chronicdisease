@@ -99,7 +99,14 @@ public class TransferRecordOutboundController extends ApiBaseController {
 		}
 		return buildSuccessMView(transferRecordOutbounService.getDounloadList(recordOutbounForm));
 	}
-
+	@ResponseBody
+	@RequestMapping(value = "getHistoryDounloadList", method = RequestMethod.POST)
+	public String getHistoryDounloadList(@Validated RecordOutbounForm recordOutbounForm, BindingResult bind) {
+		if (bind.hasErrors()) {
+			return buildBindErrorParamMView(bind);
+		}
+		return buildSuccessMView(transferRecordOutbounService.getHistoryDounloadList(recordOutbounForm));
+	}
 
 	/**
 	 * 中转服务器查询到需要下载语音文件到本地数据后，调用此方法上传文件
@@ -112,6 +119,7 @@ public class TransferRecordOutboundController extends ApiBaseController {
 		}
 		return buildSuccessMView(transferRecordOutbounService.uploadToLocalWavVo(uploadToLocalWavVo,file));
 	}
+
 
 
 //	@ResponseBody
