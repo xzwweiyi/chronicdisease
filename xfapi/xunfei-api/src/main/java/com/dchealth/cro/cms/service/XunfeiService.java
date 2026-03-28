@@ -239,7 +239,6 @@ public class XunfeiService {
                 }
                 L.info("---------------------sendVerifyCodeWithXunfei，参数为:{}----------------------------", com.alibaba.fastjson.JSONObject.toJSONString(xunfeiReq));
                 String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(XunfeiConstants.XUNFEI_SMS_TASK, xunfeiReq);
-                L.info("---------------------sendVerifyCodeWithXunfei，返回为:{}----------------------------", result);
                 com.alibaba.fastjson2.JSONObject jsonObject = com.alibaba.fastjson2.JSON.parseObject(result);
                 String code = jsonObject.getString("code");
                 if(result!=null && ("1000".equals(code) || "0".equals(code))){
