@@ -116,11 +116,11 @@ public class XunfeiDownloadSoundJob {
         }
          logger.info("讯飞api呼获取需要下载本地语音文件任务结束");
     }
-    @PostConstruct
-    public void runAtStartup() {
-        logger.info("执行每日任务（首次）");
-        xunfeiHistoryGetResultJobHandler();
-    }
+//    @PostConstruct
+//    public void runAtStartup() {
+//        logger.info("执行每日任务（首次）");
+//      xunfeiHistoryGetResultJobHandler();
+//    }
     /**
      * 下载讯飞文件
      * 默认获取所有的数据
