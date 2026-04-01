@@ -75,15 +75,21 @@ public class MinProgramService  {
 				.append(wxMinProgramVO.getAppId());
 		sb.append("&secret=").append(wxMinProgramVO.getAppSecret()).append("&js_code=").append(accountCode)
 				.append("&grant_type=authorization_code");
+			
+		L.info("开始调用微信 API 获取 OpenId，请求 URL:{}, appId:{}, accountCode:{}", sb.toString(), appId, accountCode);
 		String json = HttpClientUtil.getInstance().sendHttpGet(sb.toString());
-		L.error("获取OpenId请求路径{},响应结果{}", sb.toString(), json);
+		L.error("获取 OpenId 请求路径:{},响应结果:{}", sb.toString(), json);
+			
 		if (!StringUtils.isNotNullOrEmpty(json)) {
+			L.error("微信 API 返回值为 null 或空，请求 URL:{}, appId:{}, accountCode:{}", sb.toString(), appId, accountCode);
 			result.setCode(CroApiCodeConstant.WX_OPEN_ID_ERROR.getCode());
 			return result;
 		}
 		JSONObject rsJsonObject = JSON.parseObject(json);
 		String openId = rsJsonObject.getString("openid");
 		if (!StringUtils.isNotNullOrEmpty(openId)) {
+			L.error("微信 API 响应中未找到 openid 字段，响应内容:{}, 请求 URL:{}, appId:{}, accountCode:{}", 
+					json, sb.toString(), appId, accountCode);
 			result.setCode(CroApiCodeConstant.WX_OPEN_ID_ERROR.getCode());
 			return result;
 		}

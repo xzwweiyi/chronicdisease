@@ -30,9 +30,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 public class HttpClientUtil {
+	private static final Logger L = LoggerFactory.getLogger(HttpClientUtil.class);
 	private RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(150000).setConnectTimeout(150000)
 			.setConnectionRequestTimeout(150000).build();
 
@@ -331,7 +334,7 @@ public class HttpClientUtil {
 	}
 
 	/**
-	 * 发送Get请求
+	 * 发送 Get 请求
 	 * 
 	 * @param httpPost
 	 * @return
@@ -341,19 +344,53 @@ public class HttpClientUtil {
 		CloseableHttpResponse response = null;
 		HttpEntity entity = null;
 		String responseContent = null;
+		long startTime = System.currentTimeMillis();
 		try {
-			// 创建默认的httpClient实例.
+			L.info("开始执行 HTTP GET 请求，URL:{}, 超时配置：连接{}ms, Socket{}ms, 连接请求{}ms", 
+					httpGet.getURI().toString(), 
+					requestConfig.getConnectTimeout(),
+					requestConfig.getSocketTimeout(),
+					requestConfig.getConnectionRequestTimeout());
+			// 创建默认的 httpClient 实例.
 			httpClient = HttpClients.createDefault();
 			httpGet.setConfig(requestConfig);
 			// 执行请求
 			response = httpClient.execute(httpGet);
+			long endTime = System.currentTimeMillis();
+			L.info("HTTP 请求完成，耗时:{}ms, URL:{}", (endTime - startTime), httpGet.getURI().toString());
+			int statusCode = response.getStatusLine().getStatusCode();
+			L.info("HTTP 请求响应状态码:{}", statusCode);
+				
+			if (statusCode != 200) {
+				L.error("HTTP 请求失败，状态码非 200: {}, URL:{}", statusCode, httpGet.getURI().toString());
+				return null;
+			}
+				
 			entity = response.getEntity();
+			if (entity == null) {
+				L.warn("HTTP 响应实体为空，URL:{}", httpGet.getURI().toString());
+				return null;
+			}
+				
 			responseContent = EntityUtils.toString(entity, "UTF-8");
+			L.info("HTTP GET 请求成功，响应内容长度:{}, URL:{}", 
+					responseContent != null ? responseContent.length() : 0, 
+					httpGet.getURI().toString());
+		} catch (org.apache.http.conn.ConnectTimeoutException e) {
+			long endTime = System.currentTimeMillis();
+			L.error("HTTP GET 请求连接超时，耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
+		} catch (java.net.SocketTimeoutException e) {
+			long endTime = System.currentTimeMillis();
+			L.error("HTTP GET 请求读取超时（SocketTimeout），耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
+		} catch (java.net.UnknownHostException e) {
+			long endTime = System.currentTimeMillis();
+			L.error("HTTP GET 请求未知主机，耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			long endTime = System.currentTimeMillis();
+			L.error("HTTP GET 请求发生异常，耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
 		} finally {
 			try {
-				// 关闭连接,释放资源
+				// 关闭连接，释放资源
 				if (response != null) {
 					response.close();
 				}
@@ -361,7 +398,7 @@ public class HttpClientUtil {
 					httpClient.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				L.error("关闭 HTTP 连接时发生异常", e);
 			}
 		}
 		return responseContent;
@@ -378,8 +415,14 @@ public class HttpClientUtil {
 		CloseableHttpResponse response = null;
 		HttpEntity entity = null;
 		String responseContent = null;
+		long startTime = System.currentTimeMillis();
 		try {
-			// 创建默认的httpClient实例.
+			L.info("开始执行 HTTPS GET 请求，URL:{}, 超时配置：连接{}ms, Socket{}ms, 连接请求{}ms", 
+					httpGet.getURI().toString(), 
+					requestConfig.getConnectTimeout(),
+					requestConfig.getSocketTimeout(),
+					requestConfig.getConnectionRequestTimeout());
+			// 创建默认的 httpClient 实例.
 			PublicSuffixMatcher publicSuffixMatcher = PublicSuffixMatcherLoader
 					.load(new URL(httpGet.getURI().toString()));
 			DefaultHostnameVerifier hostnameVerifier = new DefaultHostnameVerifier(publicSuffixMatcher);
@@ -387,13 +430,41 @@ public class HttpClientUtil {
 			httpGet.setConfig(requestConfig);
 			// 执行请求
 			response = httpClient.execute(httpGet);
+			long endTime = System.currentTimeMillis();
+			L.info("HTTPS 请求完成，耗时:{}ms, URL:{}", (endTime - startTime), httpGet.getURI().toString());
+			int statusCode = response.getStatusLine().getStatusCode();
+			L.info("HTTPS 请求响应状态码:{}", statusCode);
+					
+			if (statusCode != 200) {
+				L.error("HTTPS 请求失败，状态码非 200: {}, URL:{}", statusCode, httpGet.getURI().toString());
+				return null;
+			}
+					
 			entity = response.getEntity();
+			if (entity == null) {
+				L.warn("HTTPS 响应实体为空，URL:{}", httpGet.getURI().toString());
+				return null;
+			}
+					
 			responseContent = EntityUtils.toString(entity, "UTF-8");
+			L.info("HTTPS GET 请求成功，响应内容长度:{}, URL:{}", 
+					responseContent != null ? responseContent.length() : 0, 
+					httpGet.getURI().toString());
+		} catch (org.apache.http.conn.ConnectTimeoutException e) {
+			long endTime = System.currentTimeMillis();
+			L.error("HTTPS GET 请求连接超时，耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
+		} catch (java.net.SocketTimeoutException e) {
+			long endTime = System.currentTimeMillis();
+			L.error("HTTPS GET 请求读取超时（SocketTimeout），耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
+		} catch (java.net.UnknownHostException e) {
+			long endTime = System.currentTimeMillis();
+			L.error("HTTPS GET 请求未知主机，耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			long endTime = System.currentTimeMillis();
+			L.error("HTTPS GET 请求发生异常，耗时:{}ms, URL:{}, 异常信息:{}", (endTime - startTime), httpGet.getURI().toString(), e.getMessage(), e);
 		} finally {
 			try {
-				// 关闭连接,释放资源
+				// 关闭连接，释放资源
 				if (response != null) {
 					response.close();
 				}
@@ -401,7 +472,7 @@ public class HttpClientUtil {
 					httpClient.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				L.error("关闭 HTTPS 连接时发生异常", e);
 			}
 		}
 		return responseContent;
