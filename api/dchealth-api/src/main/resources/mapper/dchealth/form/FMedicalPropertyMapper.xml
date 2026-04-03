@@ -35,6 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="attribute != null  and attribute != ''"> and attribute = #{attribute}</if>
             <if test="followId != null "> and follow_id = #{followId}</if>
             <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+             and is_deleted = 0
         </where>
     </select>
     
@@ -45,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalPropertyByFollowId" parameterType="Long" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        where follow_id = #{followId} order by sort_num asc
+        where follow_id = #{followId} and is_deleted = 0 order by sort_num asc
     </select>
         
     <insert id="insertFMedicalProperty" parameterType="com.dchealth.cro.form.domain.FMedicalProperty" useGeneratedKeys="true" keyProperty="id">
@@ -93,14 +94,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteFMedicalPropertyById" parameterType="Long">
-        delete from f_medical_property where id = #{id}
-    </delete>
+    <update id="deleteFMedicalPropertyById" parameterType="Long">
+        update f_medical_property set is_deleted = 1 where id = #{id}
+    </update>
 
-    <delete id="deleteFMedicalPropertyByIds" parameterType="String">
-        delete from f_medical_property where id in 
+    <update id="deleteFMedicalPropertyByIds" parameterType="String">
+        update f_medical_property set is_deleted = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
+    </update>
 </mapper>

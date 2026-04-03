@@ -58,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         INNER JOIN warn_medical_early wme on wmec.medical_early_warn_id=wme.id
         INNER JOIN f_medical_property fmp on wme.property_id=fmp.id
         <where>
+            and fmp.is_deleted = 0
             <if test="recordId != null "> and g.record_id = #{recordId}</if>
             <if test="warnMedicalEarlyConditionId != null "> and g.warn_medical_early_condition_id = #{warnMedicalEarlyConditionId}</if>
             <if test="warnDesc != null  and warnDesc != ''"> and g.warn_desc = #{warnDesc}</if>
@@ -76,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM warn_early_record wer
         inner join warn_medical_early_condition wmec on wer.warn_medical_early_condition_id = wmec.id
         left join f_medical_property fmp on fmp.id = wmec.property_id
-        WHERE wer.record_id = #{recordId};
+        WHERE wer.record_id = #{recordId} and fmp.is_deleted = 0
     </select>
 
     <select id="selectWarnEarlyRecordByIdList" parameterType="map" resultMap="WarnEarlyRecordResult">

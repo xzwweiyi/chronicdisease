@@ -42,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         f.form_source,f.form_type,f.scores_total_val,f.follow_id, f.create_time, f.update_time, f.create_by, f.update_by,f.dynamic, f.open_collapse,f.sort_num,
         (select count(1) from f_medical_property where medical_form_id=f.medical_form_id and is_deleted = 0) property_num,
         (select count(1) from f_medical_form where parent_id=f.medical_form_id and form_type='2' and is_deleted = 0) edc_num
-        from f_medical_form f
+        from f_medical_form f where f.is_deleted = 0
     </sql>
 
     <select id="selectFMedicalFormList" parameterType="FMedicalForm" resultMap="FMedicalFormResult">
@@ -166,9 +166,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update f_medical_form set is_deleted = 1 where medical_form_id = #{medicalFormId}
     </update>
 
-    <delete id="deleteFMedicalFormByMedicalFollowId" parameterType="Long">
-        delete from f_medical_form  where follow_id = #{followId}
-    </delete>
+    <update id="deleteFMedicalFormByMedicalFollowId" parameterType="Long">
+        update f_medical_form  set is_deleted = 1 where follow_id = #{followId}
+    </update>
 
     <update id="deleteFMedicalFormByMedicalFormIds" parameterType="String">
         update f_medical_form set is_deleted = 1 where medical_form_id in
@@ -179,12 +179,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalFormByArticleId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where article_id = #{articleId}
+        where article_id = #{articleId} and is_deleted = 0
     </select>
 
     <select id="selectFMedicalFormByFollowIdAndParentId" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId} and parent_id = #{parentId}
+        where follow_id = #{followId} and parent_id = #{parentId} and is_deleted = 0
     </select>
 
     <select id="selectFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">

@@ -72,17 +72,18 @@
             <if test="articleId != null ">and article_id = #{articleId}</if>
             <if test="formSource != null  and formSource != ''">and form_source = #{formSource}</if>
             <if test="dynamic != null  and dynamic != ''">and dynamic = #{dynamic}</if>
+            and is_deleted = 0
         </where>
     </select>
 
     <select id="selectFMedicalFormByMedicalFormId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where medical_form_id = #{medicalFormId}
+        where medical_form_id = #{medicalFormId} and is_deleted = 0
     </select>
 
     <select id="selectFMedicalFormByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormVo"/>
-        where follow_id = #{followId} and form_type != '5'
+        where follow_id = #{followId} and form_type != '5' and is_deleted = 0
     </select>
 
     <select id="selectFMedicalFormJoinByMedicalFollowId" parameterType="Long" resultMap="FMedicalFormResult">
@@ -111,7 +112,7 @@
                         m.health_manage_type
         from f_medical_form m
                  left join question_record_form q on q.medical_form_id = m.medical_form_id and q.record_id = #{recordId}
-        where m.follow_id = #{followId} and m.form_type != '5'
+        where m.follow_id = #{followId} and m.form_type != '5' and m.is_deleted = 0
         ORDER BY m.sort_num, m.create_time asc
     </select>
 
@@ -121,7 +122,7 @@
         <where>
             <if test="followId != null">and follow_id = #{followId}</if>
             <if test="healthManageType != null">and health_manage_type = #{healthManageType} </if>
-            and form_type = '5'
+            and form_type = '5' and is_deleted =0
         </where>
     </select>
 
@@ -194,16 +195,16 @@
         where medical_form_id = #{medicalFormId}
     </update>
 
-    <delete id="deleteFMedicalFormByMedicalFormId" parameterType="Long">
-        delete
-        from f_medical_form
+    <update id="deleteFMedicalFormByMedicalFormId" parameterType="Long">
+        update f_medical_form
+        set is_deleted =1
         where medical_form_id = #{medicalFormId}
-    </delete>
+    </update>
 
-    <delete id="deleteFMedicalFormByMedicalFormIds" parameterType="String">
-        delete from f_medical_form where medical_form_id in
+    <update id="deleteFMedicalFormByMedicalFormIds" parameterType="String">
+        update f_medical_form  set is_deleted =1  where medical_form_id in
         <foreach item="medicalFormId" collection="array" open="(" separator="," close=")">
             #{medicalFormId}
         </foreach>
-    </delete>
+    </update>
 </mapper>
