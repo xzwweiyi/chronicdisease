@@ -3,8 +3,6 @@ package com.dchealth.cro.minprogram.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.dchealth.cro.account.form.SendVerfiyCodeForm;
-import com.dchealth.cro.account.mapper.SysUserMapper;
-import com.dchealth.cro.base.mapper.AppBannerMapper;
 import com.dchealth.cro.common.base.CommonResult;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.cache.RedisCache;
@@ -19,8 +17,8 @@ import com.dchealth.cro.core.config.CroCoreConfig;
 import com.dchealth.cro.core.contants.CroCoreConstant;
 import com.dchealth.cro.core.domain.AppSet;
 import com.dchealth.cro.core.mapper.AppSetMapper;
-import com.dchealth.cro.core.tencent.TencentSmsTemplateEnum;
 import com.dchealth.cro.core.tencent.TencentSmsSevice;
+import com.dchealth.cro.core.tencent.TencentSmsTemplateEnum;
 import com.dchealth.cro.medical.domain.PatientInfo;
 import com.dchealth.cro.medical.domain.PatientInfoLogs;
 import com.dchealth.cro.medical.form.PatientLoginForm;
@@ -68,9 +66,12 @@ public class MinProgramService  {
 	 * @param appId
 	 * @return
 	 */
-	public DchealthCloudResponseEntity<String> getOpenId(String accountCode, String appId) {
-		WXMinProgramVO wxMinProgramVO = getWXMinProgramVOInstance(appId);
-		DchealthCloudResponseEntity<String> result = new DchealthCloudResponseEntity<String>();
+	public DchealthCloudResponseEntity<WXMinProgramVO> getOpenId(String accountCode, String appId) {
+//		WXMinProgramVO wxMinProgramVO = getWXMinProgramVOInstance(appId);
+        WXMinProgramVO wxMinProgramVO = new WXMinProgramVO();
+        wxMinProgramVO.setAppId("wx5750855a0cc81ef0");
+        wxMinProgramVO.setAppSecret("2b76c3c0f4a0ae55e0099660d86631a3");
+		DchealthCloudResponseEntity<WXMinProgramVO> result = new DchealthCloudResponseEntity<WXMinProgramVO>();
 		StringBuffer sb = new StringBuffer("https://api.weixin.qq.com/sns/jscode2session?appid=")
 				.append(wxMinProgramVO.getAppId());
 		sb.append("&secret=").append(wxMinProgramVO.getAppSecret()).append("&js_code=").append(accountCode)
@@ -87,13 +88,17 @@ public class MinProgramService  {
 		}
 		JSONObject rsJsonObject = JSON.parseObject(json);
 		String openId = rsJsonObject.getString("openid");
+		String unionId = rsJsonObject.getString("unionId");
 		if (!StringUtils.isNotNullOrEmpty(openId)) {
 			L.error("微信 API 响应中未找到 openid 字段，响应内容:{}, 请求 URL:{}, appId:{}, accountCode:{}", 
 					json, sb.toString(), appId, accountCode);
 			result.setCode(CroApiCodeConstant.WX_OPEN_ID_ERROR.getCode());
 			return result;
 		}
-		result.setData(openId);
+        WXMinProgramVO wxMinProgramVO1 = new WXMinProgramVO();
+        wxMinProgramVO1.setOpenId(openId);
+        wxMinProgramVO1.setUnionId(unionId);
+		result.setData(wxMinProgramVO1);
 		return result;
 	}
 	

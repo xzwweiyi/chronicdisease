@@ -4,8 +4,14 @@ import lombok.Data;
 
 @Data
 public class WXMinProgramVO {
-	private Long appId;
+	private String appId;
 	private String appSecret;
+
+
+    private String openId;
+    private String unionId;
+
+
 
 	
 

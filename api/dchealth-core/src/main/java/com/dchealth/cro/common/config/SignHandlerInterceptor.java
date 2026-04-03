@@ -314,7 +314,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      */
 
     public Boolean isExclude(String requestPath) {
-        String[] excludeUrls = new String[]{"/min_program/detailStandard", "/doctor/testMessagePush", "/transfer/sms/*", "/getIsShow", "/myQueue/*", "/medical/*", "/api/*"};//不需要验签的接口
+        String[] excludeUrls = new String[]{"/min_program/detailStandard", "/doctor/testMessagePush", "/transfer/sms/*", "/getIsShow", "/myQueue/*", "/medical/*", "/api/*", "/min_program/getOpenId"};//不需要验签的接口
 //		String[] excludeUrls = new String[] {  "/*"};//不需要验签的接口
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
