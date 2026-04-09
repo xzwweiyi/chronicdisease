@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         inner join warn_medical_early wme on g.medical_early_warn_id=wme.id
         inner join f_medical_property fmp on wme.property_id=fmp.id
         <where>
-            and fmp.is_deleted = 0
+            fmp.is_deleted = 0
             <if test="propertyId != null "> and g.property_id = #{propertyId}</if>
             <if test="followId != null "> and g.follow_id = #{followId}</if>
             <if test="isEffect != null  and isEffect != ''"> and wme.is_effect = #{isEffect}</if>
