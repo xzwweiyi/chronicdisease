@@ -50,7 +50,7 @@ public interface IFollowWorkService {
      * 根节点和病种节点树
      * @return
      */
-    public FollowWorkTree rootTree(Long userId);
+    public FollowWorkTree rootTree(Long userId,String nodeName);
 
     /**
      * 根据病种ID加载子树

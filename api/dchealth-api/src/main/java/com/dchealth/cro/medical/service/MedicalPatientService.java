@@ -1502,17 +1502,20 @@ public class MedicalPatientService {
         DchealthCloudResponseEntity<PatientAccountInfoVO> result = new DchealthCloudResponseEntity<>();
         PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(bindPatientForm.getAccountId());
         if (patientAccount == null) {
+            result.setMsg(CroApiCodeConstant.USER_NOT_EXIST.getMsg());
             result.setCode(CroApiCodeConstant.USER_NOT_EXIST.getCode());
             return result;
         }
         //停用
         if ("1".equals(patientAccount.getStatus())) {
             result.setCode(CroApiCodeConstant.BLOCK_UP_ERROR.getCode());
+            result.setMsg(CroApiCodeConstant.BLOCK_UP_ERROR.getMsg());
             return result;
         }
         //绑定且输入的身份证
         if ("1".equals(patientAccount.getBindStatus()) && bindPatientForm.getIdCardNo().equalsIgnoreCase(patientAccount.getIdCard())) {
-            result.setCode(CroApiCodeConstant.ALREADY_BINDING.getCode());
+            result.setCode(CroApiCodeConstant.ID_CARD_N0_ALREADY_BINDING_OTHER.getCode());
+            result.setMsg(String.format(CroApiCodeConstant.ID_CARD_N0_ALREADY_BINDING_OTHER.getMsg(),patientAccount.getMobile()));
             String personId = patientAccount.getRegistrySigns();
             // 返回已绑定id
             PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
@@ -1521,7 +1524,8 @@ public class MedicalPatientService {
             return result;
         }
         if ("1".equals(patientAccount.getBindStatus()) && !bindPatientForm.getIdCardNo().equalsIgnoreCase(patientAccount.getIdCard())) {
-            result.setCode(CroApiCodeConstant.ALREADY_BINDING_OTHER.getCode());
+            result.setCode(CroApiCodeConstant.ID_CARD_N0_ALREADY_BINDING_OTHER.getCode());
+            result.setMsg(String.format(CroApiCodeConstant.ID_CARD_N0_ALREADY_BINDING_OTHER.getMsg(),patientAccount.getMobile()));
             String personId = patientAccount.getRegistrySigns();
             // 返回已绑定id
             PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
@@ -1532,7 +1536,8 @@ public class MedicalPatientService {
         }
         MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountByAccountId(bindPatientForm.getAccountId());
         if (mpPatientAccount != null) {
-            result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
+            result.setCode(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getCode());
+            result.setMsg(String.format(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getMsg(),patientAccount.getMobile()));
             return result;
         }
         // 只处理未绑定的状态
@@ -1541,7 +1546,8 @@ public class MedicalPatientService {
         if (patientBaseInfos != null) {
             MpPatientAccount mpa = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientBaseInfos.getPersonId());
             if (mpa != null && !(mpa.getAccountId().longValue() == bindPatientForm.getAccountId().longValue())) {
-                result.setCode(CroApiCodeConstant.ALREADY_BINDING_ERROR.getCode());
+                result.setCode(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getCode());
+                result.setMsg(String.format(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getMsg(),patientAccount.getMobile()));
                 return result;
             }
         }
@@ -1550,6 +1556,7 @@ public class MedicalPatientService {
             PatMasterIndex patMasterIndex = patMasterIndexMapper.selectByIdNoAndPatientId(bindPatientForm.getIdCardNo(), bindPatientForm.getRegistrySigns());
             if (patMasterIndex == null) {
                 result.setCode(CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getCode());
+                result.setMsg(CroApiCodeConstant.PATIENT_NOT_EXIST_PLEASE_FILL_CORRECT_ID_NUMBER_AND_REGISTRY_SIGNS.getMsg());
                 return result;
             }
             //此处因为患者多手机多就诊号暂时加入手机号查询

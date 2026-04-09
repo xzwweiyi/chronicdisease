@@ -37,8 +37,23 @@ public class ApiBaseController {
 		result.setData(obj);
 		return JSON.toJSONString(result);
 	}
-	
-	
+
+	/**
+	 * 构造成功json视图
+	 *
+	 * @param
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> String buildSuccessMessageView(T obj) {
+		DchealthCloudResponseEntity<T> result = null ;
+		if(obj instanceof DchealthCloudResponseEntity) {
+			return JSON.toJSONString(obj);
+		}
+		result = new DchealthCloudResponseEntity<T>();
+		result.setData(obj);
+		return JSON.toJSONString(result);
+	}
 
 	
 	

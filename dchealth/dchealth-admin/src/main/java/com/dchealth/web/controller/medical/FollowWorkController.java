@@ -149,13 +149,13 @@ public class FollowWorkController extends BaseController {
      * @return
      */
     @GetMapping("/rootTree")
-    public AjaxResult rootTree() {
+    public AjaxResult rootTree(String diseasesName) {
         Long userId = getUserId();
 //		FollowWorkTree followWorkTree = redisCache.getCacheObject(Constants.FOLLOW_TREE_ROOT_KEY + userId);
 
 //		if (Objects.isNull(followWorkTree)){
         logger.info("followWorkTree root:" + userId + "查询数据库");
-        FollowWorkTree followWorkTree = followWorkService.rootTree(userId);
+        FollowWorkTree followWorkTree = followWorkService.rootTree(userId,diseasesName);
 
         // 获取子节点的条数
         List<FollowWorkTree> childrenList = followWorkTree.getChildrenList();

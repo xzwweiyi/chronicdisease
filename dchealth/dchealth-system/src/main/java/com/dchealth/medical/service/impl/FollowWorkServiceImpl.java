@@ -819,16 +819,16 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
 
     //lys2
     @Override
-    public FollowWorkTree rootTree(Long userId) {
+    public FollowWorkTree rootTree(Long userId,String diseaseName) {
         try {
             log.info("加载用户{}的随访根树", userId);
             long startTime = System.currentTimeMillis();
             SysUser sysUser = sysUserMapper.selectUserById(userId);
             List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
             if ("1".equals(sysUser.getIsAlldeptResearch())) {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),diseaseName);
             } else {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,diseaseName);
             }
 
             // 只构建根节点和病种节点，不加载队列和任务数据
@@ -1011,9 +1011,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             SysUser sysUser = sysUserMapper.selectUserById(userId);
             List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
             if ("1".equals(sysUser.getIsAlldeptResearch())) {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
             } else {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
             }
 
             List<ResearchInfo> researchInfos = new ArrayList<>();
@@ -1141,9 +1141,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         SysUser sysUser = sysUserMapper.selectUserById(userId);
         List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
         if ("1".equals(sysUser.getIsAlldeptResearch())) {
-            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
         } else {
-            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
         }
 
 
@@ -1833,9 +1833,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         SysUser sysUser = sysUserMapper.selectUserById(userId);
         List<ResearchDiseases> researchDiseases = new ArrayList<>();
         if ("1".equals(sysUser.getIsAlldeptResearch())) {
-            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
         } else {
-            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
         }
 
         if (researchDiseases == null || researchDiseases.isEmpty()) {

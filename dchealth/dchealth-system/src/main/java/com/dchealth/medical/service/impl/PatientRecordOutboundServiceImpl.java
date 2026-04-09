@@ -188,9 +188,9 @@ public class PatientRecordOutboundServiceImpl implements IPatientRecordOutboundS
         SysUser sysUser = sysUserMapper.selectUserById(userId);
         List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
         if("1".equals(sysUser.getIsAlldeptResearch())){
-            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId());
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
         }else{
-            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId);
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
         }
         TreeForm treeForm = new TreeForm();
         treeForm.setType("1");

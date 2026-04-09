@@ -66,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="id != null "> and ri.id = #{id}</if>
             <if test="deptId != null and deptId!='100'.toString() "> and rd.dept_id = #{deptId} and ri.dept_id = #{deptId} and d.dept_id = #{deptId}</if>
             <if test="notResearchStatus != null and notResearchStatus != ''">and ri.research_status != #{notResearchStatus}</if>
+            <if test="diseasesName != null and diseasesName != ''">and rd.disease_name like concat('%', #{diseasesName}, '%')</if>
             and d.del_flag='0' and d.dept_type = '2'
         </where>
         <!-- 数据范围过滤 -->
@@ -124,6 +125,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         inner join sys_dept d on  ri.dept_id=d.dept_id
         where  g.is_deleted='0' and d.del_flag=0 and ri.del_flag=0 and (ri.research_status = 1 or ri.research_status = 0)
         <if test="deptId != null and deptId!='100'.toString() "> and d.dept_id = #{deptId} and ri.dept_id = #{deptId} </if>
+        <if test="diseaseName != null  and diseaseName != ''"> and g.disease_name like concat('%', #{diseaseName},'%') </if>
         GROUP BY g.disease_id
     </select>
 
@@ -138,6 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ) ru on ri.id=ru.research_id
         </if>
         where  g.is_deleted='0' and d.del_flag=0 and ri.del_flag=0
+        <if test="diseaseName != null  and diseaseName != ''"> and g.disease_name like concat('%', #{diseaseName},'%') </if>
         GROUP BY g.disease_id
     </select>
     

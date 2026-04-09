@@ -47,9 +47,9 @@ public interface ResearchDiseasesMapper
 
     public List<ResearchDiseases> selectResearchDiseasesByAuthLess();
 
-    public List<ResearchDiseases> selectResearchDiseasesByAuth2(Long detpId);
+    public List<ResearchDiseases> selectResearchDiseasesByAuth2(@Param("detpId") Long detpId,@Param("diseaseName") String diseaseName);
 
-    public List<ResearchDiseases> selectResearchDiseasesByUserId(Long userId);
+    public List<ResearchDiseases> selectResearchDiseasesByUserId(@Param("userId")Long userId,@Param("diseaseName") String diseaseNam);
 
     /**
      * 选择病种下拉包含：科室、病种

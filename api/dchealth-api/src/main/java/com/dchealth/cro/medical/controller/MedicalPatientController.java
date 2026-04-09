@@ -172,7 +172,7 @@ public class MedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            return buildSuccessMView(medicalPatientService.bindPatient(bindPatientForm));
+            return buildSuccessMessageView(medicalPatientService.bindPatient(bindPatientForm));
         } catch (Exception e) {
             L.info("绑定患者异常{}", JSON.toJSONString(bindPatientForm), e);
             return buildExceptionMView();

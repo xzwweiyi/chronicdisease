@@ -95,6 +95,11 @@ public enum CroApiCodeConstant {
 	ACCOUNT_CANNOT_BE_EMPTY(2062,"账号不能为空"),
 	THE_DEPARTMENT_WHERE_THE_ACCOUNT_IS_LOCATED_IS_EMPTY(2063,"账号所在部门为空"),
 	ALREADY_BINDING_ERROR(2064,"账号已绑定过成员、请勿添加成员"),
+
+	ACCOUNT_ID_ALREADY_BINDING_OTHER(2065,"该身份证/就诊ID已绑定手机号%s，请使用此手机号登录后操作，请勿重复绑定"),
+
+	ID_CARD_N0_ALREADY_BINDING_OTHER(2066,"该身份证/就诊ID已绑定手机号%s，请使用此手机号登录后操作，请勿重复绑定"),
+
 	/**
 	 * 患者端
 	 */

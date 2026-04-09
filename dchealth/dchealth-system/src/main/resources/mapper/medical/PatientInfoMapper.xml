@@ -190,13 +190,15 @@
     </select>
 
     <select id="selectPatientInfoListByAuth" parameterType="PatientInfo" resultMap="PatientInfoResult">
+        select * from (
         select g.patient_id, g.account_id, g.person_id, g.patient_name, g.clinic_no, g.patient_code, g.research_id,
         g.dept_id, g.doctor_id, g.patient_mobile, g.patient_status,
         g.enrollment_status, g.loss_cause, g.loss_cause_other, g.update_by, g.create_by, g.create_time, g.update_time,
         g.enrollment_time, g.plan_research_id, g.enrollment_result,
         g.enrollment_result_content, g.enrollment_handler_status, g.allocated_status, g.allocated_handler_status,
         g.patient_activity_status, g.adjust_type, g.old_patient_id ,
-        g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card
+        g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card,
+        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` = '基线' and follow_status = 3 and patient_id = g.patient_id) as is_submit_base
         from patient_info g
         INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
         INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
@@ -228,6 +230,7 @@
             <if test="doctorId != null ">and g.doctor_id = #{doctorId}</if>
             <if test="patientMobile != null  and patientMobile != ''">and g.patient_mobile = #{patientMobile}</if>
             <if test="patientStatus != null  and patientStatus != ''">and g.patient_status = #{patientStatus}</if>
+            <if test="notPatientStatus != null  and notPatientStatus != ''">and g.patient_status != #{notPatientStatus}</if>
             <if test="enrollmentStatus != null  and enrollmentStatus != ''">and g.enrollment_status =
                 #{enrollmentStatus}
             </if>
@@ -277,6 +280,12 @@
                     and g.patient_status not in (4,6)
                 </when>
             </choose>
+        </where>
+        ) t
+        <where>
+            <if test="isSubmitBase != null  and isSubmitBase != ''">and is_submit_base =
+                #{isSubmitBase}
+            </if>
         </where>
     </select>
 

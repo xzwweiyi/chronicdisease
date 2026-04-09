@@ -67,7 +67,7 @@ public class FollowTreeCacheServiceImpl implements FollowTreeCacheService {
 
 
     private boolean CurrentOneSum(FollowTreeEvent followTreeEvent) {
-        List<Long> list = followWorkService.rootTree(followTreeEvent.getUserId())
+        List<Long> list = followWorkService.rootTree(followTreeEvent.getUserId(),null)
                 .getChildrenList().stream().map(FollowWorkTree::getDiseaseId).collect(Collectors.toList());
         if (ObjectUtil.isEmpty(list)) {
             return false;
