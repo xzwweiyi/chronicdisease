@@ -184,6 +184,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="diseaseId != null">
             and d.disease_id = #{diseaseId}
         </if>
+        <if test="type != null and type == '2'.toString()">
+            and pr.name != '基线'
+        </if>
     </select>
 
     <select id="selectResearchInfoByIds" parameterType="Long" resultMap="ResearchInfoResult">
