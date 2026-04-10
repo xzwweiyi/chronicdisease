@@ -455,7 +455,7 @@
         r.warn_evaluate_reply_back_time,r.over_evaluate_reply_back_time
         from patient_record r, patient_info p, research_info i
         where i.id=p.research_id and p.patient_id=r.patient_id and p.patient_activity_status = '1'
-        and r.research_id = #{researchId}
+        and r.research_id = #{researchId} and r.name != '基线'
         <if test="belongType != null  and belongType != '' and belongType == '1'.toString()">and r.follow_status
             in('3','4') and r.evaluate_status_back = #{evaluateStatus}
         </if>
