@@ -24,7 +24,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFMedicalPropertyList" parameterType="com.dchealth.cro.form.domain.FMedicalProperty" resultMap="FMedicalPropertyResult">
         <include refid="selectFMedicalPropertyVo"/>
-        <where>  
+        <where>
+            is_deleted = 0
             <if test="propertyCode != null  and propertyCode != ''"> and property_code = #{propertyCode}</if>
             <if test="propertyName != null  and propertyName != ''"> and property_name like concat('%', #{propertyName}, '%')</if>
             <if test="parentId != null "> and parent_id = #{parentId}</if>
@@ -35,7 +36,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="attribute != null  and attribute != ''"> and attribute = #{attribute}</if>
             <if test="followId != null "> and follow_id = #{followId}</if>
             <if test="sortNum != null "> and sort_num = #{sortNum}</if>
-             and is_deleted = 0
         </where>
     </select>
     

@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectFMedicalFormList" parameterType="FMedicalForm" resultMap="FMedicalFormResult">
         <include refid="selectFMedicalFormOtherVo"/>
         <where>
-            and f.is_deleted = 0
+            f.is_deleted = 0
             <if test="medicalCode != null  and medicalCode != ''"> and f.medical_code = #{medicalCode}</if>
             <if test="medicalName != null  and medicalName != ''"> and f.medical_name like concat('%', #{medicalName}, '%')</if>
             <if test="parentId != null "> and f.parent_id = #{parentId}</if>
