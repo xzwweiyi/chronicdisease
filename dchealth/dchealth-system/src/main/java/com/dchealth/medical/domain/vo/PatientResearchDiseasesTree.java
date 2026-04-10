@@ -160,14 +160,14 @@ public class PatientResearchDiseasesTree implements Serializable {
 
                                     //已完成的患者数
                                     List<PatientInfo> finishedPatientList = patientInfoList.stream().filter(patientInfo -> "3".equals(patientInfo.getEnrollmentHandlerStatus())).collect(Collectors.toList());
-                                    //患者数 todo
                                     research.setCount(num);
 
                                     //入组患者数
                                     List<PatientInfo> enrollmentPatientList = finishedPatientList.stream().filter(patientInfo -> "1".equals(patientInfo.getEnrollmentStatus())).collect(Collectors.toList());
                                     Integer enrollmentNum = enrollmentPatientList.size();
                                     research.setEnrollmentNum(enrollmentNum);
-
+                                    List<PatientInfo> currentPatientList = new ArrayList<>();
+                                    currentPatientList.addAll(enrollmentPatientList);
                                     //退出患者数
                                     //因为状态标识较多，此处为避免退出患者与其他状态患者出现交集，从总入组患者中排除已退出患者
                                     List<PatientInfo> exitPatientList = enrollmentPatientList.stream().filter(patientInfo -> "6".equals(patientInfo.getPatientStatus())).collect(Collectors.toList());
@@ -176,10 +176,8 @@ public class PatientResearchDiseasesTree implements Serializable {
                                     research.setExitNum(exitNum);
 
                                     //基线患者数
-                                    List<PatientInfo> basePatientList = enrollmentPatientList.stream().filter(patientInfo -> "1".equals(patientInfo.getEnrollmentStatus()) &&
+                                    List<PatientInfo> basePatientList = currentPatientList.stream().filter(patientInfo -> "1".equals(patientInfo.getEnrollmentStatus()) &&
                                             (patientInfo.getIsSubmitBase() == 1)).collect(Collectors.toList());
-                                    //从基线中换着中，去除已退出患者
-                                    basePatientList.removeAll(exitPatientList);
                                     Integer baseNum = basePatientList.size();
                                     research.setBaseNum(baseNum);
 

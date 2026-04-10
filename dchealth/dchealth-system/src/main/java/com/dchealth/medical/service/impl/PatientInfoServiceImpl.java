@@ -210,7 +210,6 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
 
         PageUtils.startPage();
         patientInfoParam.setEnrollmentHandlerStatus("3");
-        patientInfoParam.setEnrollmentStatus("1");
         List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoListByAuth(patientInfoParam);
         //查询当前随访名称
         if (patientInfos != null && !patientInfos.isEmpty()) {
