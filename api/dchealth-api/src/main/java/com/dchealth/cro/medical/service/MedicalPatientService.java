@@ -1546,8 +1546,9 @@ public class MedicalPatientService {
         if (patientBaseInfos != null) {
             MpPatientAccount mpa = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientBaseInfos.getPersonId());
             if (mpa != null && !(mpa.getAccountId().longValue() == bindPatientForm.getAccountId().longValue())) {
+                PatientAccount patientAccount1 = patientAccountMapper.selectPatientAccountByAccountId(mpa.getAccountId());
                 result.setCode(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getCode());
-                result.setMsg(String.format(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getMsg(),patientAccount.getMobile()));
+                result.setMsg(String.format(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getMsg(),patientAccount1.getMobile()));
                 return result;
             }
         }
