@@ -190,15 +190,13 @@
     </select>
 
     <select id="selectPatientInfoListByAuth" parameterType="PatientInfo" resultMap="PatientInfoResult">
-        select * from (
         select g.patient_id, g.account_id, g.person_id, g.patient_name, g.clinic_no, g.patient_code, g.research_id,
         g.dept_id, g.doctor_id, g.patient_mobile, g.patient_status,
         g.enrollment_status, g.loss_cause, g.loss_cause_other, g.update_by, g.create_by, g.create_time, g.update_time,
         g.enrollment_time, g.plan_research_id, g.enrollment_result,
         g.enrollment_result_content, g.enrollment_handler_status, g.allocated_status, g.allocated_handler_status,
         g.patient_activity_status, g.adjust_type, g.old_patient_id ,
-        g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card,
-        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` = '基线' and follow_status = 3 and patient_id = g.patient_id) as is_submit_base
+        g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card
         from patient_info g
         INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
         INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
@@ -280,12 +278,6 @@
                     and g.patient_status not in (4,6)
                 </when>
             </choose>
-        </where>
-        ) t
-        <where>
-            <if test="isSubmitBase != null  and isSubmitBase != ''">and is_submit_base =
-                #{isSubmitBase}
-            </if>
         </where>
     </select>
 
@@ -609,7 +601,30 @@
         <if test="enrollmentStatus != null"> and f.enrollment_status = #{enrollmentStatus}</if>
         <if test="deptIdNoZero != null  and deptIdNoZero != '' and deptIdNoZero=='1'.toString()"> and f.dept_id > 0 </if>
     </select>
-
+    <select id="selectExcelEnrollmentPatientInfoList" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
+        select f.patient_id, f.person_id, f.patient_name, p.card_id id_card, pc.mobile, f.create_time, f.plan_research_id, f.research_id, f.dept_id, f.account_id,
+        p.phone_number base_mobile,f.enrollment_handler_status, f.enrollment_status, f.enrollment_result_content,case WHEN f.account_id = 0 THEN 0 else 1 END as bindStatus, f.patient_code
+        from patient_info f
+        INNER JOIN mp_person p on f.person_id=p.person_id
+        LEFT JOIN mp_patient_account mpa on mpa.person_id=p.person_id
+        LEFT JOIN patient_account pc on pc.account_id = mpa.account_id
+        where  1=1
+        <if test="patientIds!=null  and patientIds.size > 0">
+            and f.patient_id in
+            <foreach item="patientId" collection="patientIds" open="(" separator="," close=")">
+                #{patientId}
+            </foreach>
+        </if>
+        <if test="patientId != null "> and patient_id = #{patientId}</if>
+        <if test="patientName != null  and patientName != ''"> and p.person_name like concat('%', #{patientName}, '%')</if>
+        <if test="researchId != null  and researchId != ''"> and (f.research_id = #{researchId} or f.research_id is null)</if>
+        <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and f.account_id = 0 </if>
+        <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and f.account_id != 0 </if>
+        <if test="enrollmentHandlerStatus != null"> and f.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="enrollmentStatus != null"> and f.enrollment_status = #{enrollmentStatus}</if>
+        <if test="deptIdNoZero != null  and deptIdNoZero != '' and deptIdNoZero=='1'.toString()"> and f.dept_id > 0 </if>
+        order by f.create_time desc
+    </select>
     <select id="selectEnrollmentPatientInfoListLess" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
         select f.patient_id
         from patient_info f

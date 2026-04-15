@@ -134,6 +134,8 @@ public interface PatientInfoMapper
 
     List<PatientEnrollmentVo> selectEnrollmentPatientInfoList(PatientInfo patientInfo);
 
+    List<PatientEnrollmentVo> selectExcelEnrollmentPatientInfoList(PatientInfo patientInfo);
+
     List<PatientEnrollmentVo> selectEnrollmentPatientInfoListLess(PatientInfo patientInfo);
 
 
