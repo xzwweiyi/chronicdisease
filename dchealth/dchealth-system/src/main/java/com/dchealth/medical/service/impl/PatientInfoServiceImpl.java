@@ -386,6 +386,19 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
         }
         return patientEnrollmentVos;
     }
+    @Override
+    public List<PatientEnrollmentVo> selectExcelEnrollmentPatientInfoList(PatientInfo patientInfo) {
+        List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.selectExcelEnrollmentPatientInfoList(patientInfo);
+        if (patientEnrollmentVos.size() > 0) {
+            for (PatientEnrollmentVo p : patientEnrollmentVos) {
+                if (p.getIdCard() != null && p.getIdCard().length() >= 18) {
+                    p.setBirthday(DateUtils.dateTime(DateUtils.YYYY_MM_DD, CommunalUtils.getBirthday(p.getIdCard())));
+                    p.setSex(CommunalUtils.getSex(p.getIdCard()));
+                }
+            }
+        }
+        return patientEnrollmentVos;
+    }
 
     @Override
     public List<PatientEnrollmentVo> selectNoEnrollmentPatientInfoList(PatientInfo patientInfo) {

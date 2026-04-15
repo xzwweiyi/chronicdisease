@@ -629,7 +629,7 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
             info.setPatientIds(patientIds);
         }
         info.setEnrollmentHandlerStatus("3");
-        List<PatientEnrollmentVo> list = patientInfoService.selectEnrollmentPatientInfoList(info);
+        List<PatientEnrollmentVo> list = patientInfoService.selectExcelEnrollmentPatientInfoList(info);
         Map<Long, PatientEnrollmentVo> patientInfoMap = list.stream().collect(Collectors.toMap(
                 PatientEnrollmentVo::getPatientId, Function.identity(), (oldValue, newValue) -> newValue));
 

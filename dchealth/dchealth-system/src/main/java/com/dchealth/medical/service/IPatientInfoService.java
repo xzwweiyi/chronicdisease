@@ -69,6 +69,8 @@ public interface IPatientInfoService
 
     List<PatientEnrollmentVo> selectEnrollmentPatientInfoList(PatientInfo patientInfo);
 
+    List<PatientEnrollmentVo> selectExcelEnrollmentPatientInfoList(PatientInfo patientInfo);
+
     List<PatientEnrollmentVo> selectNoEnrollmentPatientInfoList(PatientInfo patientInfo);
 
     List<PatientInfo> selectPatientInfoByPersonId(String personId);
