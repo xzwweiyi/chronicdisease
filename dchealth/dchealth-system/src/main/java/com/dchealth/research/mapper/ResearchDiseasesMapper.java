@@ -1,10 +1,11 @@
 package com.dchealth.research.mapper;
 
-import java.util.List;
 import com.dchealth.research.domain.ResearchDiseases;
 import com.dchealth.research.domain.vo.ResearchDiseasesVO;
 import com.dchealth.research.domain.vo.ResearchInfoVo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 病种Mapper接口
@@ -47,7 +48,7 @@ public interface ResearchDiseasesMapper
 
     public List<ResearchDiseases> selectResearchDiseasesByAuthLess();
 
-    public List<ResearchDiseases> selectResearchDiseasesByAuth2(@Param("detpId") Long detpId,@Param("diseaseName") String diseaseName);
+    public List<ResearchDiseases> selectResearchDiseasesByAuth2(@Param("deptId") Long deptId,@Param("diseaseName") String diseaseName);
 
     public List<ResearchDiseases> selectResearchDiseasesByUserId(@Param("userId")Long userId,@Param("diseaseName") String diseaseNam);
 
