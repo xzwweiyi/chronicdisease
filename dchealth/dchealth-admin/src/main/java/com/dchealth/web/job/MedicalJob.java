@@ -262,7 +262,9 @@ public class MedicalJob {
                             getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
                         }
                     }else{
-                        patientRecordMapper.batchInsertPatientRecord(insertList);
+                        for (PatientRecord record : insertList) {
+                            patientRecordMapper.insertPatientRecord(record);
+                        }
                     }
 
                     patientInfo.setIsEndCreateRecord("0");
