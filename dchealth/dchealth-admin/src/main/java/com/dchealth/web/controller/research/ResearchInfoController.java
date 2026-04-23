@@ -224,6 +224,20 @@ public class ResearchInfoController extends BaseController
         return medicalJob.followUpTasksAreGeneratedManually(id,patientId);
     }
     /**
+     * 更新手动生成随访任务
+     * id队列id
+     */
+    @Log(title = "更新手动生成随访任务", businessType = BusinessType.UPDATE)
+    @GetMapping("/manuallyFollowUpPlanJobHandler")
+    public AjaxResult manuallyFollowUpPlanJobHandler() {
+        try {
+            medicalJob.manuallyFollowUpPlanJobHandler();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return AjaxResult.success();
+    }
+    /**
      * 测试xxjob随访任务
      * id队列id
      */

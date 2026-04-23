@@ -84,6 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outboundCreateTime != null  and outboundCreateTime != ''"> and TO_DAYS(g.create_time) = TO_DAYS(#{outboundCreateTime})</if>
             <if test="isDownloadSound != null  and isDownloadSound != ''"> and g.is_download_sound = #{isDownloadSound}</if>
             <if test="isDownloadSoundCode != null  and isDownloadSoundCode != ''"> and (g.xunfei_result_code = '0' or g.xunfei_result_code = '15')</if>
+             and pr.follow_status !=-1
         </where>
     </select>
 
@@ -111,6 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planVisitTime != null "> and g.plan_visit_time = #{planVisitTime}</if>
             <if test="status != null  and status != ''"> and g.status = #{status}</if>
             <if test="outboundCreateTime != null  and outboundCreateTime != ''"> and TO_DAYS(g.create_time) = TO_DAYS(#{outboundCreateTime})</if>
+            and pr.follow_status !=-1
         </where>
     </select>
 
@@ -153,6 +155,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             <if test="patientName != null  and patientName != '' "> and pi.patient_name like concat('%', #{patientName}, '%')</if>
             <if test="patientId != null  and patientId != '' "> and pi.patient_id like concat('%', #{patientId}, '%')</if>
+            and pr.follow_status !=-1
         </where>
     </select>
 
@@ -179,6 +182,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskId != null  and taskId != ''"> and g.task_Id = #{taskId}</if>
             <if test="xunfeiRecordId != null  and xunfeiRecordId != ''"> and g.xunfei_record_id = #{xunfeiRecordId}</if>
             <if test="outboundCreateTime != null  and outboundCreateTime != ''"> and TO_DAYS(g.create_time) = TO_DAYS(#{outboundCreateTime})</if>
+            and pr.follow_status !=-1
         </where>
         group by g.research_id
     </select>
@@ -354,7 +358,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByOutboundAndRemindType" resultMap="PatientRecordOutboundResult">
         <include refid="selectPatientRecordOutboundVo"/>
-        where g.record_id = #{recordId} and g.outbound_type = #{outboundType} and g.remind_type = #{remindType}  limit 0,1
+        where g.record_id = #{recordId} and g.outbound_type = #{outboundType} and g.remind_type = #{remindType}   and pr.follow_status !=-1  limit 0,1
     </select>
 
 

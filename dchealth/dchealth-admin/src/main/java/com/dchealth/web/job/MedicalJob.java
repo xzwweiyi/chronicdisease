@@ -85,6 +85,10 @@ public class MedicalJob {
         if (patientInfo == null){
             return AjaxResult.error("没有此患者");
         }
+        PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(id, patientId);
+        if (patientRecord == null){
+            return AjaxResult.error("此患者已经手动创建过，需要等任务完成才可以再次手动创建");
+        }
         //所有进行中队列的规则
         String resultStr = "";
         List<PatientRecord> insertRecord = new ArrayList<>();
@@ -93,7 +97,15 @@ public class MedicalJob {
         return AjaxResult.success(resultStr);
     }
 
-
+    /**
+     * 随访手动任务更新
+     */
+    @XxlJob("manuallyFollowUpPlanJobHandler")
+    public void manuallyFollowUpPlanJobHandler() throws Exception {
+        XxlJobHelper.log("随访手动任务更新",DateUtils.getTime());
+        patientRecordMapper.updateManuallyFollowUpList();
+        XxlJobHelper.log("随访手动任务更新结束",DateUtils.getTime());
+    }
     /**
      * 随访计划
      */
@@ -249,7 +261,7 @@ public class MedicalJob {
                 //创建随访1的PatientRecord记录
                 followUpTasksAreGeneratedManually(listTotal,insertList, researchInfo, patientRecord, recordTemplate,patientInfo);
                 if(insertList.size()>0){
-                    patientInfo.setGeneratedManually(patientInfo.getGeneratedManually() == null? BigDecimal.ONE.longValue():patientInfo.getGeneratedManually()+BigDecimal.ONE.longValue());
+                    patientInfo.setGeneratedManually(patientInfo.getGeneratedManually() == 0? BigDecimal.ONE.longValue() :patientInfo.getGeneratedManually()+BigDecimal.ONE.longValue());
                     //肥胖综合征
                     List<Long> list=followPropertyMapper.getDict("research");
                     for (PatientRecord record : insertList) {
@@ -257,12 +269,14 @@ public class MedicalJob {
                     }
                     if (list.contains(researchId)){
                         for (PatientRecord record : insertList) {
+                            record.setFollowStatus("-1");
                             patientRecordMapper.insertPatientRecord(record);
                             logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
                             getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
                         }
                     }else{
                         for (PatientRecord record : insertList) {
+                            record.setFollowStatus("-1");
                             patientRecordMapper.insertPatientRecord(record);
                         }
                     }

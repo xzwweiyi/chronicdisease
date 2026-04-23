@@ -214,7 +214,7 @@ public class PatientInfo extends BaseEntity
     /**
      * 手动入组次数
      */
-    private Long generatedManually;
+    private long generatedManually;
 
     public PatientInfo(){}
 

@@ -128,7 +128,8 @@
         g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card,
         (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` = '基线' and follow_status = 3 and patient_id = g.patient_id) as is_submit_base,
         (select case when count(1)>0 then 0 else 1 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status != 3 and patient_id = g.patient_id) as is_complete_followup,
-        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status = 3 and patient_id = g.patient_id) as exists_complete_followup
+        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status = 3 and patient_id = g.patient_id) as exists_complete_followup,
+        g.generated_manually
         from patient_info g
         INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
         INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
@@ -818,7 +819,8 @@
         a.research_id researchId,
         a.enrollment_time enrollmentTime,
         a.dept_id deptId,
-        b.disease_type_id diseaseTypeId
+        b.disease_type_id diseaseTypeId,
+        a.generated_manually
         FROM
         patient_info a INNER JOIN research_info b on a.research_id = b.id
         INNER join sys_user su on su.user_name=b.create_by

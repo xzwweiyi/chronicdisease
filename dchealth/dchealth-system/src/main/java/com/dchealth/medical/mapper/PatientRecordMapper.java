@@ -229,4 +229,8 @@ public interface PatientRecordMapper
      * @return
      */
     List<StatisticsFollowRateVo> selectFollowListBySuccess(StatisticsFollowRateVo statisticsParam);
+
+    PatientRecord selectNoFollowupOnePatientRecordByResearchId(@Param("researchId")Long researchId,@Param("id") Long patientId);
+
+    void updateManuallyFollowUpList();
 }
