@@ -249,8 +249,12 @@ public class MedicalJob {
                 //创建随访1的PatientRecord记录
                 followUpTasksAreGeneratedManually(listTotal,insertList, researchInfo, patientRecord, recordTemplate,patientInfo);
                 if(insertList.size()>0){
+                    patientInfo.setGeneratedManually(patientInfo.getGeneratedManually() == null? BigDecimal.ONE.longValue():patientInfo.getGeneratedManually()+BigDecimal.ONE.longValue());
                     //肥胖综合征
                     List<Long> list=followPropertyMapper.getDict("research");
+                    for (PatientRecord record : insertList) {
+                        record.setGeneratedManually(patientInfo.getGeneratedManually());
+                    }
                     if (list.contains(researchId)){
                         for (PatientRecord record : insertList) {
                             patientRecordMapper.insertPatientRecord(record);
@@ -260,7 +264,7 @@ public class MedicalJob {
                     }else{
                         patientRecordMapper.batchInsertPatientRecord(insertList);
                     }
-                    patientInfo.setGeneratedManually(patientInfo.getGeneratedManually() == null? BigDecimal.ONE.longValue():patientInfo.getGeneratedManually()+BigDecimal.ONE.longValue());
+
                     patientInfo.setIsEndCreateRecord("0");
                     patientInfoMapper.updatePatientInfo(patientInfo);
                     logger.info("----------------------------------------队列id:{}插入周期数量:{}-----------------",researchId,insertList.size());

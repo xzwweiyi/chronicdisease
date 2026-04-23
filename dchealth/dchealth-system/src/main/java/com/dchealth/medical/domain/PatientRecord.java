@@ -201,6 +201,10 @@ public class PatientRecord extends BaseEntity{
     private Date endTime;
 
 
+    /**
+     * 手动入组次数
+     */
+    private Long generatedManually;
 
 
     public Date getStartTime() {

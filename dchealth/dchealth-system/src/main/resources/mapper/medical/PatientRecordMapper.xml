@@ -366,7 +366,7 @@
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
         ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,
-         prt.follow_num, ac.id_card card_id, ac.id_card card_id,p.generated_manually
+         prt.follow_num, ac.id_card card_id, ac.id_card card_id,r.generated_manually
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
@@ -711,6 +711,7 @@
             <if test="followOpinion != null">follow_opinion,</if>
             <if test="followStatus != null">follow_status,</if>
             <if test="followCompleteTime != null">follow_complete_time,</if>
+            <if test="generatedManually != null">generated_manually,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="patientId != null">#{patientId},</if>
@@ -750,6 +751,7 @@
             <if test="followOpinion != null">#{followOpinion},</if>
             <if test="followStatus != null">#{followStatus},</if>
             <if test="followCompleteTime != null">#{followCompleteTime},</if>
+            <if test="generatedManually != null">#{generatedManually},</if>
         </trim>
     </insert>
 
