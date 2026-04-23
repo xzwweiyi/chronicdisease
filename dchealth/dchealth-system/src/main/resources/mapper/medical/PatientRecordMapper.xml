@@ -91,7 +91,7 @@
         <result property="formComplentRate" column="form_complent_rate"/>
         <result property="followNum" column="follow_num"/>
         <result property="cardId" column="card_id"/>
-
+        <result property="generatedManually" column="generated_manually"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.EvaluateVO" id="EvaluateVOResult">
@@ -365,7 +365,8 @@
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate, prt.follow_num, ac.id_card card_id, ac.id_card card_id
+        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,
+         prt.follow_num, ac.id_card card_id, ac.id_card card_id,p.generated_manually
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
@@ -572,7 +573,78 @@
                                      and q.person_id = pi.person_id)
 
     </select>
+    <select id="testXxjobGeneratedManually" resultMap="PatientRecordResult">
+        select pr.record_id,
+               pr.follow_id,
+               pr.patient_id,
+               pr.research_id,
+               pr.stage_num,
+               pr.stage_add_num,
+               pr.lock_visit_time,
+               pi.account_id
+        from patient_record pr,
+             patient_info pi,
+             mp_person mp,
+             (select MAX(r.record_id) as new_record_id
+              from patient_record r
+              where r.research_id = #{researchId}
+              group by r.patient_id) pd,
+             research_info ri
+        where pr.record_id = pd.new_record_id
+          and ri.id = pr.research_id
+          and pi.patient_id = pr.patient_id
+          and mp.person_id = pi.person_id
+          and pr.research_id = #{researchId}
+          and pi.enrollment_status = '1'
+          and pi.is_end_create_record = '0'
+          and pi.account_id > 0
+          and pi.person_id not in (select q.person_id
+                                   from quit_record q
+                                   where q.is_agree = 1
+                                     and pi.research_id = q.research_id
+                                     and q.person_id = pi.person_id)
+          <if test="patientId != null and patientId !=''">
+              and pr.patient_id=#{patientId}
+          </if>
 
+    </select>
+    <select id="followUpTasksAreGeneratedManually" resultMap="PatientRecordResult">
+        select pr.record_id,
+        pr.follow_id,
+        pr.patient_id,
+        pr.research_id,
+        pr.stage_num,
+        pr.stage_add_num,
+        pr.lock_visit_time,
+        pi.account_id
+        from patient_record pr,
+        patient_info pi,
+        mp_person mp,
+        (select MAX(r.record_id) as new_record_id
+        from patient_record r
+        where r.research_id = #{researchId}
+        group by r.patient_id) pd,
+        research_info ri
+        where pr.record_id = pd.new_record_id
+        and ri.id = pr.research_id
+          and pi.patient_id = pr.patient_id
+          and mp.person_id = pi.person_id
+          and pr.research_id = #{researchId}
+          and pr.follow_id in
+          <foreach collection="followIds" item="followId" open="(" separator="," close=")">
+              #{followId}
+          </foreach>
+          and pi.patient_id=#{patientId}
+          and pi.enrollment_status = '1'
+          and pi.account_id > 0
+          and pi.person_id not in (select q.person_id
+                                   from quit_record q
+                                   where q.is_agree = 1
+                                     and pi.research_id = q.research_id
+                                     and q.person_id = pi.person_id)
+
+
+    </select>
     <select id="selectMaxRecordByResearchId" resultMap="PatientRecordResult">
         select pr.record_id,
                pr.follow_id,

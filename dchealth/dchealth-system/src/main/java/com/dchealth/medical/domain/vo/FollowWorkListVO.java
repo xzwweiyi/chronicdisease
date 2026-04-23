@@ -170,4 +170,8 @@ public class FollowWorkListVO {
 
     private String cardId;
 
+    /**
+     * 手动入组次数
+     */
+    private int generatedManually;
 }

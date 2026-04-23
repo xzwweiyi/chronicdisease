@@ -200,6 +200,9 @@ public class PatientRecord extends BaseEntity{
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
+
+
+
     public Date getStartTime() {
         return startTime;
     }
@@ -283,13 +286,15 @@ public class PatientRecord extends BaseEntity{
             this.stageNum = old.getStageNum() + 1;
         }
         this.followId = recordTemplate.getFollowId();
+        int interval = recordTemplate.getFollowInterval() != null ? recordTemplate.getFollowInterval().intValue() : 0;
+
         //插入的是正确算出来的随访时间
         if ("1".equals(recordTemplate.getFollowIntervalUnit())){
-            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),recordTemplate.getFollowInterval().intValue());
+            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),interval);
         }else if ("2".equals(recordTemplate.getFollowIntervalUnit())){
-            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),recordTemplate.getFollowInterval().intValue() * 7);
+            this.visitTime = DateUtils.addWeeks(old.getLockVisitTime(),interval);
         }else if ("3".equals(recordTemplate.getFollowIntervalUnit())){
-            this.visitTime = DateUtils.addDays(old.getLockVisitTime(),recordTemplate.getFollowInterval().intValue() * 30);
+            this.visitTime = DateUtils.addMonths(old.getLockVisitTime(),interval);
         }
         this.lockVisitTime = this.visitTime;
         this.setCreateTime(new Date());
@@ -301,7 +306,6 @@ public class PatientRecord extends BaseEntity{
         this.name = name + String.format("%02d", old.getStageAddNum());
         L.info("当前时间:{} 随访节点名称:{} ",System.currentTimeMillis(), this.name );
     }
-
     /**
      * 生成基线
      * @param patientInfo

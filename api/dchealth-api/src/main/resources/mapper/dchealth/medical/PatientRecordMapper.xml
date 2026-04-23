@@ -79,6 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="loseReason"    column="lose_reason"    />
         <result property="visitTime"    column="visit_time"    />
         <result property="warnStatus"    column="warn_status"    />
+        <result property="generatedManually"    column="generated_manually"    />
     </resultMap>
 
     <resultMap type="com.dchealth.cro.medical.vo.PatientRecordVo" id="PatientRecordVoResult">
@@ -176,7 +177,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectFollowWorkPatientRecordLis" parameterType="com.dchealth.cro.medical.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
         select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, p.patient_mobile mobile,r.over_time_handle_status,
-        r.lose_type,r.lose_reason,r.visit_time  from patient_record r, patient_info p, research_info i, mp_person mp
+        r.lose_type,r.lose_reason,r.visit_time,p.generated_manually  from patient_record r, patient_info p, research_info i, mp_person mp
         where i.id=p.research_id and p.patient_id=r.patient_id and mp.person_id=p.person_id and p.patient_activity_status = '1'
         and r.research_id = #{researchId} and i.del_flag = '0'
         and r.is_submit = 1

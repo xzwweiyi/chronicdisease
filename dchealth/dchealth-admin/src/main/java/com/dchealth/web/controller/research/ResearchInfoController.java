@@ -13,6 +13,7 @@ import com.dchealth.medical.domain.vo.ResearchPatientVO;
 import com.dchealth.medical.service.IPatientInfoService;
 import com.dchealth.research.domain.vo.ResearchInfoVo;
 import com.dchealth.research.service.IResearchInfoService;
+import com.dchealth.web.job.MedicalJob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,6 +44,8 @@ public class ResearchInfoController extends BaseController
 
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private MedicalJob medicalJob;
     /**
      * 查询队列基础信息列表
      */
@@ -209,5 +212,25 @@ public class ResearchInfoController extends BaseController
     @GetMapping("/followUpPersonImportHandler")
     public void followUpPersonImportHandler(String id,String startDate,String endDate) throws Exception {
         syncRecordDataESService.syncMpDiagnosisInfos(id, startDate, endDate);
+    }
+
+    /**
+     * 手动生成随访任务
+     * id队列id
+     */
+    @Log(title = "手动生成随访任务", businessType = BusinessType.UPDATE)
+    @GetMapping("/followUpTasksAreGeneratedManually")
+    public AjaxResult followUpTasksAreGeneratedManually(@RequestParam Long id,@RequestParam Long patientId) {
+        return medicalJob.followUpTasksAreGeneratedManually(id,patientId);
+    }
+    /**
+     * 测试xxjob随访任务
+     * id队列id
+     */
+    @Log(title = "测试xxjob随访任务", businessType = BusinessType.UPDATE)
+    @GetMapping("/testXxjobGeneratedManually")
+    public AjaxResult testXxjobGeneratedManually(@RequestParam Long id,@RequestParam Long patientId,@RequestParam Date specifyTheTime) {
+         medicalJob.testXxjobGeneratedManually(id,patientId,specifyTheTime);
+         return AjaxResult.success();
     }
 }
