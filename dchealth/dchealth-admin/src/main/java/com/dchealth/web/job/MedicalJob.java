@@ -469,7 +469,7 @@ public class MedicalJob {
     private void followUpTasksAreGeneratedManually(List<PatientRecord> listTotal, List<PatientRecord> insertList,ResearchInfo researchInfo,
                                PatientRecord patientRecord,PatientRecordTemplate recordTemplate,PatientInfo patientInfo) {
         patientRecord.setStageAddNum(1);
-
+        Date date = new Date();
         patientRecord.setPersonId(patientInfo.getPersonId());
         if ("1".equals(recordTemplate.getFollowFrequency())){
             //限制频次
@@ -485,10 +485,10 @@ public class MedicalJob {
                 logger.info("已经切换了队列,旧队列不再生成新的随访节点,patientId:{}",patientInfo.getPatientId());
                 return ;
             }
-            PatientRecord newPatientRecord = new PatientRecord(new Date(),patientRecord, recordTemplate);
+            PatientRecord newPatientRecord = new PatientRecord(date,patientRecord, recordTemplate);
             newPatientRecord.setStageNum(1);
             listTotal.add(newPatientRecord);
-            newPatientRecord =  new PatientRecord(new Date(),patientRecord, recordTemplate);
+            newPatientRecord =  new PatientRecord(date,patientRecord, recordTemplate);
             newPatientRecord.setStageNum(1);
             insertList.add(newPatientRecord);
         }else if ("2".equals(recordTemplate.getFollowFrequency())){//不限频次
@@ -500,10 +500,10 @@ public class MedicalJob {
                 logger.info("已经切换了队列,旧队列不再生成新的随访节点,patientId:{}",patientInfo.getPatientId());
                 return;
             }
-            PatientRecord newPatientRecord = new PatientRecord(new Date(),patientRecord, recordTemplate);
+            PatientRecord newPatientRecord = new PatientRecord(date,patientRecord, recordTemplate);
             newPatientRecord.setStageNum(1);
             listTotal.add(newPatientRecord);
-            newPatientRecord =  new PatientRecord(new Date(),patientRecord, recordTemplate);
+            newPatientRecord =  new PatientRecord(date,patientRecord, recordTemplate);
             newPatientRecord.setStageNum(1);
             insertList.add(newPatientRecord);
         }
