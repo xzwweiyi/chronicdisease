@@ -62,4 +62,6 @@ public interface QuitRecordMapper {
      * @param record
      */
     Integer removeNowDayRecord(@Param("record") PatientRecord record);
+
+    QuitRecord selectPatient(@Param("researchId")Long id,@Param("personId") String personId);
 }

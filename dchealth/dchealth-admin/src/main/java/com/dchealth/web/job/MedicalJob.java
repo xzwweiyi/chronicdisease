@@ -11,9 +11,11 @@ import com.dchealth.common.utils.StringUtils;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.PatientRecord;
 import com.dchealth.medical.domain.PatientRecordTemplate;
+import com.dchealth.medical.domain.QuitRecord;
 import com.dchealth.medical.mapper.PatientInfoMapper;
 import com.dchealth.medical.mapper.PatientRecordMapper;
 import com.dchealth.medical.mapper.PatientRecordTemplateMapper;
+import com.dchealth.medical.mapper.QuitRecordMapper;
 import com.dchealth.research.domain.ResearchInfo;
 import com.dchealth.research.domain.ResearchUserRole;
 import com.dchealth.research.mapper.ResearchInfoMapper;
@@ -69,12 +71,15 @@ public class MedicalJob {
 
     @Autowired
     private FollowPropertyMapper followPropertyMapper;
+
+    @Autowired
+    private QuitRecordMapper quitRecordMapper;
     /**
      * 随访任务手动生成
      */
-    public AjaxResult followUpTasksAreGeneratedManually(Long id,Long patientId){
+    public AjaxResult followUpTasksAreGeneratedManually(Long researchId,Long patientId){
         //进行中的队列
-        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(id);
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
         if (researchInfo == null){
             return AjaxResult.error("没有此队列");
         }
@@ -85,9 +90,13 @@ public class MedicalJob {
         if (patientInfo == null){
             return AjaxResult.error("没有此患者");
         }
-        PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(id, patientId);
-        if (patientRecord == null){
+        PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(researchId, patientId);
+        if (patientRecord != null){
             return AjaxResult.error("此患者已经手动创建过，需要等任务完成才可以再次手动创建");
+        }
+        QuitRecord quitRecord = quitRecordMapper.selectPatient(researchInfo.getId(),patientInfo.getPersonId());
+        if (quitRecord != null){
+            return AjaxResult.error("此患者已经退出队列，无法手动创建任务");
         }
         //所有进行中队列的规则
         String resultStr = "";
@@ -251,6 +260,7 @@ public class MedicalJob {
 
                 //查询的是同一个队列中同一个登录账号下[由于A->B->A可能 有多个patientId]的最大的随访记录，不是所有的，这也是为啥多次插入而不重复插入数据的根因
                 PatientRecord patientRecord = patientRecordMapper.followUpTasksAreGeneratedManually(researchInfo.getId(),patientId,followIds);
+
                 logger.info("随访计划定时任务执行队列id:{},手动入组的患者id:{}",researchInfo.getId(),patientRecord.getPatientId());
                 if (!maps.containsKey(patientRecord.getFollowId())){
                     return;

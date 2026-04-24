@@ -1211,7 +1211,7 @@
         GROUP BY a.patient_id
     </select>
     <select id="selectNoFollowupOnePatientRecordByResearchId" resultMap="PatientRecordResult">
-        select * from patient_record  where  follow_status !=-1 and research_id = #{researchId} and  patient_id=#{patientId}
+        select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
     </select>
     <update id="updateManuallyFollowUpList">
         update patient_record set follow_status =1  where  follow_status =-1

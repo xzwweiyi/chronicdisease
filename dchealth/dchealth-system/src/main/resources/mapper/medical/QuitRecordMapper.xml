@@ -92,7 +92,7 @@
         delete from patient_record_outbound where record_id = #{record.recordId} and research_id = #{record.researchId} and status = 1
     </update>
 
-    <update id="removeNowDayRecord">
-        delete from patient_record where record_id = #{record.recordId} and date(create_time) = date(now()) and fill_status = 0
-    </update>
+    <select id="selectPatient" resultMap="quitRecordResult" >
+        select * from quit_record where is_agree =1 and research_id =#{researchId} and person_id=#{personId}
+    </select>
 </mapper>

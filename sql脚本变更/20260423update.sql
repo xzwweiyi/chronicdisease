@@ -2,3 +2,4 @@
 
 ALTER TABLE patient_record ADD generated_manually int(3)  default 0 COMMENT '手动入组次数';
 ALTER TABLE patient_info ADD generated_manually int(3)   default 0 COMMENT '手动入组次数';
+ALTER TABLE patient_record MODIFY COLUMN follow_status varchar(255) DEFAULT null COMMENT '随访状态 -1:随访任务不可见 0:无状态 1:待处理 2:进行中 3:已完成';
