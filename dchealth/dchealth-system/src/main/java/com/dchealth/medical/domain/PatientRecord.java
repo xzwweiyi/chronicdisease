@@ -272,7 +272,43 @@ public class PatientRecord extends BaseEntity{
     private String personId;
 
     public PatientRecord(){}
+    /**
+     * 生成计划随访使用
+     * @param old
+     * @param recordTemplate
+     */
+    public PatientRecord(Date now,PatientRecord old, PatientRecordTemplate recordTemplate){
+        this.researchId = old.getResearchId();
+        this.patientId = old.getPatientId();
+        this.personId = old.getPersonId();
+        this.followTipStatus = 1;
+        //当前节点是基线，模板是随访1的
+        if (old.getFollowId().longValue() != recordTemplate.getFollowId().longValue()){
+            this.stageNum = 1;
+        }else{
+            this.stageNum = old.getStageNum() + 1;
+        }
+        this.followId = recordTemplate.getFollowId();
+        int interval = recordTemplate.getFollowInterval() != null ? recordTemplate.getFollowInterval().intValue() : 0;
 
+        //插入的是正确算出来的随访时间
+        if ("1".equals(recordTemplate.getFollowIntervalUnit())){
+            this.visitTime = DateUtils.addDays(now,interval);
+        }else if ("2".equals(recordTemplate.getFollowIntervalUnit())){
+            this.visitTime = DateUtils.addWeeks(now,interval);
+        }else if ("3".equals(recordTemplate.getFollowIntervalUnit())){
+            this.visitTime = DateUtils.addMonths(now,interval);
+        }
+        this.lockVisitTime = this.visitTime;
+        this.setCreateTime(new Date());
+//        String name = StringUtils.isNotBlankAndNotEmpty(recordTemplate.getFollowName()) ? recordTemplate.getFollowName() : "随访";
+        String name = "随访";
+        this.stageAddNum = old.getStageAddNum();
+        L.info("当前时间:{} stageAddNum:{} ",System.currentTimeMillis(), this.stageAddNum );
+        this.followStatus = "0";
+        this.name = name + String.format("%02d", old.getStageAddNum());
+        L.info("当前时间:{} 随访节点名称:{} ",System.currentTimeMillis(), this.name );
+    }
     /**
      * 生成计划随访使用
      * @param old
