@@ -694,10 +694,10 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
                 .collect(Collectors.toList());
         // 手动入组的手动人数,默认从1开始，但是本身0也算一次
         List<StatisticsFollowRateVo> generatedManually = patientEnrollmentList.stream()
-                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() != 0)
+                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() > 0)
                 .collect(Collectors.toList());
         int generatedManuallySum = patientEnrollmentList.stream()
-                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() != 0)
+                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() > 0)
                 .mapToInt(StatisticsFollowRateVo::getGeneratedManually)
                 .sum();
         int enrollmentNum = noGeneratedManually.size() + generatedManuallySum+generatedManually.size();
