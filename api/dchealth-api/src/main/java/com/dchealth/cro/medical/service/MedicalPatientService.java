@@ -2322,6 +2322,20 @@ public class MedicalPatientService {
     @Transactional
     public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatientDetail(BindPatientDetailForm bindPatientForm) {
         DchealthCloudResponseEntity<PatientAccountInfoVO> result = new DchealthCloudResponseEntity<>();
+
+        // 安全验证：openId与accountId必须匹配，防止遍历攻击
+        PatientAccount accountByOpenId = patientAccountMapper.selectPatientAccountByOpenId(bindPatientForm.getOpenId());
+        if (accountByOpenId == null) {
+            result.setCode(CroApiCodeConstant.USER_NOT_EXIST.getCode());
+            result.setMsg("用户身份验证失败");
+            return result;
+        }
+        if (!accountByOpenId.getAccountId().equals(bindPatientForm.getAccountId())) {
+            result.setCode(CroApiCodeConstant.AUTH_NOT_ALLOW.getCode());
+            result.setMsg("无权查看该用户信息");
+            return result;
+        }
+
         PatientAccount patientAccount =
                 patientAccountMapper.selectPatientAccountByAccountId(bindPatientForm.getAccountId());
         if (patientAccount == null) {
