@@ -1214,6 +1214,6 @@
         select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
     </select>
     <update id="updateManuallyFollowUpList">
-        update patient_record set follow_status =1  where  follow_status =-1
+        update patient_record set follow_status =1  where  follow_status =-1  AND DATE(visit_time) = CURDATE()
     </update>
 </mapper>

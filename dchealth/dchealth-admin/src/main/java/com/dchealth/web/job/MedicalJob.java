@@ -92,7 +92,7 @@ public class MedicalJob {
         }
         PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(researchId, patientId);
         if (patientRecord != null){
-            return AjaxResult.error("此患者已经手动创建过，需要等任务完成才可以再次手动创建");
+            return AjaxResult.error("此患者已手动创建过随访任务，待1次随访后可再次手动创建随访任务");
         }
         QuitRecord quitRecord = quitRecordMapper.selectPatient(researchInfo.getId(),patientInfo.getPersonId());
         if (quitRecord != null){
