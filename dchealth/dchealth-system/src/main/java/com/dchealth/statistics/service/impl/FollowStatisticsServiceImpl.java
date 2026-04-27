@@ -688,8 +688,19 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
 
         // 如果全部不为空，则计算队列在指定时间内入队列患者和参加随访的患者随访率
         List<StatisticsFollowRateVo> patientEnrollmentList = patientInfoMapper.selectFollowEnrollmentList(statisticsParam);
-
-        int enrollmentNum = patientEnrollmentList.size();
+        // 未入组的手动人数
+        List<StatisticsFollowRateVo> noGeneratedManually = patientEnrollmentList.stream()
+                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() == 0)
+                .collect(Collectors.toList());
+        // 手动入组的手动人数,默认从1开始，但是本身0也算一次
+        List<StatisticsFollowRateVo> generatedManually = patientEnrollmentList.stream()
+                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() > 0)
+                .collect(Collectors.toList());
+        int generatedManuallySum = patientEnrollmentList.stream()
+                .filter(patientEnrollment -> patientEnrollment.getGeneratedManually() > 0)
+                .mapToInt(StatisticsFollowRateVo::getGeneratedManually)
+                .sum();
+        int enrollmentNum = noGeneratedManually.size() + generatedManuallySum+generatedManually.size();
 
         List<StatisticsFollowRateVo> patientRecordList = patientRecordMapper.selectFollowListBySuccess(statisticsParam);
 

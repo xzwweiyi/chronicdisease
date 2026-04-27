@@ -211,6 +211,11 @@ public class PatientInfo extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date commitTime;
 
+    /**
+     * 手动入组次数
+     */
+    private long generatedManually;
+
     public PatientInfo(){}
 
     public PatientInfo(PatientInfo old, ResearchInfo researchInfo, String createBy){

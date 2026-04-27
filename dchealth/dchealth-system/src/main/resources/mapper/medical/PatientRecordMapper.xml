@@ -91,7 +91,7 @@
         <result property="formComplentRate" column="form_complent_rate"/>
         <result property="followNum" column="follow_num"/>
         <result property="cardId" column="card_id"/>
-
+        <result property="generatedManually" column="generated_manually"/>
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.EvaluateVO" id="EvaluateVOResult">
@@ -296,6 +296,7 @@
             <if test="visitTime != null ">and g.visit_time = #{visitTime}</if>
             <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}
             </if>
+            and g.follow_status !=-1
         </where>
     </select>
 
@@ -321,6 +322,7 @@
             #{overTimeHandleStatus}
         </if>
         <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        and g.follow_status !=-1
     </select>
 
     <select id="selectFollowWorkBasePatientRecordList"
@@ -355,6 +357,7 @@
             date(p.enrollment_time)
         </if>
         <if test="diseaseTypeId != null "> and i.disease_type_id = #{diseaseTypeId}</if>
+        and r.follow_status !=-1
     </select>
 
     <!--随访超窗待处理的具体患者信息-->
@@ -365,7 +368,8 @@
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate, prt.follow_num, ac.id_card card_id, ac.id_card card_id
+        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,
+         prt.follow_num, ac.id_card card_id, ac.id_card card_id,r.generated_manually
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
@@ -407,6 +411,7 @@
         <if test="enrollmentEndTime != null and enrollmentEndTime != ''">and #{enrollmentEndTime} >=
             date(p.enrollment_time)
         </if>
+        and r.follow_status !=-1
     </select>
 
 
@@ -426,6 +431,7 @@
         </if>
         <if test="patientId != null  and patientId != '' ">and p.patient_id like concat('%', #{patientId}, '%')</if>
         <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        and r.follow_status !=-1
     </select>
 
     <!-- 随访超窗人数 -->
@@ -438,7 +444,7 @@
                  INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
         where prt.follow_num > 0
         and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
-
+          and r.follow_status !=-1
 
     </select>
 
@@ -472,6 +478,7 @@
         <if test="patientName != null  and patientName != '' ">and p.patient_name like concat('%', #{patientName},
             '%')
         </if>
+        and r.follow_status !=-1
     </select>
 
     <select id="selectPatientRecordByResearchReleaseIdAndDate" resultMap="PatientRecordResult">
@@ -495,7 +502,7 @@
               from patient_record pr,
                    (select MAX(r.record_id) as new_record_id
                     from patient_record r
-                    where r.research_id = #{researchId}
+                    where r.research_id = #{researchId} and r.follow_status !=-1
                       and TO_DAYS(r.lock_visit_time) = TO_DAYS(#{handleDate})
                     group by r.patient_id) pd
               where pr.record_id = pd.new_record_id) c on c.patient_id = c.patient_id
@@ -518,7 +525,7 @@
               from patient_record pr,
                    (select MAX(r.record_id) as new_record_id
                     from patient_record r
-                    where r.research_id = #{researchId}
+                    where r.research_id = #{researchId}  and r.follow_status !=-1
                       and date_format(r.lock_visit_time, '%y-%m') &lt;= date_format(#{handleDate}, '%y-%m')
                     group by r.patient_id) pd
               where pr.record_id = pd.new_record_id) c on c.patient_id = pi.patient_id
@@ -536,6 +543,7 @@
           and not exists (select 1
                           from patient_record pr2
                           where pr.patient_id = pr2.patient_id and `name` != '基线' and follow_status != 3)
+          and pr.follow_status !=-1
 
     </select>
 
@@ -554,7 +562,7 @@
              mp_person mp,
              (select MAX(r.record_id) as new_record_id
               from patient_record r
-              where r.research_id = #{researchId}
+              where r.research_id = #{researchId} and r.follow_status !=-1
               group by r.patient_id) pd,
              research_info ri
         where pr.record_id = pd.new_record_id
@@ -572,7 +580,78 @@
                                      and q.person_id = pi.person_id)
 
     </select>
+    <select id="testXxjobGeneratedManually" resultMap="PatientRecordResult">
+        select pr.record_id,
+               pr.follow_id,
+               pr.patient_id,
+               pr.research_id,
+               pr.stage_num,
+               pr.stage_add_num,
+               pr.lock_visit_time,
+               pi.account_id
+        from patient_record pr,
+             patient_info pi,
+             mp_person mp,
+             (select MAX(r.record_id) as new_record_id
+              from patient_record r
+              where r.research_id = #{researchId} and r.follow_status !=-1
+              group by r.patient_id) pd,
+             research_info ri
+        where pr.record_id = pd.new_record_id
+          and ri.id = pr.research_id
+          and pi.patient_id = pr.patient_id
+          and mp.person_id = pi.person_id
+          and pr.research_id = #{researchId}
+          and pi.enrollment_status = '1'
+          and pi.is_end_create_record = '0'
+          and pi.account_id > 0
+          and pi.person_id not in (select q.person_id
+                                   from quit_record q
+                                   where q.is_agree = 1
+                                     and pi.research_id = q.research_id
+                                     and q.person_id = pi.person_id)
+          <if test="patientId != null and patientId !=''">
+              and pr.patient_id=#{patientId}
+          </if>
 
+    </select>
+    <select id="followUpTasksAreGeneratedManually" resultMap="PatientRecordResult">
+        select pr.record_id,
+        pr.follow_id,
+        pr.patient_id,
+        pr.research_id,
+        pr.stage_num,
+        pr.stage_add_num,
+        pr.lock_visit_time,
+        pi.account_id
+        from patient_record pr,
+        patient_info pi,
+        mp_person mp,
+        (select MAX(r.record_id) as new_record_id
+        from patient_record r
+        where r.research_id = #{researchId} and r.follow_status !=-1
+        group by r.patient_id) pd,
+        research_info ri
+        where pr.record_id = pd.new_record_id
+        and ri.id = pr.research_id
+          and pi.patient_id = pr.patient_id
+          and mp.person_id = pi.person_id
+          and pr.research_id = #{researchId}
+          and pr.follow_id in
+          <foreach collection="followIds" item="followId" open="(" separator="," close=")">
+              #{followId}
+          </foreach>
+          and pi.patient_id=#{patientId}
+          and pi.enrollment_status = '1'
+          and pi.account_id > 0
+          and pi.person_id not in (select q.person_id
+                                   from quit_record q
+                                   where q.is_agree = 1
+                                     and pi.research_id = q.research_id
+                                     and q.person_id = pi.person_id)
+
+
+    </select>
     <select id="selectMaxRecordByResearchId" resultMap="PatientRecordResult">
         select pr.record_id,
                pr.follow_id,
@@ -586,7 +665,7 @@
              patient_info pi,
              (select MAX(r.record_id) as new_record_id
               from patient_record r
-              where r.research_id = #{researchId}
+              where r.research_id = #{researchId} and r.follow_status !=-1
               group by r.patient_id) pd,
              research_info ri
         where pr.record_id = pd.new_record_id
@@ -639,6 +718,7 @@
             <if test="followOpinion != null">follow_opinion,</if>
             <if test="followStatus != null">follow_status,</if>
             <if test="followCompleteTime != null">follow_complete_time,</if>
+            <if test="generatedManually != null">generated_manually,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="patientId != null">#{patientId},</if>
@@ -678,6 +758,7 @@
             <if test="followOpinion != null">#{followOpinion},</if>
             <if test="followStatus != null">#{followStatus},</if>
             <if test="followCompleteTime != null">#{followCompleteTime},</if>
+            <if test="generatedManually != null">#{generatedManually},</if>
         </trim>
     </insert>
 
@@ -781,6 +862,7 @@
             <if test="overTimeCreateTime != null">and TO_DAYS(g.over_time_create_time) =
                 TO_DAYS(#{overTimeCreateTime})
             </if>
+            and g.follow_status !=-1
         </where>
     </select>
 
@@ -812,7 +894,7 @@
                  JOIN (SELECT MAX(record_id) AS max_id
                        FROM patient_record
                        WHERE patient_id = #{patientId}
-                         AND research_id = #{researchId}) max_rec ON re.record_id = max_rec.max_id
+                         AND research_id = #{researchId} and follow_status !=-1) max_rec ON re.record_id = max_rec.max_id
         WHERE re.patient_id = #{patientId}
           AND re.research_id = #{researchId};
     </select>
@@ -824,23 +906,23 @@
                             FROM patient_record
                             WHERE patient_id = #{patientId}
                               AND research_id = #{researchId}
-                              AND edc_status = '4') b ON re.patient_id = b.patient_id
+                              AND edc_status = '4' and follow_status !=-1) b ON re.patient_id = b.patient_id
         WHERE re.patient_id = #{patientId}
           AND re.research_id = #{researchId}
           AND re.record_id = (SELECT MAX(record_id)
                               FROM patient_record
                               WHERE patient_id = #{patientId}
-                                AND research_id = #{researchId});
+                                AND research_id = #{researchId} and follow_status !=-1);
     </select>
 
     <select id="selectPatientRecordByPatientId" resultMap="PatientRecordResult">
         <include refid="selectPatientRecordInfo"/>
-        where patient_id = #{patientId}
+        where patient_id = #{patientId} and follow_status !=-1
     </select>
 
     <select id="selectPatientRecordTodo" resultMap="PatientRecordResult">
         <include refid="selectPatientRecordVo"/>
-        where edc_status = 1
+        where edc_status = 1 and follow_status !=-1
     </select>
 
     <select id="selectEcdPatientRecordVoList" parameterType="com.dchealth.medical.domain.vo.PatientRecordVo"
@@ -854,6 +936,7 @@
             <if test="patientName != null  and patientName != ''">and i.patient_name like concat('%', #{patientName},
                 '%')
             </if>
+            and re.follow_status !=-1
         </where>
     </select>
 
@@ -866,7 +949,7 @@
     <select id="selectPatientRecordsByResearchIdAndPatientId" parameterType="java.util.Map"
             resultMap="PatientRecordResult">
         <include refid="selectPatientRecordVo"/>
-        where research_id = #{researchId} and patient_id = #{patientId}
+        where research_id = #{researchId} and patient_id = #{patientId}  and follow_status !=-1
     </select>
 
     <select id="selectOldByPatientId" resultMap="PatientRecordResult">
@@ -912,6 +995,7 @@
         <if test="userId != null ">and (i.id in (select research_id from research_user_role where user_id = #{userId})
             or su.user_id = #{userId} )
         </if>
+        and r.follow_status !=-1
     </select>
 
     <select id="selectPatientRecordListForStatistics3" parameterType="com.dchealth.statistics.domain.StatisticsParam"
@@ -923,6 +1007,7 @@
         <if test="researchId != null ">and p.research_id = #{researchId}</if>
         <if test="deptId != null ">and p.dept_id = #{deptId}</if>
         <if test="enrollmentHandlerStatus != null ">and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        and r.follow_status !=-1
     </select>
 
     <select id="selectList" parameterType="PatientRecord" resultMap="PatientRecordResult">
@@ -941,6 +1026,7 @@
             <if test="followOpinionUserId != null ">and g.follow_opinion_user_id = #{followOpinionUserId}</if>
             <if test="startTime != null ">and TO_DAYS(g.follow_complete_time) &gt;= TO_DAYS(#{startTime})</if>
             <if test="endTime != null ">and TO_DAYS(g.follow_complete_time) &lt;= TO_DAYS(#{endTime})</if>
+            and g.follow_status !=-1
         </where>
     </select>
     <select id="selectPatientRecordByFollowId" resultMap="PatientRecordResult">
@@ -1008,7 +1094,7 @@
         WHERE pr.follow_id = #{followId}
           AND pr.over_time_status = 1
           AND pi.is_end_create_record = '0'
-
+          and pr.follow_status !=-1
     </select>
 
 
@@ -1039,7 +1125,7 @@
         LEFT JOIN patient_info patientInfo ON patientInfo.patient_id = patientRecord.patient_id
         LEFT JOIN research_info researchInfo on researchInfo.id = patientInfo.research_id
         LEFT JOIN research_diseases researchDiseases ON researchDiseases.disease_id = researchInfo.disease_type_id
-        where patientRecord.name != '基线' and patientInfo.patient_status != 6
+        where patientRecord.name != '基线' and patientInfo.patient_status != 6  and patientRecord.follow_status !=-1
         <if test="deptId != null ">
             AND patientInfo.dept_id = #{deptId}
         </if>
@@ -1054,7 +1140,7 @@
     <select id="selectRecordCount" resultType="integer" parameterType="StatisticsParam">
         <include refid="selectRecordSql"/>
         <if test="startTime != null and endTime != null ">
-            AND patientRecord.create_time BETWEEN #{startTime} and #{endTime}
+            AND patientRecord.create_time BETWEEN #{startTime} and #{endTime} and patientRecord.follow_status !=-1
         </if>
     </select>
 
@@ -1094,7 +1180,7 @@
         INNER join sys_user su on su.user_name=c.create_by
 
         WHERE
-        a.follow_status != 0
+        a.follow_status != 0 and a.follow_status !=-1
         AND a.name != '基线'
         and c.del_flag = '0' and c.research_status != 0 and b.patient_status != 6
 
@@ -1124,5 +1210,10 @@
         </if>
         GROUP BY a.patient_id
     </select>
-
+    <select id="selectNoFollowupOnePatientRecordByResearchId" resultMap="PatientRecordResult">
+        select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
+    </select>
+    <update id="updateManuallyFollowUpList">
+        update patient_record set follow_status =1  where  follow_status =-1  AND DATE(visit_time) = CURDATE()
+    </update>
 </mapper>

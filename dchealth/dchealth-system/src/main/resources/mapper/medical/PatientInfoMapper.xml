@@ -43,6 +43,7 @@
         <result property="isSubmitBase"    column="is_submit_base"    />
         <result property="isCompleteFollowup"    column="is_complete_followup"    />
         <result property="existsCompleteFollowup"    column="exists_complete_followup"    />
+        <result property="generatedManually"    column="generated_manually"    />
     </resultMap>
 
     <resultMap type="com.dchealth.medical.domain.vo.FollowWorkListVO" id="ResearchPatientVOResult">
@@ -115,7 +116,8 @@
     <sql id="selectPatientInfoVo">
         select patient_id, account_id, person_id, patient_name, clinic_no, patient_code, research_id, dept_id, doctor_id, patient_mobile, patient_status,
         enrollment_status, loss_cause, loss_cause_other, update_by, create_by, create_time, update_time, enrollment_time, plan_research_id, enrollment_result,
-        enrollment_result_content, enrollment_handler_status, allocated_status, allocated_handler_status, patient_activity_status, adjust_type, old_patient_id ,is_end_create_record ,channel_type ,plan_scan_research_id
+        enrollment_result_content, enrollment_handler_status, allocated_status, allocated_handler_status, patient_activity_status, adjust_type, old_patient_id ,is_end_create_record ,
+        channel_type ,plan_scan_research_id,generated_manually
         from patient_info
     </sql>
 
@@ -126,7 +128,8 @@
         g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card,
         (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` = '基线' and follow_status = 3 and patient_id = g.patient_id) as is_submit_base,
         (select case when count(1)>0 then 0 else 1 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status != 3 and patient_id = g.patient_id) as is_complete_followup,
-        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status = 3 and patient_id = g.patient_id) as exists_complete_followup
+        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status = 3 and patient_id = g.patient_id) as exists_complete_followup,
+        g.generated_manually
         from patient_info g
         INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
         INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
@@ -541,6 +544,7 @@
             <if test="cityId != null">city_id = #{cityId},</if>
             <if test="areaId != null">area_id = #{areaId},</if>
             <if test="visitType != null">visit_type = #{visitType},</if>
+            <if test="generatedManually != null">generated_manually = #{generatedManually},</if>
         </trim>
         where patient_id = #{patientId}
     </update>
@@ -815,12 +819,12 @@
         a.research_id researchId,
         a.enrollment_time enrollmentTime,
         a.dept_id deptId,
-        b.disease_type_id diseaseTypeId
+        b.disease_type_id diseaseTypeId,
+        a.generated_manually generatedManually
         FROM
         patient_info a INNER JOIN research_info b on a.research_id = b.id
         INNER join sys_user su on su.user_name=b.create_by
         WHERE a.enrollment_status = 1 and b.del_flag = '0' and b.research_status != 0 and a.patient_status != 6
-
         <if test="inputStartTime != null">
             and DATE_FORMAT(a.enrollment_time,'%Y-%m-%d') &gt;= #{inputStartTime}
         </if>

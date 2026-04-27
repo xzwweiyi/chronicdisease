@@ -50,7 +50,10 @@ public interface PatientRecordMapper
 
     //批量生成根据队列id查询最新记录
     public List<PatientRecord> selectOnePatientMaxRecordByResearchId(Long researchId);
-
+    //批量生成根据队列id查询最新记录
+    public List<PatientRecord> testXxjobGeneratedManually(@Param("researchId")Long researchId,@Param("patientId") Long patientId);
+    //批量生成根据队列id查询最新记录
+    public PatientRecord followUpTasksAreGeneratedManually(@Param("researchId")Long researchId,@Param("patientId")Long patientId,@Param("followIds")List<Long> followIds);
     public List<PatientRecord> selectMaxRecordByResearchId(Long researchId);
 
 
@@ -226,4 +229,8 @@ public interface PatientRecordMapper
      * @return
      */
     List<StatisticsFollowRateVo> selectFollowListBySuccess(StatisticsFollowRateVo statisticsParam);
+
+    PatientRecord selectNoFollowupOnePatientRecordByResearchId(@Param("researchId")Long researchId,@Param("patientId") Long patientId);
+
+    void updateManuallyFollowUpList();
 }

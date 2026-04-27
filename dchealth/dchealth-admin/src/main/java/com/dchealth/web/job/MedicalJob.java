@@ -4,15 +4,18 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.dchealth.account.domain.AccountNotice;
 import com.dchealth.account.mapper.AccountNoticeMapper;
+import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.utils.DateUtils;
 import com.dchealth.common.utils.SplitListUtils;
 import com.dchealth.common.utils.StringUtils;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.PatientRecord;
 import com.dchealth.medical.domain.PatientRecordTemplate;
+import com.dchealth.medical.domain.QuitRecord;
 import com.dchealth.medical.mapper.PatientInfoMapper;
 import com.dchealth.medical.mapper.PatientRecordMapper;
 import com.dchealth.medical.mapper.PatientRecordTemplateMapper;
+import com.dchealth.medical.mapper.QuitRecordMapper;
 import com.dchealth.research.domain.ResearchInfo;
 import com.dchealth.research.domain.ResearchUserRole;
 import com.dchealth.research.mapper.ResearchInfoMapper;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -68,8 +72,49 @@ public class MedicalJob {
     @Autowired
     private FollowPropertyMapper followPropertyMapper;
 
+    @Autowired
+    private QuitRecordMapper quitRecordMapper;
+    /**
+     * 随访任务手动生成
+     */
+    public AjaxResult followUpTasksAreGeneratedManually(Long researchId,Long patientId){
+        //进行中的队列
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
+        if (researchInfo == null){
+            return AjaxResult.error("没有此队列");
+        }
+        if (researchInfo != null && "0".equals(researchInfo.getResearchStatus())){
+            return AjaxResult.error("当前队列不是进行中");
+        }
+        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientId);
+        if (patientInfo == null){
+            return AjaxResult.error("没有此患者");
+        }
+        PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(researchId, patientId);
+        if (patientRecord != null){
+            return AjaxResult.error("此患者已手动创建过随访任务，待1次随访后可再次手动创建随访任务");
+        }
+        QuitRecord quitRecord = quitRecordMapper.selectPatient(researchInfo.getId(),patientInfo.getPersonId());
+        if (quitRecord != null){
+            return AjaxResult.error("此患者已经退出队列，无法手动创建任务");
+        }
+        //所有进行中队列的规则
+        String resultStr = "";
+        List<PatientRecord> insertRecord = new ArrayList<>();
+        followUpTasksAreGeneratedManually(researchInfo.getId(),patientId, insertRecord);
+        resultStr = "操作成功,共插入"+insertRecord.size()+"条";
+        return AjaxResult.success(resultStr);
+    }
 
-
+    /**
+     * 随访手动任务更新
+     */
+    @XxlJob("manuallyFollowUpPlanJobHandler")
+    public void manuallyFollowUpPlanJobHandler() throws Exception {
+        XxlJobHelper.log("随访手动任务更新",DateUtils.getTime());
+        patientRecordMapper.updateManuallyFollowUpList();
+        XxlJobHelper.log("随访手动任务更新结束",DateUtils.getTime());
+    }
     /**
      * 随访计划
      */
@@ -137,7 +182,7 @@ public class MedicalJob {
         resultStr = "操作成功,共插入"+insertRecord.size()+"条";
         XxlJobHelper.handleSuccess(resultStr);
     }
-//    public String followPlanJobHandler() throws Exception {
+    //    public String followPlanJobHandler() throws Exception {
 //
 //        XxlJobHelper.log("随访计划定时任务日期{}开始",DateUtils.getTime());
 //        //进行中的队列
@@ -202,6 +247,57 @@ public class MedicalJob {
 //        XxlJobHelper.handleSuccess(resultStr);
 //        return "success";
 //    }
+    public void followUpTasksAreGeneratedManually(Long researchId,Long patientId,List<PatientRecord> listTotal){
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
+        if(researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
+            PatientRecordTemplate pt = new PatientRecordTemplate();
+            pt.setResearchId(researchId);
+            List<PatientRecordTemplate> patientRecordTemplates = patientRecordTemplateMapper.followUpTasksAreGeneratedManually(pt);
+            if(patientRecordTemplates.size()>0){
+                Map<Long, PatientRecordTemplate> maps = patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate :: getFollowId, Function.identity()));
+                List<Long> followIds = patientRecordTemplates.stream().map(PatientRecordTemplate::getFollowId).collect(Collectors.toList());
+                List<PatientRecord> insertList = new ArrayList<>();
+
+                //查询的是同一个队列中同一个登录账号下[由于A->B->A可能 有多个patientId]的最大的随访记录，不是所有的，这也是为啥多次插入而不重复插入数据的根因
+                PatientRecord patientRecord = patientRecordMapper.followUpTasksAreGeneratedManually(researchInfo.getId(),patientId,followIds);
+
+                logger.info("随访计划定时任务执行队列id:{},手动入组的患者id:{}",researchInfo.getId(),patientRecord.getPatientId());
+                if (!maps.containsKey(patientRecord.getFollowId())){
+                    return;
+                }
+                PatientRecordTemplate recordTemplate = maps.get(patientRecord.getFollowId());
+                logger.info("---------------------------recordId:{}",patientRecord.getRecordId());
+                PatientInfo patientInfo = getPatientInfo(patientRecord);
+                //创建随访1的PatientRecord记录
+                followUpTasksAreGeneratedManually(listTotal,insertList, researchInfo, patientRecord, recordTemplate,patientInfo);
+                if(insertList.size()>0){
+                    patientInfo.setGeneratedManually(patientInfo.getGeneratedManually() == 0? BigDecimal.ONE.longValue() :patientInfo.getGeneratedManually()+BigDecimal.ONE.longValue());
+                    //肥胖综合征
+                    List<Long> list=followPropertyMapper.getDict("research");
+                    for (PatientRecord record : insertList) {
+                        record.setGeneratedManually(patientInfo.getGeneratedManually());
+                    }
+                    if (list.contains(researchId)){
+                        for (PatientRecord record : insertList) {
+                            record.setFollowStatus("-1");
+                            patientRecordMapper.insertPatientRecord(record);
+                            logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                            getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                        }
+                    }else{
+                        for (PatientRecord record : insertList) {
+                            record.setFollowStatus("-1");
+                            patientRecordMapper.insertPatientRecord(record);
+                        }
+                    }
+
+                    patientInfo.setIsEndCreateRecord("0");
+                    patientInfoMapper.updatePatientInfo(patientInfo);
+                    logger.info("----------------------------------------队列id:{}插入周期数量:{}-----------------",researchId,insertList.size());
+                }
+            }
+        }
+    }
     public void insertRecordJob(Long researchId,List<PatientRecord> listTotal){
         ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
         if(researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
@@ -246,9 +342,9 @@ public class MedicalJob {
                     List<Long> list=followPropertyMapper.getDict("research");
                     if (list.contains(researchId)){
                         for (PatientRecord record : insertList) {
-                        patientRecordMapper.insertPatientRecord(record);
-                        logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
-                        getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                            patientRecordMapper.insertPatientRecord(record);
+                            logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                            getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
                         }
                     }else{
                         patientRecordMapper.batchInsertPatientRecord(insertList);
@@ -274,8 +370,8 @@ public class MedicalJob {
     }
 
     private void handleFollowUp(List<PatientRecord> listTotal,List<PatientRecord> insertList,ResearchInfo researchInfo, Date now,
-                           List<PatientRecordTemplate> patientRecordTemplates, PatientRecord x,
-                           PatientRecordTemplate recordTemplate,PatientInfo patientInfo) {
+                                List<PatientRecordTemplate> patientRecordTemplates, PatientRecord x,
+                                PatientRecordTemplate recordTemplate,PatientInfo patientInfo) {
         if ("1".equals(recordTemplate.getFollowFrequency())){//限制频次
             handleLimitFrequency(listTotal,insertList, researchInfo, now, patientRecordTemplates, x, recordTemplate,patientInfo);
         }else if ("2".equals(recordTemplate.getFollowFrequency())){//不限频次
@@ -284,8 +380,8 @@ public class MedicalJob {
     }
 
     private void handleNoLimitFrequency(List<PatientRecord> listTotal,List<PatientRecord> insertList, Date now,
-                           List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
-                           PatientRecordTemplate recordTemplate,PatientInfo patient) {
+                                        List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
+                                        PatientRecordTemplate recordTemplate,PatientInfo patient) {
         patientRecord.setStageAddNum(patientRecord.getStageAddNum()+1);
         patientRecord.setPersonId(patient.getPersonId());
         // 没设置次数且间隔为0天
@@ -324,8 +420,8 @@ public class MedicalJob {
     }
 
     private void handleLimitFrequency(List<PatientRecord> listTotal,List<PatientRecord> insertList,ResearchInfo researchInfo, Date now,
-                           List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
-                           PatientRecordTemplate recordTemplate,PatientInfo patient) {
+                                      List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
+                                      PatientRecordTemplate recordTemplate,PatientInfo patient) {
         if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1){
             logger.info("生成随访计划,队列ID{}随访规则ID{}followTotal没有值", researchInfo.getId(), recordTemplate.getFollowId());
             return;
@@ -370,10 +466,51 @@ public class MedicalJob {
             }
         }
     }
-
+    private void followUpTasksAreGeneratedManually(List<PatientRecord> listTotal, List<PatientRecord> insertList,ResearchInfo researchInfo,
+                               PatientRecord patientRecord,PatientRecordTemplate recordTemplate,PatientInfo patientInfo) {
+        patientRecord.setStageAddNum(1);
+        Date date = new Date();
+        patientRecord.setPersonId(patientInfo.getPersonId());
+        if ("1".equals(recordTemplate.getFollowFrequency())){
+            //限制频次
+            if (recordTemplate.getFollowTotal() == null || recordTemplate.getFollowTotal() < 1){
+                logger.info("生成随访计划,队列ID{}随访规则ID{}followTotal没有值", researchInfo.getId(), recordTemplate.getFollowId());
+                return ;
+            }
+            if(Objects.isNull(patientInfo)){
+                logger.error("患者信息为空 patientId:{}",patientRecord.getPatientId());
+                return ;
+            }
+            if(!Objects.isNull(patientInfo.getPlanResearchId()) && !Objects.equals(patientInfo.getPlanResearchId(),patientInfo.getResearchId())){
+                logger.info("已经切换了队列,旧队列不再生成新的随访节点,patientId:{}",patientInfo.getPatientId());
+                return ;
+            }
+            PatientRecord newPatientRecord = new PatientRecord(date,patientRecord, recordTemplate);
+            newPatientRecord.setStageNum(1);
+            listTotal.add(newPatientRecord);
+            newPatientRecord =  new PatientRecord(date,patientRecord, recordTemplate);
+            newPatientRecord.setStageNum(1);
+            insertList.add(newPatientRecord);
+        }else if ("2".equals(recordTemplate.getFollowFrequency())){//不限频次
+            if(Objects.isNull(patientInfo)){
+                logger.error("患者信息为空 patientId:{}",patientRecord.getPatientId());
+                return;
+            }
+            if(!Objects.isNull(patientInfo.getPlanResearchId()) && !Objects.equals(patientInfo.getPlanResearchId(),patientInfo.getResearchId())){
+                logger.info("已经切换了队列,旧队列不再生成新的随访节点,patientId:{}",patientInfo.getPatientId());
+                return;
+            }
+            PatientRecord newPatientRecord = new PatientRecord(date,patientRecord, recordTemplate);
+            newPatientRecord.setStageNum(1);
+            listTotal.add(newPatientRecord);
+            newPatientRecord =  new PatientRecord(date,patientRecord, recordTemplate);
+            newPatientRecord.setStageNum(1);
+            insertList.add(newPatientRecord);
+        }
+    }
     private void handleBaseLine(List<PatientRecord> listTotal, List<PatientRecord> insertList,ResearchInfo researchInfo, Date now,
-                           List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
-                           PatientRecordTemplate recordTemplate,PatientInfo patientInfo) {
+                                List<PatientRecordTemplate> patientRecordTemplates, PatientRecord patientRecord,
+                                PatientRecordTemplate recordTemplate,PatientInfo patientInfo) {
 
         if(patientRecordTemplates.size() >1){
             //随访1节点模板
@@ -416,43 +553,59 @@ public class MedicalJob {
     }
 
 
-    //判断生成的下一个随访时间是否在当前时间之前,如果是，可以生成
+    /**
+     * 判断生成的下一个随访时间是否在当前时间之前或当天，如果是则可以生成随访记录
+     *
+     * @param now 当前时间（基准时间）
+     * @param patientRecord 患者随访记录（包含上次锁定的随访时间）
+     * @param prt 随访计划模板（包含随访间隔单位和数值）
+     * @return true-可以生成随访记录（下次随访时间 <= 当前时间）；false-不可生成
+     */
     public boolean isCreateRecord(Date now, PatientRecord patientRecord, PatientRecordTemplate prt) {
+        // 参数校验：患者记录、模板、锁定随访时间任一为空则不能生成
         if (patientRecord == null || prt == null || patientRecord.getLockVisitTime() == null) {
             return false;
         }
+
         Date nextDate = null;
-        // 根据单位计算下次随访日期
+        // 获取随访间隔单位：1-天，2-周，3-月
         String unit = prt.getFollowIntervalUnit();
+        // 获取随访间隔数值（整数）
         int interval = prt.getFollowInterval() != null ? prt.getFollowInterval().intValue() : 0;
 
+        // 根据单位类型计算下次应随访的日期（基于上次锁定的随访时间）
         if ("1".equals(unit)) {
-            // 按天
+            // 按天计算下次随访日期：上次锁定时间 + 间隔天数
             nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), interval);
         } else if ("2".equals(unit)) {
-            // 按周
+            // 按周计算下次随访日期：上次锁定时间 + 间隔周数
             nextDate = DateUtils.addWeeks(patientRecord.getLockVisitTime(), interval);
         } else if ("3".equals(unit)) {
-            // 按月
+            // 按月计算下次随访日期：上次锁定时间 + 间隔月数
             nextDate = DateUtils.addMonths(patientRecord.getLockVisitTime(), interval);
         } else {
-            // 未知单位，直接返回 false
+            // 未知单位类型（非1/2/3），无法计算，返回false
             return false;
         }
 
+        // 计算失败（异常情况），返回false
         if (nextDate == null) {
             return false;
         }
 
-        // 如果今天是生成日或者已经过了生成日
+        // 判断下次随访时间是否 <= 当前时间
+        // 条件：同一天 或者 当前时间晚于下次随访时间 → 说明已到或超过随访时间，可以生成
+        // 举例：上次锁定时间=2026-04-01，间隔30天，则下次随访日期=2026-05-01
+        //情况1- 当前时间=2026-05-01（当天）→ 返回 true
+        //情况2- 当前时间=2026-05-03（已逾期）→ 返回 true
+        //情况3- 当前时间=2026-04-28（未到期）→ 返回 false
         if (DateUtils.isSameDay(now, nextDate) || now.after(nextDate)) {
             return true;
         }
-
         return false;
     }
-    
-    
+
+
 
     /**
      * 随访计划单次执行
@@ -566,7 +719,7 @@ public class MedicalJob {
      * 超窗定时
      * 参数未超窗天数  数字类型
      */
-     @XxlJob("overTimeJobHandLer")
+    @XxlJob("overTimeJobHandLer")
     public void overTimeJobHandLer(){
         String loggerName = "日志："+XxlJobHelper.getJobLogFileName()+",";
         try{
@@ -651,62 +804,62 @@ public class MedicalJob {
     /**
      * 同步随访数据
      */
-   public void getFollowDate(Long followId,String personId,Long researchId,Long recordId) {//
+    public void getFollowDate(Long followId,String personId,Long researchId,Long recordId) {//
 //        Long followId=92L;
 //        Long personId=10003930L;
 //        Long researchId=44L;
 //        Long recordId=1266L;
-       List<TextData> dataList = new ArrayList<>();
-       //根绝followId获取随访表单内容
-       List<FMedicalProperty> medicalPropertyList=medicalPropertyMapper.selectFMedicalPropertyByFollowId(followId);
-       //根据属性查询表
-       List<String> propertyCodeList=medicalPropertyList.stream().map(FMedicalProperty::getPropertyCode).collect(Collectors.toList());
-      //获取需要拉取的属性
-       List<FollowProperty> tableList=followPropertyMapper.getFollowProperty(followId,propertyCodeList);
-       if (CollectionUtils.isNotEmpty(tableList)){
-           Map<String,FMedicalProperty> medicalPropertMap=medicalPropertyList.stream().collect(Collectors.toMap(FMedicalProperty::getPropertyCode,fMedicalProperty->fMedicalProperty));
+        List<TextData> dataList = new ArrayList<>();
+        //根绝followId获取随访表单内容
+        List<FMedicalProperty> medicalPropertyList=medicalPropertyMapper.selectFMedicalPropertyByFollowId(followId);
+        //根据属性查询表
+        List<String> propertyCodeList=medicalPropertyList.stream().map(FMedicalProperty::getPropertyCode).collect(Collectors.toList());
+        //获取需要拉取的属性
+        List<FollowProperty> tableList=followPropertyMapper.getFollowProperty(followId,propertyCodeList);
+        if (CollectionUtils.isNotEmpty(tableList)){
+            Map<String,FMedicalProperty> medicalPropertMap=medicalPropertyList.stream().collect(Collectors.toMap(FMedicalProperty::getPropertyCode,fMedicalProperty->fMedicalProperty));
 
-           Map<String,List<FollowProperty>> tableMap = tableList.stream().collect(Collectors.groupingBy(FollowProperty::getPropertyTable));
-           for (Map.Entry<String, List<FollowProperty>> entry : tableMap.entrySet()) {
-               String tableName = entry.getKey();
-               List<FollowProperty> propertyList = entry.getValue();
-               //String columns=propertyList.stream().map(FollowProperty::getPropertyCode).collect(Collectors.joining(","));
-              StringBuilder condition= new StringBuilder();
-              for (FollowProperty property : propertyList) {
-                  if (StringUtils.isNotEmpty(property.getConditions())) {
-                      condition.append(property.getConditions()).append(" or ");
-                  }
-              }
-              condition.delete(condition.length()-3, condition.length());
-             List<Map<String,Object>>  result = followPropertyMapper.getResult(tableName, condition.toString(),personId);
-              if (result!=null){
-                  for (Map<String,Object> map : result) {
-                      for (FollowProperty property : propertyList) {
-                          System.out.println(map.get("propertyName"));
-                          System.out.println(property.getPropertyName());
-                          String propertyName = String.valueOf(map.get("propertyName")).trim();
-                          if (property.getPropertyName().equals(propertyName)) {
-                              TextData textData = new TextData();
-                              textData.setPropertyValue(String.valueOf(map.get(property.getColumnName())));
-                              textData.setPropertyId(medicalPropertMap.get(property.getPropertyCode()).getId());
-                              textData.setPropertyCode(property.getPropertyCode());
-                              textData.setFormId(medicalPropertMap.get(property.getPropertyCode()).getMedicalFormId());
-                              dataList.add(textData);
-                          }
-                      }
+            Map<String,List<FollowProperty>> tableMap = tableList.stream().collect(Collectors.groupingBy(FollowProperty::getPropertyTable));
+            for (Map.Entry<String, List<FollowProperty>> entry : tableMap.entrySet()) {
+                String tableName = entry.getKey();
+                List<FollowProperty> propertyList = entry.getValue();
+                //String columns=propertyList.stream().map(FollowProperty::getPropertyCode).collect(Collectors.joining(","));
+                StringBuilder condition= new StringBuilder();
+                for (FollowProperty property : propertyList) {
+                    if (StringUtils.isNotEmpty(property.getConditions())) {
+                        condition.append(property.getConditions()).append(" or ");
+                    }
+                }
+                condition.delete(condition.length()-3, condition.length());
+                List<Map<String,Object>>  result = followPropertyMapper.getResult(tableName, condition.toString(),personId);
+                if (result!=null){
+                    for (Map<String,Object> map : result) {
+                        for (FollowProperty property : propertyList) {
+                            System.out.println(map.get("propertyName"));
+                            System.out.println(property.getPropertyName());
+                            String propertyName = String.valueOf(map.get("propertyName")).trim();
+                            if (property.getPropertyName().equals(propertyName)) {
+                                TextData textData = new TextData();
+                                textData.setPropertyValue(String.valueOf(map.get(property.getColumnName())));
+                                textData.setPropertyId(medicalPropertMap.get(property.getPropertyCode()).getId());
+                                textData.setPropertyCode(property.getPropertyCode());
+                                textData.setFormId(medicalPropertMap.get(property.getPropertyCode()).getMedicalFormId());
+                                dataList.add(textData);
+                            }
+                        }
 
-                  }
+                    }
 
-              }
-           }
-       }
+                }
+            }
+        }
 
-      if (CollectionUtils.isNotEmpty(dataList)){
-          followPropertyMapper.insertTextData(researchId,recordId,dataList);
-      }
+        if (CollectionUtils.isNotEmpty(dataList)){
+            followPropertyMapper.insertTextData(researchId,recordId,dataList);
+        }
 
 
-   }
+    }
 
 
     /**
@@ -732,4 +885,69 @@ public class MedicalJob {
     }
 
 
+    public void testXxjobGeneratedManually(Long id,Long patientId,Date specifyTheTime) {
+        XxlJobHelper.log("随访计划定时任务日期{}开始",DateUtils.getTime());
+        //进行中的队列
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(id);
+        //所有进行中队列的规则
+        String resultStr = "";
+        List<PatientRecord> insertRecord = new ArrayList<>();
+        testXxjobInsertRecordJob(researchInfo.getId(),patientId, insertRecord,specifyTheTime);
+        resultStr = "操作成功,共插入"+insertRecord.size()+"条";
+        XxlJobHelper.handleSuccess(resultStr);
+    }
+    public void testXxjobInsertRecordJob(Long researchId,Long patientId,List<PatientRecord> listTotal,Date now){
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
+        if(researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
+            PatientRecordTemplate pt = new PatientRecordTemplate();
+            pt.setResearchId(researchId);
+            List<PatientRecordTemplate> patientRecordTemplates = patientRecordTemplateMapper.selectPatientRecordTemplateList(pt);
+            if(patientRecordTemplates.size()>0){
+                List<PatientRecord> insertList = new ArrayList<>();
+                patientRecordTemplates.sort(Comparator.comparing(PatientRecordTemplate :: getFollowNum));
+                Map<Long, PatientRecordTemplate> maps = patientRecordTemplates.stream().collect(Collectors.toMap(PatientRecordTemplate :: getFollowId, Function.identity()));
+                //查询的是同一个队列中同一个登录账号下[由于A->B->A可能 有多个patientId]的最大的随访记录，不是所有的，这也是为啥多次插入而不重复插入数据的根因
+                List<PatientRecord> patientRecords = patientRecordMapper.testXxjobGeneratedManually(researchInfo.getId(),patientId);
+                XxlJobHelper.log("随访计划定时任务执行队列id:{},查询可执行周期数:{}",researchInfo.getId(),patientRecords.size());
+                patientRecords.forEach(patientRecord->{
+                    if(patientRecord.getAccountId()==0){
+                        return;
+                    }
+                    if (!maps.containsKey(patientRecord.getFollowId())){
+                        return;
+                    }
+                    if(patientRecord.getLockVisitTime()==null){
+                        return;
+                    }
+                    PatientRecordTemplate recordTemplate = maps.get(patientRecord.getFollowId());
+                    XxlJobHelper.log("---------------------------recordId:{}",patientRecord.getRecordId());
+                    PatientInfo patientInfo = getPatientInfo(patientRecord);
+                    //说明是基线,会创建随访1的PatientRecord记录
+                    if(recordTemplate.getFollowNum()==0){
+                        handleBaseLine(listTotal,insertList, researchInfo, now, patientRecordTemplates, patientRecord,
+                                recordTemplate,patientInfo);
+                    }else{
+                        if (!"4".equals(patientInfo.getPatientStatus())) {
+                            handleFollowUp(listTotal,insertList,researchInfo, now, patientRecordTemplates, patientRecord,
+                                    recordTemplate,patientInfo);
+                        }
+                    }
+                });
+                if(insertList.size()>0){
+                    //肥胖综合征
+                    List<Long> list=followPropertyMapper.getDict("research");
+                    if (list.contains(researchId)){
+                        for (PatientRecord record : insertList) {
+                            patientRecordMapper.insertPatientRecord(record);
+                            logger.info("表单id：{}，患者id：{}，队列id：{}，recordId:{}",record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                            getFollowDate(record.getFollowId(),record.getPersonId(),researchId,record.getRecordId());
+                        }
+                    }else{
+                        patientRecordMapper.batchInsertPatientRecord(insertList);
+                    }
+                    XxlJobHelper.log("----------------------------------------队列id:{}插入周期数量:{}-----------------",researchId,insertList.size());
+                }
+            }
+        }
+    }
 }

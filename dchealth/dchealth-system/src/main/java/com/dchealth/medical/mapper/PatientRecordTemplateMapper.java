@@ -49,7 +49,13 @@ public interface PatientRecordTemplateMapper
      * @return 周期配置集合
      */
     public List<PatientRecordTemplate> selectPatientRecordTemplateList(PatientRecordTemplate patientRecordTemplate);
-
+    /**
+     * 查询非基线周期配置列表
+     *
+     * @param patientRecordTemplate 周期配置
+     * @return 周期配置集合
+     */
+    public List<PatientRecordTemplate> followUpTasksAreGeneratedManually(PatientRecordTemplate patientRecordTemplate);
     /**
      * 新增周期配置
      * 

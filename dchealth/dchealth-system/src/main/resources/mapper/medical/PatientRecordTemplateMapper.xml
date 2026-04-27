@@ -64,7 +64,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="followName != null "> and follow_name = #{followName}</if>
         </where>
     </select>
-    
+    <select id="followUpTasksAreGeneratedManually" parameterType="PatientRecordTemplate" resultMap="PatientRecordTemplateResult">
+        <include refid="selectPatientRecordTemplateVo"/>
+        <where>
+            follow_num != 0
+        </where>
+    </select>
     <select id="selectPatientRecordTemplateByFollowId" parameterType="Long" resultMap="PatientRecordTemplateResult">
         <include refid="selectPatientRecordTemplateVo"/>
         where follow_id = #{followId}

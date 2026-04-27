@@ -63,6 +63,8 @@ public class StatisticsFollowRateVo {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date followEndTime;
-
-
+    /**
+     * 手动入组次数
+     */
+    private int generatedManually;
 }

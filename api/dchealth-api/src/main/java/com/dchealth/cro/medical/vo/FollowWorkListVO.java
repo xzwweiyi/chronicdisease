@@ -69,4 +69,6 @@ public class FollowWorkListVO {
 
     private  String warnStatus;
 
+    /** 手动入组次数 */
+    private int generatedManually;
 }
