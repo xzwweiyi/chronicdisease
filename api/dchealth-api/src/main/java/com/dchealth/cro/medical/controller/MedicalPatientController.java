@@ -268,13 +268,13 @@ public class MedicalPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "patientBaseInfo", method = RequestMethod.POST)
-    public String patientBaseInfo(Long accountId) {
+    public String patientBaseInfo(Long accountId, HttpServletRequest request) {
         L.info("accountId:{}",accountId);
         try {
             if (accountId == null) {
                 return buildErrorParamMView();
             }
-            return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId));
+            return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", accountId, e);
             return buildExceptionMView();

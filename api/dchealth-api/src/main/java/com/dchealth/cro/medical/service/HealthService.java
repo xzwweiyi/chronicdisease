@@ -1,24 +1,25 @@
 package com.dchealth.cro.medical.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import com.dchealth.cro.account.domain.PatientAccount;
+import com.dchealth.cro.account.mapper.PatientAccountMapper;
+import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.cache.RedisCache;
+import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.crypto.MD5Util;
 import com.dchealth.cro.common.exception.base.ServiceException;
+import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.common.utils.StringUtils;
+import com.dchealth.cro.health.constants.HealthConstant;
+import com.dchealth.cro.health.constants.HealthPatientCheckExamEnum;
+import com.dchealth.cro.health.constants.HealthPatientCheckTestEnum;
+import com.dchealth.cro.health.constants.HealthRecordCheckConstants;
 import com.dchealth.cro.health.domain.*;
+import com.dchealth.cro.health.form.DetailForm;
+import com.dchealth.cro.health.form.HealthListSearchForm;
 import com.dchealth.cro.health.mapper.*;
+import com.dchealth.cro.health.utils.HealthUtils;
 import com.dchealth.cro.health.utils.ThreadLocalUtils;
+import com.dchealth.cro.health.vo.*;
 import com.dchealth.cro.medical.contants.TableEnum;
 import com.dchealth.cro.medical.domain.MpCommonCol;
 import com.dchealth.cro.medical.mapper.MpCommonColMapper;
@@ -29,79 +30,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
-import com.dchealth.cro.common.cache.RedisCache;
-import com.dchealth.cro.common.constant.CroApiCodeConstant;
-import com.dchealth.cro.common.exception.base.ServiceException;
-import com.dchealth.cro.common.utils.DateUtils;
-import com.dchealth.cro.common.utils.StringUtils;
-import com.dchealth.cro.health.constants.HealthConstant;
-import com.dchealth.cro.health.constants.HealthPatientCheckExamEnum;
-import com.dchealth.cro.health.constants.HealthPatientCheckTestEnum;
-import com.dchealth.cro.health.constants.HealthRecordCheckConstants;
-import com.dchealth.cro.health.domain.MpBloodBiochemistry;
-import com.dchealth.cro.health.domain.MpBloodGasAnalysis;
-import com.dchealth.cro.health.domain.MpBloodRoutine;
-import com.dchealth.cro.health.domain.MpCoagulationFunction;
-import com.dchealth.cro.health.domain.MpCtExam;
-import com.dchealth.cro.health.domain.MpDiagnosis;
-import com.dchealth.cro.health.domain.MpElectrocardiogramExam;
-import com.dchealth.cro.health.domain.MpGeneralInspection;
-import com.dchealth.cro.health.domain.MpGlucoseTolerance;
-import com.dchealth.cro.health.domain.MpHormoneItems;
-import com.dchealth.cro.health.domain.MpInfectiousDiseases;
-import com.dchealth.cro.health.domain.MpInternalMedicineExam;
-import com.dchealth.cro.health.domain.MpNuclearMagnetismExam;
-import com.dchealth.cro.health.domain.MpOphthalmologicalExam;
-import com.dchealth.cro.health.domain.MpOtolaryngologyExam;
-import com.dchealth.cro.health.domain.MpPerson;
-import com.dchealth.cro.health.domain.MpStomatologyExam;
-import com.dchealth.cro.health.domain.MpStoolRoutine;
-import com.dchealth.cro.health.domain.MpSurgicalExam;
-import com.dchealth.cro.health.domain.MpThyroidFunction;
-import com.dchealth.cro.health.domain.MpTumorScreeningItems;
-import com.dchealth.cro.health.domain.MpUltrasonicExam;
-import com.dchealth.cro.health.domain.MpUnitDict;
-import com.dchealth.cro.health.domain.MpUrineRoutine;
-import com.dchealth.cro.health.domain.MpVisitOccurrence;
-import com.dchealth.cro.health.domain.MpXRayExam;
-import com.dchealth.cro.health.form.DetailForm;
-import com.dchealth.cro.health.form.HealthListSearchForm;
-import com.dchealth.cro.health.mapper.MpBloodBiochemistryMapper;
-import com.dchealth.cro.health.mapper.MpBloodGasAnalysisMapper;
-import com.dchealth.cro.health.mapper.MpBloodRoutineMapper;
-import com.dchealth.cro.health.mapper.MpCoagulationFunctionMapper;
-import com.dchealth.cro.health.mapper.MpCtExamMapper;
-import com.dchealth.cro.health.mapper.MpDiagnosisMapper;
-import com.dchealth.cro.health.mapper.MpElectrocardiogramExamMapper;
-import com.dchealth.cro.health.mapper.MpGeneralInspectionMapper;
-import com.dchealth.cro.health.mapper.MpGlucoseToleranceMapper;
-import com.dchealth.cro.health.mapper.MpHormoneItemsMapper;
-import com.dchealth.cro.health.mapper.MpInfectiousDiseasesMapper;
-import com.dchealth.cro.health.mapper.MpInternalMedicineExamMapper;
-import com.dchealth.cro.health.mapper.MpNuclearMagnetismExamMapper;
-import com.dchealth.cro.health.mapper.MpOphthalmologicalExamMapper;
-import com.dchealth.cro.health.mapper.MpOtolaryngologyExamMapper;
-import com.dchealth.cro.health.mapper.MpPersonMapper;
-import com.dchealth.cro.health.mapper.MpStomatologyExamMapper;
-import com.dchealth.cro.health.mapper.MpStoolRoutineMapper;
-import com.dchealth.cro.health.mapper.MpSurgicalExamMapper;
-import com.dchealth.cro.health.mapper.MpThyroidFunctionMapper;
-import com.dchealth.cro.health.mapper.MpTumorScreeningItemsMapper;
-import com.dchealth.cro.health.mapper.MpUltrasonicExamMapper;
-import com.dchealth.cro.health.mapper.MpUnitDictMapper;
-import com.dchealth.cro.health.mapper.MpUrineRoutineMapper;
-import com.dchealth.cro.health.mapper.MpVisitOccurrenceMapper;
-import com.dchealth.cro.health.mapper.MpXRayExamMapper;
-import com.dchealth.cro.health.utils.HealthUtils;
-import com.dchealth.cro.health.utils.ThreadLocalUtils;
-import com.dchealth.cro.health.vo.CatalogVO;
-import com.dchealth.cro.health.vo.GeneralInspectionVO;
-import com.dchealth.cro.health.vo.HealthDetailVO;
-import com.dchealth.cro.health.vo.HealthItemVO;
-import com.dchealth.cro.health.vo.ItemValueVO;
-import com.dchealth.cro.health.vo.PatientHealthVisitVO;
-import com.dchealth.cro.health.vo.VisitListVO;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class HealthService {
@@ -173,12 +110,53 @@ public class HealthService {
 	@Autowired
 	private MpCommonColMapper mpCommonColMapper;
 
+	@Autowired
+	private PatientAccountMapper patientAccountMapper;
+
+	@Autowired
+	private MpPatientAccountMapper mpPatientAccountMapper;
+
 	/**
 	 * todo 检查, 通用核心方法
 	 */
 	public void check(){
 
 	}
+
+	/**
+	 * 权限校验：验证 personId 是否属于当前登录用户
+	 * @param personId 就诊ID
+	 * @param request HTTP请求
+	 * @return 校验失败返回错误响应，校验成功返回null
+	 */
+	private DchealthCloudResponseEntity<?> validatePersonIdAccess(String personId, HttpServletRequest request) {
+		if (request == null) {
+			return null;
+		}
+		String deviceToken = request.getHeader("deviceToken");
+		if (StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
+			PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
+			if (currentAccount == null) {
+				log.warn("越权访问尝试: deviceToken={}, 请求personId={}, 用户不存在", deviceToken, personId);
+				DchealthCloudResponseEntity<?> result = new DchealthCloudResponseEntity<>();
+				result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+				result.setMsg("无权访问该用户信息");
+				return result;
+			}
+			// 通过 accountId 获取对应的 personId
+			com.dchealth.cro.health.domain.MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountByAccountId(currentAccount.getAccountId());
+			if (mpPatientAccount == null || !personId.equals(mpPatientAccount.getPersonId())) {
+				log.warn("越权访问尝试: deviceToken={}, 请求personId={}, 实际personId={}",
+					deviceToken, personId, mpPatientAccount != null ? mpPatientAccount.getPersonId() : "null");
+				DchealthCloudResponseEntity<?> result = new DchealthCloudResponseEntity<>();
+				result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+				result.setMsg("无权访问该用户信息");
+				return result;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * todo 检验, 通用核心方法
 	 */
@@ -191,8 +169,17 @@ public class HealthService {
 	 * @param healthListSearchForm
 	 * @return
 	 */
-	public DchealthCloudResponseEntity<PatientHealthVisitVO> index(HealthListSearchForm  healthListSearchForm) {
+	public DchealthCloudResponseEntity<PatientHealthVisitVO> index(HealthListSearchForm  healthListSearchForm, HttpServletRequest request) {
 		DchealthCloudResponseEntity<PatientHealthVisitVO> result = new DchealthCloudResponseEntity<PatientHealthVisitVO>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(healthListSearchForm.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
+
 		PatientHealthVisitVO  patientHealthVisitVO  = new PatientHealthVisitVO();
 		patientHealthVisitVO.setPersonId(healthListSearchForm.getPersonId());
 		int i = (healthListSearchForm.getPageNo()-1)*healthListSearchForm.getPageSize() +1;
@@ -230,8 +217,17 @@ public class HealthService {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public DchealthCloudResponseEntity<HealthDetailVO> detail(DetailForm detail)  {
+	public DchealthCloudResponseEntity<HealthDetailVO> detail(DetailForm detail, HttpServletRequest request)  {
 		DchealthCloudResponseEntity<HealthDetailVO>  result = new DchealthCloudResponseEntity<HealthDetailVO>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(detail.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
+
 		HealthDetailVO  healthDetailVO = new  HealthDetailVO();
 
 		MpVisitOccurrence  mpVisitOccurrence  =  mpVisitOccurrenceMapper.selectVisitByPersonIdAndVisitId(detail.getPersonId(),detail.getVisitId());
@@ -269,8 +265,17 @@ public class HealthService {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public DchealthCloudResponseEntity<List<HealthItemVO>> checkExamItemList(DetailForm detail) {
+	public DchealthCloudResponseEntity<List<HealthItemVO>> checkExamItemList(DetailForm detail, HttpServletRequest request) {
 		DchealthCloudResponseEntity<List<HealthItemVO>>  result = new DchealthCloudResponseEntity<List<HealthItemVO>>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(detail.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
+
 		String personId =detail.getPersonId();
 		String visitId=detail.getVisitId();
 		List<HealthItemVO> list = new ArrayList<HealthItemVO>();
@@ -455,8 +460,16 @@ public class HealthService {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public DchealthCloudResponseEntity<List<HealthItemVO>> queryCheckTestItemList(DetailForm detail) {
+	public DchealthCloudResponseEntity<List<HealthItemVO>> queryCheckTestItemList(DetailForm detail, HttpServletRequest request) {
 		DchealthCloudResponseEntity<List<HealthItemVO>>  result = new DchealthCloudResponseEntity<List<HealthItemVO>>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(detail.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
 
 		MpPerson person = mpPersonMapper.getPersonByPersonId(detail.getPersonId());
 
@@ -1763,8 +1776,16 @@ public class HealthService {
 	}
 
 
-	public DchealthCloudResponseEntity<List<HealthItemVO>> mzTestItemList(DetailForm detail) {
+	public DchealthCloudResponseEntity<List<HealthItemVO>> mzTestItemList(DetailForm detail, HttpServletRequest request) {
 		DchealthCloudResponseEntity<List<HealthItemVO>> result = new DchealthCloudResponseEntity<List<HealthItemVO>>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(detail.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
 
 		MpPerson person = mpPersonMapper.getPersonByPersonId(detail.getPersonId());
 		if(person == null){
@@ -2391,8 +2412,17 @@ public class HealthService {
 		}
 	}
 
-	public DchealthCloudResponseEntity<List<HealthItemVO>> mzExamItemList(DetailForm detail) {
+	public DchealthCloudResponseEntity<List<HealthItemVO>> mzExamItemList(DetailForm detail, HttpServletRequest request) {
 		DchealthCloudResponseEntity<List<HealthItemVO>>  result = new DchealthCloudResponseEntity<List<HealthItemVO>>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(detail.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
+
 		String personId =detail.getPersonId();
 		if (StringUtils.isEmpty(personId)) {
 			throw new ServiceException("personId不能为空");
@@ -2748,8 +2778,17 @@ public class HealthService {
 		}
 	}
 
-	public DchealthCloudResponseEntity<HealthItemVO<List<CatalogVO>>> queryMzDiagnosis(DetailForm detail)  {
+	public DchealthCloudResponseEntity<HealthItemVO<List<CatalogVO>>> queryMzDiagnosis(DetailForm detail, HttpServletRequest request)  {
 		DchealthCloudResponseEntity<HealthItemVO<List<CatalogVO>>> result = new DchealthCloudResponseEntity<HealthItemVO<List<CatalogVO>>>();
+
+		// 权限校验
+		DchealthCloudResponseEntity<?> validationResult = validatePersonIdAccess(detail.getPersonId(), request);
+		if (validationResult != null) {
+			result.setCode(validationResult.getCode());
+			result.setMsg(validationResult.getMsg());
+			return result;
+		}
+
 		MpPerson person = mpPersonMapper.selectPersonByPersonId(detail.getPersonId());
 		if(person == null) {
 			result.setCode(CroApiCodeConstant.ARCHIVE_NOT_EXIST.getCode());

@@ -1708,8 +1708,22 @@ public class MedicalPatientService {
         return researchInfo.getUserId();
     }
 
-    public DchealthCloudResponseEntity<MpPerson> selectPatientBaseInfoByAccountId(Long accountId) {
+    public DchealthCloudResponseEntity<MpPerson> selectPatientBaseInfoByAccountId(Long accountId, HttpServletRequest request) {
         DchealthCloudResponseEntity<MpPerson> result = new DchealthCloudResponseEntity<>();
+
+        // 权限校验：通过 deviceToken 获取当前登录用户的 accountId，验证请求的 accountId 是否属于当前用户
+        String deviceToken = request.getHeader("deviceToken");
+        if (StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
+            PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
+            if (currentAccount == null || !currentAccount.getAccountId().equals(accountId)) {
+                L.warn("越权访问尝试: deviceToken={}, 请求accountId={}, 实际accountId={}", deviceToken, accountId,
+                    currentAccount != null ? currentAccount.getAccountId() : "null");
+                result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+                result.setMsg("无权访问该用户信息");
+                return result;
+            }
+        }
+
         MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(accountId);
         if (patientBaseInfo == null) {
 //        	 result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());

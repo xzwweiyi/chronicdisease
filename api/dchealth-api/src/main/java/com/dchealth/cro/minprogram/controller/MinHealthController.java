@@ -16,6 +16,8 @@ import com.dchealth.cro.health.form.DetailForm;
 import com.dchealth.cro.health.form.HealthListSearchForm;
 import com.dchealth.cro.medical.service.HealthService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 @RequestMapping(value = "/min_program/health")
 public class MinHealthController  extends ApiBaseController{
@@ -36,12 +38,12 @@ public class MinHealthController  extends ApiBaseController{
 	     */
 	    @ResponseBody
 	    @RequestMapping(value = "/index", method = RequestMethod.POST)
-	    public String index( @Validated HealthListSearchForm  healthListSearchForm,BindingResult bind) {
+	    public String index( @Validated HealthListSearchForm  healthListSearchForm,BindingResult bind, HttpServletRequest request) {
 	        try {
 	        	if (bind.hasErrors()) {
 	    			return buildBindErrorParamMView(bind);
 	    		}
-	            return buildSuccessMView(healthService.index(healthListSearchForm));
+	            return buildSuccessMView(healthService.index(healthListSearchForm, request));
 	        	
 	        } catch (Exception e) {
 	            L.error("查询患者健康档案和体检报告列表异常：{}", JSON.toJSONString(healthListSearchForm));
@@ -60,12 +62,12 @@ public class MinHealthController  extends ApiBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/detail", method = RequestMethod.POST)
-    public String queryPatientInfo(@Validated DetailForm detail,BindingResult bind) {
+    public String queryPatientInfo(@Validated DetailForm detail,BindingResult bind, HttpServletRequest request) {
         try {
         	if (bind.hasErrors()) {
     			return buildBindErrorParamMView(bind);
     		}
-            return buildSuccessMView(healthService.detail(detail));
+            return buildSuccessMView(healthService.detail(detail, request));
         } catch (Exception e) {
         	 L.error("查询患者基本信息，诊断信息异常：{}", e);
         }
@@ -80,12 +82,12 @@ public class MinHealthController  extends ApiBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/checkExamItemList", method = RequestMethod.POST)
-    public String checkExamItemList(@Validated DetailForm detail,BindingResult bind) {
+    public String checkExamItemList(@Validated DetailForm detail,BindingResult bind, HttpServletRequest request) {
         try {
         	if (bind.hasErrors()) {
     			return buildBindErrorParamMView(bind);
     		}
-            return  buildSuccessMView(healthService.checkExamItemList(detail));
+            return  buildSuccessMView(healthService.checkExamItemList(detail, request));
         } catch (Exception e) {
         	 L.info("查询体检报告检查项目列表异常：{}", e);
         }
@@ -101,13 +103,13 @@ public class MinHealthController  extends ApiBaseController{
      */
     @ResponseBody
     @RequestMapping(value = "/checkTestItemList", method = RequestMethod.POST)
-    public String queryTestItemList(@Validated DetailForm detail,BindingResult bind) {
+    public String queryTestItemList(@Validated DetailForm detail,BindingResult bind, HttpServletRequest request) {
         String result;
         try {
         	if (bind.hasErrors()) {
     			return buildBindErrorParamMView(bind);
     		}
-            result = buildSuccessMView(healthService.queryCheckTestItemList(detail));
+            result = buildSuccessMView(healthService.queryCheckTestItemList(detail, request));
         } catch (Exception e) {
         	 L.info("查询体检报告检验项目列表异常：{}", e);
             result = buildExceptionMView();
@@ -122,10 +124,10 @@ public class MinHealthController  extends ApiBaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/mzTestItemList", method = RequestMethod.POST)
-	public String mzTestItemList(DetailForm detail) {
+	public String mzTestItemList(DetailForm detail, HttpServletRequest request) {
 		String result;
 		try {
-			result = buildSuccessMView(healthService.mzTestItemList(detail));
+			result = buildSuccessMView(healthService.mzTestItemList(detail, request));
 		} catch (Exception e) {
 			L.info("查询门诊检验项目列表异常：{}", e);
 			result = buildExceptionMView();
@@ -140,9 +142,9 @@ public class MinHealthController  extends ApiBaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/mzExamItemList", method = RequestMethod.POST)
-	public String mzExamItemList(DetailForm detail) {
+	public String mzExamItemList(DetailForm detail, HttpServletRequest request) {
 		try {
-			return  buildSuccessMView(healthService.mzExamItemList(detail));
+			return  buildSuccessMView(healthService.mzExamItemList(detail, request));
 		} catch (Exception e) {
 			L.info("查询门诊检查项目列表异常：{}", e);
 		}
@@ -157,9 +159,9 @@ public class MinHealthController  extends ApiBaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/queryMzDiagnosis", method = RequestMethod.POST)
-	public String queryMzDiagnosis(DetailForm detail) {
+	public String queryMzDiagnosis(DetailForm detail, HttpServletRequest request) {
 		try {
-			return buildSuccessMView(healthService.queryMzDiagnosis(detail));
+			return buildSuccessMView(healthService.queryMzDiagnosis(detail ,request));
 		} catch (Exception e) {
 			L.error("查询患者基本信息，诊断信息异常：{}", e);
 		}

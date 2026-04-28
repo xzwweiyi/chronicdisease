@@ -1,10 +1,16 @@
 package com.dchealth.cro.minprogram.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.alibaba.fastjson2.JSON;
+import com.dchealth.cro.base.common.FileCommon;
+import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.utils.StringUtils;
+import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
+import com.dchealth.cro.medical.domain.PatientRecord;
+import com.dchealth.cro.medical.form.*;
+import com.dchealth.cro.medical.service.MedicalPatientService;
+import com.dchealth.cro.question.form.QuestionRecordForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.alibaba.fastjson2.JSON;
-import com.dchealth.cro.base.common.FileCommon;
-import com.dchealth.cro.common.base.ApiBaseController;
-import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
-import com.dchealth.cro.common.constant.CroApiCodeConstant;
-import com.dchealth.cro.common.utils.StringUtils;
-import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
-import com.dchealth.cro.medical.domain.PatientRecord;
-import com.dchealth.cro.medical.form.ApplyResearchForm;
-import com.dchealth.cro.medical.form.BindPatientDetailForm;
-import com.dchealth.cro.medical.form.BindPatientForm;
-import com.dchealth.cro.medical.form.PatientRecordFilesForm;
-import com.dchealth.cro.medical.form.PatientRecordSaveUpdateInfoForm;
-import com.dchealth.cro.medical.service.MedicalPatientService;
-import com.dchealth.cro.question.form.QuestionRecordForm;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/min_program/medical/patient")
@@ -203,13 +197,13 @@ public class MinMedicalPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "patientBaseInfo", method = RequestMethod.POST)
-    public String patientBaseInfo(Long accountId) {
+    public String patientBaseInfo(Long accountId, HttpServletRequest request) {
         L.info("accountId:{}",accountId);
         try {
             if (accountId == null) {
                 return buildErrorParamMView();
             }
-            return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId));
+            return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", accountId, e);
             return buildExceptionMView();
