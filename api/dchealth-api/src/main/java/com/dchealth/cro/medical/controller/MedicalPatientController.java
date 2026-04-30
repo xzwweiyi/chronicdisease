@@ -290,7 +290,7 @@ public class MedicalPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "patientRecordList", method = RequestMethod.POST)
-    public String patientRecordList(@Validated PatientRecord patientRecord, BindingResult bind) {
+    public String patientRecordList(@Validated PatientRecord patientRecord, BindingResult bind, HttpServletRequest request) {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
@@ -303,7 +303,7 @@ public class MedicalPatientController extends ApiBaseController {
                 result.setCode(CroApiCodeConstant.ARTICLE_NOT_EXIST.getCode());
                 return JSON.toJSONString(result);
             }
-            return buildSuccessMView(medicalPatientService.selectPatientRecordList(patientRecord));
+            return buildSuccessMView(medicalPatientService.selectPatientRecordList(patientRecord, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", JSON.toJSONString(patientRecord), e);
             return buildExceptionMView();

@@ -1811,9 +1811,31 @@ public class MedicalPatientService {
     }
 
     @Transactional
-    public DchealthCloudResponseEntity<PatientRecordListVo> selectPatientRecordList(PatientRecord record) {
+    public DchealthCloudResponseEntity<PatientRecordListVo> selectPatientRecordList(PatientRecord record, HttpServletRequest request) {
         AtomicReference<PatientRecord> nextNodeAtomic = new AtomicReference<>(new PatientRecord());
         DchealthCloudResponseEntity<PatientRecordListVo> result = new DchealthCloudResponseEntity<>();
+
+        // 权限校验：验证 patientId 是否属于当前登录用户
+        String deviceToken = request.getHeader("deviceToken");
+        if (StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
+            PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
+            if (currentAccount == null) {
+                L.warn("越权访问尝试: deviceToken={}, 请求patientId={}, 用户不存在", deviceToken, record.getPatientId());
+                result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+                result.setMsg("无权访问该用户信息");
+                return result;
+            }
+            // 通过 patientId 获取对应的 accountId
+            PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(record.getPatientId());
+            if (patientInfo == null || !currentAccount.getAccountId().equals(patientInfo.getAccountId())) {
+                L.warn("越权访问尝试: deviceToken={}, 请求patientId={}, 实际accountId={}",
+                    deviceToken, record.getPatientId(), patientInfo != null ? patientInfo.getAccountId() : "null");
+                result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+                result.setMsg("无权访问该用户信息");
+                return result;
+            }
+        }
+
         PatientRecordListVo resultVo = new PatientRecordListVo();
 
         List<PatientRecord> patientRecords = patientRecordMapper.selectPatientRecordList(record);

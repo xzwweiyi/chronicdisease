@@ -219,12 +219,12 @@ public class MinMedicalPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "patientRecordList", method = RequestMethod.POST)
-    public String patientRecordList(@Validated PatientRecord patientRecord, BindingResult bind) {
+    public String patientRecordList(@Validated PatientRecord patientRecord, BindingResult bind, HttpServletRequest request) {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            return buildSuccessMView(medicalPatientService.selectPatientRecordList(patientRecord));
+            return buildSuccessMView(medicalPatientService.selectPatientRecordList(patientRecord, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", JSON.toJSONString(patientRecord), e);
             return buildExceptionMView();
