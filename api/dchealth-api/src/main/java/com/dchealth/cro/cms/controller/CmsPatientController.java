@@ -1,6 +1,8 @@
 package com.dchealth.cro.cms.controller;
 
 import com.alibaba.fastjson2.JSON;
+import com.dchealth.cro.account.domain.PatientAccount;
+import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.cms.form.ActicleListSearchForm;
 import com.dchealth.cro.cms.form.CommentSaveForm;
 import com.dchealth.cro.cms.service.ArticleService;
@@ -8,6 +10,7 @@ import com.dchealth.cro.cms.vo.ArticleDetailVO;
 import com.dchealth.cro.cms.vo.ArticleVO;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.research.domain.ResearchInfoArticlePatient;
 import org.slf4j.Logger;
@@ -30,6 +33,42 @@ public class CmsPatientController extends ApiBaseController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private PatientAccountMapper patientAccountMapper;
+
+    /**
+     * 权限校验：验证 accountId 是否属于当前登录用户
+     */
+    private boolean validateAccountIdAccess(Long accountId, HttpServletRequest request) {
+        if (accountId == null) {
+            return true; // accountId为可选参数，为空时不校验
+        }
+        String deviceToken = request.getHeader("deviceToken");
+        if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
+            return true; // 无deviceToken时跳过校验（兼容旧逻辑）
+        }
+        PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
+        if (currentAccount == null) {
+            L.warn("越权访问尝试: deviceToken={}, 用户不存在", deviceToken);
+            return false;
+        }
+        if (!currentAccount.getAccountId().equals(accountId)) {
+            L.warn("越权访问尝试: deviceToken={}, 请求accountId={}, 实际accountId={}",
+                deviceToken, accountId, currentAccount.getAccountId());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 构建权限拒绝响应
+     */
+    private String buildAccessDeniedResponse() {
+        DchealthCloudResponseEntity<Object> result = new DchealthCloudResponseEntity<>();
+        result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+        result.setMsg("无权访问该用户信息");
+        return JSON.toJSONString(result);
+    }
 
     /**
      * 最新患教文章
@@ -158,10 +197,16 @@ public class CmsPatientController extends ApiBaseController {
     @ResponseBody
     @RequestMapping(value = "detail", method = RequestMethod.POST)
     public String detail(HttpServletRequest request,
-            @RequestParam(value = "articleId", required = true) Long articleId, @RequestParam(value = "accountId", required = false) Long accountId, @RequestParam("appType") String appType) {
+            @RequestParam(value = "articleId", required = true) Long articleId,
+            @RequestParam(value = "accountId", required = false) Long accountId,
+            @RequestParam("appType") String appType) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
+            }
+            // 权限校验
+            if (!validateAccountIdAccess(accountId, request)) {
+                return buildAccessDeniedResponse();
             }
             String osType = request.getHeader("osType");
             DchealthCloudResponseEntity<ArticleDetailVO> result = articleService.detail(articleId, accountId, appType);
@@ -216,10 +261,18 @@ public class CmsPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "detailArticleComment", method = RequestMethod.POST)
-    public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
+    public String detailComment(HttpServletRequest request,
+            @RequestParam(value = "articleId", required = true) Long articleId,
+            @RequestParam(value = "accountId", required = false) Long accountId,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
+            }
+            // 权限校验
+            if (!validateAccountIdAccess(accountId, request)) {
+                return buildAccessDeniedResponse();
             }
             return buildSuccessMView(articleService.detailComment(articleId,accountId, pageNo, pageSize));
         } catch (Exception e) {

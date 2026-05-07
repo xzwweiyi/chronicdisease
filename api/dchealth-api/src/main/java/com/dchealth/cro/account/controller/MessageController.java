@@ -1,5 +1,7 @@
 package com.dchealth.cro.account.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson2.JSON;
+import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.form.MessageAccountNoticeVo;
 import com.dchealth.cro.account.form.MessageSearchForm;
+import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.account.service.MessageService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
+import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.utils.StringUtils;
 
 /**
  * 资讯管理
@@ -23,108 +30,170 @@ import com.dchealth.cro.common.base.ApiBaseController;
 @Controller
 @RequestMapping(value = "/message")
 public class MessageController extends ApiBaseController {
-	private static final Logger L = LoggerFactory.getLogger(MessageController.class);
-	@Autowired
-	private MessageService messageService;
+		private static final Logger L = LoggerFactory.getLogger(MessageController.class);
+		@Autowired
+		private MessageService messageService;
+		@Autowired
+		private PatientAccountMapper patientAccountMapper;
 
-	/**
-	 * 查询消息列表
-	 */
-	@ResponseBody
-	@RequestMapping(value = "list", method = RequestMethod.POST)
-	public String list(@Validated MessageSearchForm messageSearchForm,
-					   @RequestAttribute(value = "appType", required = true) String appType,BindingResult bind) {
-		try {
-			if (bind.hasErrors()) {
-				return buildBindErrorParamMView(bind);
+		/**
+		 * 权限校验：验证 accountId 是否属于当前登录用户
+		 */
+		private boolean validateAccountIdAccess(Long accountId, HttpServletRequest request) {
+			String deviceToken = request.getHeader("deviceToken");
+			if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
+				return true; // 无deviceToken时跳过校验（兼容旧逻辑）
 			}
-			return buildSuccessMView(messageService.list(messageSearchForm,appType));
-		} catch (Exception e) {
-			L.info("综合查询资讯信息异常{}", JSON.toJSONString(messageSearchForm), e);
-			return buildExceptionMView();
-		}
-	}
-
-
-	/**
-	 * 设置消息为已读
-	 */
-	@ResponseBody
-	@RequestMapping(value = "setMessageRead", method = RequestMethod.POST)
-	public String setMessageRead(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
-								 @RequestAttribute(value = "appType", required = true) String appType) {
-		return buildSuccessMView(messageService.setMessageRead(messageAccountNoticeVo,appType));
-	}
-
-
-	/**
-	 *  个人中心红点
-	 */
-	@ResponseBody
-	@RequestMapping(value = "personalCenterRedDot", method = RequestMethod.POST)
-	public String personalCenterRedDot(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
-									   @RequestAttribute(value = "appType", required = true) String appType, BindingResult bind){
-		try {
-			if (bind.hasErrors()) {
-				return buildBindErrorParamMView(bind);
+			PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
+			if (currentAccount == null) {
+				L.warn("越权访问尝试: deviceToken={}, 用户不存在", deviceToken);
+				return false;
 			}
-			return buildSuccessMView(messageService.personalCenterRedDot(messageAccountNoticeVo,appType));
-		} catch (Exception e) {
-			L.info("获取个人中心红点信息异常{}", JSON.toJSONString(messageAccountNoticeVo), e);
-			return buildExceptionMView();
-		}
-	}
-
-	/**
-	 *  获取导航栏红点
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getMenuRedDotVo", method = RequestMethod.POST)
-	public String getMenuRedDotVo(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
-									   @RequestAttribute(value = "appType", required = true) String appType, BindingResult bind){
-		try {
-			if (bind.hasErrors()) {
-				return buildBindErrorParamMView(bind);
+			if (accountId != null && !currentAccount.getAccountId().equals(accountId)) {
+				L.warn("越权访问尝试: deviceToken={}, 请求accountId={}, 实际accountId={}",
+					deviceToken, accountId, currentAccount.getAccountId());
+				return false;
 			}
-			return buildSuccessMView(messageService.getMenuRedDotVo(messageAccountNoticeVo,appType));
-		} catch (Exception e) {
-			L.info("获取个人中心红点信息异常{}", JSON.toJSONString(messageAccountNoticeVo), e);
-			return buildExceptionMView();
+			return true;
 		}
-	}
 
-	/**
-	 *  患者端消息详情
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getMessageVo", method = RequestMethod.POST)
-	public String getMessageVo(Long messageId, @RequestAttribute(value = "appType", required = true) String appType){
-		try {
-
-			return buildSuccessMView(messageService.getMessageVo(messageId,appType));
-		} catch (Exception e) {
-			L.info("获取患者端消息详情信息异常{}", JSON.toJSONString(messageId), e);
-			return buildExceptionMView();
+		/**
+		 * 构建权限拒绝响应
+		 */
+		private String buildAccessDeniedResponse() {
+			DchealthCloudResponseEntity<Object> result = new DchealthCloudResponseEntity<>();
+			result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+			result.setMsg("无权访问该用户信息");
+			return JSON.toJSONString(result);
 		}
-	}
 
-	/**
-	 *  获取导航栏红点
-	 */
-	@ResponseBody
-	@RequestMapping(value = "getPopHanderInfo", method = RequestMethod.POST)
-	public String getPopHanderInfo(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
-								  @RequestAttribute(value = "appType", required = true) String appType, BindingResult bind){
-		try {
-			if (bind.hasErrors()) {
-				return buildBindErrorParamMView(bind);
+		/**
+		 * 查询消息列表
+		 */
+		@ResponseBody
+		@RequestMapping(value = "list", method = RequestMethod.POST)
+		public String list(@Validated MessageSearchForm messageSearchForm,
+						   @RequestAttribute(value = "appType", required = true) String appType,
+						   BindingResult bind,
+						   HttpServletRequest request) {
+			try {
+				if (bind.hasErrors()) {
+					return buildBindErrorParamMView(bind);
+				}
+				// 权限校验
+				if (!validateAccountIdAccess(messageSearchForm.getAccountId(), request)) {
+					return buildAccessDeniedResponse();
+				}
+				return buildSuccessMView(messageService.list(messageSearchForm,appType));
+			} catch (Exception e) {
+				L.info("综合查询资讯信息异常{}", JSON.toJSONString(messageSearchForm), e);
+				return buildExceptionMView();
 			}
-			return buildSuccessMView(messageService.getPopHanderInfo(messageAccountNoticeVo,appType));
-		} catch (Exception e) {
-			L.info("获取个人中心红点信息异常{}", JSON.toJSONString(messageAccountNoticeVo), e);
-			return buildExceptionMView();
 		}
+
+
+		/**
+		 * 设置消息为已读
+		 */
+		@ResponseBody
+		@RequestMapping(value = "setMessageRead", method = RequestMethod.POST)
+		public String setMessageRead(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
+										 @RequestAttribute(value = "appType", required = true) String appType,
+										 HttpServletRequest request) {
+			// 权限校验
+			if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				return buildAccessDeniedResponse();
+			}
+			return buildSuccessMView(messageService.setMessageRead(messageAccountNoticeVo,appType));
+		}
+
+
+		/**
+		 *  个人中心红点
+		 */
+		@ResponseBody
+		@RequestMapping(value = "personalCenterRedDot", method = RequestMethod.POST)
+		public String personalCenterRedDot(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
+											   @RequestAttribute(value = "appType", required = true) String appType,
+											   BindingResult bind,
+											   HttpServletRequest request){
+			try {
+				if (bind.hasErrors()) {
+					return buildBindErrorParamMView(bind);
+				}
+				// 权限校验
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+					return buildAccessDeniedResponse();
+				}
+				return buildSuccessMView(messageService.personalCenterRedDot(messageAccountNoticeVo,appType));
+			} catch (Exception e) {
+				L.info("获取个人中心红点信息异常{}", JSON.toJSONString(messageAccountNoticeVo), e);
+				return buildExceptionMView();
+			}
+		}
+
+		/**
+		 *  获取导航栏红点
+		 */
+		@ResponseBody
+		@RequestMapping(value = "getMenuRedDotVo", method = RequestMethod.POST)
+		public String getMenuRedDotVo(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
+											   @RequestAttribute(value = "appType", required = true) String appType,
+											   BindingResult bind,
+											   HttpServletRequest request){
+			try {
+				if (bind.hasErrors()) {
+					return buildBindErrorParamMView(bind);
+				}
+				// 权限校验
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+					return buildAccessDeniedResponse();
+				}
+				return buildSuccessMView(messageService.getMenuRedDotVo(messageAccountNoticeVo,appType));
+			} catch (Exception e) {
+				L.info("获取个人中心红点信息异常{}", JSON.toJSONString(messageAccountNoticeVo), e);
+				return buildExceptionMView();
+			}
+		}
+
+		/**
+		 *  患者端消息详情
+		 */
+		@ResponseBody
+		@RequestMapping(value = "getMessageVo", method = RequestMethod.POST)
+		public String getMessageVo(Long messageId, @RequestAttribute(value = "appType", required = true) String appType){
+			try {
+
+				return buildSuccessMView(messageService.getMessageVo(messageId,appType));
+			} catch (Exception e) {
+				L.info("获取患者端消息详情信息异常{}", JSON.toJSONString(messageId), e);
+				return buildExceptionMView();
+			}
+		}
+
+		/**
+		 *  获取导航栏红点
+		 */
+		@ResponseBody
+		@RequestMapping(value = "getPopHanderInfo", method = RequestMethod.POST)
+		public String getPopHanderInfo(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
+										  @RequestAttribute(value = "appType", required = true) String appType,
+										  BindingResult bind,
+										  HttpServletRequest request){
+			try {
+				if (bind.hasErrors()) {
+					return buildBindErrorParamMView(bind);
+				}
+				// 权限校验
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+					return buildAccessDeniedResponse();
+				}
+				return buildSuccessMView(messageService.getPopHanderInfo(messageAccountNoticeVo,appType));
+			} catch (Exception e) {
+				L.info("获取个人中心红点信息异常{}", JSON.toJSONString(messageAccountNoticeVo), e);
+				return buildExceptionMView();
+			}
+		}
+
+
 	}
-
-
-}

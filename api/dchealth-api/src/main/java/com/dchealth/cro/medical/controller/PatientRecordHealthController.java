@@ -2,14 +2,20 @@ package com.dchealth.cro.medical.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson2.JSON;
+import com.dchealth.cro.account.domain.PatientAccount;
+import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
+import com.dchealth.cro.medical.domain.PatientInfo;
+import com.dchealth.cro.medical.domain.PatientRecord;
 import com.dchealth.cro.medical.domain.PatientRecordHealth;
 import com.dchealth.cro.medical.form.PatientRecordFilesForm;
 import com.dchealth.cro.medical.form.PatientRecordSaveUpdateInfoForm;
+import com.dchealth.cro.medical.mapper.PatientInfoMapper;
+import com.dchealth.cro.medical.mapper.PatientRecordMapper;
 import com.dchealth.cro.medical.service.PatientRecordHealthService;
 import com.dchealth.cro.medical.vo.health.PatientRecordHealthReq;
 import com.dchealth.cro.question.form.QuestionRecordForm;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +48,50 @@ public class PatientRecordHealthController extends ApiBaseController {
 
     @Autowired
     private PatientRecordHealthService patientRecordHealthService;
+    @Autowired
+    private PatientRecordMapper patientRecordMapper;
+    @Autowired
+    private PatientInfoMapper patientInfoMapper;
+    @Autowired
+    private PatientAccountMapper patientAccountMapper;
+
+    /**
+     * 权限校验：验证 recordId 是否属于当前登录用户
+     */
+    private boolean validateRecordIdAccess(Long recordId, HttpServletRequest request) {
+        String deviceToken = request.getHeader("deviceToken");
+        if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
+            return true; // 无deviceToken时跳过校验（兼容旧逻辑）
+        }
+        PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
+        if (currentAccount == null) {
+            L.warn("越权访问尝试: deviceToken={}, 用户不存在", deviceToken);
+            return false;
+        }
+        // 通过 recordId 获取 patientId
+        PatientRecord patientRecord = patientRecordMapper.selectPatientRecordByRecordId(recordId);
+        if (patientRecord == null) {
+            return false;
+        }
+        // 通过 patientId 获取 accountId
+        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
+        if (patientInfo == null || !currentAccount.getAccountId().equals(patientInfo.getAccountId())) {
+            L.warn("越权访问尝试: deviceToken={}, 请求recordId={}, 实际accountId不匹配",
+                deviceToken, recordId);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 构建权限拒绝响应
+     */
+    private String buildAccessDeniedResponse() {
+        DchealthCloudResponseEntity<Object> result = new DchealthCloudResponseEntity<>();
+        result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
+        result.setMsg("无权访问该用户信息");
+        return JSON.toJSONString(result);
+    }
 
     /**
      * 保存或更新患者档案
@@ -89,7 +140,12 @@ public class PatientRecordHealthController extends ApiBaseController {
 
     @ResponseBody
     @RequestMapping(value = "healthList", method = RequestMethod.POST)
-    public String healthList(PatientRecordHealthReq healthListReq) {
+    public String healthList(PatientRecordHealthReq healthListReq, HttpServletRequest request) {
+        // 权限校验
+        if (healthListReq.getRecordId() != null && !validateRecordIdAccess(healthListReq.getRecordId(), request)) {
+            return buildAccessDeniedResponse();
+        }
+
         // 通过recordId获取到对应的健康管理的档案信息
         DchealthCloudResponseEntity<List<PatientRecordHealth>> result = new DchealthCloudResponseEntity<>();
         PatientRecordHealth patientRecordHealth = new PatientRecordHealth();
@@ -105,11 +161,15 @@ public class PatientRecordHealthController extends ApiBaseController {
 
     @ResponseBody
     @RequestMapping(value = "healthInfo", method = RequestMethod.POST)
-    public String healthInfo(PatientRecordHealthReq healthListReq) {
+    public String healthInfo(PatientRecordHealthReq healthListReq, HttpServletRequest request) {
 
         try {
             if (healthListReq.getRecordId() == null && healthListReq.getHealthManageType() == null) {
                 return buildErrorParamMView();
+            }
+            // 权限校验
+            if (healthListReq.getRecordId() != null && !validateRecordIdAccess(healthListReq.getRecordId(), request)) {
+                return buildAccessDeniedResponse();
             }
             return buildSuccessMView(patientRecordHealthService.patientRecordHealthDetail(healthListReq));
         } catch (Exception e) {
