@@ -43,4 +43,6 @@ public class FollowOverTimeHandleForm {
 
     //0患者本次不随访1患者已经完成随访
     private String ignoreType;
+
+    private Long researchId;
 }

@@ -819,16 +819,16 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
 
     //lys2
     @Override
-    public FollowWorkTree rootTree(Long userId,String diseaseName) {
+    public FollowWorkTree rootTree(Long userId, String diseaseName) {
         try {
             log.info("加载用户{}的随访根树", userId);
             long startTime = System.currentTimeMillis();
             SysUser sysUser = sysUserMapper.selectUserById(userId);
             List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
             if ("1".equals(sysUser.getIsAlldeptResearch())) {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),diseaseName);
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(), diseaseName);
             } else {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,diseaseName);
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId, diseaseName);
             }
 
             // 只构建根节点和病种节点，不加载队列和任务数据
@@ -1011,9 +1011,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             SysUser sysUser = sysUserMapper.selectUserById(userId);
             List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
             if ("1".equals(sysUser.getIsAlldeptResearch())) {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(), null);
             } else {
-                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
+                researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId, null);
             }
 
             List<ResearchInfo> researchInfos = new ArrayList<>();
@@ -1141,9 +1141,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         SysUser sysUser = sysUserMapper.selectUserById(userId);
         List<ResearchDiseases> researchDiseasesList = new ArrayList<>();
         if ("1".equals(sysUser.getIsAlldeptResearch())) {
-            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(), null);
         } else {
-            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
+            researchDiseasesList = researchDiseasesMapper.selectResearchDiseasesByUserId(userId, null);
         }
 
 
@@ -1833,9 +1833,9 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         SysUser sysUser = sysUserMapper.selectUserById(userId);
         List<ResearchDiseases> researchDiseases = new ArrayList<>();
         if ("1".equals(sysUser.getIsAlldeptResearch())) {
-            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(),null);
+            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByAuth2(sysUser.getDeptId(), null);
         } else {
-            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByUserId(userId,null);
+            researchDiseases = researchDiseasesMapper.selectResearchDiseasesByUserId(userId, null);
         }
 
         if (researchDiseases == null || researchDiseases.isEmpty()) {
@@ -1861,18 +1861,44 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
     public int visitTimeHandle(FollowOverTimeHandleForm followOverTimeHandleForm) {
         PatientRecord patientRecord = new PatientRecord();
         patientRecord.setRecordId(followOverTimeHandleForm.getRecordId());
-        patientRecord.setOverTimeStatus("3");
         patientRecord.setOverEvaluateStatusBack("1");
         patientRecord.setOverTimeHandleStatus(followOverTimeHandleForm.getHandleType());
         patientRecord.setOverTimeHandleTime(DateUtils.getNowDate());
         //1更新随访时间2忽略本次3失访
         if ("1".equals(followOverTimeHandleForm.getHandleType())) {
-            patientRecord.setVisitTime(followOverTimeHandleForm.getVisitTime());
+            Date overDay = null;
+            ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(followOverTimeHandleForm.getResearchId());
+            //超窗外呼提醒,超过随访时间1天要提醒
+            ResearchOutbound researchOutboundCall = researchOutboundMapper.selectByResearchIdAndType(followOverTimeHandleForm.getResearchId(), "1"); // 1 外呼提醒
+            if (researchOutboundCall != null && researchInfo != null && "1".equals(researchInfo.getResearchStatus())) {
+
+                if (researchOutboundCall.getOverAdvanceDays() != null) {
+                    overDay = DateUtils.addDays(followOverTimeHandleForm.getVisitTime(), researchOutboundCall.getOverAdvanceDays());
+                }
+
+            }
+            //更新lockVisitTime为新日期，外呼定时任务将按新日期触发
+            patientRecord.setLockVisitTime(followOverTimeHandleForm.getVisitTime());
             patientRecord.setFollowTipStatus(FollowTipStatusConstants.CHANGE_OF_FOLLOW_UP_TIME_REMINDER);
+            //取消该记录的待处理外呼/短信/站内信
+//            patientRecordOutboundMapper.updateChangeOutboundStatusByRecordId("1", "0", followOverTimeHandleForm.getRecordId());
+
+            //复制一条原来的站内信，然后直接插入到patient_outbound表中
+            PatientRecordOutbound pro = patientRecordOutboundMapper.selectByOutboundAndRemindType(followOverTimeHandleForm.getRecordId(), "1", "2");
+            if (pro != null) {
+                PatientRecordOutbound newPro = new PatientRecordOutbound();
+                BeanUtils.copyProperties(pro, newPro);
+                newPro.setOutboundTime(overDay);
+                newPro.setCreateTime(overDay);
+                patientRecordOutboundMapper.insertPatientRecordOutbound(newPro);
+            }
+
         } else if ("2".equals(followOverTimeHandleForm.getHandleType())) {
+            patientRecord.setOverTimeStatus("3");
             patientRecord.setFollowTipStatus(FollowTipStatusConstants.IGNORE_THIS_FOLLOW_UP_REMINDER);
             patientRecord.setIgnoreType(followOverTimeHandleForm.getIgnoreType());
         } else if ("3".equals(followOverTimeHandleForm.getHandleType())) {
+            patientRecord.setOverTimeStatus("3");
             PatientRecord recordDB = patientRecordMapper.selectPatientRecordByRecordId(followOverTimeHandleForm.getRecordId());
             PatientInfo patientInfo = new PatientInfo();
             patientInfo.setPatientId(recordDB.getPatientId());
