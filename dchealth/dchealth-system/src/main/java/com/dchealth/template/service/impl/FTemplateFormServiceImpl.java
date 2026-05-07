@@ -1,5 +1,6 @@
 package com.dchealth.template.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.dchealth.common.utils.DateUtils;
 import com.dchealth.template.domain.*;
 import com.dchealth.template.mapper.*;
@@ -10,9 +11,11 @@ import com.dchealth.warn.domain.vo.WarnTemplateEarlyConditionVO;
 import com.dchealth.warn.domain.vo.WarnTemplateEarlyVO;
 import com.dchealth.warn.mapper.WarnTemplateEarlyConditionMapper;
 import com.dchealth.warn.mapper.WarnTemplateEarlyMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +43,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
     WarnTemplateEarlyMapper warnTemplateEarlyMapper;
     @Autowired
     WarnTemplateEarlyConditionMapper warnTemplateEarlyConditionMapper;
-
     @Autowired
-    private FMedicalFormMapper fMedicalFormMapper;
+    private FTemplateFormSetEvaluationMapper fTemplateFormSetEvaluationMapper;
     /**
      * 查询单模板
      *
@@ -338,6 +340,273 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
 
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int copyFTemplateForm(Long templateId, Long templateFormId) {
+
+        // 查询原表单
+        FTemplateForm oldForm = fTemplateFormMapper.selectFTemplateFormByTemplateFormId(templateFormId);
+
+        if (oldForm == null){
+            throw new RuntimeException("表单不存在");
+        }
+
+        // 开始递归复制
+        copyFormNode(oldForm, templateId, 0L);
+
+        return 1;
+    }
+    /**
+     * 递归复制表单
+     *
+     * @param oldForm 原节点
+     * @param newTemplateId 新模板ID
+     * @param parentId 新父ID
+     */
+    private void copyFormNode(FTemplateForm oldForm, Long newTemplateId, Long parentId){
+
+        // ---------- 1.复制表单 ----------
+        FTemplateForm newForm = new FTemplateForm();
+
+        BeanUtils.copyProperties(oldForm, newForm);
+
+        // 清空主键
+        newForm.setTemplateFormId(null);
+
+        newForm.setTemplateName(oldForm.getTemplateName() + "_copy");
+        newForm.setTemplateCode(getMaxTemplateFormCode());
+        // 新模板ID
+        newForm.setTemplateId(newTemplateId);
+        newForm.setUpdateTime(DateUtils.getNowDate());
+        newForm.setCreateTime(DateUtils.getNowDate());
+        // 新父ID
+        newForm.setParentId(parentId);
+
+        // 新增
+        fTemplateFormMapper.insertFTemplateForm(newForm);
+        FTemplateFormSetEvaluation fTemplateFormSetEvaluation = new FTemplateFormSetEvaluation();
+        fTemplateFormSetEvaluation.setTemplateFormId(oldForm.getTemplateFormId());
+        List<FTemplateFormSetEvaluation> tfses = fTemplateFormSetEvaluationMapper.selectFTemplateFormSetEvaluationList(fTemplateFormSetEvaluation);
+        if (CollectionUtils.isNotEmpty(tfses)) {
+            List<FTemplateFormSetEvaluation> fTemplateFormSetEvaluations = BeanUtil.copyToList(tfses, FTemplateFormSetEvaluation.class);
+            fTemplateFormSetEvaluations.forEach(templateFormSetEvaluation -> {
+                templateFormSetEvaluation.setTemplateFormId(newForm.getTemplateFormId());
+                templateFormSetEvaluation.setId(null);
+                templateFormSetEvaluation.setUpdateTime(DateUtils.getNowDate());
+                templateFormSetEvaluation.setCreateTime(DateUtils.getNowDate());
+                fTemplateFormSetEvaluationMapper.insertFTemplateFormSetEvaluation(templateFormSetEvaluation);
+            });
+        }
+        Long newFormId = newForm.getTemplateFormId();
+
+        // ---------- 2.复制属性 ----------
+
+        String formType = oldForm.getFormType();
+
+        // 自评量表
+        if ("3".equals(formType)) {
+
+            copyExamSubject(oldForm.getTemplateFormId(),newTemplateId, newFormId);
+
+        } else {
+
+            copyProperties(oldForm.getTemplateFormId(),newTemplateId, newFormId);
+        }
+
+        // ---------- 3.递归复制子节点 ----------
+
+        FTemplateForm params = new FTemplateForm();
+        params.setParentId(oldForm.getTemplateFormId());
+
+        List<FTemplateForm> children = fTemplateFormMapper.selectFTemplateFormList(params);
+
+        if (CollectionUtils.isNotEmpty(children)) {
+
+            for (FTemplateForm child : children) {
+
+                copyFormNode(child, newTemplateId, newFormId);
+            }
+        }
+    }
+
+
+    /**
+     * 复制组件属性
+     */
+    private void copyProperties(Long oldFormId, Long newTemplateId, Long newFormId){
+
+        List<FTemplateProperty> properties = fTemplatePropertyMapper.selectFTemplatePropertyByTemFromId(oldFormId);
+
+        if (CollectionUtils.isEmpty(properties)){
+            return;
+        }
+
+        for (FTemplateProperty oldProperty : properties){
+
+            // ---------- 复制属性 ----------
+            FTemplateProperty newProperty = new FTemplateProperty();
+
+            BeanUtils.copyProperties(oldProperty, newProperty);
+
+            newProperty.setId(null);
+            newProperty.setTemplateFormId(newFormId);
+            newProperty.setTemplateId(newTemplateId);
+            newProperty.setUpdateTime(DateUtils.getNowDate());
+            newProperty.setCreateTime(DateUtils.getNowDate());
+            fTemplatePropertyMapper.insertFTemplateProperty(newProperty);
+
+            Long newPropertyId = newProperty.getId();
+
+            // ---------- 复制预警 ----------
+            WarnTemplateEarly warn = new WarnTemplateEarly();
+            warn.setPropertyId(oldProperty.getId());
+            warn.setFormId(oldFormId);
+
+            List<WarnTemplateEarly> earlyList = warnTemplateEarlyMapper.selectWarnTemplateEarlyList(warn);
+
+            if (!CollectionUtils.isEmpty(earlyList)){
+
+                for (WarnTemplateEarly oldEarly : earlyList){
+
+                    WarnTemplateEarly newEarly = new WarnTemplateEarly();
+
+                    BeanUtils.copyProperties(oldEarly, newEarly);
+
+                    newEarly.setId(null);
+                    newEarly.setPropertyId(newPropertyId);
+                    newEarly.setFormId(newFormId);
+                    newEarly.setTemplateId(newTemplateId);
+                    newEarly.setUpdateTime(DateUtils.getNowDate());
+                    newEarly.setCreateTime(DateUtils.getNowDate());
+                    warnTemplateEarlyMapper.insertWarnTemplateEarly(newEarly);
+
+                    Long newEarlyId = newEarly.getId();
+
+                    // ---------- 复制预警条件 ----------
+                    WarnTemplateEarlyCondition condition = new WarnTemplateEarlyCondition();
+
+                    condition.setTemplateEarlyWarnId(oldEarly.getId());
+
+                    List<WarnTemplateEarlyCondition> conditionList = warnTemplateEarlyConditionMapper.selectWarnTemplateEarlyConditionList(condition);
+
+                    if (!CollectionUtils.isEmpty(conditionList)){
+
+                        for (WarnTemplateEarlyCondition oldCondition : conditionList){
+
+                            WarnTemplateEarlyCondition newCondition = new WarnTemplateEarlyCondition();
+
+                            BeanUtils.copyProperties(oldCondition, newCondition);
+                            newCondition.setTemplateId(newTemplateId);
+                            newCondition.setId(null);
+                            newCondition.setTemplateEarlyWarnId(newEarlyId);
+                            newCondition.setPropertyId(newProperty.getId());
+                            newCondition.setUpdateTime(DateUtils.getNowDate());
+                            newCondition.setCreateTime(DateUtils.getNowDate());
+                            warnTemplateEarlyConditionMapper.insertWarnTemplateEarlyCondition(newCondition);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * 复制自评量表
+     */
+    private void copyExamSubject(Long oldFormId, Long newTemplateId, Long newFormId){
+
+        List<FTemplateExamSubject> subjectList = fTemplateExamSubjectMapper.selectFTemplateExamSubjectByTemFromId(oldFormId);
+
+        if (CollectionUtils.isEmpty(subjectList)){
+            return;
+        }
+
+        for (FTemplateExamSubject oldSubject : subjectList){
+
+            // ---------- 复制题目 ----------
+            FTemplateExamSubject newSubject = new FTemplateExamSubject();
+
+            BeanUtils.copyProperties(oldSubject, newSubject);
+
+            newSubject.setId(null);
+            newSubject.setTemplateFormId(newFormId);
+            newSubject.setTemplateId(newTemplateId);
+            newSubject.setUpdateTime(DateUtils.getNowDate());
+            newSubject.setCreateTime(DateUtils.getNowDate());
+            fTemplateExamSubjectMapper.insertFTemplateExamSubject(newSubject);
+
+            Long newSubjectId = newSubject.getId();
+
+            // ---------- 复制选项 ----------
+            List<FTemplateExamItem> itemList = fTemplateExamItemMapper.selectExamItemByPropertyId(oldSubject.getId());
+
+            if (!CollectionUtils.isEmpty(itemList)){
+
+                for (FTemplateExamItem oldItem : itemList){
+
+                    FTemplateExamItem newItem = new FTemplateExamItem();
+                    BeanUtils.copyProperties(oldItem, newItem);
+                    newItem.setId(null);
+                    // 新题目ID
+                    newItem.setPropertyId(newSubjectId);
+                    newItem.setTemplateFormId(newFormId);
+                    newItem.setUpdateTime(DateUtils.getNowDate());
+                    newItem.setCreateTime(DateUtils.getNowDate());
+                    fTemplateExamItemMapper.insertFTemplateExamItem(newItem);
+                }
+            }
+        }
+    }
+    private String getMaxTemplateFormCode() {
+
+        String maxCode = fTemplateFormMapper.selectMaxTemplateFormCode();
+
+        // 默认第一个
+        if (maxCode == null || maxCode.trim().isEmpty()) {
+            return "modela";
+        }
+
+        // 去掉前缀
+        String suffix = maxCode.replaceFirst("^model", "");
+
+        // 字母递增
+        String next = recoverCode(suffix);
+
+        return "model" + next;
+    }
+    /**
+     * 字母编码递增
+     *
+     * a -> b
+     * z -> aa
+     * az -> ba
+     * zz -> aaa
+     */
+    private String recoverCode(String code) {
+
+        char[] chars = code.toCharArray();
+
+        int index = chars.length - 1;
+
+        // 从后往前进位
+        while (index >= 0) {
+
+            // 当前不是 z
+            if (chars[index] < 'z') {
+
+                chars[index]++;
+
+                return new String(chars);
+            }
+
+            // 当前是 z
+            chars[index] = 'a';
+
+            index--;
+        }
+
+        // 全部都是 z
+        return "a" + new String(chars);
+    }
     private void checkHealthType(FTemplateForm fTemplateForm) {
         // 对表单类型为5的健康管理方案类的进行限制。不可添加重名的，不可同时添加超过4个类型方案。考虑到小程序端的展示
         if ("5".equals(fTemplateForm.getFormType())) {
@@ -354,8 +623,6 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
                     throw new RuntimeException("健康管理方案类不可添加超过4个");
                 }
             }
-
-
         }
     }
 }

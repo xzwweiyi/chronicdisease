@@ -133,7 +133,6 @@ public class FMedicalFormServiceImpl implements IFMedicalFormService
             }
         }
         List<FMedicalForm> childrens = findChildren(fMedicalForms, warnMap, itemMap);
-
         if(medicalForm==null){
             medicalForm = new FMedicalForm();
         }

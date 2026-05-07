@@ -1850,7 +1850,7 @@ public class MedicalPatientService {
             PatientRecord patientRecord = setFollowTipAndGetNextNodeInfo(s, patientInfo, patientRecords,
                     maxFollowIdPr, patientRecordTemplates);
 
-            if (!Objects.isNull(patientRecord) && !"4".equals(patientInfo.getPatientStatus())) {
+            if (!Objects.isNull(patientRecord) && !"4".equals(patientInfo.getPatientStatus()) && !"-1".equals(rp.getFollowStatus())) {
                 nextNodeAtomic.set(patientRecord);
             }
         });

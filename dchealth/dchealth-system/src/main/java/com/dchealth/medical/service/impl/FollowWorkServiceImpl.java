@@ -264,20 +264,8 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 if (exaMap != null && exaMap.containsKey(medicalFormVO.getMedicalFormId()) && !"1".equals(medicalFormVO.getOpenMultiple())) {
                     medicalFormVO.setPropertyExamVOS(exaMap.get(medicalFormVO.getMedicalFormId()));
                 }
-                if (medicalFormMap.containsKey(medicalFormVO.getMedicalFormId())) {
-                    List<MedicalFormVO> voList = medicalFormMap.get(medicalFormVO.getMedicalFormId());
-                    if (voList.size() > 0) {
-                        for (MedicalFormVO v : voList) {
-                            if (map != null && map.containsKey(v.getMedicalFormId())) {
-                                v.setPropertyVOS(map.get(v.getMedicalFormId()));
-                            }
-                            if (exaMap != null && exaMap.containsKey(v.getMedicalFormId())) {
-                                v.setPropertyExamVOS(exaMap.get(v.getMedicalFormId()));
-                            }
-                        }
-                        medicalFormVO.setChildMedicalFormVOS(voList);
-                    }
-                }
+                setMedicalFormRecursively(medicalFormVO,medicalFormMap,map,exaMap);
+
 
                 if ("3".equals(medicalFormVO.getFormType())) {
 
@@ -400,7 +388,39 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         patientDetailVO.setMedicalFormExamVOS(medicalFormExamVOSResult);
         return patientDetailVO;
     }
+    /**
+     * 递归设置表单属性
+     * @param medicalFormVO 当前表单VO
+     * @param medicalFormMap 表单映射Map
+     * @param map 属性Map
+     * @param exaMap 检查属性Map
+     */
+    private void setMedicalFormRecursively(MedicalFormVO medicalFormVO,
+                                           Map<Long, List<MedicalFormVO>> medicalFormMap,
+                                           Map<Long, List<MedicalPropertyVO>> map,
+                                           Map<Long, List<MedicalPropertyVO>> exaMap) {
+        // 获取当前表单的子表单列表
+        List<MedicalFormVO> childList = medicalFormMap.get(medicalFormVO.getMedicalFormId());
 
+        if (childList != null && !childList.isEmpty()) {
+            // 为每个子表单设置属性和检查项
+            for (MedicalFormVO child : childList) {
+                // 设置普通属性
+                if (map != null && map.containsKey(child.getMedicalFormId())) {
+                    child.setPropertyVOS(map.get(child.getMedicalFormId()));
+                }
+                // 设置检查属性
+                if (exaMap != null && exaMap.containsKey(child.getMedicalFormId())) {
+                    child.setPropertyExamVOS(exaMap.get(child.getMedicalFormId()));
+                }
+                // 递归处理子表单的子表单
+                setMedicalFormRecursively(child, medicalFormMap, map, exaMap);
+            }
+
+            // 将处理完的子表单列表设置到当前表单
+            medicalFormVO.setChildMedicalFormVOS(childList);
+        }
+    }
     private void dealWarnSource(Long recordId, List<MedicalFormVO> medicalFormVOSResult) {
         try {
             // 查询预警信息

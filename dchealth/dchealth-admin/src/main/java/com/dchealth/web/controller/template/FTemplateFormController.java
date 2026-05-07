@@ -45,7 +45,16 @@ public class FTemplateFormController extends BaseController
         List<FTemplateForm> list = fTemplateFormService.selectFTemplateFormList(fTemplateForm);
         return getDataTable(list);
     }
-
+    /**
+     * 复制单模板
+     */
+    @PreAuthorize("@ss.hasPermi('base:template:add')")
+    @Log(title = "单模板", businessType = BusinessType.INSERT)
+    @PostMapping(value = "/{templateFormId}/{templateId}")
+    public AjaxResult copy(@PathVariable("templateId") Long templateId,@PathVariable("templateFormId") Long templateFormId)
+    {
+        return toAjax(fTemplateFormService.copyFTemplateForm(templateId,templateFormId));
+    }
     /**
      * 导出单模板列表
      */

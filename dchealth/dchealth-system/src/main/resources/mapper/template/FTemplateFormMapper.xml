@@ -62,7 +62,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFTemplateFormVo"/>
         where template_form_id = #{templateFormId}
     </select>
-
+    <select id="selectMaxTemplateFormCode" resultType="java.lang.String">
+        select template_code
+        from f_template_form order by create_time desc limit 1
+    </select>
     <select id="selectFTemplateFormByTemplateId" parameterType="Long" resultMap="FTemplateFormResult">
         <include refid="selectFTemplateFormVo"/>
         where template_id = #{templateId}

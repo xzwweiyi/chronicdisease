@@ -72,4 +72,8 @@ public interface IFTemplateFormService
      * @return
      */
     FTemplateForm queryTemplateFromByTemId(Long templateId);
+    /**
+     * 复制单模板
+     */
+    int copyFTemplateForm(Long templateId,Long templateFormId);
 }

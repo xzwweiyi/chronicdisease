@@ -19,7 +19,12 @@ public interface FTemplateFormMapper
      * @return 单模板
      */
     public FTemplateForm selectFTemplateFormByTemplateFormId(Long templateFormId);
-
+    /**
+     * 查询单模板code
+     *
+     * @return 单模板
+     */
+    public String selectMaxTemplateFormCode();
     /**
      * 查询单模板列表
      * 
