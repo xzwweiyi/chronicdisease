@@ -9,3 +9,4 @@ ALTER TABLE patient_record MODIFY COLUMN follow_status varchar(255) DEFAULT null
 
 ALTER TABLE research_info ADD is_follow_rate int(1)   default 1 COMMENT '是否开启随访率：1-开启，0-关闭';
 ALTER TABLE research_info ADD public_time datetime   default null COMMENT '发布时间';
+update research_info set public_time = create_time where research_status =1
