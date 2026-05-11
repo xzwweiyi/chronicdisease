@@ -49,7 +49,7 @@ public class FTemplateFormController extends BaseController
      * 复制单模板
      */
     @PreAuthorize("@ss.hasPermi('base:template:add')")
-    @Log(title = "单模板", businessType = BusinessType.INSERT)
+    @Log(title = "复制单模板", businessType = BusinessType.INSERT)
     @PostMapping(value = "/{templateFormId}/{templateId}")
     public AjaxResult copy(@PathVariable("templateId") Long templateId,@PathVariable("templateFormId") Long templateFormId)
     {

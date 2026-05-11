@@ -4,6 +4,7 @@ import com.dchealth.common.utils.DateUtils;
 import com.dchealth.template.domain.*;
 import com.dchealth.template.domain.vo.FTemplateVo;
 import com.dchealth.template.mapper.*;
+import com.dchealth.template.service.IFTemplateFormService;
 import com.dchealth.template.service.IFTemplateService;
 import com.dchealth.warn.domain.form.WarnMedicalEarlyForm;
 import com.dchealth.warn.domain.vo.WarnTemplateEarlyVO;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +60,8 @@ public class FTemplateServiceImpl implements IFTemplateService
 
     @Autowired
     private FDeptCrfTemplateMapper fDeptCrfTemplateMapper;
+    @Autowired
+    private IFTemplateFormService fTemplateFormService;
 
 
     /**
@@ -506,6 +512,48 @@ public class FTemplateServiceImpl implements IFTemplateService
     @Override
     public List<FTemplate> selectDeptFTemplateList(FTemplate fTemplate) {
         return fTemplateMapper.selectDeptFTemplateList(fTemplate);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void copy(Long templateId,Long templateCategoryId) {
+        FTemplate fTemplate = fTemplateMapper.selectFTemplateByTemplateId(templateId);
+        FTemplate copyFTemplate = new FTemplate();
+        BeanUtils.copyProperties(fTemplate,copyFTemplate);
+        copyFTemplate.setTemplateCategoryId(templateCategoryId);
+        copyFTemplate.setTemplateId(null);
+        copyFTemplate.setTemplateName(fTemplate.getTemplateName()+"_copy");
+        fTemplateMapper.insertFTemplate(copyFTemplate);
+        FTemplateForm fTemplateForm = new FTemplateForm();
+        fTemplateForm.setTemplateId(templateId);
+        List<FTemplateForm> fTemplateForms = fTemplateFormService.selectFTemplateFormList(fTemplateForm);
+        if(CollectionUtils.isEmpty(fTemplateForms)){
+            return;
+        }
+        // 内部线程池
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+        try {
+
+            List<CompletableFuture<Void>> futures =
+                    fTemplateForms.stream()
+                            .map(templateForm ->
+                                    CompletableFuture.runAsync(() -> {
+
+                                        fTemplateFormService.copyFTemplateForm(
+                                                copyFTemplate.getTemplateId(),
+                                                templateForm.getTemplateFormId()
+                                        );
+
+                                    }, executorService)
+                            )
+                            .collect(Collectors.toList());
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        } finally {
+            // 必须关闭
+            executorService.shutdown();
+        }
     }
 
 }

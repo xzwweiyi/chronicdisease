@@ -67,8 +67,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="followUpTasksAreGeneratedManually" parameterType="PatientRecordTemplate" resultMap="PatientRecordTemplateResult">
         <include refid="selectPatientRecordTemplateVo"/>
         <where>
-            follow_num != 0
+            follow_num != 0 and research_id = #{researchId}
         </where>
+        order by create_time asc
     </select>
     <select id="selectPatientRecordTemplateByFollowId" parameterType="Long" resultMap="PatientRecordTemplateResult">
         <include refid="selectPatientRecordTemplateVo"/>

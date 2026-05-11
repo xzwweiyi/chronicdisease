@@ -604,6 +604,7 @@
         <if test="enrollmentHandlerStatus != null"> and f.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
         <if test="enrollmentStatus != null"> and f.enrollment_status = #{enrollmentStatus}</if>
         <if test="deptIdNoZero != null  and deptIdNoZero != '' and deptIdNoZero=='1'.toString()"> and f.dept_id > 0 </if>
+        <if test="enrollmentTime != null and enrollmentTime != '' "> and date(f.enrollment_time) >=#{enrollmentTime} </if>
     </select>
     <select id="selectExcelEnrollmentPatientInfoList" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
         select f.patient_id, f.person_id, f.patient_name, p.card_id id_card, pc.mobile, f.create_time, f.plan_research_id, f.research_id, f.dept_id, f.account_id,

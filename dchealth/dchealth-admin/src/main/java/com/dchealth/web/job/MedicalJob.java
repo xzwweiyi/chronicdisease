@@ -265,10 +265,11 @@ public class MedicalJob {
                 if (!maps.containsKey(patientRecord.getFollowId())){
                     return;
                 }
-                PatientRecordTemplate recordTemplate = maps.get(patientRecord.getFollowId());
+                //获取随访1的周期模版
+                PatientRecordTemplate recordTemplate = patientRecordTemplates.get(0);
                 logger.info("---------------------------recordId:{}",patientRecord.getRecordId());
                 PatientInfo patientInfo = getPatientInfo(patientRecord);
-                //创建随访1的PatientRecord记录
+                //根据最新的随访记录和随访1的周期模版重新创建随访1的PatientRecord记录
                 followUpTasksAreGeneratedManually(listTotal,insertList, researchInfo, patientRecord, recordTemplate,patientInfo);
                 if(insertList.size()>0){
                     patientInfo.setGeneratedManually(patientInfo.getGeneratedManually() == 0? BigDecimal.ONE.longValue() :patientInfo.getGeneratedManually()+BigDecimal.ONE.longValue());

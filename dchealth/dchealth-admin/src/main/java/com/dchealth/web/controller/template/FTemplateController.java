@@ -61,7 +61,11 @@ public class FTemplateController extends BaseController
         List<FTemplate> list = fTemplateService.selectFTemplateList(fTemplate);
         return getDataTable(list);
     }
-
+    @PostMapping("/copy/{templateId}/{templateCategoryId}")
+    public AjaxResult copy(@PathVariable("templateId") Long templateId,@PathVariable("templateCategoryId") Long templateCategoryId){
+        fTemplateService.copy(templateId,templateCategoryId);
+        return AjaxResult.success();
+    }
     /**
      * 导出模板列表
      */

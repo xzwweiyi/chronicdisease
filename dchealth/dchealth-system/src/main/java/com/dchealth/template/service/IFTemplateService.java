@@ -91,4 +91,6 @@ public interface IFTemplateService
     int deleteFTemplateByTempIds(Long[] templateIds);
 
     List<FTemplate> selectDeptFTemplateList(FTemplate fTemplate);
+
+    void copy(Long templateId,Long templateCategoryId);
 }

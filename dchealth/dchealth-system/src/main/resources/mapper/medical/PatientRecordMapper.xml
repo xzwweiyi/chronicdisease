@@ -329,7 +329,7 @@
             parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
         select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
         ac.mobile,
-        r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num
+        r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,r.follow_status,
         ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.form_complent_rate, ac.id_card card_id
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
@@ -1214,6 +1214,6 @@
         select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
     </select>
     <update id="updateManuallyFollowUpList">
-        update patient_record set follow_status =1  where  follow_status =-1  <![CDATA[ AND DATE(visit_time) <= CURDATE() ]]>
+        update patient_record set follow_status =0  where  follow_status =-1  <![CDATA[ AND DATE(visit_time) <= CURDATE() ]]>
     </update>
 </mapper>
