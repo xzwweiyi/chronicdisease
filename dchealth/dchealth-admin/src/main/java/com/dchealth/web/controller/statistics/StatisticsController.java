@@ -150,8 +150,8 @@ public class StatisticsController extends BaseController {
         log.info("queryFollowRate param:{}", JSONObject.toJSONString(statisticsParam));
         LoginUser loginUser = getLoginUser();
         SysUser sysUser = loginUser.getUser();
-
-        if (!loginUser.getUser().isAdmin()) {
+        //非管理员和非特殊统计部门
+        if (!loginUser.getUser().isAdmin() && loginUser.getDeptId() != 490L) {
             statisticsParam.setRoleDeptId(getDeptId());
             //新增部门权限判断逻辑 如果用户有部门权限则不设置用户id查询部门数据  否则设置用户id查询自己的数据
             if (!"1".equals(sysUser.getIsAlldeptResearch())) {

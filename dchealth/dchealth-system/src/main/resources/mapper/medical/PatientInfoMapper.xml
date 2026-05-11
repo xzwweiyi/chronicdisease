@@ -597,6 +597,9 @@
             </foreach>
         </if>
         <if test="patientId != null "> and patient_id = #{patientId}</if>
+        <if test="idCard != null  and  idCard != ''"> and p.card_id like concat('%', #{idCard}, '%')</if>
+        <if test="tdPatientId != null "> and p.person_id = #{tdPatientId}</if>
+        <if test="mobile != null  and mobile != ''"> and p.phone_number like concat('%', #{mobile}, '%')</if>
         <if test="patientName != null  and patientName != ''"> and p.person_name like concat('%', #{patientName}, '%')</if>
         <if test="researchId != null  and researchId != ''"> and (f.research_id = #{researchId} or f.research_id is null)</if>
         <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and f.account_id = 0 </if>

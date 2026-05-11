@@ -330,7 +330,7 @@
         select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,r.follow_status,
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.form_complent_rate, ac.id_card card_id
+        r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.form_complent_rate, ac.id_card card_id
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
@@ -368,7 +368,7 @@
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
-        ,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,
+,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,
          prt.follow_num, ac.id_card card_id, ac.id_card card_id,r.generated_manually
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id

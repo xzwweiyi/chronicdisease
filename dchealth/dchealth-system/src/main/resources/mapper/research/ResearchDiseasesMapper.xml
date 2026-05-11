@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="com.dchealth.research.domain.vo.ResearchDiseasesVO" id="ResearchDiseasesVOResult">
         <result property="deptId"    column="dept_id"    />
+        <result property="parentId"    column="parent_id"    />
         <result property="deptName"    column="dept_name"    />
         <result property="diseaseId"    column="disease_id"    />
         <result property="diseaseName"    column="disease_name"    />
@@ -51,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectResearchDiseasesListTree" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchDiseasesVOResult">
-        select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name, ri.stage,ri.research_status
+        select d.dept_id, d.parent_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name, ri.stage,ri.research_status
         from sys_dept d
         INNER JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
         INNER join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'

@@ -7,8 +7,14 @@ import lombok.Data;
  */
 @Data
 public class ResearchDiseasesVO {
-
+    /**
+     * 子部门
+     */
     private Long deptId;
+    /**
+     * 父部门
+     */
+    private Long parentId;
 
     private String deptName;
 

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.dchealth.common.core.domain.entity.SysUser;
 import com.dchealth.common.core.domain.model.LoginUser;
 import com.dchealth.research.domain.DiseasesGroups;
+import com.dchealth.research.domain.vo.ResearchDiseasesTreeSelect;
 import com.dchealth.research.domain.vo.ResearchInfoVo;
 import com.dchealth.research.service.IDiseasesGroupsService;
 import com.dchealth.system.service.ISysUserService;
@@ -80,7 +81,8 @@ public class ResearchDiseasesController extends BaseController
         }
 
         // 调用服务方法获取研究疾病列表，并返回成功结果
-        return AjaxResult.success(researchDiseasesService.selectResearchDiseasesListTree(vo));
+        List<ResearchDiseasesTreeSelect> researchDiseasesTreeSelects = researchDiseasesService.selectResearchDiseasesListTree(vo);
+        return AjaxResult.success(researchDiseasesTreeSelects);
     }
 
     /**

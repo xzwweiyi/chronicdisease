@@ -72,10 +72,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left JOIN mp_patient_account mpa on mpa.person_id = p.person_id
         left JOIN patient_account pa on mpa.account_id=pa.account_id
         where 1=1
-        <if test="mobile != null  and mobile != ''"> and p.phone_number like concat('%', #{mobile}, '%')</if>
         <if test="patientName != null  and  patientName != ''"> and p.person_name like concat('%', #{patientName}, '%')</if>
         <if test="idCard != null  and  idCard != ''"> and p.card_id like concat('%', #{idCard}, '%')</if>
         <if test="tdPatientId != null "> and p.person_id = #{tdPatientId}</if>
+        <if test="mobile != null  and mobile != ''"> and p.phone_number like concat('%', #{mobile}, '%')</if>
         <if test="researchId != null  and  researchId != ''">
             and p.person_id not in (
             select distinct person_id from patient_info where research_id= #{researchId}
