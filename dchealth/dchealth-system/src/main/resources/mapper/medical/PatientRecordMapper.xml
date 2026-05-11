@@ -1182,7 +1182,7 @@
         WHERE
         a.follow_status != 0 and a.follow_status !=-1
         AND a.name != '基线'
-        and c.del_flag = '0' and c.research_status != 0 and b.patient_status != 6
+        and c.del_flag = '0' and c.research_status != 0 and b.patient_status != 6 and c.is_follow_rate =1
 
         <if test="followStartTime != null and followEndTime != null">
             AND DATE_FORMAT(a.follow_submit_time,'%Y-%m-%d') BETWEEN #{followStartTime} and #{followEndTime}

@@ -64,6 +64,9 @@ public class ResearchInfo extends BaseEntity
     /** 阶段（0-简介，1-随访周期，2-CRF，3-患教，4-外呼，5-随访患者，6-随访医生，7-队列状态） */
     private String stage;
 
+    /** 是否开启随访率：1-开启，0-关闭 */
+    private Integer isFollowRate;
+
     /**
      * 后台质效待评价数量
      */

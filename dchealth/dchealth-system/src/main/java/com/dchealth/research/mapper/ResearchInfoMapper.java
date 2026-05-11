@@ -124,6 +124,12 @@ public interface ResearchInfoMapper
      * @return
      */
     int updateInfoDelFlagById(Long id);
+    /**
+     * 关闭随访率状态
+     * @param id
+     * @return
+     */
+    int closeFollowRate(Long id);
 
     /**
      * 更新阶段信息
@@ -141,4 +147,6 @@ public interface ResearchInfoMapper
     int updateResearchInfoStatus(@Param("id") Long id, @Param("status") String status);
 
     List<ResearchInfo> selectResearchInfoByStatus2();
+
+
 }

@@ -103,4 +103,6 @@ public interface IResearchInfoService
      * @param id 队列id
      */
     void createTableInAddUser(Long id);
+
+    int closeFollowRate(Long id);
 }

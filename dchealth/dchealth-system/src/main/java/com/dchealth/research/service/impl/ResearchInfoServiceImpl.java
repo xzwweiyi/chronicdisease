@@ -502,4 +502,9 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
             L.error("ERROR",e);
         }
     }
+
+    @Override
+    public int closeFollowRate(Long id) {
+        return researchInfoMapper.closeFollowRate(id);
+    }
 }

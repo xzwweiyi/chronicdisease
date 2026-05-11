@@ -142,7 +142,19 @@ public class ResearchInfoController extends BaseController
         applicationContext.publishEvent(new FollowTreeEvent(getUserId(),getUserId(), Boolean.FALSE));
         return toAjax(researchInfoService.updateResearchInfo(vo));
     }
-
+    @PreAuthorize("@ss.hasPermi('research:info:edit')")
+    @Log(title = "队列关闭统计随访率", businessType = BusinessType.UPDATE)
+    @PutMapping("/closeFollowRate/{id}")
+    public AjaxResult closeFollowRate(@PathVariable Long id)
+    {
+        // 判断权限
+        if (!patientInfoService.canDeleteById(getUserId(),id)){
+            return AjaxResult.error("当前患者只能由队列创建者关闭统计随访率或者管理员关闭统计随访率");
+        }
+        int i = researchInfoService.closeFollowRate(id);
+        applicationContext.publishEvent(new FollowTreeEvent(this,getUserId(), Boolean.FALSE));
+        return toAjax(i);
+    }
     /**
      * 删除队列基础信息
      */
