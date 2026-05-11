@@ -1,10 +1,13 @@
 package com.dchealth.research.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.dchealth.common.annotation.Excel;
 import com.dchealth.common.core.domain.BaseEntity;
+
+import java.util.Date;
 
 /**
  * 队列基础信息对象 research_info
@@ -66,6 +69,10 @@ public class ResearchInfo extends BaseEntity
 
     /** 是否开启随访率：1-开启，0-关闭 */
     private Integer isFollowRate;
+
+    /** 发布时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date publicTime;
 
     /**
      * 后台质效待评价数量

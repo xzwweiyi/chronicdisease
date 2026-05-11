@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="overEvaluateStatusBack"    column="over_evaluate_status_back"    />
         <result property="evaluateStatus"    column="evaluate_status"    />
         <result property="isFollowRate"    column="is_follow_rate"    />
+        <result property="publicTime"    column="public_time"    />
     </resultMap>
 
     <resultMap type="ResearchInfoVo" id="ResearchInfoDetailResult">
@@ -64,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="researchStandard"    column="research_standard"    />
         <result property="stage"    column="stage"    />
         <result property="isFollowRate"    column="is_follow_rate"    />
+        <result property="publicTime"    column="public_time"    />
     </resultMap>
 
     <sql id="selectResearchInfoVo">
@@ -74,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectResearchInfoDetailVo">
         select info.id, info.dept_id, info.image_url, info.project_name, info.research_synopsis, info.patient_num, info.hospital_num, info.research_status, info.create_time, info.update_time, info.create_by, info.update_by, info.disease_type_id, info.doctor_id, info.research_type, info.stage,
-               detail.research_intro, detail.research_scheme, detail.research_standard,info.is_follow_rate
+               detail.research_intro, detail.research_scheme, detail.research_standard,info.is_follow_rate,info.public_time
         from research_info info left join research_detail detail on info.id = detail.research_id
     </sql>
 
@@ -307,7 +309,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateResearchInfoStatus">
         update research_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test="status != null">research_status = #{status},</if>
+
+            <if test="status != null">
+                research_status = #{status},
+            </if>
+
+            <if test="status != null and status == 1">
+                public_time = now(),
+            </if>
+
+            <if test="status != null and status == 0">
+                public_time = null,
+            </if>
+
         </trim>
         where id = #{id}
     </update>
