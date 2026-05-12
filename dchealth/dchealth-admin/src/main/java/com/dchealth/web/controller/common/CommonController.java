@@ -111,7 +111,7 @@ public class CommonController
             // 上传并返回新文件名称
             // 上传文件流处理
             String url = null;
-            String httpUrl = filePath + "ngupload/nonCompressFile";
+            String httpUrl = filePath + "ngupload/single";
             String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, file);
             if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
                 JSONObject jsonObject = JSON.parseObject(result);

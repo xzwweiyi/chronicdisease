@@ -329,7 +329,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                             // 为每个图片URL添加 _big 后缀
                             int dotIndex = imageUrl.lastIndexOf(".");
                             if (dotIndex != -1) {
-                                String imageUrlWithBig = imageUrl.substring(0, dotIndex) + "_big" + imageUrl.substring(dotIndex);
+                                String imageUrlWithBig = imageUrl.substring(0, dotIndex) + imageUrl.substring(dotIndex);
                                 bigImageUrls.add(imageUrlWithBig);
                             } else {
                                 bigImageUrls.add(imageUrl);
@@ -359,7 +359,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                             // 为每个图片URL添加 _big 后缀
                             int dotIndex = imageUrl.lastIndexOf(".");
                             if (dotIndex != -1) {
-                                String imageUrlWithBig = imageUrl.substring(0, dotIndex) + "_big" + imageUrl.substring(dotIndex);
+                                String imageUrlWithBig = imageUrl.substring(0, dotIndex) + imageUrl.substring(dotIndex);
                                 bigImageUrls.add(imageUrlWithBig);
                             } else {
                                 bigImageUrls.add(imageUrl);
