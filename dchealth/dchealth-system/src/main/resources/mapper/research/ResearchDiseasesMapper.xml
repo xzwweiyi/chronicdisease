@@ -32,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="orderNum"    column="order_num"    />
         <result property="diseasesGroupsId"    column="diseases_groups_id"    />
         <result property="createBy"    column="create_by"    />
+        <result property="isFollowRate"    column="is_follow_rate"    />
     </resultMap>
 
     <sql id="selectResearchDiseasesVo">
@@ -76,7 +77,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectResearchDiseases" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchDiseasesVOResult">
-        select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name, ri.stage,ri.research_status,ri.create_by,d.order_num
+        select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name,
+               ri.stage,ri.research_status,ri.create_by,d.order_num,ri.is_follow_rate
         from sys_dept d
         LEFT JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
         LEFT join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'

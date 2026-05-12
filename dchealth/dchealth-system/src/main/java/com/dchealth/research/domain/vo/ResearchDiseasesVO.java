@@ -37,5 +37,7 @@ public class ResearchDiseasesVO {
 
     private Integer orderNum;
 
+    private Integer isFollowRate;
+
     private Long diseasesGroupsId;
 }

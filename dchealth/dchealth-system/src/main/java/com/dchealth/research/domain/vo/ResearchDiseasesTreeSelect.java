@@ -50,6 +50,16 @@ public class ResearchDiseasesTreeSelect implements Serializable {
     //队列创建人
     private String researchCreateBy;
 
+    private Integer isFollowRate;
+
+    public Integer getIsFollowRate() {
+        return isFollowRate;
+    }
+
+    public void setIsFollowRate(Integer isFollowRate) {
+        this.isFollowRate = isFollowRate;
+    }
+
     /**
      * 子节点
      */
@@ -126,6 +136,7 @@ public class ResearchDiseasesTreeSelect implements Serializable {
                             research.setLabel(researchDiseasesVO.getProjectName());
                             research.setStage(researchDiseasesVO.getStage());
                             research.setResearchStatus(researchDiseasesVO.getResearchStatus());
+                            research.setIsFollowRate(researchDiseasesVO.getIsFollowRate());
                             research.setResearchCreateBy(researchDiseasesVO.getCreateBy());
                             rs.add(research);
                         }
