@@ -91,6 +91,9 @@ public class MedicalJob {
             return AjaxResult.error("没有此患者");
         }
         PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(researchId, patientId);
+        if (patientRecord == null){
+            return AjaxResult.error("此患者还未生成随访任务，所以无法手动创建任务");
+        }
         if (patientRecord != null){
             return AjaxResult.error("此患者已手动创建过随访任务，待1次随访后可再次手动创建随访任务");
         }

@@ -526,6 +526,7 @@ public class FTemplateServiceImpl implements IFTemplateService
         fTemplateMapper.insertFTemplate(copyFTemplate);
         FTemplateForm fTemplateForm = new FTemplateForm();
         fTemplateForm.setTemplateId(templateId);
+        fTemplateForm.setParentId(0L);
         List<FTemplateForm> fTemplateForms = fTemplateFormService.selectFTemplateFormList(fTemplateForm);
         if(CollectionUtils.isEmpty(fTemplateForms)){
             return;
