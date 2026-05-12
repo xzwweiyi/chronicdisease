@@ -17,6 +17,7 @@ import com.dchealth.framework.config.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,8 @@ public class CommonController
     private IFastFileService fastFileService;
 
     private static final String FILE_DELIMETER = ",";
+    @Value("${spring.profiles.active}")
+    private String profiles;
 
     /**
      * 通用下载请求
@@ -85,7 +88,12 @@ public class CommonController
         log.info("----------------------通用上传请求开始----------------------------");
         try {
             // 上传文件路径
-            String filePath = DchealthConfig.getFastPath();
+            String filePath = null;
+            if("prod".equals(profiles)){
+                filePath = DchealthConfig.getProdFastPath();
+            }else{
+                filePath = DchealthConfig.getTestFastPath();
+            }
             String hashString = CalcMD5.calcMD5(file);
             AjaxResult ajax = AjaxResult.success();
             //返回文件名

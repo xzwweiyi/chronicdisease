@@ -1,5 +1,6 @@
 package com.dchealth.common.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +34,9 @@ public class DchealthConfig
     /** 验证码类型 */
     private static String captchaType;
     
-    private static String fastPath;
+    private static String testFastPath;
+
+    private static String prodFastPath;
 
     public String getName()
     {
@@ -135,15 +138,20 @@ public class DchealthConfig
         return getProfile() + "/upload";
     }
 
-	public static String getFastPath() {
-		return fastPath;
-	}
 
-	public  void setFastPath(String fastPath) {
-		DchealthConfig.fastPath = fastPath;
-	}
-    
-    
-    
-    
+    public static String getTestFastPath() {
+        return testFastPath;
+    }
+
+    public static void setTestFastPath(String testFastPath) {
+        DchealthConfig.testFastPath = testFastPath;
+    }
+
+    public static String getProdFastPath() {
+        return prodFastPath;
+    }
+
+    public static void setProdFastPath(String prodFastPath) {
+        DchealthConfig.prodFastPath = prodFastPath;
+    }
 }

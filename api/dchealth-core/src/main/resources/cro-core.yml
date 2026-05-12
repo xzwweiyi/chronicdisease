@@ -1,4 +1,5 @@
-fastPath: http://fastdfs-server:7910/fastdfs/
+testFastPath: http://fastdfs-server:7910/fastdfs/
+prodFastPath: http://fastdfs-server:7910/fastdfs/
 tencentSecretId: ENC(wUaTwh7DILW1O0PFnzf1RQk8kbLbiHs551sijLzvvtt6pcDtYv16oS7Bxv9m/Zp/)
 tencentSecretKey: ENC(XPU6kF3DT8NWcqs/OGQV/90Ocio6pdXvWE15/cRz5vHWuk0fEDzSxLIodck1I/32)
 userHead: https://files.giantcro.com/group1/M00/00/01/3MI-xF4Fs3qAJ180AAAyTKkYIGk319.png

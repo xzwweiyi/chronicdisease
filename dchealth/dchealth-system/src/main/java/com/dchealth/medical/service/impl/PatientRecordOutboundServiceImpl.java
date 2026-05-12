@@ -104,6 +104,10 @@ public class PatientRecordOutboundServiceImpl implements IPatientRecordOutboundS
     @Value("${xunfei.requestUrl}")
     private String baseUrl ;
 
+    @Value("${spring.profiles.active}")
+    private String profiles;
+
+
     /**
      * 查询患者参与队列信息
      * 
@@ -1206,7 +1210,14 @@ public class PatientRecordOutboundServiceImpl implements IPatientRecordOutboundS
                 return "";
             }
             log.info("uploadImFile------------------"+fileName);
-            String httpUrl = DchealthConfig.getFastPath() + "ngupload/single";
+            // 上传文件路径
+            String filePath = null;
+            if("prod".equals(profiles)){
+                filePath = DchealthConfig.getProdFastPath();
+            }else{
+                filePath = DchealthConfig.getTestFastPath();
+            }
+            String httpUrl = filePath + "ngupload/single";
             String filesResult = HttpClientUtil.getInstance().sendHttpPostWav(httpUrl, is,fileName);
             if (StringUtils.isNotEmpty(filesResult)) {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(filesResult);
