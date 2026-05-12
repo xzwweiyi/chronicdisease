@@ -217,6 +217,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="diseaseTypeId != null">disease_type_id,</if>
             <if test="doctorId != null">doctor_id,</if>
             <if test="researchType != null">research_type,</if>
+            <if test="isFollowRate != null">is_follow_rate,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deptId != null">#{deptId},</if>
@@ -233,6 +234,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="diseaseTypeId != null">#{diseaseTypeId},</if>
             <if test="doctorId != null">#{doctorId},</if>
             <if test="researchType != null">#{researchType},</if>
+            <if test="isFollowRate != null">#{isFollowRate},</if>
          </trim>
     </insert>
 
@@ -255,6 +257,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="researchType != null">research_type = #{researchType},</if>
             <if test="delFlag != null">del_flag = #{delFlag},</if>
             <if test="stage != null">stage = #{stage},</if>
+            <if test="isFollowRate != null">is_follow_rate = #{isFollowRate},</if>
         </trim>
         where id = #{id}
     </update>
