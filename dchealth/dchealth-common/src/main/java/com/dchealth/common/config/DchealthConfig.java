@@ -36,11 +36,13 @@ public class DchealthConfig
     
     private static String fastPath;
 
-    public static String getFastPath() {
+    public static String getFastPath()
+    {
         return fastPath;
     }
 
-    public static void setFastPath(String fastPath) {
+    public void setFastPath(String fastPath)
+    {
         DchealthConfig.fastPath = fastPath;
     }
 
