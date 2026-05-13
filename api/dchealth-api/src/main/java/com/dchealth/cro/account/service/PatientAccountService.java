@@ -53,9 +53,6 @@ public class PatientAccountService {
     @Autowired
     private MpPersonMapper mpPersonMapper;
 
-    @Value("${spring.profiles.active}")
-    private String active;
-
     @Value("${xunfei.requestUrl}")
     private String baseUrl ;
 

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,8 @@ public class XunfeiImDownloadlJob {
 
     @Autowired
     private CroCoreConfig croCoreConfig;
+    @Value("${spring.profiles.active}")
+    private String active;
 
     /**
      * -----------------------------------------废弃-----------------------------------------------------
@@ -102,7 +105,13 @@ public class XunfeiImDownloadlJob {
                 return "";
             }
             log.info("uploadSoundFile------------------"+fileName);
-            String httpUrl = croCoreConfig.getFastPath() + "ngupload/single";
+            String fastPath = null;
+            if("prod".equals(active)){
+                fastPath = croCoreConfig.getProdFastPath();
+            }else {
+                fastPath = croCoreConfig.getTestFastPath();
+            }
+            String httpUrl = fastPath+ "ngupload/single";
             String filesResult = HttpClientUtil.getInstance().sendHttpPostWav(httpUrl, is,fileName);
             if (StringUtils.isNotEmpty(filesResult)) {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(filesResult);

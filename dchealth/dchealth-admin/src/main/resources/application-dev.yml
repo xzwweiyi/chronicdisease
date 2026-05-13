@@ -9,7 +9,7 @@ dchealth:
   # 实例演示开关
   demoEnabled: true
   profile: /usr/local/server/mirco-server/upload_temp
-  fastPath: http://103.85.174.233:42535/fastdfs/
+  fastPath: http://10.131.102.124:7910/fastdfs/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证

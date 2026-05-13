@@ -129,7 +129,7 @@ public interface ResearchInfoMapper
      * @param id
      * @return
      */
-    int closeFollowRate(Long id);
+    int isFollowRate(Long id);
 
     /**
      * 更新阶段信息

@@ -10,6 +10,7 @@ import com.dchealth.cro.medical.form.PatientRecordFilesForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -28,6 +29,8 @@ public class FileCommon {
 
     @Autowired
     private CroCoreConfig croCoreConfig;
+    @Value("${spring.profiles.active}")
+    private String active;
 
     /**
      * 处理上传文件
@@ -45,7 +48,13 @@ public class FileCommon {
             List<MultipartFile> imagesFiles = request.getFiles(key);
             // 上传文件流处理
             if (imagesFiles != null && imagesFiles.size() > 0) {
-                String httpUrl = croCoreConfig.getFastPath() + "ngupload/singleFiles";
+                String fastPath = null;
+                if("prod".equals(active)){
+                    fastPath = croCoreConfig.getProdFastPath();
+                }else {
+                    fastPath = croCoreConfig.getTestFastPath();
+                }
+                String httpUrl = fastPath + "ngupload/singleFiles";
                 String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, imagesFiles);
                 if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
                     JSONObject jsonObject = JSON.parseObject(result);
@@ -107,7 +116,13 @@ public class FileCommon {
                 List<MultipartFile> imagesFiles = request.getFiles(key.toString());
                 // 上传文件流处理
                 if (imagesFiles != null && imagesFiles.size() > 0) {
-                    String httpUrl = croCoreConfig.getFastPath() + "ngupload/singleFiles";
+                    String fastPath = null;
+                    if("prod".equals(active)){
+                        fastPath = croCoreConfig.getProdFastPath();
+                    }else {
+                        fastPath = croCoreConfig.getTestFastPath();
+                    }
+                    String httpUrl = fastPath + "ngupload/singleFiles";
                     String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, imagesFiles);
                     if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
                         JSONObject jsonObject = JSON.parseObject(result);

@@ -11,8 +11,8 @@ import lombok.Data;
 @PropertySource("classpath:cro-core.yml")
 @Data
 public class CroCoreConfig {
-	private  String fastPath;
-	
+	private  String testFastPath;
+	private  String prodFastPath;
 	private  String tencentSecretId;
 	private  String tencentSecretKey;
 	private  String userHead;

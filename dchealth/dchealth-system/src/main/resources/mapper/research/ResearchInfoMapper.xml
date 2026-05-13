@@ -298,8 +298,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateInfoDelFlagById" parameterType="Long">
         update research_info set del_flag = 1 where id = #{id}
     </update>
-    <update id="closeFollowRate" parameterType="Long">
-        update research_info set is_follow_rate = 0 where id = #{id}
+    <update id="isFollowRate" parameterType="Long">
+        update research_info set is_follow_rate = 1 - is_follow_rate where id = #{id}
     </update>
     <update id="updateResearchInfoStage">
         update research_info

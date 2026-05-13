@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,8 @@ public class TransferRecordOutbounService {
 
     @Autowired
     private CroCoreConfig croCoreConfig;
+    @Value("${spring.profiles.active}")
+    private String active;
 
 
     public DchealthCloudResponseEntity<RecordOutboundVO> getRecordOutboundVO(RecordOutbounForm recordOutbounForm) {
@@ -175,7 +178,13 @@ public class TransferRecordOutbounService {
 
     private String uploadImFile(InputStream is,String fileName) throws IOException {
         try{
-            String httpUrl = croCoreConfig.getFastPath() + "ngupload/single";
+            String fastPath = null;
+            if("prod".equals(active)){
+                fastPath = croCoreConfig.getProdFastPath();
+            }else {
+                fastPath = croCoreConfig.getTestFastPath();
+            }
+            String httpUrl = fastPath + "ngupload/single";
             String filesResult = HttpClientUtil.getInstance().sendHttpPostWav(httpUrl, is,fileName);
             if (StringUtils.isNotEmpty(filesResult)) {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(filesResult);

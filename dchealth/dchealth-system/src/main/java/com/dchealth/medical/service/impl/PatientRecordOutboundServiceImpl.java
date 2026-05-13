@@ -104,8 +104,6 @@ public class PatientRecordOutboundServiceImpl implements IPatientRecordOutboundS
     @Value("${xunfei.requestUrl}")
     private String baseUrl ;
 
-    @Value("${spring.profiles.active}")
-    private String profiles;
 
 
     /**
@@ -1211,12 +1209,7 @@ public class PatientRecordOutboundServiceImpl implements IPatientRecordOutboundS
             }
             log.info("uploadImFile------------------"+fileName);
             // 上传文件路径
-            String filePath = null;
-            if("prod".equals(profiles)){
-                filePath = DchealthConfig.getProdFastPath();
-            }else{
-                filePath = DchealthConfig.getTestFastPath();
-            }
+            String filePath = DchealthConfig.getFastPath();
             String httpUrl = filePath + "ngupload/single";
             String filesResult = HttpClientUtil.getInstance().sendHttpPostWav(httpUrl, is,fileName);
             if (StringUtils.isNotEmpty(filesResult)) {

@@ -504,7 +504,7 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
     }
 
     @Override
-    public int closeFollowRate(Long id) {
-        return researchInfoMapper.closeFollowRate(id);
+    public int isFollowRate(Long id) {
+        return researchInfoMapper.isFollowRate(id);
     }
 }

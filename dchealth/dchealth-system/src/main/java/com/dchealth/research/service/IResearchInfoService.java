@@ -104,5 +104,5 @@ public interface IResearchInfoService
      */
     void createTableInAddUser(Long id);
 
-    int closeFollowRate(Long id);
+    int isFollowRate(Long id);
 }

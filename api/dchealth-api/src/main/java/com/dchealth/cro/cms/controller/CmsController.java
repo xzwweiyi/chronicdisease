@@ -14,6 +14,7 @@ import com.dchealth.cro.core.config.CroCoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +38,8 @@ public class CmsController extends ApiBaseController {
 	private GuestBookService guestBookService;
 	@Autowired
 	private CroCoreConfig  croCoreConfig;
+	@Value("${spring.profiles.active}")
+	private String active;
 
 	/**
 	 * 综合查询资讯信息
@@ -124,7 +127,13 @@ public class CmsController extends ApiBaseController {
 			List<MultipartFile> files = request.getFiles("files");
 			
 			if (files != null && files.size() > 0) {
-				String httpUrl = croCoreConfig.getFastPath() + "ngupload/singleFiles";
+				String fastPath = null;
+				if("prod".equals(active)){
+					fastPath = croCoreConfig.getProdFastPath();
+				}else {
+					fastPath = croCoreConfig.getTestFastPath();
+				}
+				String httpUrl = fastPath + "ngupload/singleFiles";
 				String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, files);
 				if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
 					JSONObject jsonObject = JSON.parseObject(result);

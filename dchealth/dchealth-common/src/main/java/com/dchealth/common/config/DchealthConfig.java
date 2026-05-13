@@ -34,9 +34,15 @@ public class DchealthConfig
     /** 验证码类型 */
     private static String captchaType;
     
-    private static String testFastPath;
+    private static String fastPath;
 
-    private static String prodFastPath;
+    public static String getFastPath() {
+        return fastPath;
+    }
+
+    public static void setFastPath(String fastPath) {
+        DchealthConfig.fastPath = fastPath;
+    }
 
     public String getName()
     {
@@ -139,19 +145,7 @@ public class DchealthConfig
     }
 
 
-    public static String getTestFastPath() {
-        return testFastPath;
-    }
 
-    public static void setTestFastPath(String testFastPath) {
-        DchealthConfig.testFastPath = testFastPath;
-    }
 
-    public static String getProdFastPath() {
-        return prodFastPath;
-    }
 
-    public static void setProdFastPath(String prodFastPath) {
-        DchealthConfig.prodFastPath = prodFastPath;
-    }
 }

@@ -15,6 +15,7 @@ import com.dchealth.cro.warn.form.WarnLeaveMessageForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +40,8 @@ public class FollowWorkController extends ApiBaseController {
     private FollowWorkService followWorkService;
     @Autowired
     private CroCoreConfig croCoreConfig;
+    @Value("${spring.profiles.active}")
+    private String active;
     /**
      *
      * @param recordId
@@ -355,7 +358,13 @@ public class FollowWorkController extends ApiBaseController {
             List<MultipartFile> imagesFiles = request.getFiles("imageFiles");
             if(imagesFiles!=null) {
                 List<String> imagesArr = new ArrayList<String>();
-                String httpUrl = croCoreConfig.getFastPath() + "ngupload/singleFiles";
+                String fastPath = null;
+                if("prod".equals(active)){
+                    fastPath = croCoreConfig.getProdFastPath();
+                }else {
+                    fastPath = croCoreConfig.getTestFastPath();
+                }
+                String httpUrl = fastPath + "ngupload/singleFiles";
                 String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, imagesFiles);
                 if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
                     JSONObject jsonObject = JSON.parseObject(result);

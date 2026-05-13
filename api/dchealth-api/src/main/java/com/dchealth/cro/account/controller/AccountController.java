@@ -12,6 +12,7 @@ import com.dchealth.cro.core.config.CroCoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +33,8 @@ public class AccountController extends ApiBaseController {
 	private AccountService accountService;
 	@Autowired
 	private CroCoreConfig croCoreConfig;
+	@Value("${spring.profiles.active}")
+	private String active;
 	/**
 	 * 更新账户信息
 	 * @param appType
@@ -64,7 +67,13 @@ public class AccountController extends ApiBaseController {
 		//头像
 		MultipartFile headImageFile = request.getFile("headImageFile");
 		if(headImageFile!=null) {
-			String httpUrl = croCoreConfig.getFastPath() + "ngupload/single";
+			String fastPath = null;
+			if("prod".equals(active)){
+				fastPath = croCoreConfig.getProdFastPath();
+			}else {
+				fastPath = croCoreConfig.getTestFastPath();
+			}
+			String httpUrl = fastPath + "ngupload/single";
 			String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, headImageFile);
 			if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
 				JSONObject jsonObject = JSON.parseObject(result);

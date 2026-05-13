@@ -70,8 +70,6 @@ public class DoctorAccountService {
     @Autowired
     private SysAreaMapper sysAreaMapper;
 
-    @Value("${spring.profiles.active}")
-    private String active;
 
     @Autowired
      SysDeptMapper sysDeptMapper;

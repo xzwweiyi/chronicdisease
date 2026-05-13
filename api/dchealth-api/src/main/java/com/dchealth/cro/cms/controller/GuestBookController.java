@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,8 @@ public class GuestBookController extends ApiBaseController {
 	private GuestBookService guestBookService;
 	@Autowired
 	private CroCoreConfig  croCoreConfig;
+	@Value("${spring.profiles.active}")
+	private String active;
 
 	/**
 	 * 保存投诉意见
@@ -51,7 +54,13 @@ public class GuestBookController extends ApiBaseController {
 			}
 			List<MultipartFile> files = request.getFiles("files");
 			if (files != null && files.size() > 0) {
-				String httpUrl = croCoreConfig.getFastPath() + "upload/singleFiles";
+				String fastPath = null;
+				if("prod".equals(active)){
+					fastPath = croCoreConfig.getProdFastPath();
+				}else {
+					fastPath = croCoreConfig.getTestFastPath();
+				}
+				String httpUrl = fastPath + "upload/singleFiles";
 				String result = HttpClientUtil.getInstance().sendHttpPost(httpUrl, files);
 				if (StringUtils.isNotEmpty(result) && StringUtils.isNotBlank(result)) {
 					JSONObject jsonObject = JSON.parseObject(result);

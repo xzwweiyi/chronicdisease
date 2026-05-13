@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -38,6 +39,8 @@ public class PatientAccountController extends ApiBaseController {
     
     @Autowired
     private DoctorAccountService doctorAccountService;
+	@Value("${spring.profiles.active}")
+	private String active;
 
     /**
      * 验证码登陆
@@ -156,7 +159,13 @@ public class PatientAccountController extends ApiBaseController {
 			//头像
 			MultipartFile headImageFile = request.getFile("file");
 			if (headImageFile != null) {
-				String httpUrl = croCoreConfig.getFastPath() + "ngupload/single";
+				String fastPath = null;
+				if("prod".equals(active)){
+					fastPath = croCoreConfig.getProdFastPath();
+				}else {
+					fastPath = croCoreConfig.getTestFastPath();
+				}
+				String httpUrl = fastPath + "ngupload/single";
 				String filesResult = HttpClientUtil.getInstance().sendHttpPost(httpUrl, headImageFile);
 				if (StringUtils.isNotNullOrEmpty(filesResult)) {
 					JSONObject jsonObject = JSON.parseObject(filesResult);
