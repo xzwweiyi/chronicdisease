@@ -239,8 +239,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select d.dept_id,d.dept_name,ri.research_status,count(ri.id) as num
         from sys_dept d
         LEFT JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
-        INNER join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
-        INNER join sys_user su on su.user_name=ri.create_by
+        left join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
+        left join sys_user su on su.user_name=ri.create_by
         <if test="userId != null">
             and (ri.id in (select research_id from research_user_role where user_id = #{userId}) or su.user_id = #{userId})
         </if>

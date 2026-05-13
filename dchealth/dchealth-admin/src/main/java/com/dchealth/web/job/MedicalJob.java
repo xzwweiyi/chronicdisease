@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.dchealth.account.domain.AccountNotice;
 import com.dchealth.account.mapper.AccountNoticeMapper;
+import com.dchealth.common.constant.HttpStatus;
 import com.dchealth.common.core.domain.AjaxResult;
 import com.dchealth.common.utils.DateUtils;
 import com.dchealth.common.utils.SplitListUtils;
@@ -91,9 +92,6 @@ public class MedicalJob {
             return AjaxResult.error("没有此患者");
         }
         PatientRecord patientRecord = patientRecordMapper.selectNoFollowupOnePatientRecordByResearchId(researchId, patientId);
-        if (patientRecord == null){
-            return AjaxResult.error("此患者还未生成随访任务，所以无法手动创建任务");
-        }
         if (patientRecord != null){
             return AjaxResult.error("此患者已手动创建过随访任务，待1次随访后可再次手动创建随访任务");
         }
@@ -104,7 +102,10 @@ public class MedicalJob {
         //所有进行中队列的规则
         String resultStr = "";
         List<PatientRecord> insertRecord = new ArrayList<>();
-        followUpTasksAreGeneratedManually(researchInfo.getId(),patientId, insertRecord);
+        String message = followUpTasksAreGeneratedManually(researchInfo.getId(), patientId, insertRecord);
+        if(StringUtils.isNotEmpty(message)){
+            return AjaxResult.error(message);
+        }
         resultStr = "操作成功,共插入"+insertRecord.size()+"条";
         return AjaxResult.success(resultStr);
     }
@@ -250,7 +251,8 @@ public class MedicalJob {
 //        XxlJobHelper.handleSuccess(resultStr);
 //        return "success";
 //    }
-    public void followUpTasksAreGeneratedManually(Long researchId,Long patientId,List<PatientRecord> listTotal){
+    public String followUpTasksAreGeneratedManually(Long researchId,Long patientId,List<PatientRecord> listTotal){
+        String message = null;
         ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);
         if(researchInfo!=null && "1".equals(researchInfo.getResearchStatus())){
             PatientRecordTemplate pt = new PatientRecordTemplate();
@@ -263,10 +265,12 @@ public class MedicalJob {
 
                 //查询的是同一个队列中同一个登录账号下[由于A->B->A可能 有多个patientId]的最大的随访记录，不是所有的，这也是为啥多次插入而不重复插入数据的根因
                 PatientRecord patientRecord = patientRecordMapper.followUpTasksAreGeneratedManually(researchInfo.getId(),patientId,followIds);
-
+                if (patientRecord == null){
+                    message = "此患者还未生成随访任务，所以无法手动创建任务";
+                }
                 logger.info("随访计划定时任务执行队列id:{},手动入组的患者id:{}",researchInfo.getId(),patientRecord.getPatientId());
                 if (!maps.containsKey(patientRecord.getFollowId())){
-                    return;
+                    return "";
                 }
                 //获取随访1的周期模版
                 PatientRecordTemplate recordTemplate = patientRecordTemplates.get(0);
@@ -301,6 +305,7 @@ public class MedicalJob {
                 }
             }
         }
+        return message;
     }
     public void insertRecordJob(Long researchId,List<PatientRecord> listTotal){
         ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(researchId);

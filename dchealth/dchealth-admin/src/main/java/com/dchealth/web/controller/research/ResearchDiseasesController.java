@@ -71,7 +71,7 @@ public class ResearchDiseasesController extends BaseController
         SysUser sysUser = getLoginUser().getUser();
 
         // 如果当前用户不是管理员，则限制查询范围到用户所在科室
-        if(!sysUser.isAdmin()) {
+        if(!sysUser.isAdmin() && getLoginUser().getDeptId() != 490L) {
             vo.setDeptId(sysUser.getDeptId());
 
             // 如果用户没有权限查询所有科室的研究疾病列表，则进一步限制查询范围到用户本身

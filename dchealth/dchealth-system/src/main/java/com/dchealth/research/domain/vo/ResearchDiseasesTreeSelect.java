@@ -233,6 +233,7 @@ public class ResearchDiseasesTreeSelect implements Serializable {
                             research.setLabel(researchDiseasesVO.getProjectName());
                             research.setStage(researchDiseasesVO.getStage());
                             research.setResearchStatus(researchDiseasesVO.getResearchStatus());
+                            research.setIsFollowRate(researchDiseasesVO.getIsFollowRate());
                             research.setResearchCreateBy(researchDiseasesVO.getCreateBy());
                             rs.add(research);
                         }
