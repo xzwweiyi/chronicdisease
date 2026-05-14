@@ -730,7 +730,7 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
         Long deptId = sysUser.getDeptId();
         Long deptId1 = researchInfo.getDeptId();
         if (
-                deptId1.equals(deptId) &&
+                deptId1.equals(deptId) ||
                 userName.equals(createBy)) {
             isDelete = true;
         }
