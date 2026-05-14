@@ -148,9 +148,10 @@ public class ResearchInfoController extends BaseController
     public AjaxResult isFollowRate(@PathVariable Long id)
     {
         // 判断权限
-        if (!patientInfoService.canDeleteById(getUserId(),id)){
-            return AjaxResult.error("当前患者只能由队列创建者关闭统计随访率或者管理员关闭统计随访率");
+        if (!patientInfoService.canCreateByOrDeptIdDeleteById(getUserId(),id)){
+            return AjaxResult.error("当前队列只能由队列创建者或科室管理员关闭随访统计");
         }
+
         int i = researchInfoService.isFollowRate(id);
         applicationContext.publishEvent(new FollowTreeEvent(this,getUserId(), Boolean.FALSE));
         return toAjax(i);

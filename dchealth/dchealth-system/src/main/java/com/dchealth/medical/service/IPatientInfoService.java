@@ -95,6 +95,8 @@ public interface IPatientInfoService
 
     boolean canDeleteById(Long userId, Long id);
 
+    boolean canCreateByOrDeptIdDeleteById(Long userId, Long id);
+
     int moveEnrollment(MoveEnrollmentVo moveEnrollmentVo);
 
 

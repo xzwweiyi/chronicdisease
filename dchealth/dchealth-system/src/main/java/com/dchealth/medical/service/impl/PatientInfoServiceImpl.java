@@ -719,6 +719,26 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
         }
         return isDelete;
     }
+    @Override
+    public boolean canCreateByOrDeptIdDeleteById(Long userId, Long id) {
+        boolean isDelete = false;
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(id);
+        String createBy = researchInfo.getCreateBy();
+        System.out.println("createBy = " + createBy);
+        SysUser sysUser = sysUserMapper.selectUserById(userId);
+        String userName = sysUser.getUserName();
+        Long deptId = sysUser.getDeptId();
+        Long deptId1 = researchInfo.getDeptId();
+        if (
+                deptId1.equals(deptId) &&
+                userName.equals(createBy)) {
+            isDelete = true;
+        }
+        if ("admin".equals(userName)) {
+            isDelete = true;
+        }
+        return isDelete;
+    }
 
     @Transactional
     @Override
