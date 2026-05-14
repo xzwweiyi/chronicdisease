@@ -77,19 +77,16 @@ public class ResearchInfoVo extends BaseEntity {
     private String createBy;
 
     /** 创建时间 */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime;
+    private String createTime;
 
     /** 更新者 */
     private String updateBy;
 
     /** 更新时间 */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateTime;
+    private String updateTime;
 
     /** 发布时间 */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date publicTime;
+    private String publicTime;
 
     /** 阶段（0-简介，1-随访周期，2-CRF，3-患教，4-外呼，5-随访患者，6-随访医生，7-队列状态） */
     private String stage;
