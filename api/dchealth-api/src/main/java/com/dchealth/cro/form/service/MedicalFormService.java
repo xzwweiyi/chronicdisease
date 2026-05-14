@@ -121,17 +121,19 @@ public class MedicalFormService {
         if (medicalFormVOS != null) {
             List<MedicalFormVO> formVOS = medicalFormVOS.stream().filter(x -> "3".equals(x.getFormType())).collect(Collectors.toList());
             for (MedicalFormVO formVO : formVOS) {
-                formVO.getPropertyVOS().stream().forEach(x -> {
-                    if (x.getPropertyType().equals("Statistic")) {
-                        // 查对应的自评结果
-                        FMedicalFormEvalResult fMedicalFormEvalResult = new FMedicalFormEvalResult();
-                        fMedicalFormEvalResult.setRecordId(recordId);
-                        fMedicalFormEvalResult.setMedicalFormId(x.getMedicalFormId());
-                        FMedicalFormEvalResult result = fMedicalFormEvalResultMapper.selectFMedicalFormEvalResultList(fMedicalFormEvalResult).stream().findFirst().orElse(new FMedicalFormEvalResult());
+                if(!CollectionUtils.isEmpty(formVO.getPropertyVOS())){
+                    formVO.getPropertyVOS().stream().forEach(x -> {
+                        if (x.getPropertyType().equals("Statistic")) {
+                            // 查对应的自评结果
+                            FMedicalFormEvalResult fMedicalFormEvalResult = new FMedicalFormEvalResult();
+                            fMedicalFormEvalResult.setRecordId(recordId);
+                            fMedicalFormEvalResult.setMedicalFormId(x.getMedicalFormId());
+                            FMedicalFormEvalResult result = fMedicalFormEvalResultMapper.selectFMedicalFormEvalResultList(fMedicalFormEvalResult).stream().findFirst().orElse(new FMedicalFormEvalResult());
 
-                        formVO.setEvaluationResult(result.getEvaluationResult());
-                    }
-                });
+                            formVO.setEvaluationResult(result.getEvaluationResult());
+                        }
+                    });
+                }
             }
         }
 
