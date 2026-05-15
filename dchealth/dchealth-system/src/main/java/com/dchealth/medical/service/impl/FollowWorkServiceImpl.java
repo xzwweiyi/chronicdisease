@@ -933,7 +933,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
 //                    .filter(info -> info.getDiseaseTypeId().equals(diseaseId))
 //                    .collect(Collectors.toList());
 
-            log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+          //  log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
 
             // 异步获取任务状态数据（与原来tree方法中的相同）
             Future<List<FollowWorkListVO>> submit = executorService.submit(() -> {
@@ -942,7 +942,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 followWorkListForm.setAllocatedStatus(0);
                 followWorkListForm.setDiseaseTypeId(diseaseId);
                 List<FollowWorkListVO> follow = patientInfoMapper.enrollmentListNew(followWorkListForm);
-                log.info("1-到待处理患者查询完, count: {}条 cost time: {}ms", follow.size(), (System.currentTimeMillis() - startTime));
+             //   log.info("1-到待处理患者查询完, count: {}条 cost time: {}ms", follow.size(), (System.currentTimeMillis() - startTime));
                 return follow;
             });
 
@@ -953,7 +953,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 followWorkListForm.setOverTimeStatus(1);
                 followWorkListForm.setWarnStatus(1);
                 List<FollowWorkListVO> all = patientRecordMapper.selectFollowWorkPatientRecordListNew(followWorkListForm);
-                log.info("2-到查询所有档案完, count: {}条, cost time: {}ms", all.size(), (System.currentTimeMillis() - startTime));
+               // log.info("2-到查询所有档案完, count: {}条, cost time: {}ms", all.size(), (System.currentTimeMillis() - startTime));
                 return all;
             });
 
@@ -963,7 +963,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 form.setDeptId(sysUser.getDeptId());
                 form.setDiseaseTypeId(diseaseId);
                 List<FollowWorkListVO> allocated = patientInfoMapper.allocatedList(form);
-                log.info("3-到查入组状态待处理完, count: {}条,cost time: {}ms", allocated.size(), (System.currentTimeMillis() - startTime));
+               // log.info("3-到查入组状态待处理完, count: {}条,cost time: {}ms", allocated.size(), (System.currentTimeMillis() - startTime));
                 return allocated;
             });
 
@@ -973,7 +973,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 followWorkListForm.setEnrollmentStatus(1);
                 followWorkListForm.setDiseaseTypeId(diseaseId);
                 List<FollowWorkListVO> base = patientRecordMapper.selectFollowWorkBasePatientRecordList(followWorkListForm);
-                log.info(" 查询所有基线, count: {}条, cost time: {}ms", base.size(), (System.currentTimeMillis() - startTime));
+              //  log.info(" 查询所有基线, count: {}条, cost time: {}ms", base.size(), (System.currentTimeMillis() - startTime));
                 return base;
             });
 
@@ -1006,7 +1006,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             map.put("allocated", allocateds);
             map.put("baseline", base);
             map.put("logoutAudit", logoutAudit);
-            log.info("to map handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+          //  log.info("to map handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
 
             // 构建病种子树
             List<ResearchDiseases> diseaseList = Collections.singletonList(disease);
@@ -1046,7 +1046,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 treeForm.setUserId(userId);
                 researchInfos = researchInfoMapper.selectResearchInfoByUserId(treeForm);
             }
-            log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+           // log.info("to research handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
 
             Future<List<FollowWorkListVO>> submit = executorService.submit(() -> {
                 log.info(Thread.currentThread().getName());
@@ -1055,14 +1055,14 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                 followWorkListForm.setEnrollmentHandlerStatus(1);
                 followWorkListForm.setAllocatedStatus(0);//待分配
                 List<FollowWorkListVO> follow = patientInfoMapper.enrollmentListNew(followWorkListForm);
-                log.info("1-到待处理患者查询完, count: {}条 cost time: {}ms", follow.size(), (System.currentTimeMillis() - startTime));
+               // log.info("1-到待处理患者查询完, count: {}条 cost time: {}ms", follow.size(), (System.currentTimeMillis() - startTime));
                 return follow;
             });
 
             Future<List<FollowWorkListVO>> submit1 = executorService.submit(() -> {
                 log.info(Thread.currentThread().getName());
                 List<FollowWorkListVO> all = selectFollowWorkPatientRecordListNew();
-                log.info("2-到查询所有档案完, count: {}条, cost time: {}ms", all.size(), (System.currentTimeMillis() - startTime));
+                //log.info("2-到查询所有档案完, count: {}条, cost time: {}ms", all.size(), (System.currentTimeMillis() - startTime));
                 return all;
             });
 
@@ -1072,7 +1072,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
                         form.setAllocatedHandlerStatus("1");
                         form.setDeptId(sysUser.getDeptId());
                         List<FollowWorkListVO> allocated = patientInfoMapper.allocatedList(form);
-                        log.info("3-到查入组状态待处理完, count: {}条,cost time: {}ms", allocated.size(), (System.currentTimeMillis() - startTime));
+                       // log.info("3-到查入组状态待处理完, count: {}条,cost time: {}ms", allocated.size(), (System.currentTimeMillis() - startTime));
                         return allocated;
                     }
             );
@@ -1080,7 +1080,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             Future<List<FollowWorkListVO>> submit3 = executorService.submit(() -> {
                 log.info(Thread.currentThread().getName());
                 List<FollowWorkListVO> base = selectFollowWorkBasePatientRecordList();
-                log.info(" 查询所有基线, count: {}条, cost time: {}ms", base.size(), (System.currentTimeMillis() - startTime));
+                //log.info(" 查询所有基线, count: {}条, cost time: {}ms", base.size(), (System.currentTimeMillis() - startTime));
                 return base;
             });
 
@@ -1113,7 +1113,7 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             map.put("allocated", allocateds);
             map.put("baseline", base);
             map.put("logoutAudit", logoutAudit);
-            log.info("to map handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
+          //  log.info("to map handle over cost time: {}ms", (System.currentTimeMillis() - startTime));
 
             FollowWorkTree followWorkTree = new FollowWorkTree(researchDiseasesList, researchInfos, map);
             log.info("to generate tree over cost time (all time): {}ms", (System.currentTimeMillis() - startTime));

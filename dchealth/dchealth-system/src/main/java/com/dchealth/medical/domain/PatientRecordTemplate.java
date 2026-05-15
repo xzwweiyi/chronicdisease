@@ -66,6 +66,6 @@ public class PatientRecordTemplate extends BaseEntity
     private String followName;
 
     /** 随访对应的模板信息 */
-    private List<FMedicalForm> fMedicalForms;
+    private List<FMedicalForm> fmedicalForms;
 
 }

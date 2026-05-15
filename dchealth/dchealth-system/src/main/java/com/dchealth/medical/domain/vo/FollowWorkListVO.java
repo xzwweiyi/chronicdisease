@@ -174,4 +174,12 @@ public class FollowWorkListVO {
      * 手动入组次数
      */
     private int generatedManually;
+    /**
+     * 随访时间
+     */
+    private String visitTime;
+    /**
+     * 更新后随访时间
+     */
+    private String lockVisitTime;
 }

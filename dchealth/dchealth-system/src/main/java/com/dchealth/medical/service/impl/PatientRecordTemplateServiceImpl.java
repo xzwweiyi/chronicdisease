@@ -51,7 +51,7 @@ public class PatientRecordTemplateServiceImpl implements IPatientRecordTemplateS
             patientRecordTemplates.forEach(prt -> {
                 //查询随访周期对应的模板信息
                 List<FMedicalForm> fMedicalForms = fMedicalFormMapper.selectFMedicalFormByFollowId(prt.getFollowId());
-                prt.setFMedicalForms(fMedicalForms);
+                prt.setFmedicalForms(fMedicalForms);
             });
         }
         return patientRecordTemplates;

@@ -377,8 +377,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
         newForm.setTemplateCode(getMaxTemplateFormCode());
         // 新模板ID
         newForm.setTemplateId(newTemplateId);
-        newForm.setUpdateTime(DateUtils.getNowDate());
-        newForm.setCreateTime(DateUtils.getNowDate());
+        newForm.setUpdateTime(oldForm.getUpdateTime());
+        newForm.setCreateTime(oldForm.getCreateTime());
         // 新父ID
         newForm.setParentId(parentId);
 
@@ -392,8 +392,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
             fTemplateFormSetEvaluations.forEach(templateFormSetEvaluation -> {
                 templateFormSetEvaluation.setTemplateFormId(newForm.getTemplateFormId());
                 templateFormSetEvaluation.setId(null);
-                templateFormSetEvaluation.setUpdateTime(DateUtils.getNowDate());
-                templateFormSetEvaluation.setCreateTime(DateUtils.getNowDate());
+                templateFormSetEvaluation.setUpdateTime(templateFormSetEvaluation.getUpdateTime());
+                templateFormSetEvaluation.setCreateTime(templateFormSetEvaluation.getCreateTime());
                 fTemplateFormSetEvaluationMapper.insertFTemplateFormSetEvaluation(templateFormSetEvaluation);
             });
         }
@@ -451,8 +451,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
             newProperty.setId(null);
             newProperty.setTemplateFormId(newFormId);
             newProperty.setTemplateId(newTemplateId);
-            newProperty.setUpdateTime(DateUtils.getNowDate());
-            newProperty.setCreateTime(DateUtils.getNowDate());
+            newProperty.setUpdateTime(oldProperty.getUpdateTime());
+            newProperty.setCreateTime(oldProperty.getCreateTime());
             fTemplatePropertyMapper.insertFTemplateProperty(newProperty);
 
             Long newPropertyId = newProperty.getId();
@@ -476,8 +476,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
                     newEarly.setPropertyId(newPropertyId);
                     newEarly.setFormId(newFormId);
                     newEarly.setTemplateId(newTemplateId);
-                    newEarly.setUpdateTime(DateUtils.getNowDate());
-                    newEarly.setCreateTime(DateUtils.getNowDate());
+                    newEarly.setUpdateTime(oldEarly.getUpdateTime());
+                    newEarly.setCreateTime(oldEarly.getCreateTime());
                     warnTemplateEarlyMapper.insertWarnTemplateEarly(newEarly);
 
                     Long newEarlyId = newEarly.getId();
@@ -500,8 +500,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
                             newCondition.setId(null);
                             newCondition.setTemplateEarlyWarnId(newEarlyId);
                             newCondition.setPropertyId(newProperty.getId());
-                            newCondition.setUpdateTime(DateUtils.getNowDate());
-                            newCondition.setCreateTime(DateUtils.getNowDate());
+                            newCondition.setUpdateTime(oldCondition.getUpdateTime());
+                            newCondition.setCreateTime(oldCondition.getCreateTime());
                             warnTemplateEarlyConditionMapper.insertWarnTemplateEarlyCondition(newCondition);
                         }
                     }
@@ -530,8 +530,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
             newSubject.setId(null);
             newSubject.setTemplateFormId(newFormId);
             newSubject.setTemplateId(newTemplateId);
-            newSubject.setUpdateTime(DateUtils.getNowDate());
-            newSubject.setCreateTime(DateUtils.getNowDate());
+            newSubject.setUpdateTime(oldSubject.getUpdateTime());
+            newSubject.setCreateTime(oldSubject.getCreateTime());
             fTemplateExamSubjectMapper.insertFTemplateExamSubject(newSubject);
 
             Long newSubjectId = newSubject.getId();
@@ -549,8 +549,8 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
                     // 新题目ID
                     newItem.setPropertyId(newSubjectId);
                     newItem.setTemplateFormId(newFormId);
-                    newItem.setUpdateTime(DateUtils.getNowDate());
-                    newItem.setCreateTime(DateUtils.getNowDate());
+                    newItem.setUpdateTime(oldItem.getUpdateTime());
+                    newItem.setCreateTime(oldItem.getCreateTime());
                     fTemplateExamItemMapper.insertFTemplateExamItem(newItem);
                 }
             }

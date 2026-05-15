@@ -550,7 +550,6 @@ public class FTemplateServiceImpl implements IFTemplateService
                             )
                             .collect(Collectors.toList());
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         } finally {
             // 必须关闭
             executorService.shutdown();
