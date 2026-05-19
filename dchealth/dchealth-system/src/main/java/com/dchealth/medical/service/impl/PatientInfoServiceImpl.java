@@ -756,8 +756,12 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
             info.setResearchId(moveEnrollmentVo.getResearchId());
 
             List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(info);
-            Map<String, PatientInfo> infoMap = patientInfos.stream().collect(Collectors.toMap(PatientInfo::getPersonId, Function.identity()));
-
+            Map<String, PatientInfo> infoMap = patientInfos.stream()
+                    .collect(Collectors.toMap(
+                            PatientInfo::getPersonId,
+                            Function.identity(),
+                            (existing, replacement) -> existing  // ← 保留旧值（先到的）
+                    ));
 
             if (infoMap.get(mpPerson.getPersonId()) == null) {
                 PatientInfo patientInfo = new PatientInfo();
