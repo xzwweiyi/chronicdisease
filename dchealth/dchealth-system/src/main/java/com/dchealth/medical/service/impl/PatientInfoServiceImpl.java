@@ -647,7 +647,9 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 }
                 logger.info("patientId:{},researchPatientId{},patientRecordId{}", patientId, idArray, recordIdArray);
                 patientInfoMapper.deletePatientInfoByPatientId(patientId);
-                researchPatientMapper.deleteResearchPatientByIds(idArray); //todo 重点观测
+                if(idArray.length > 0){
+                    researchPatientMapper.deleteResearchPatientByIds(idArray); //todo 重点观测
+                }
                 patientRecordMapper.deletePatientRecordByRecordIds(recordIdArray);
                 num++;
             }

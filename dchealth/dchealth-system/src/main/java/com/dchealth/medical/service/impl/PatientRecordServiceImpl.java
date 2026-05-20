@@ -907,6 +907,7 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
         idCardMedicalPropertyVO.setAttribute("{\"propertyName\": \"身份证号\",\"tag\": \"el-input\",\"required\": true," +
                 "\"endType\": \"\"}");
 
+
         MedicalPropertyVO birthdayMedicalPropertyVO = new MedicalPropertyVO();
         birthdayMedicalPropertyVO.setId(-5L);
         birthdayMedicalPropertyVO.setPropertyCode(BaseInfoCodeNameEnum.DATE_OF_BIRTH.getCode());
@@ -914,13 +915,29 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
         birthdayMedicalPropertyVO.setPropertyType("Input");
         birthdayMedicalPropertyVO.setAttribute("{\"propertyName\": \"出生日期\",\"tag\": \"el-input\",\"required\": true," +
                 "\"endType\": \"\"}");
+        MedicalPropertyVO personIdMedicalPropertyVO = new MedicalPropertyVO();
+        personIdMedicalPropertyVO.setId(-6L);
+        personIdMedicalPropertyVO.setPropertyCode(BaseInfoCodeNameEnum.PERSON_ID.getCode());
+        personIdMedicalPropertyVO.setPropertyName("就诊号");
+        personIdMedicalPropertyVO.setPropertyType("Input");
+        personIdMedicalPropertyVO.setAttribute("{\"propertyName\": \"就诊号\",\"tag\": \"el-input\",\"required\": true," +
+                "\"endType\": \"\"}");
 
+        MedicalPropertyVO timeMedicalPropertyVO = new MedicalPropertyVO();
+        timeMedicalPropertyVO.setId(-7L);
+        timeMedicalPropertyVO.setPropertyCode(BaseInfoCodeNameEnum.ENROLLMENT_TIME.getCode());
+        timeMedicalPropertyVO.setPropertyName("入组时间");
+        timeMedicalPropertyVO.setPropertyType("Input");
+        timeMedicalPropertyVO.setAttribute("{\"propertyName\": \"入组时间\",\"tag\": \"el-input\",\"required\": true," +
+                "\"endType\": \"\"}");
         List<MedicalPropertyVO> propertyVOS = new ArrayList<>();
         propertyVOS.add(nameMedicalPropertyVO);
         propertyVOS.add(sexMedicalPropertyVO);
         propertyVOS.add(phoneMedicalPropertyVO);
         propertyVOS.add(idCardMedicalPropertyVO);
         propertyVOS.add(birthdayMedicalPropertyVO);
+        propertyVOS.add(personIdMedicalPropertyVO);
+        propertyVOS.add(timeMedicalPropertyVO);
         medicalFormVO.setPropertyVOS(propertyVOS);
         ls.add(medicalFormVO);
         return ls;
@@ -1080,7 +1097,16 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
                         begin++;
                         continue;
                     }
-
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.PERSON_ID.getCode())) {
+                        tCell.setCellValue(patientEnrollmentVo.getPersonId());
+                        begin++;
+                        continue;
+                    }
+                    if (propertyCode.equals(BaseInfoCodeNameEnum.ENROLLMENT_TIME.getCode())) {
+                        tCell.setCellValue(DateUtils.dateTime(patientEnrollmentVo.getEnrollmentTime()));
+                        begin++;
+                        continue;
+                    }
                     if (propertyCode.equals(BaseInfoCodeNameEnum.SUBMIT_DATE.getCode())) {
                         tCell.setCellValue(patientMedicalPropertyResVOS1.get(0).getFollowSubmitTime());
                         begin++;
@@ -1231,6 +1257,16 @@ public class PatientRecordServiceImpl implements IPatientRecordService {
 
                 if (propertyCode.equals(BaseInfoCodeNameEnum.DATE_OF_BIRTH.getCode())) {
                     tCell.setCellValue(DateUtils.dateTime(patientEnrollmentVo.getBirthday()));
+                    begin++;
+                    continue;
+                }
+                if (propertyCode.equals(BaseInfoCodeNameEnum.PERSON_ID.getCode())) {
+                    tCell.setCellValue(patientEnrollmentVo.getPersonId());
+                    begin++;
+                    continue;
+                }
+                if (propertyCode.equals(BaseInfoCodeNameEnum.ENROLLMENT_TIME.getCode())) {
+                    tCell.setCellValue(DateUtils.dateTime(patientEnrollmentVo.getEnrollmentTime()));
                     begin++;
                     continue;
                 }

@@ -105,6 +105,7 @@
         <result property="deptId"    column="dept_id"    />
         <result property="enrollmentHandlerStatus"    column="enrollment_handler_status"    />
         <result property="enrollmentStatus"    column="enrollment_status"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
         <result property="enrollmentResultContent"    column="enrollment_result_content"    />
         <result property="baseMobile"    column="base_mobile"    />
         <result property="personId"    column="person_id"    />
@@ -611,7 +612,7 @@
     </select>
     <select id="selectExcelEnrollmentPatientInfoList" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
         select f.patient_id, f.person_id, f.patient_name, p.card_id id_card, pc.mobile, f.create_time, f.plan_research_id, f.research_id, f.dept_id, f.account_id,
-        p.phone_number base_mobile,f.enrollment_handler_status, f.enrollment_status, f.enrollment_result_content,case WHEN f.account_id = 0 THEN 0 else 1 END as bindStatus, f.patient_code
+        p.phone_number base_mobile,f.enrollment_handler_status,f.enrollment_time, f.enrollment_status, f.enrollment_result_content,case WHEN f.account_id = 0 THEN 0 else 1 END as bindStatus, f.patient_code
         from patient_info f
         INNER JOIN mp_person p on f.person_id=p.person_id
         LEFT JOIN mp_patient_account mpa on mpa.person_id=p.person_id
