@@ -35,6 +35,8 @@ public enum BaseInfoCodeNameEnum {
     EMPLOYMENT_SITUATION("registerSelectfvss","就业情况"),
     AVERAGE_MONTHLY_SPEND("registerSelectbmen","患者月均医疗费用支出"),
     ANNUAL_INCOME("registerSelectpvfm","家庭年收入（包括各种来源）"),
+
+    PERSON_ID("personId","就诊编号"),
     ENROLLMENT_TIME("registerEnrollTimeabc", "入组时间");
 
     // 下面的暂时不用

@@ -59,6 +59,9 @@ public class PatientEnrollmentVo {
     private String personId;
     private String baseMobile;
 
+    private Date enrollmentTime;
+
+
     /**
      * 1未入组 3已入组
      */
