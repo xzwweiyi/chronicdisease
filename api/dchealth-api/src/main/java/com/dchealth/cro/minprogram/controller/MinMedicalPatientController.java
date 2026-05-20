@@ -5,6 +5,7 @@ import com.dchealth.cro.base.common.FileCommon;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.form.domain.form.FMedicalPropertyForm;
 import com.dchealth.cro.medical.domain.PatientRecord;
@@ -35,6 +36,8 @@ public class MinMedicalPatientController extends ApiBaseController {
     private MedicalPatientService medicalPatientService;
     @Autowired
     private FileCommon fileCommon;
+    @Autowired
+    private RsaUtil rsaUtil;
 
 
     /**
@@ -127,6 +130,9 @@ public class MinMedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(bindPatientForm.getAccountId() !=null){
+                bindPatientForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId().toString())));
+            }
             return buildSuccessMView(medicalPatientService.bindPatient(bindPatientForm));
         } catch (Exception e) {
             L.info("绑定患者异常{}", JSON.toJSONString(bindPatientForm), e);
@@ -143,6 +149,9 @@ public class MinMedicalPatientController extends ApiBaseController {
     @RequestMapping(value = "bindPatientDetail", method = RequestMethod.POST)
     public String bindPatientDetail(@Validated BindPatientDetailForm bindPatientForm) {
         try {
+            if(bindPatientForm.getAccountId() !=null){
+                bindPatientForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId().toString())));
+            }
             return buildSuccessMView(medicalPatientService.bindPatientDetail(bindPatientForm));
         } catch (Exception e) {
             L.info("绑定患者详情异常{}", JSON.toJSONString(bindPatientForm), e);
@@ -164,6 +173,12 @@ public class MinMedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(applyResearchForm.getAccountId() !=null){
+                applyResearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId().toString())));
+            }
+            if(StringUtils.isNotEmpty(applyResearchForm.getPersonId())){
+                applyResearchForm.setPersonId(rsaUtil.decryptValue(applyResearchForm.getPersonId()));
+            }
             return buildSuccessMView(medicalPatientService.applyResearch(applyResearchForm));
         } catch (Exception e) {
             L.info("队列申请异常{}", JSON.toJSONString(applyResearchForm), e);
@@ -181,6 +196,12 @@ public class MinMedicalPatientController extends ApiBaseController {
     @RequestMapping(value = "scanCodeResearch", method = RequestMethod.POST)
     public String scanCodeResearch(@Validated ApplyResearchForm applyResearchForm) {
         try {
+            if(applyResearchForm.getAccountId() !=null){
+                applyResearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId().toString())));
+            }
+            if(StringUtils.isNotEmpty(applyResearchForm.getPersonId())){
+                applyResearchForm.setPersonId(rsaUtil.decryptValue(applyResearchForm.getPersonId()));
+            }
             return buildSuccessMView(medicalPatientService.scanCodeResearch(applyResearchForm));
         } catch (Exception e) {
             L.info("扫码申请队列异常{}", JSON.toJSONString(applyResearchForm), e);
@@ -203,6 +224,9 @@ public class MinMedicalPatientController extends ApiBaseController {
             if (accountId == null) {
                 return buildErrorParamMView();
             }
+            if(accountId !=null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            }
             return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", accountId, e);
@@ -223,6 +247,9 @@ public class MinMedicalPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(patientRecord.getAccountId() !=null){
+                patientRecord.setAccountId(Long.valueOf(rsaUtil.decryptValue(patientRecord.getAccountId().toString())));
             }
             return buildSuccessMView(medicalPatientService.selectPatientRecordList(patientRecord, request));
         } catch (Exception e) {

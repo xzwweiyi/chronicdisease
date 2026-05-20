@@ -3,19 +3,27 @@ package com.dchealth.cro.account.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.dchealth.cro.common.annoation.Desensitize;
+import com.dchealth.cro.common.constant.DesensitizeType;
+import com.dchealth.cro.common.serializers.DesensitizeSerializer;
 import com.dchealth.cro.core.vo.DictVO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 @Data
 public class UserInfoVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long accountId;// 主键
+	@Desensitize(type = DesensitizeType.PHONE)
+	@JsonSerialize(using = DesensitizeSerializer.class)
 	private String mobile;// 手机号或邮箱
 	private String email;// 邮箱
 	private String sex;// 性别0 男 1 女 2未知
 	private List<DictVO> sexDict;
 	private String nickName;// 昵称
+	@Desensitize(type = DesensitizeType.ID_CARD)
+	@JsonSerialize(using = DesensitizeSerializer.class)
 	private String idCardNo;// 身份证号
 
 	private Long deptId;//部门id

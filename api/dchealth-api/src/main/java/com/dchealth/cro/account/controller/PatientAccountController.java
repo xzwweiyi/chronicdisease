@@ -2,6 +2,7 @@ package com.dchealth.cro.account.controller;
 
 import java.io.IOException;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class PatientAccountController extends ApiBaseController {
     private DoctorAccountService doctorAccountService;
 	@Value("${spring.profiles.active}")
 	private String active;
+	@Autowired
+	private RsaUtil rsaUtil;
 
     /**
      * 验证码登陆
@@ -197,6 +200,9 @@ public class PatientAccountController extends ApiBaseController {
     @RequestMapping(value = "minLoginOut", method = RequestMethod.POST)
     public String minLoginOut(Long accountId,String openId) {
     	try {
+			if(accountId != null){
+				accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+			}
     		boolean b = notEmpty(accountId,openId);
     		if (!b) {
     			return buildErrorParamMView();

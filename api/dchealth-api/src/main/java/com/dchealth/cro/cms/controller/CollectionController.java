@@ -2,6 +2,7 @@ package com.dchealth.cro.cms.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +36,20 @@ public class CollectionController extends ApiBaseController {
 		private ArticleService articleService;
 		@Autowired
 		private PatientAccountMapper patientAccountMapper;
+	@Autowired
+	private RsaUtil rsaUtil;
 
-		/**
+
+	/**
 		 * 权限校验：验证 accountId 是否属于当前登录用户
 		 */
 		private boolean validateAccountIdAccess(Long accountId, HttpServletRequest request) {
 			String deviceToken = request.getHeader("deviceToken");
 			if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
 				return true; // 无deviceToken时跳过校验（兼容旧逻辑）
+			}
+			if(accountId != null){
+				accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
 			}
 			PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
 			if (currentAccount == null) {
@@ -79,6 +86,9 @@ public class CollectionController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
+				if(collectionActicleSearchForm.getAccountId() != null){
+					collectionActicleSearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(collectionActicleSearchForm.getAccountId().toString())));
+				}
 				// 权限校验
 				if (!validateAccountIdAccess(collectionActicleSearchForm.getAccountId(), request)) {
 					return buildAccessDeniedResponse();
@@ -102,6 +112,9 @@ public class CollectionController extends ApiBaseController {
 				@RequestAttribute("channel") String channel,
 				HttpServletRequest request) {
 			try {
+				if(accountId != null){
+					accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+				}
 				// 权限校验
 				if (!validateAccountIdAccess(accountId, request)) {
 					return buildAccessDeniedResponse();

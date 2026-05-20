@@ -1,5 +1,6 @@
 package com.dchealth.cro.cms.controller;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class CommentController extends ApiBaseController {
 	private static final Logger L = LoggerFactory.getLogger(CommentController.class);
 	@Autowired
 	private CommentService commentService;
+	@Autowired
+	private RsaUtil rsaUtil;
 
 	/**
 	 * 保存投诉意见
@@ -36,6 +39,9 @@ public class CommentController extends ApiBaseController {
 	public String save(@Validated CommentSaveForm commentSaveForm, BindingResult bind,
 			@RequestAttribute("channel") String channel,@RequestAttribute("appType") String appType) {
 		try {
+			if(commentSaveForm.getAccountId() != null){
+				commentSaveForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId().toString())));
+			}
 			commentSaveForm.setTenantId(channel);
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
@@ -55,6 +61,9 @@ public class CommentController extends ApiBaseController {
 	public String saveTip(@Validated CmsCommentTipForm cmsCommentTipForm, BindingResult bind,
 			@RequestAttribute("channel") String channel) {
 		try {
+			if(cmsCommentTipForm.getAccountId() != null){
+				cmsCommentTipForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(cmsCommentTipForm.getAccountId().toString())));
+			}
 			cmsCommentTipForm.setTenantId(channel);
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
@@ -74,6 +83,9 @@ public class CommentController extends ApiBaseController {
 	public String saveBlank(@Validated CmsCommentBlankForm cmsCommentBlankForm, BindingResult bind,
 			@RequestAttribute("channel") String channel) {
 		try {
+			if(cmsCommentBlankForm.getAccountId() != null){
+				cmsCommentBlankForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(cmsCommentBlankForm.getAccountId().toString())));
+			}
 			cmsCommentBlankForm.setTenantId(channel);
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);

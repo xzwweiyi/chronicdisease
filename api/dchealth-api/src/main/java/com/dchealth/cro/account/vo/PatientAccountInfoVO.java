@@ -1,5 +1,9 @@
 package com.dchealth.cro.account.vo;
 
+import com.dchealth.cro.common.annoation.Desensitize;
+import com.dchealth.cro.common.constant.DesensitizeType;
+import com.dchealth.cro.common.serializers.DesensitizeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 /**
@@ -27,6 +31,8 @@ public class PatientAccountInfoVO {
     private String bindStatus;
 
     private Integer sex;
+    @Desensitize(type = DesensitizeType.ID_CARD)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String idCard;
 
     /**
@@ -39,10 +45,14 @@ public class PatientAccountInfoVO {
     /**
      * 随访手机号
      */
+    @Desensitize(type = DesensitizeType.PHONE)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String mobile;
 
     /**
      * 登录手机号
      */
+    @Desensitize(type = DesensitizeType.PHONE)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String loginMobile;
 }

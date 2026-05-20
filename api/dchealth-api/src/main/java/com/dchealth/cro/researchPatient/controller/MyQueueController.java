@@ -6,6 +6,7 @@ import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.health.domain.MpPatientAccount;
 import com.dchealth.cro.health.mapper.MpPatientAccountMapper;
@@ -41,7 +42,8 @@ public class MyQueueController extends ApiBaseController {
 
     @Autowired
     private MpPatientAccountMapper mpPatientAccountMapper;
-
+    @Autowired
+    private RsaUtil rsaUtil;
     /**
      * 权限校验：验证 personId 是否属于当前登录用户
      */
@@ -70,7 +72,9 @@ public class MyQueueController extends ApiBaseController {
     @GetMapping("findList")
     public String findList(@RequestParam(value = "personId", required = true) Long personId, HttpServletRequest request) {
         DchealthCloudResponseEntity<List<MyQueue>> result = new DchealthCloudResponseEntity<>();
-
+        if(personId !=null){
+            personId = Long.valueOf(rsaUtil.decryptValue(personId.toString()));
+        }
         // 权限校验
         if (!validatePersonIdAccess(String.valueOf(personId), request)) {
             result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
@@ -90,6 +94,9 @@ public class MyQueueController extends ApiBaseController {
     public String applyQuitQueue(@RequestBody QuitRecord quitRecord) {
         DchealthCloudResponseEntity<String> result = new DchealthCloudResponseEntity<>();
         try {
+            if(StringUtils.isNotEmpty(quitRecord.getPersonId())){
+                quitRecord.setPersonId(rsaUtil.decryptValue(quitRecord.getPersonId()));
+            }
             boolean save = quitRecordService.saveInfo(quitRecord);
             if(save) {
                 result.setCode(CroApiCodeConstant.APPLY_SUCCESS.getCode());
@@ -110,7 +117,9 @@ public class MyQueueController extends ApiBaseController {
                                @RequestParam(value = "queueId", required = true) Long queueId,
                                HttpServletRequest request) {
         DchealthCloudResponseEntity<List<QuitRecord>> result = new DchealthCloudResponseEntity<>();
-
+        if(personId !=null){
+            personId = Long.valueOf(rsaUtil.decryptValue(personId.toString()));
+        }
         // 权限校验
         if (!validatePersonIdAccess(String.valueOf(personId), request)) {
             result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());

@@ -1,6 +1,10 @@
 package com.dchealth.cro.health.domain;
 
+import com.dchealth.cro.common.annoation.Desensitize;
+import com.dchealth.cro.common.constant.DesensitizeType;
+import com.dchealth.cro.common.serializers.DesensitizeSerializer;
 import com.dchealth.cro.medical.domain.PatientInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.Date;
@@ -43,12 +47,16 @@ public class MpPerson {
     private String genderSourceValue;
 
     /** 证件号 */
+    @Desensitize(type = DesensitizeType.ID_CARD)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String cardId;
 
     /** 证件类型 */
     private String cardType;
 
     /** 患者电话 */
+    @Desensitize(type = DesensitizeType.PHONE)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String phoneNumber;
 
     /** 现住址 */
@@ -61,6 +69,8 @@ public class MpPerson {
     private String contactsName;
 
     /** 联系人电话 */
+    @Desensitize(type = DesensitizeType.PHONE)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String contactsPhone;
 
     /** 职业名称 */
@@ -77,6 +87,8 @@ public class MpPerson {
 
     private Long researchId;
     private Long deptId;
+    @Desensitize(type = DesensitizeType.PHONE)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String mobile;
     private String patientName;
 

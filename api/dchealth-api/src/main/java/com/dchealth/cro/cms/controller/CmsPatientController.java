@@ -11,6 +11,7 @@ import com.dchealth.cro.cms.vo.ArticleVO;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.research.domain.ResearchInfoArticlePatient;
 import org.slf4j.Logger;
@@ -35,6 +36,8 @@ public class CmsPatientController extends ApiBaseController {
     private ArticleService articleService;
     @Autowired
     private PatientAccountMapper patientAccountMapper;
+    @Autowired
+    private RsaUtil rsaUtil;
 
     /**
      * 权限校验：验证 accountId 是否属于当前登录用户
@@ -42,6 +45,9 @@ public class CmsPatientController extends ApiBaseController {
     private boolean validateAccountIdAccess(Long accountId, HttpServletRequest request) {
         if (accountId == null) {
             return true; // accountId为可选参数，为空时不校验
+        }
+        if(accountId != null){
+            accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
         }
         String deviceToken = request.getHeader("deviceToken");
         if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
@@ -85,6 +91,9 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(researchInfoArticlePatient.getAccountId() != null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            }
             DchealthCloudResponseEntity<ArticleVO> result = articleService.latestPatientArticle(researchInfoArticlePatient);
             if (!"3".equals(request.getHeader("osType"))) {
                 result.getData().getArticleList().forEach(article -> {
@@ -115,6 +124,9 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(researchInfoArticlePatient.getAccountId() != null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            }
             DchealthCloudResponseEntity<ArticleVO> result = articleService.allPatientArticle(researchInfoArticlePatient);
             if (!"3".equals(request.getHeader("osType"))) {
                 result.getData().getArticleList().forEach(article -> {
@@ -140,6 +152,9 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(researchInfoArticlePatient.getAccountId() != null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            }
             return buildSuccessMView(articleService.ownQuestionnaire(researchInfoArticlePatient));
         } catch (Exception e) {
             L.info("自评接口异常{}", JSON.toJSONString(researchInfoArticlePatient), e);
@@ -156,6 +171,9 @@ public class CmsPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(researchInfoArticlePatient.getAccountId() != null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
             }
             return buildSuccessMView(articleService.questionnaireList(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -179,6 +197,7 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+
             acticleListSearchForm.setPositionType(positionType);
             return buildSuccessMView(articleService.list(acticleListSearchForm));
         } catch (Exception e) {
@@ -203,6 +222,9 @@ public class CmsPatientController extends ApiBaseController {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
+            }
+            if(accountId != null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
             }
             // 权限校验
             if (!validateAccountIdAccess(accountId, request)) {
@@ -234,7 +256,9 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-
+            if(commentSaveForm.getAccountId() != null){
+                commentSaveForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId().toString())));
+            }
             return buildSuccessMView(articleService.save(commentSaveForm,appType));
         } catch (Exception e) {
             L.info("文章评论意见异常{}", JSON.toJSONString(commentSaveForm), e);
@@ -269,6 +293,9 @@ public class CmsPatientController extends ApiBaseController {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
+            }
+            if(accountId != null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
             }
             // 权限校验
             if (!validateAccountIdAccess(accountId, request)) {

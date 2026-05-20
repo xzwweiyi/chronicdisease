@@ -5,6 +5,7 @@ import com.dchealth.cro.cms.form.ActicleListSearchForm;
 import com.dchealth.cro.cms.form.CommentSaveForm;
 import com.dchealth.cro.cms.service.ArticleService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.research.domain.ResearchInfoArticlePatient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,8 @@ public class MinCmsPatientController extends ApiBaseController {
 
     @Autowired
     private ArticleService articleService;
-
+    @Autowired
+    private RsaUtil rsaUtil;
     /**
      * 最新患教文章
      *
@@ -38,6 +40,9 @@ public class MinCmsPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(researchInfoArticlePatient.getAccountId() !=null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
             }
             return buildSuccessMView(articleService.latestPatientArticle(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -60,6 +65,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(researchInfoArticlePatient.getAccountId() !=null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            }
             return buildSuccessMView(articleService.allPatientArticle(researchInfoArticlePatient));
         } catch (Exception e) {
             L.info("患教天地接口异常{}", JSON.toJSONString(researchInfoArticlePatient), e);
@@ -77,6 +85,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(researchInfoArticlePatient.getAccountId() !=null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            }
             return buildSuccessMView(articleService.ownQuestionnaire(researchInfoArticlePatient));
         } catch (Exception e) {
             L.info("自评接口异常{}", JSON.toJSONString(researchInfoArticlePatient), e);
@@ -93,6 +104,9 @@ public class MinCmsPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(researchInfoArticlePatient.getAccountId() !=null){
+                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
             }
             return buildSuccessMView(articleService.questionnaireList(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -138,6 +152,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
+            if(accountId !=null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            }
             return buildSuccessMView(articleService.detail(articleId,accountId,appType));
         } catch (Exception e) {
             L.info("查询资讯详情异常{}", articleId, e);
@@ -157,7 +174,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-
+            if(commentSaveForm.getAccountId() !=null){
+                commentSaveForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId().toString())));
+            }
             return buildSuccessMView(articleService.save(commentSaveForm,appType));
         } catch (Exception e) {
             L.info("文章评论意见异常{}", JSON.toJSONString(commentSaveForm), e);
@@ -188,6 +207,9 @@ public class MinCmsPatientController extends ApiBaseController {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
+            }
+            if(accountId !=null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
             }
             return buildSuccessMView(articleService.detailComment(articleId,accountId, pageNo, pageSize));
         } catch (Exception e) {

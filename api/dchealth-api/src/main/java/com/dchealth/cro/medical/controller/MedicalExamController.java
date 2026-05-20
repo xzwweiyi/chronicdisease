@@ -3,6 +3,7 @@ package com.dchealth.cro.medical.controller;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.base.common.FileCommon;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.form.domain.FMedicalExamForm;
 import com.dchealth.cro.form.domain.FMedicalExamRes;
@@ -30,6 +31,8 @@ public class MedicalExamController extends ApiBaseController {
     private MedicalExamService medicalExamService;
     @Autowired
     private FileCommon fileCommon;
+    @Autowired
+    private RsaUtil rsaUtil;
     /**
      * 问卷详情
      * @param fMedicalExamRes
@@ -39,6 +42,9 @@ public class MedicalExamController extends ApiBaseController {
     @RequestMapping(value = "examFromInfo", method = RequestMethod.POST)
     public String examFromDetailInfo(FMedicalExamRes fMedicalExamRes) {
         try {
+            if(fMedicalExamRes.getAccountId() !=null){
+                fMedicalExamRes.setAccountId(Long.valueOf(rsaUtil.decryptValue(fMedicalExamRes.getAccountId().toString())));
+            }
             L.info("问卷查看详情json{}", JSON.toJSONString(fMedicalExamRes));
             return buildSuccessMView(medicalExamService.selectExamFromDetailInfo(fMedicalExamRes));
         } catch (Exception e) {

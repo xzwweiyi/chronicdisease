@@ -1,6 +1,10 @@
 package com.dchealth.cro.api.vo;
 
 
+import com.dchealth.cro.common.annoation.Desensitize;
+import com.dchealth.cro.common.constant.DesensitizeType;
+import com.dchealth.cro.common.serializers.DesensitizeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.List;
@@ -20,7 +24,8 @@ public class BaseInfoVo {
     private String personId;
 
     private String patientName;
-
+    @Desensitize(type = DesensitizeType.PHONE)
+    @JsonSerialize(using = DesensitizeSerializer.class)
     private String mobile;
 
     private List<ResearchInfoVo> researchInfoVos;

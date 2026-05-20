@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.medical.form.*;
 import com.dchealth.cro.research.domain.ReSearchForm;
 import org.slf4j.Logger;
@@ -36,7 +37,8 @@ public class MedicalPatientController extends ApiBaseController {
     private MedicalPatientService medicalPatientService;
     @Autowired
     private FileCommon fileCommon;
-
+    @Autowired
+    private RsaUtil rsaUtil;
 
     /**
      * 调试使用
@@ -85,7 +87,6 @@ public class MedicalPatientController extends ApiBaseController {
                 QuestionRecordForm questionRecordForm = JSON.parseObject(infoForm.getQuestionRecordJson(), QuestionRecordForm.class);
                 infoForm.setQuestionRecordForm(questionRecordForm);
             }
-
             infoForm.setImageUrls(fileCommon.uploadFiles(infoForm.getImageUrls(), request));
             return buildSuccessMView(medicalPatientService.saveOrUpdatePatientRecord(infoForm));
         } catch (Exception e) {
@@ -172,6 +173,9 @@ public class MedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(bindPatientForm.getAccountId() !=null){
+                bindPatientForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId().toString())));
+            }
             return buildSuccessMessageView(medicalPatientService.bindPatient(bindPatientForm));
         } catch (Exception e) {
             L.info("绑定患者异常{}", JSON.toJSONString(bindPatientForm), e);
@@ -194,6 +198,9 @@ public class MedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(StringUtils.isNotEmpty(form.getPersonId())){
+                form.setPersonId(rsaUtil.decryptValue(form.getPersonId()));
+            }
             String message = medicalPatientService.updateMobile(form);
             DchealthCloudResponseEntity<?> result = new DchealthCloudResponseEntity<>();
             result.setMsg(message);
@@ -214,6 +221,9 @@ public class MedicalPatientController extends ApiBaseController {
     @RequestMapping(value = "bindPatientDetail", method = RequestMethod.POST)
     public String bindPatientDetail(@Validated BindPatientDetailForm bindPatientForm) {
         try {
+            if(bindPatientForm.getAccountId() !=null){
+                bindPatientForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId().toString())));
+            }
             return buildSuccessMView(medicalPatientService.bindPatientDetail(bindPatientForm));
         } catch (Exception e) {
             L.info("绑定患者详情异常{}", JSON.toJSONString(bindPatientForm), e);
@@ -234,6 +244,12 @@ public class MedicalPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(applyResearchForm.getAccountId() !=null){
+                applyResearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId().toString())));
+            }
+            if(StringUtils.isNotEmpty(applyResearchForm.getPersonId())){
+                applyResearchForm.setPersonId(rsaUtil.decryptValue(applyResearchForm.getPersonId()));
             }
             return buildSuccessMView(medicalPatientService.applyResearch(applyResearchForm));
         } catch (Exception e) {
@@ -274,6 +290,9 @@ public class MedicalPatientController extends ApiBaseController {
             if (accountId == null) {
                 return buildErrorParamMView();
             }
+            if(accountId !=null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            }
             return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", accountId, e);
@@ -294,6 +313,9 @@ public class MedicalPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(patientRecord.getAccountId() !=null){
+                patientRecord.setAccountId(Long.valueOf(rsaUtil.decryptValue(patientRecord.getAccountId().toString())));
             }
             if (-1L==patientRecord.getPatientId()) {
 //                    result.setCode(CroApiCodeConstant.ARTICLE_NOT_EXIST.getCode());
@@ -321,6 +343,9 @@ public class MedicalPatientController extends ApiBaseController {
         try {
             if (Objects.isNull(reSearchForm.getResearchId())||reSearchForm.getResearchId()==-1) {
                 return buildErrorMView(CroApiCodeConstant.ARTICLE_NOT_EXIST.getCode());
+            }
+            if(reSearchForm.getAccountId() !=null){
+                reSearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(reSearchForm.getAccountId().toString())));
             }
             return buildSuccessMView(medicalPatientService.researchStatusInfo(reSearchForm));
         } catch (Exception e) {

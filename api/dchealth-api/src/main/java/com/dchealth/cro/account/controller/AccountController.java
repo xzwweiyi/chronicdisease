@@ -6,6 +6,8 @@ import com.dchealth.cro.account.form.AccountForm;
 import com.dchealth.cro.account.form.UserUpdateOldPasswordForm;
 import com.dchealth.cro.account.service.AccountService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.config.KeyConfig;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.common.utils.http.HttpClientUtil;
 import com.dchealth.cro.core.config.CroCoreConfig;
@@ -35,6 +37,8 @@ public class AccountController extends ApiBaseController {
 	private CroCoreConfig croCoreConfig;
 	@Value("${spring.profiles.active}")
 	private String active;
+    @Autowired
+	private RsaUtil rsaUtil;
 	/**
 	 * 更新账户信息
 	 * @param appType
@@ -51,6 +55,9 @@ public class AccountController extends ApiBaseController {
 		try {
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
+			}
+			if(accountForm.getAccountId() !=null){
+				accountForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(accountForm.getAccountId().toString())));
 			}
 			accountForm.setTenantId(channel);
 			accountForm.setPositionType(appType);
@@ -97,6 +104,9 @@ public class AccountController extends ApiBaseController {
 	@ResponseBody
 	@RequestMapping(value = "index", method = RequestMethod.POST)
 	public String index(Long accountId) {
+		if(accountId !=null){
+			accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+		}
 		Boolean  b = notEmpty(accountId);
 		if (!b) {
 			return buildErrorParamMView();
@@ -109,6 +119,9 @@ public class AccountController extends ApiBaseController {
 	@ResponseBody
 	@RequestMapping(value = "detail", method = RequestMethod.POST)
 	public String detail(Long accountId) {
+		if(accountId !=null){
+			accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+		}
 		Boolean  b = notEmpty(accountId);
 		if (!b) {
 			return buildErrorParamMView();
@@ -124,6 +137,9 @@ public class AccountController extends ApiBaseController {
 	public String updatePasswordByAccountId(@Validated UserUpdateOldPasswordForm userUpdateOldPasswordForm,@RequestAttribute("channel") String channel, BindingResult bind) {
 		if (bind.hasErrors()) {
 			return buildBindErrorParamMView(bind);
+		}
+		if(userUpdateOldPasswordForm.getAccountId() !=null){
+			userUpdateOldPasswordForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(userUpdateOldPasswordForm.getAccountId().toString())));
 		}
 		userUpdateOldPasswordForm.setTenantId(channel);
 		return buildSuccessMView(accountService.updatePasswordByOldPassword(userUpdateOldPasswordForm));

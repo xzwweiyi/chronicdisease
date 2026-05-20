@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.common.utils.http.HttpClientUtil;
 import com.dchealth.cro.core.config.CroCoreConfig;
@@ -42,6 +43,8 @@ public class FollowWorkController extends ApiBaseController {
     private CroCoreConfig croCoreConfig;
     @Value("${spring.profiles.active}")
     private String active;
+    @Autowired
+    private RsaUtil rsaUtil;
     /**
      *
      * @param recordId
@@ -103,6 +106,9 @@ public class FollowWorkController extends ApiBaseController {
     {
         try {
             L.info("随访列表参数{}", JSON.toJSONString(followWorkListForm));
+            if(followWorkListForm.getAccountId() !=null){
+                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.handleList(followWorkListForm));
         } catch (Exception e) {
             L.info("随访列表异常{}", JSON.toJSONString(followWorkListForm), e);
@@ -120,6 +126,9 @@ public class FollowWorkController extends ApiBaseController {
     {
         L.info("超窗列表参数:{}",JSON.toJSONString(followWorkListForm));
         try {
+            if(followWorkListForm.getAccountId() !=null){
+                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.overList(followWorkListForm));
         } catch (Exception e) {
             L.info("超窗列表异常{}", JSON.toJSONString(followWorkListForm), e);
@@ -137,6 +146,9 @@ public class FollowWorkController extends ApiBaseController {
     {
             L.info("预警列表参数:{}" ,followWorkListForm);
         try {
+            if(followWorkListForm.getAccountId() !=null){
+                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.warnList(followWorkListForm));
         } catch (Exception e) {
             L.info("预警列表异常{}", JSON.toJSONString(followWorkListForm), e);
@@ -154,6 +166,9 @@ public class FollowWorkController extends ApiBaseController {
     {
         L.info("followWorkListForm:{}",followWorkListForm);
         try {
+            if(followWorkListForm.getAccountId() !=null){
+                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.warnPatientList(followWorkListForm));
         } catch (Exception e) {
             L.info("预警列表异常{}", JSON.toJSONString(followWorkListForm), e);
@@ -171,6 +186,9 @@ public class FollowWorkController extends ApiBaseController {
     {
 
         try {
+            if(followWorkListForm.getAccountId() !=null){
+                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.allocatedList(followWorkListForm));
         } catch (Exception e) {
             L.info("待分配列表异常{}", JSON.toJSONString(followWorkListForm), e);
@@ -273,6 +291,9 @@ public class FollowWorkController extends ApiBaseController {
     {
         L.info("followWorkHandleForm:{}",followWorkHandleForm);
         try {
+            if(followWorkHandleForm.getAccountId() !=null){
+                followWorkHandleForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkHandleForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.submitOpinionHandle(followWorkHandleForm));
         } catch (Exception e) {
             L.info("提交意见操作异常{}", JSON.toJSONString(followWorkHandleForm), e);
@@ -340,6 +361,9 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "savePatientRecordEvaluation", method = RequestMethod.POST)
     public String savePatientRecordEvaluation(@Validated PatientRecordDetailForm infoForm) {
         try {
+            if(infoForm.getAccountId() !=null){
+                infoForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.savePatientRecordEvaluation(infoForm));
         } catch (Exception e) {
             L.info("患者保存随访评价异常{}", JSON.toJSONString(infoForm), e);
@@ -354,6 +378,9 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "savePatientWarnLeaveMessage", method = RequestMethod.POST)
     public String savePatientWarnLeaveMessage(@Validated WarnLeaveMessageForm infoForm,MultipartHttpServletRequest request) {
         try {
+            if(infoForm.getAccountId() !=null){
+                infoForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId().toString())));
+            }
         	if("2" .equals(infoForm.getContentType())) {
             List<MultipartFile> imagesFiles = request.getFiles("imageFiles");
             if(imagesFiles!=null) {
@@ -395,6 +422,9 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "savePatientWarnLeaveMessageMin", method = RequestMethod.POST)
     public String savePatientWarnLeaveMessageMin(@Validated WarnLeaveMessageForm infoForm) {
         try {
+            if(infoForm.getAccountId() !=null){
+                infoForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.savePatientWarnLeaveMessage(infoForm));
         } catch (Exception e) {
             L.info("保存预警指导异常{}", JSON.toJSONString(infoForm), e);
@@ -409,6 +439,9 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "endWarn", method = RequestMethod.POST)
     public String endWarn(@RequestParam(value = "recordId", required = true) Long recordId,@RequestParam(value = "accountId", required = true) Long accountId ) {
         try {
+            if(accountId !=null){
+                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            }
             return buildSuccessMView(followWorkService.endWarn(recordId,accountId));
         } catch (Exception e) {
             L.info("删除指导意见异常{}", e);
@@ -426,6 +459,9 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "updatePatientRecordOver", method = RequestMethod.POST)
     public String updatePatientRecordOver(@Validated PatientRecordDetailForm infoForm) {
         try {
+            if(infoForm.getAccountId() !=null){
+                infoForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId().toString())));
+            }
             return buildSuccessMView(followWorkService.updatePatientRecordTime(infoForm));
         } catch (Exception e) {
             L.info("更新随访时间异常{}", JSON.toJSONString(infoForm), e);
