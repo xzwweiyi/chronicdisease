@@ -69,6 +69,9 @@ public interface IPatientInfoService
 
     List<PatientEnrollmentVo> selectEnrollmentPatientInfoList(PatientInfo patientInfo);
 
+    List<PatientEnrollmentVo> patientEnrollmentInformation(PatientInfo patientInfo);
+
+
     List<PatientEnrollmentVo> selectExcelEnrollmentPatientInfoList(PatientInfo patientInfo);
 
     List<PatientEnrollmentVo> selectNoEnrollmentPatientInfoList(PatientInfo patientInfo);
@@ -99,6 +102,6 @@ public interface IPatientInfoService
 
     int moveEnrollment(MoveEnrollmentVo moveEnrollmentVo);
 
-
+    int batchMoveEnrollment(List<MoveEnrollmentVo> voList);
     List<EnrollmentListVo> enrollmentList(MoveEnrollmentVo moveEnrollmentVo);
 }

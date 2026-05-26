@@ -90,4 +90,6 @@ public interface MpPersonMapper{
     Integer updateMobile(@Param("personId") String personId, @Param("mobile") String mobile);
 
     MpPerson selectMpPersonByCardId(@Param("cardId")String cardId, @Param("mobile")String mobile);
+
+    List<MpPerson> selectMpPersonByCardIdAndMobileBatch(@Param("cardIdList")List<String> cardIdList,@Param("mobileList") List<String> mobileList);
 }

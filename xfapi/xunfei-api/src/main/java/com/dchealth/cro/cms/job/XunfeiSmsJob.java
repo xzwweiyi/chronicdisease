@@ -108,6 +108,7 @@ public class XunfeiSmsJob {
         xunfeiReq.setVars(vars);
         logger.info("---------------------xunfeicalljob短信开始呼叫，参数为:{}----------------------------", com.alibaba.fastjson.JSONObject.toJSONString(xunfeiReq));
         String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(XunfeiConstants.XUNFEI_SMS_TASK, xunfeiReq);
+        logger.info("---------------------xunfeicalljob短信呼叫返回，参数为:{}----------------------------", result);
         com.alibaba.fastjson2.JSONObject jsonObject = JSON.parseObject(result);
         String code = jsonObject.getString("code");
         if(result!=null && ("1000".equals(code) || "0".equals(code))){
@@ -131,7 +132,7 @@ public class XunfeiSmsJob {
             RecordOutbounUpdateForm recordOutbounUpdateForm = new RecordOutbounUpdateForm();
             recordOutbounUpdateForm.setPatientRecordOutboundList(patientRecordOutboundList);
             String updResult = TdApiHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"transfer/recordOutbound/recordOutboundUpdate", recordOutbounUpdateForm);
-            logger.info("transfer/recordOutbound/recordOutboundUpdate超窗操作结果{}", updResult);
+            logger.info("transfer/recordOutbound/recordOutboundUpdate短信操作结果{}", updResult);
         }
     }
 

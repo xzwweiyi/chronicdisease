@@ -1,5 +1,6 @@
 package com.dchealth.web.controller.medical;
 
+import cn.hutool.core.collection.CollUtil;
 import com.dchealth.common.annotation.Log;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
@@ -17,6 +18,7 @@ import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.vo.EnrollmentListVo;
 import com.dchealth.medical.domain.vo.MoveEnrollmentVo;
 import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
+import com.dchealth.medical.dto.MoveEnrollmentBatchReqDto;
 import com.dchealth.medical.service.IPatientInfoService;
 import com.dchealth.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 患者信息Controller
@@ -139,7 +142,16 @@ public class PatientInfoController extends BaseController {
         List<PatientEnrollmentVo> list = patientInfoService.selectEnrollmentPatientInfoList(patientInfo);
         return getDataTable(list);
     }
-
+    /**
+     * 查询入组患者信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:info:list')")
+    @GetMapping("/patientEnrollmentInformation")
+    public TableDataInfo patientEnrollmentInformation(PatientInfo patientInfo) {
+        startPage();
+        List<PatientEnrollmentVo> list = patientInfoService.patientEnrollmentInformation(patientInfo);
+        return getDataTable(list);
+    }
     /**
      * 查询未入组患者
      */
@@ -214,13 +226,45 @@ public class PatientInfoController extends BaseController {
     }
 
     @PostMapping("/moveEnrollment")
-    public AjaxResult moveEnrollment(@RequestBody List<MoveEnrollmentVo> moveEnrollmentVos) {
-        int num = 0;
-        for (MoveEnrollmentVo moveEnrollmentVo : moveEnrollmentVos) {
-            int i = patientInfoService.moveEnrollment(moveEnrollmentVo);
-            num += i;
+    public AjaxResult moveEnrollment(@RequestBody MoveEnrollmentBatchReqDto reqDto) {
+        // 1. 校验
+        if (reqDto.getSelectAll() == null) {
+            reqDto.setSelectAll(false);
         }
-        return AjaxResult.success("移动入组" + num + "个患者");
+
+        // 2. 全选：走列表查询
+        if (reqDto.getSelectAll()) {
+            if (reqDto.getQueryParam() == null) {
+                return AjaxResult.error("全选时必须传递查询条件");
+            }
+            // 调用列表查询 → 得到所有患者
+            List<PatientEnrollmentVo> allList = patientInfoService.selectEnrollmentPatientInfoList(reqDto.getQueryParam());
+            if (CollUtil.isEmpty(allList)) {
+                return AjaxResult.success("当前列表无患者可移动");
+            }
+
+            // 转成 MoveEnrollmentVo
+            List<MoveEnrollmentVo> batchList = allList.stream().map(p -> {
+                MoveEnrollmentVo vo = new MoveEnrollmentVo();
+                vo.setCardId(p.getIdCard());
+                vo.setMobile(p.getMobile());
+                vo.setDeptId(p.getDeptId().toString());
+                vo.setResearchId(reqDto.getQueryParam().getResearchId()); // 目标队列ID
+                return vo;
+            }).collect(Collectors.toList());
+
+            // 批量执行
+            int success = patientInfoService.batchMoveEnrollment(batchList);
+            return AjaxResult.success("全选移动入组完成：成功 " + success + " 个");
+        }
+
+        // 3. 部分选择
+        if (CollUtil.isEmpty(reqDto.getSelectedList())) {
+            return AjaxResult.error("请选择要移动的患者");
+        }
+
+        int success = patientInfoService.batchMoveEnrollment(reqDto.getSelectedList());
+        return AjaxResult.success("部分移动入组完成：成功 " + success + " 个");
     }
 
     @PostMapping("/enrollmentList")

@@ -859,6 +859,7 @@
             <if test="questionStatus != null  and questionStatus != ''">and g.question_status = #{questionStatus}</if>
             <if test="warnStatus != null  and warnStatus != ''">and g.warn_status = #{warnStatus}</if>
             <if test="overDay != null">and TO_DAYS(g.lock_visit_time) = TO_DAYS(#{overDay})</if>
+            <if test="visitDay != null">and TO_DAYS(g.lock_visit_time) = TO_DAYS(#{visitDay})</if>
             <if test="questionTimeOver != null">and TO_DAYS(g.question_time) = TO_DAYS(#{questionTimeOver})</if>
             <if test="createTime != null">and TO_DAYS(g.create_time) = TO_DAYS(#{createTime})</if>
             <if test="overTimeCreateTime != null">and TO_DAYS(g.over_time_create_time) =

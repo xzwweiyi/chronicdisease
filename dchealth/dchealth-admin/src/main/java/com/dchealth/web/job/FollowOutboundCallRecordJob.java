@@ -19,15 +19,13 @@ import com.dchealth.research.mapper.ResearchOutboundMapper;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -151,6 +149,7 @@ public class FollowOutboundCallRecordJob {
                     }
                     PatientRecordTemplate recordTemplate = maps.get(x.getFollowId());
                     if (recordTemplate.getFollowNum() == 0) {
+                        log.info("基线时随访提醒", researchInfo.getId(), recordTemplate.getFollowId());
                         //说明当前是基线,下次为第一次生成随访信息
                         int index = patientRecordTemplates.indexOf(recordTemplate);
                         x.setStageAddNum(1);
@@ -168,6 +167,7 @@ public class FollowOutboundCallRecordJob {
                                 return;
                             }
                             if (x.getStageNum().intValue() == recordTemplate.getFollowTotal().intValue()) {//完成当前随访节点进入下一个随访节点
+                                log.info("当前随访节点进入下一个随访节点提醒", researchInfo.getId(), recordTemplate.getFollowId());
                                 int index = patientRecordTemplates.indexOf(recordTemplate);
                                 if (index + 1 < patientRecordTemplates.size()) {
                                     if (isCreateFollowRecord(now, x, patientRecordTemplates.get(index + 1), researchOutbound.getFollowAdvanceDays())) {
@@ -175,6 +175,7 @@ public class FollowOutboundCallRecordJob {
                                     }
                                 }
                             } else if (x.getStageNum().intValue() < recordTemplate.getFollowTotal().intValue()) {//未完成当前随访节点继续生成当前随访节点计划
+                                log.info("未完成当前随访节点继续生成当前随访节点计划", researchInfo.getId(), recordTemplate.getFollowId());
                                 if (isCreateFollowRecord(now, x, recordTemplate, researchOutbound.getFollowAdvanceDays())) {
                                     insertList.add(patientRecordOutboundFollow(x, researchOutbound, recordTemplate, "1"));
                                 }
@@ -198,17 +199,16 @@ public class FollowOutboundCallRecordJob {
                 });
             }
         }
-
         //超窗外呼提醒,超过随访时间1天要提醒
-        ResearchOutbound researchOutboundCall = researchOutboundMapper.selectByResearchIdAndType(researchId, "1"); // 1 外呼提醒
+        ResearchOutbound researchOutboundOverCall = researchOutboundMapper.selectByResearchIdAndType(researchId, "1"); // 1 外呼提醒
         if (researchOutbound != null && researchInfo != null && "1".equals(researchInfo.getResearchStatus())) {
             PatientRecord patientRecord = new PatientRecord();
             patientRecord.setResearchId(researchId);
             patientRecord.setFillStatus("0");
 
             Date overDay = null;
-            if (researchOutboundCall.getOverAdvanceDays() != null) {
-                overDay = DateUtils.addDays(new Date(), -researchOutboundCall.getOverAdvanceDays());
+            if (researchOutboundOverCall.getOverAdvanceDays() != null) {
+                overDay = DateUtils.addDays(new Date(), -researchOutboundOverCall.getOverAdvanceDays());
             }
             String overDayStr = DateUtils.dateTime(overDay);
             patientRecord.setOverDay(overDayStr);
@@ -349,56 +349,123 @@ public class FollowOutboundCallRecordJob {
 
     }
 
+    // patientRecord:{"accountId":5104,"followId":6046,"lockVisitTime":1779417046000,"params":{},"patientId":13142076,"recordId":3176110,"researchId":3022,"stageAddNum":2,"stageNum":1},patientRecordTemplate():{"createBy":"admin","createTime":1778809405000,"followFrequency":"1","followId":6046,"followInterval":2,"followIntervalUnit":"1","followName":"随访1","followNum":1,"followTotal":3,"params":{},"researchId":3022},followAdvanceDays:1
+    public boolean isCreateFollowRecord(Date now, PatientRecord patientRecord, PatientRecordTemplate prt, Integer followAdvanceDays) {
+        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},patientRecordTemplate():{}" +
+                ",followAdvanceDays:{}", JSON.toJSONString(patientRecord), JSON.toJSONString(prt),followAdvanceDays);
 
-    //判断生成的下一个随访时间在提前提醒时间，是否在当前日期之前，如果是为true
-    public boolean isCreateFollowRecord(Date now, PatientRecord patientRecord, PatientRecordTemplate prt, Integer i) {
-        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},prt.getFollowInterval().intValue()={}", JSON.toJSONString(patientRecord), prt.getFollowInterval().intValue());
-
-        Date nextDate = null;
-        if (StringUtils.equals("1", prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() - i); // 时间计算需要跟踪
-        } else if ("2".equals(prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() * 7 - i);
-        } else if ("3".equals(prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() * 30 - i);
-        }
-        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
-        String patientStatus = patientInfo.getPatientStatus();
-        if ("4".equals(patientStatus)) {
+        // ✅ 1. 强制非空校验（防御式编程）
+        if (now == null || patientRecord == null || prt == null || followAdvanceDays == null) {
+            XxlJobHelper.log("isCreateFollowRecord: null param, skip.");
             return false;
         }
-        if (DateUtils.dateTime(now).equals(DateUtils.dateTime(nextDate))) {
-            XxlJobHelper.log("创建随访外呼提醒成功");
-            return true;
+        Date lockVisitTime = patientRecord.getLockVisitTime();
+        if (lockVisitTime == null) {
+            XxlJobHelper.log("isCreateFollowRecord: lockVisitTime is null, skip.");
+            return false;
         }
-        XxlJobHelper.log("不创建随访外呼提醒");
-        return false;
+
+        // ✅ 2. 计算「真正的下一个随访执行日」（不减 followAdvanceDays！）
+        Date nextFollowDate = null;
+        Integer interval = prt.getFollowInterval();
+        String unit = prt.getFollowIntervalUnit();
+        if (interval == null) interval = 0;
+
+        if ("1".equals(unit)) {
+            nextFollowDate = DateUtils.addDays(lockVisitTime, interval);
+        } else if ("2".equals(unit)) {
+            nextFollowDate = DateUtils.addDays(lockVisitTime, interval * 7);
+        } else if ("3".equals(unit)) {
+            nextFollowDate = DateUtils.addDays(lockVisitTime, interval * 30);
+        } else {
+            XxlJobHelper.log("isCreateFollowRecord: unsupported unit='{}', skip.", unit);
+            return false;
+        }
+
+        // ✅ 3. 计算「提前提醒触发日」= 随访日 - 提前N天
+        Date triggerDate = DateUtils.addDays(nextFollowDate, -followAdvanceDays);
+
+        // ✅ 4. 使用 isSameDay 的正确姿势：判断「今天是否 >= 触发日」
+        // isSameDay(a,b) 只能判断同一天，无法表达“从某天起持续有效”
+        // 所以改用 truncate + before（更准确、更常用、更易读）
+        Date today = DateUtils.truncate(now, Calendar.DATE);
+        Date triggerDay = DateUtils.truncate(triggerDate, Calendar.DATE);
+        boolean shouldTrigger = !today.before(triggerDay); // today >= triggerDay
+
+        // ✅ 5. 患者状态拦截（增强健壮性）
+        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
+        if (patientInfo != null && "4".equals(patientInfo.getPatientStatus())) {
+            XxlJobHelper.log("isCreateFollowRecord: patient archived (status=4), skip.");
+            return false;
+        }
+
+        // ✅ 6. 清晰日志（含格式化日期，便于 ELK 搜索和人工核对）
+        String todayStr = DateFormatUtils.format(today, "yyyy-MM-dd");
+        String triggerStr = DateFormatUtils.format(triggerDay, "yyyy-MM-dd");
+        String nextStr = DateFormatUtils.format(nextFollowDate, "yyyy-MM-dd");
+        XxlJobHelper.log("isCreateFollowRecord: recordId={} | now={} | nextFollowDate={} | triggerDay={} | shouldTrigger={}",
+                patientRecord.getRecordId(),todayStr, nextStr, triggerStr, shouldTrigger);
+
+        return shouldTrigger;
     }
 
-
     //判断生成的下一个随访时间在提前提醒时间，是否在当前日期之前，如果是为true
-    public boolean isCreateFollowSms(Date now, PatientRecord patientRecord, PatientRecordTemplate prt, Integer i) {
-        XxlJobHelper.log("isCreateFollowRecord method, patientRecord:{},prt.getFollowInterval().intValue()={}", JSON.toJSONString(patientRecord), prt.getFollowInterval().intValue());
+    public boolean isCreateFollowSms(Date now, PatientRecord patientRecord, PatientRecordTemplate prt, Integer followAdvanceDays) {
+        XxlJobHelper.log("isCreateFollowSms method, patientRecord:{},patientRecordTemplate():{},followAdvanceDays:{}",
+                JSON.toJSONString(patientRecord), JSON.toJSONString(prt),followAdvanceDays);
 
-        Date nextDate = null;
-        if (StringUtils.equals("1", prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() - i); // 时间计算需要跟踪
-        } else if ("2".equals(prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() * 7 - i);
-        } else if ("3".equals(prt.getFollowIntervalUnit())) {
-            nextDate = DateUtils.addDays(patientRecord.getLockVisitTime(), prt.getFollowInterval().intValue() * 30 - i);
-        }
-        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
-        String patientStatus = patientInfo.getPatientStatus();
-        if ("4".equals(patientStatus)) {
+        // ✅ 1. 强制非空校验（防御式编程）
+        if (now == null || patientRecord == null || prt == null || followAdvanceDays == null) {
+            XxlJobHelper.log("isCreateFollowSms: null param, skip.");
             return false;
         }
-        if (DateUtils.dateTime(now).equals(DateUtils.dateTime(nextDate))) {
-            XxlJobHelper.log("创建随访短信提醒成功");
-            return true;
+        Date lockVisitTime = patientRecord.getLockVisitTime();
+        if (lockVisitTime == null) {
+            XxlJobHelper.log("isCreateFollowSms: lockVisitTime is null, skip.");
+            return false;
         }
-        XxlJobHelper.log("不创建随访短信提醒");
-        return false;
+
+        // ✅ 2. 计算「真正的下一个随访执行日」（不减 followAdvanceDays！）
+        Date nextFollowDate = null;
+        Integer interval = prt.getFollowInterval();
+        String unit = prt.getFollowIntervalUnit();
+        if (interval == null) interval = 0;
+
+        if ("1".equals(unit)) {
+            nextFollowDate = DateUtils.addDays(lockVisitTime, interval);
+        } else if ("2".equals(unit)) {
+            nextFollowDate = DateUtils.addDays(lockVisitTime, interval * 7);
+        } else if ("3".equals(unit)) {
+            nextFollowDate = DateUtils.addDays(lockVisitTime, interval * 30);
+        } else {
+            XxlJobHelper.log("isCreateFollowSms: unsupported unit='{}', skip.", unit);
+            return false;
+        }
+
+        // ✅ 3. 计算「提前提醒触发日」= 随访日 - 提前N天
+        Date triggerDate = DateUtils.addDays(nextFollowDate, -followAdvanceDays);
+
+        // ✅ 4. 使用 isSameDay 的正确姿势：判断「今天是否 >= 触发日」
+        // isSameDay(a,b) 只能判断同一天，无法表达“从某天起持续有效”
+        // 所以改用 truncate + before（更准确、更常用、更易读）
+        Date today = DateUtils.truncate(now, Calendar.DATE);
+        Date triggerDay = DateUtils.truncate(triggerDate, Calendar.DATE);
+        boolean shouldTrigger = !today.before(triggerDay); // today >= triggerDay
+
+        // ✅ 5. 患者状态拦截（增强健壮性）
+        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
+        if (patientInfo != null && "4".equals(patientInfo.getPatientStatus())) {
+            XxlJobHelper.log("isCreateFollowSms: patient archived (status=4), skip.");
+            return false;
+        }
+
+        // ✅ 6. 清晰日志（含格式化日期，便于 ELK 搜索和人工核对）
+        String todayStr = DateFormatUtils.format(today, "yyyy-MM-dd");
+        String triggerStr = DateFormatUtils.format(triggerDay, "yyyy-MM-dd");
+        String nextStr = DateFormatUtils.format(nextFollowDate, "yyyy-MM-dd");
+        XxlJobHelper.log("isCreateFollowSms: recordId={} | now={} | nextFollowDate={} | triggerDay={} | shouldTrigger={}",
+                patientRecord.getRecordId(),todayStr, nextStr, triggerStr, shouldTrigger);
+        return shouldTrigger;
     }
 
     //外呼短信随访提前提醒

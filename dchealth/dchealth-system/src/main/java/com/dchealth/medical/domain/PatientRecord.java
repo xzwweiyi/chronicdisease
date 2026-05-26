@@ -260,6 +260,8 @@ public class PatientRecord extends BaseEntity{
 
     private String overDay;
 
+    private String visitDay;
+
     //查询超过7天未处理预警时时间条件
     private String questionTimeOver;
 

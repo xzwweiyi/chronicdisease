@@ -1,5 +1,6 @@
 package com.dchealth.medical.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.dchealth.account.domain.AccountNotice;
@@ -376,6 +377,19 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
     @Override
     public List<PatientEnrollmentVo> selectEnrollmentPatientInfoList(PatientInfo patientInfo) {
         List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.selectEnrollmentPatientInfoList(patientInfo);
+        if (patientEnrollmentVos.size() > 0) {
+            for (PatientEnrollmentVo p : patientEnrollmentVos) {
+                if (p.getIdCard() != null && p.getIdCard().length() >= 18) {
+                    p.setBirthday(DateUtils.dateTime(DateUtils.YYYY_MM_DD, CommunalUtils.getBirthday(p.getIdCard())));
+                    p.setSex(CommunalUtils.getSex(p.getIdCard()));
+                }
+            }
+        }
+        return patientEnrollmentVos;
+    }
+    @Override
+    public List<PatientEnrollmentVo> patientEnrollmentInformation(PatientInfo patientInfo) {
+        List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.patientEnrollmentInformation(patientInfo);
         if (patientEnrollmentVos.size() > 0) {
             for (PatientEnrollmentVo p : patientEnrollmentVos) {
                 if (p.getIdCard() != null && p.getIdCard().length() >= 18) {
@@ -878,7 +892,156 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
         return num;
 
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int batchMoveEnrollment(List<MoveEnrollmentVo> voList) {
+        if (CollUtil.isEmpty(voList)) return 0;
 
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        int successCount = 0;
+
+        // ======================== 全局只查1次（公共数据） ========================
+        // 1. 患者编码字典（全量缓存）
+        SysDictData sysDictData = new SysDictData();
+        sysDictData.setDictType("patient_code");
+        List<SysDictData> dictDataList = sysDictDataService.selectDictDataList(sysDictData);
+        Map<String, String> queueCodeMap = dictDataList.stream()
+                .collect(Collectors.toMap(SysDictData::getDictLabel, SysDictData::getDictValue));
+
+        // 按研究ID分组 → 批量处理，避免重复查询
+        Map<Long, List<MoveEnrollmentVo>> researchGroupMap = voList.stream()
+                .collect(Collectors.groupingBy(MoveEnrollmentVo::getResearchId));
+
+        // 遍历每个研究
+        for (Map.Entry<Long, List<MoveEnrollmentVo>> entry : researchGroupMap.entrySet()) {
+            Long researchId = entry.getKey();
+            List<MoveEnrollmentVo> researchVoList = entry.getValue();
+
+            // 2. 该研究下 所有已存在患者（只查1次）
+            PatientInfo infoParam = new PatientInfo();
+            infoParam.setResearchId(researchId);
+            List<PatientInfo> existPatientList = patientInfoMapper.selectPatientInfoList(infoParam);
+            Set<String> existPersonIdSet = existPatientList.stream()
+                    .map(PatientInfo::getPersonId)
+                    .collect(Collectors.toSet());
+
+            // 3. 该研究下 基线模板（只查1次）
+            List<PatientRecordTemplate> templateList = patientRecordTemplateMapper.selectPatientRecordTemplateByResearchId(researchId);
+            Long followId = CollUtil.isNotEmpty(templateList) ? templateList.get(0).getFollowId() : null;
+
+            // 4. 批量获取患者信息（批量查mpPerson，避免循环查）
+            List<String> cardIdList = researchVoList.stream().map(MoveEnrollmentVo::getCardId).collect(Collectors.toList());
+            List<String> mobileList = researchVoList.stream().map(MoveEnrollmentVo::getMobile).collect(Collectors.toList());
+            List<MpPerson> mpPersonList = mpPersonMapper.selectMpPersonByCardIdAndMobileBatch(cardIdList, mobileList);
+            Map<String, MpPerson> personMap = mpPersonList.stream()
+                    .collect(Collectors.toMap(p -> p.getCardId() + "_" + p.getMobile(), p -> p));
+
+            // ===================== 开始批量处理患者 =====================
+            for (MoveEnrollmentVo vo : researchVoList) {
+                try {
+                    String key = vo.getCardId() + "_" + vo.getMobile();
+                    MpPerson mpPerson = personMap.get(key);
+                    if (mpPerson == null) continue;
+
+                    String personId = mpPerson.getPersonId();
+                    // 已存在 → 跳过
+                    if (existPersonIdSet.contains(personId)) continue;
+
+                    // ===================== 生成患者编码（只计算1次） =====================
+                    String patientCode = generatePatientCode(researchId, existPatientList, queueCodeMap);
+
+                    // ===================== 构建患者信息 =====================
+                    PatientInfo patientInfo = new PatientInfo();
+                    patientInfo.setPersonId(personId);
+                    patientInfo.setResearchId(researchId);
+                    patientInfo.setPlanResearchId(researchId);
+                    patientInfo.setPatientName(mpPerson.getPersonName());
+                    patientInfo.setPatientMobile(vo.getMobile());
+                    patientInfo.setDeptId(Long.valueOf(vo.getDeptId()));
+                    patientInfo.setPatientCode(patientCode);
+                    patientInfo.setPatientStatus("0");
+                    patientInfo.setEnrollmentStatus("0");
+                    patientInfo.setChannelType("3");
+                    patientInfo.setCreateTime(DateUtils.getNowDate());
+                    patientInfo.setEnrollmentTime(DateUtils.getNowDate());
+                    patientInfo.setCreateBy(loginUser.getUsername());
+                    patientInfo.setEnrollmentResult("0");
+                    patientInfo.setEnrollmentHandlerStatus("1");
+                    patientInfo.setAllocatedHandlerStatus("0");
+                    patientInfo.setAllocatedStatus("0");
+                    if (vo.getAccountId() != null) {
+                        patientInfo.setAccountId(Long.valueOf(vo.getAccountId()));
+                    }
+
+                    // 插入
+                    patientInfoMapper.insertPatientInfo(patientInfo);
+                    successCount++;
+
+                    // 研究患者关联
+                    ResearchPatient researchPatient = new ResearchPatient();
+                    researchPatient.setResearchId(researchId);
+                    researchPatient.setPersonId(personId);
+                    researchPatient.setPatientId(patientInfo.getPatientId());
+                    researchPatient.setCreateTime(DateUtils.getNowDate());
+                    researchPatientMapper.insertResearchPatient(researchPatient);
+
+                    // 基线
+                    if (CollUtil.isNotEmpty(templateList)) {
+                        PatientRecord record = new PatientRecord();
+                        record.setPatientId(patientInfo.getPatientId());
+                        record.setResearchId(researchId);
+                        record.setFollowId(followId);
+                        record.setName("基线");
+                        record.setVisitTime(DateUtils.getNowDate());
+                        record.setLockVisitTime(patientInfo.getCreateTime());
+                        record.setFollowTipStatus(FollowTipStatusConstants.BASELINE_REMINDER);
+                        record.setCreateTime(DateUtils.getNowDate());
+                        record.setUpdateBy(loginUser.getUsername());
+                        patientRecordMapper.insertPatientRecord(record);
+                    }
+
+                    // 入组相关处理
+                    vo.setHandleType("3");
+                    enrollmentHandle(vo, patientInfo);
+                    patientConfirmEnrollment(vo, patientInfo);
+
+                } catch (Exception e) {
+                    log.error("批量移动入组失败 cardId={}", vo.getCardId(), e);
+                }
+            }
+
+            // 创建分表（每个研究只执行1次）
+            researchInfoService.createTableInAddUser(researchId);
+        }
+
+        return successCount;
+    }
+
+    private String generatePatientCode(Long researchId, List<PatientInfo> existPatientList, Map<String, String> queueCodeMap) {
+        String code = "D-0001";
+        String researchIdStr = String.valueOf(researchId);
+
+        for (Map.Entry<String, String> entry : queueCodeMap.entrySet()) {
+            if (!researchIdStr.equals(entry.getValue())) continue;
+            String queueName = entry.getKey();
+            if (CollUtil.isEmpty(existPatientList)) {
+                switch (queueName) {
+                    case "肥胖门诊用药队列": code = "D-0001"; break;
+                    case "肥胖门诊生活方式队列": code = "L-0001"; break;
+                    case "肥胖门诊手术队列": code = "S-0001"; break;
+                }
+            } else {
+                PatientInfo maxCodePatient = getFirstPatientCode(existPatientList);
+                switch (queueName) {
+                    case "肥胖门诊用药队列": code = generateNextCode("D", maxCodePatient.getPatientCode()); break;
+                    case "肥胖门诊生活方式队列": code = generateNextCode("L", maxCodePatient.getPatientCode()); break;
+                    case "肥胖门诊手术队列": code = generateNextCode("S", maxCodePatient.getPatientCode()); break;
+                }
+            }
+            break;
+        }
+        return code;
+    }
     /**
      * 患者确认入组
      * @param moveEnrollmentVo
