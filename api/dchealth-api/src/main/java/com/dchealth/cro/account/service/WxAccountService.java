@@ -59,7 +59,7 @@ public class WxAccountService {
 
     public Boolean updateLoginPhone(UpdateUserInfoReq updateUserInfoReq, String channel) {
 
-        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountId());
+        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountIds());
         if (ObjUtil.isNull(patientAccount)) {
             throw new RuntimeException("用户不存在");
         }
@@ -85,13 +85,13 @@ public class WxAccountService {
             return result;
         }
 
-        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountId());
+        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(updateUserInfoReq.getAccountIds());
         if (ObjUtil.isNull(patientAccount)) {
             throw new ServiceException("用户不存在");
         }
 
         // 判断用户是否加入队列，如果加入队列则不允许修改
-        Boolean joinQueue = isJoinQueue(updateUserInfoReq.getAccountId(), channel);
+        Boolean joinQueue = isJoinQueue(updateUserInfoReq.getAccountIds(), channel);
         if (!joinQueue) {
 
             MobileForm mobileForm = new MobileForm();
@@ -162,12 +162,12 @@ public class WxAccountService {
         MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientAccount.getRegistrySigns());
         if (mpPatientAccount == null) {
             MpPatientAccount mp = new MpPatientAccount();
-            mp.setAccountId(updateUserInfoReq.getAccountId());
+            mp.setAccountId(updateUserInfoReq.getAccountIds());
             mp.setPersonId(updateUserInfoReq.getPersonId());
             mpPatientAccountMapper.insertMpPatientAccount(mp);
         } else {
             if (!mpPatientAccount.getPersonId().equals(updateUserInfoReq.getPersonId())) {
-                mpPatientAccount.setAccountId(updateUserInfoReq.getAccountId());
+                mpPatientAccount.setAccountId(updateUserInfoReq.getAccountIds());
                 mpPatientAccount.setPersonId(updateUserInfoReq.getPersonId());
                 mpPatientAccountMapper.deleteMpPatientAccountByPatientId(mpPatientAccount.getPersonId());
                 mpPatientAccountMapper.insertMpPatientAccount(mpPatientAccount);
@@ -225,7 +225,7 @@ public class WxAccountService {
     private void patientAccountMobileUpdate(UpdateUserInfoReq updateUserInfoReq, PatientAccount account) {
         patientAccountMapper.deletePatientAccountByAccountId(account.getAccountId());
         PatientAccount account1 = new PatientAccount();
-        account1.setAccountId(updateUserInfoReq.getAccountId());
+        account1.setAccountId(updateUserInfoReq.getAccountIds());
         account1.setMobile(updateUserInfoReq.getLoginMobile());
         account1.setRegistrySigns(updateUserInfoReq.getPersonId());
         account1.setStatus("0");

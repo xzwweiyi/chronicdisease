@@ -412,7 +412,7 @@ public class ArticleService {
         DchealthCloudResponseEntity<ArticleVO> result = new DchealthCloudResponseEntity<ArticleVO>();
         //对于没有关联队列的患者直接返回null，这里的查询和患者基础信息接口保持一致
         List<PatientInfo> patientInfos =
-                patientInfoMapper.selectPatientInfoByAccountIdEnrollment(researchInfoArticlePatient.getAccountId());
+                patientInfoMapper.selectPatientInfoByAccountIdEnrollment(researchInfoArticlePatient.getAccountIds());
         //已入组的队列
         List<PatientInfo> patientInfoList = patientInfos.stream().filter(x -> "1".equals(x.getEnrollmentStatus())).collect(Collectors.toList());
         if(CollectionUtils.isEmpty(patientInfoList)){
@@ -436,7 +436,7 @@ public class ArticleService {
 //        List<ArticleListVO> rs = list.stream().limit(5).collect(Collectors.toList());
 
         CmsCollection cmsCollectionSearch = new CmsCollection();
-        cmsCollectionSearch.setAccountId(researchInfoArticlePatient.getAccountId());
+        cmsCollectionSearch.setAccountId(researchInfoArticlePatient.getAccountIds());
         List<CmsCollection> cmsCollectionList = cmsCollectionMapper.selectCmsCollectionList(cmsCollectionSearch);
         Map<Long,CmsCollection> collectionMap;
         if (cmsCollectionList != null && !cmsCollectionList.isEmpty()) {
@@ -482,7 +482,7 @@ public class ArticleService {
     public DchealthCloudResponseEntity<ArticleVO> allPatientArticle(ResearchInfoArticlePatient researchInfoArticlePatient) {
         DchealthCloudResponseEntity<ArticleVO> result = new DchealthCloudResponseEntity<ArticleVO>();
         List<PatientInfo> patientInfos =
-        		patientInfoMapper.selectPatientInfoByAccountIdEnrollment(researchInfoArticlePatient.getAccountId());
+        		patientInfoMapper.selectPatientInfoByAccountIdEnrollment(researchInfoArticlePatient.getAccountIds());
         if(CollectionUtils.isEmpty(patientInfos)){
             result.setData(new ArticleVO());
             return result;
@@ -538,7 +538,7 @@ public class ArticleService {
     public DchealthCloudResponseEntity<QuestionnaireVO> questionnaireList(ResearchInfoArticlePatient researchInfoArticlePatient) {
         DchealthCloudResponseEntity<QuestionnaireVO> result = new DchealthCloudResponseEntity<QuestionnaireVO>();
         List<PatientInfo> patientInfos =
-        		patientInfoMapper.selectPatientInfoByAccountIdEnrollment(researchInfoArticlePatient.getAccountId());
+        		patientInfoMapper.selectPatientInfoByAccountIdEnrollment(researchInfoArticlePatient.getAccountIds());
         if(CollectionUtils.isEmpty(patientInfos)){
             return result;
         }
@@ -682,7 +682,7 @@ public class ArticleService {
     public DchealthCloudResponseEntity<CommonResult> save(CommentSaveForm commentSaveForm, String positionType) {
         DchealthCloudResponseEntity<CommonResult> result = new DchealthCloudResponseEntity<CommonResult>();
         CmsArticle cmsArticle = cmsArticleMapper.selectCmsArticleById(commentSaveForm.getArticleId());
-        if (commentSaveForm.getAccountId() == null || commentSaveForm.getAccountId() < 1) {
+        if (commentSaveForm.getAccountId() == null || commentSaveForm.getAccountIds() < 1) {
             result.setCode(CroApiCodeConstant.USER_NOT_LOGIN.getCode());
             return result;
         }
@@ -711,7 +711,7 @@ public class ArticleService {
             }
         }
         CmsComment cmsComment = new CmsComment();
-        cmsComment.setAccountId(commentSaveForm.getAccountId());
+        cmsComment.setAccountId(commentSaveForm.getAccountIds());
         cmsComment.setArticleId(commentSaveForm.getArticleId());
         cmsComment.setContent(commentSaveForm.getContent());
         cmsComment.setCreateTime(DateUtils.getNowDate());

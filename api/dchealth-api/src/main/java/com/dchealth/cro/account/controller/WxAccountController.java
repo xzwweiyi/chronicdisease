@@ -1,14 +1,18 @@
 package com.dchealth.cro.account.controller;
 
 
+import cn.hutool.core.net.URLDecoder;
 import com.dchealth.cro.account.form.req.UpdateUserInfoReq;
 import com.dchealth.cro.account.service.WxAccountService;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.medical.form.MobileForm;
 import com.dchealth.cro.medical.service.MedicalPatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author: wangpf
@@ -35,8 +39,8 @@ public class WxAccountController extends ApiBaseController {
         if (!b) {
             return buildErrorParamMView();
         }
-        if(updateUserInfoReq.getAccountId() !=null){
-            updateUserInfoReq.setAccountId(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId().toString())));
+        if(StringUtils.isNotEmpty(updateUserInfoReq.getAccountId())){
+            updateUserInfoReq.setAccountIds(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId())));
         }
         try {
             return buildSuccessMView(accountService.updateLoginPhone(updateUserInfoReq, channel));
@@ -56,8 +60,8 @@ public class WxAccountController extends ApiBaseController {
         if (!b) {
             return buildErrorParamMView();
         }
-        if(updateUserInfoReq.getAccountId() !=null){
-            updateUserInfoReq.setAccountId(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId().toString())));
+        if(StringUtils.isNotEmpty(updateUserInfoReq.getAccountId())){
+            updateUserInfoReq.setAccountIds(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId())));
         }
         try {
             return buildSuccessMView(accountService.updatePatientInfo(updateUserInfoReq, channel));
@@ -72,16 +76,17 @@ public class WxAccountController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "isJoinQueue", method = RequestMethod.POST)
-    public String isJoinQueue(Long accountId, @RequestAttribute("channel") String channel) {
+    public String isJoinQueue(String accountId, @RequestAttribute("channel") String channel) {
         boolean b = notEmpty(accountId);
         if (!b) {
             return buildErrorParamMView();
         }
-        if(accountId !=null){
-            accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+        Long accountIds = null;
+        if(StringUtils.isNotEmpty(accountId)){
+            accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
         }
         try {
-            return buildSuccessMView(accountService.isJoinQueue(accountId, channel));
+            return buildSuccessMView(accountService.isJoinQueue(accountIds, channel));
         } catch (Exception e) {
             return buildErrorParamMView(e);
         }

@@ -221,7 +221,7 @@ public class MedicalPatientService {
         }
 
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
-        patientRecord.setAccountId(patientInfo.getAccountId());
+        patientRecord.setAccountIds(patientInfo.getAccountId());
 
         // 处理自评量表有表单分数计算的模块
         infoForm.getPropertyForms().stream().filter(item -> item.getPropertyType().equals("Statistic")).forEach(form -> {
@@ -1500,7 +1500,7 @@ public class MedicalPatientService {
     @Transactional
     public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatient(BindPatientForm bindPatientForm) {
         DchealthCloudResponseEntity<PatientAccountInfoVO> result = new DchealthCloudResponseEntity<>();
-        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(bindPatientForm.getAccountId());
+        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(bindPatientForm.getAccountIds());
         if (patientAccount == null) {
             result.setMsg(CroApiCodeConstant.USER_NOT_EXIST.getMsg());
             result.setCode(CroApiCodeConstant.USER_NOT_EXIST.getCode());
@@ -1534,7 +1534,7 @@ public class MedicalPatientService {
             result.setData(patientAccountInfoVO);
             return result;
         }
-        MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountByAccountId(bindPatientForm.getAccountId());
+        MpPatientAccount mpPatientAccount = mpPatientAccountMapper.selectMpPatientAccountByAccountId(bindPatientForm.getAccountIds());
         if (mpPatientAccount != null) {
             result.setCode(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getCode());
             result.setMsg(String.format(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getMsg(),patientAccount.getMobile()));
@@ -1545,7 +1545,7 @@ public class MedicalPatientService {
         MpPerson patientBaseInfos = mpPersonMapper.selectMpPersonByPersonIdCardId(bindPatientForm.getRegistrySigns(), bindPatientForm.getIdCardNo());
         if (patientBaseInfos != null) {
             MpPatientAccount mpa = mpPatientAccountMapper.selectMpPatientAccountBypersonId(patientBaseInfos.getPersonId());
-            if (mpa != null && !(mpa.getAccountId().longValue() == bindPatientForm.getAccountId().longValue())) {
+            if (mpa != null && !(mpa.getAccountId().longValue() == bindPatientForm.getAccountIds().longValue())) {
                 PatientAccount patientAccount1 = patientAccountMapper.selectPatientAccountByAccountId(mpa.getAccountId());
                 result.setCode(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getCode());
                 result.setMsg(String.format(CroApiCodeConstant.ACCOUNT_ID_ALREADY_BINDING_OTHER.getMsg(),patientAccount1.getMobile()));
@@ -1588,7 +1588,7 @@ public class MedicalPatientService {
 
         MpPatientAccount patientAccount2 = new MpPatientAccount();
         patientAccount2.setPersonId(String.valueOf(patientBaseInfos.getPersonId()));
-        patientAccount2.setAccountId(bindPatientForm.getAccountId());
+        patientAccount2.setAccountId(bindPatientForm.getAccountIds());
         mpPatientAccountMapper.insertMpPatientAccount(patientAccount2);
         patientAccount.setBindStatus("1");
         patientAccount.setRegistrySigns(bindPatientForm.getRegistrySigns());
@@ -1599,7 +1599,7 @@ public class MedicalPatientService {
         patientAccountInfoVO.setBindStatus("1");
         patientAccountInfoVO.setSex(HealthUtils.getSex(patientBaseInfos.getCardId()));
         patientAccountInfoVO.setIdCard(patientBaseInfos.getCardId());
-        patientAccountInfoVO.setAccountId(bindPatientForm.getAccountId());
+        patientAccountInfoVO.setAccountId(bindPatientForm.getAccountIds());
 
 
         //patient_info表中accountId是null的做绑定处理
@@ -1612,7 +1612,7 @@ public class MedicalPatientService {
             for (PatientInfo info : filterPatientInfos) {
                 PatientInfo patientInfoVo = new PatientInfo();
                 patientInfoVo.setPatientId(info.getPatientId());
-                patientInfoVo.setAccountId(bindPatientForm.getAccountId());
+                patientInfoVo.setAccountId(bindPatientForm.getAccountIds());
                 patientInfoVo.setPatientMobile(patientAccount.getMobile());
                 patientInfoMapper.updatePatientInfo(patientInfoVo);
             }
@@ -1632,7 +1632,7 @@ public class MedicalPatientService {
     public DchealthCloudResponseEntity<CommonResult> applyResearch(ApplyResearchForm applyResearchForm) {
         DchealthCloudResponseEntity<CommonResult> result = new DchealthCloudResponseEntity<CommonResult>();
         CommonResult commonResult = new CommonResult();
-        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(applyResearchForm.getAccountId());
+        PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(applyResearchForm.getAccountIds());
         if (patientAccount == null) {
             result.setCode(CroApiCodeConstant.USER_NOT_EXIST.getCode());
             return result;
@@ -1651,11 +1651,11 @@ public class MedicalPatientService {
         PatientInfo info = new PatientInfo();
         info.setPersonId(patientInfo.getPersonId());
         info.setResearchId(applyResearchForm.getResearchId());
-        info.setAccountId(applyResearchForm.getAccountId());
+        info.setAccountId(applyResearchForm.getAccountIds());
         List<PatientInfo> patientInfos = patientInfoMapper.selectPatientInfoList(info);
         if (patientInfos.size() == 0) {
             patientInfo.setCreateTime(new Date());
-            patientInfo.setAccountId(applyResearchForm.getAccountId());
+            patientInfo.setAccountId(applyResearchForm.getAccountIds());
             patientInfo.setResearchId(applyResearchForm.getResearchId());
             patientInfo.setPlanScanResearchId(applyResearchForm.getResearchId());
             patientInfo.setChannelType("2");//来源渠道  2扫码
@@ -2366,14 +2366,14 @@ public class MedicalPatientService {
             result.setMsg("用户身份验证失败");
             return result;
         }
-        if (!accountByOpenId.getAccountId().equals(bindPatientForm.getAccountId())) {
+        if (!accountByOpenId.getAccountId().toString().equals(bindPatientForm.getAccountIds().toString())) {
             result.setCode(CroApiCodeConstant.AUTH_NOT_ALLOW.getCode());
             result.setMsg("无权查看该用户信息");
             return result;
         }
 
         PatientAccount patientAccount =
-                patientAccountMapper.selectPatientAccountByAccountId(bindPatientForm.getAccountId());
+                patientAccountMapper.selectPatientAccountByAccountId(bindPatientForm.getAccountIds());
         if (patientAccount == null) {
             result.setCode(CroApiCodeConstant.USER_NOT_EXIST.getCode());
             return result;
@@ -2383,7 +2383,7 @@ public class MedicalPatientService {
             return result;
         }
         PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
-        MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(bindPatientForm.getAccountId());
+        MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(bindPatientForm.getAccountIds());
         if (patientBaseInfo != null) {
             patientAccountInfoVO.setPersonId(patientBaseInfo.getPersonId());
             patientAccountInfoVO.setPersonName(patientBaseInfo.getPersonName());
@@ -2393,7 +2393,7 @@ public class MedicalPatientService {
             patientAccountInfoVO.setMobile(patientBaseInfo.getPhoneNumber());
             patientAccountInfoVO.setLoginMobile(patientAccount.getMobile());
         }
-        patientAccountInfoVO.setAccountId(bindPatientForm.getAccountId());
+        patientAccountInfoVO.setAccountId(bindPatientForm.getAccountIds());
 
         result.setData(patientAccountInfoVO);
         return result;
@@ -2411,7 +2411,7 @@ public class MedicalPatientService {
                 new DchealthCloudResponseEntity<PatientAccountInfoVO>();
         PatientAccountInfoVO patientAccountInfoVO = new PatientAccountInfoVO();
         PatientAccount patientAccount =
-                patientAccountMapper.selectPatientAccountByAccountId(applyResearchForm.getAccountId());
+                patientAccountMapper.selectPatientAccountByAccountId(applyResearchForm.getAccountIds());
         if (patientAccount == null) {
             result.setCode(CroApiCodeConstant.USER_NOT_EXIST.getCode());
             return result;
@@ -2422,7 +2422,7 @@ public class MedicalPatientService {
         }
         PatientInfo patientInfo = new PatientInfo();
         patientInfo.setCreateTime(new Date());
-        patientInfo.setAccountId(applyResearchForm.getAccountId());
+        patientInfo.setAccountId(applyResearchForm.getAccountIds());
         //patientInfo.setBaseId(applyResearchForm.getPatientBaseAccountId());
         patientInfo.setResearchId(applyResearchForm.getResearchId());
         patientInfo.setDeptId(applyResearchForm.getDeptId());
@@ -2439,7 +2439,7 @@ public class MedicalPatientService {
             patientAccountInfoVO.setEnrollmentHandlerStatus(patientInfo1.getEnrollmentHandlerStatus());
             patientAccountInfoVO.setEnrollmentStatus(patientInfo1.getEnrollmentStatus());
         } else {
-            MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(applyResearchForm.getAccountId());
+            MpPerson patientBaseInfo = mpPersonMapper.selectPersonByAccountId(applyResearchForm.getAccountIds());
             if (patientBaseInfo != null) {
                 patientAccountInfoVO.setPersonName(patientBaseInfo.getPersonName());
             }

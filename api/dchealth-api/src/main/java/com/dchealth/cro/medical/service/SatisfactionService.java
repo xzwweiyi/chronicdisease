@@ -25,7 +25,7 @@ public class SatisfactionService {
 		DchealthCloudResponseEntity<CommonResult> result = new DchealthCloudResponseEntity<CommonResult>();
 		CommonResult commonResult = new CommonResult();
 		DoctorSatisfactionEvaluation doctorSatisfactionEvaluation = new DoctorSatisfactionEvaluation();
-		doctorSatisfactionEvaluation.setAccountId(doctorSatisfactionEvaluationVo.getAccountId());
+		doctorSatisfactionEvaluation.setAccountId(doctorSatisfactionEvaluationVo.getAccountIds());
 		doctorSatisfactionEvaluation.setScore(doctorSatisfactionEvaluationVo.getScore());
 		doctorSatisfactionEvaluation.setSuggestion(doctorSatisfactionEvaluationVo.getSuggestion());
 		doctorSatisfactionEvaluation.setCreateTime(DateUtils.getNowDate());

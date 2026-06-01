@@ -1,5 +1,6 @@
 package com.dchealth.cro.cms.form;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -27,8 +28,10 @@ public class CmsCommentBlankForm
     private String tenantId;
 
     /** 用户ID */
-    @NotNull(message = "当前用户ID不能为空")
-    private Long accountId;
+    @NotBlank(message = "当前用户ID不能为空")
+    private String accountId;
+
+    private Long accountIds;
 
 
   

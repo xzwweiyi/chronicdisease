@@ -130,8 +130,8 @@ public class MinMedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(bindPatientForm.getAccountId() !=null){
-                bindPatientForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(bindPatientForm.getAccountId())){
+                bindPatientForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId())));
             }
             return buildSuccessMView(medicalPatientService.bindPatient(bindPatientForm));
         } catch (Exception e) {
@@ -149,8 +149,8 @@ public class MinMedicalPatientController extends ApiBaseController {
     @RequestMapping(value = "bindPatientDetail", method = RequestMethod.POST)
     public String bindPatientDetail(@Validated BindPatientDetailForm bindPatientForm) {
         try {
-            if(bindPatientForm.getAccountId() !=null){
-                bindPatientForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(bindPatientForm.getAccountId())){
+                bindPatientForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(bindPatientForm.getAccountId())));
             }
             return buildSuccessMView(medicalPatientService.bindPatientDetail(bindPatientForm));
         } catch (Exception e) {
@@ -173,8 +173,8 @@ public class MinMedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(applyResearchForm.getAccountId() !=null){
-                applyResearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(applyResearchForm.getAccountId())){
+                applyResearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId())));
             }
             if(StringUtils.isNotEmpty(applyResearchForm.getPersonId())){
                 applyResearchForm.setPersonId(rsaUtil.decryptValue(applyResearchForm.getPersonId()));
@@ -196,8 +196,8 @@ public class MinMedicalPatientController extends ApiBaseController {
     @RequestMapping(value = "scanCodeResearch", method = RequestMethod.POST)
     public String scanCodeResearch(@Validated ApplyResearchForm applyResearchForm) {
         try {
-            if(applyResearchForm.getAccountId() !=null){
-                applyResearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(applyResearchForm.getAccountId())){
+                applyResearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId())));
             }
             if(StringUtils.isNotEmpty(applyResearchForm.getPersonId())){
                 applyResearchForm.setPersonId(rsaUtil.decryptValue(applyResearchForm.getPersonId()));
@@ -218,16 +218,17 @@ public class MinMedicalPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "patientBaseInfo", method = RequestMethod.POST)
-    public String patientBaseInfo(Long accountId, HttpServletRequest request) {
+    public String patientBaseInfo(String accountId, HttpServletRequest request) {
         L.info("accountId:{}",accountId);
         try {
             if (accountId == null) {
                 return buildErrorParamMView();
             }
-            if(accountId !=null){
-                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            Long accountIds = null;
+            if(StringUtils.isNotEmpty(accountId)){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
             }
-            return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountId, request));
+            return buildSuccessMView(medicalPatientService.selectPatientBaseInfoByAccountId(accountIds, request));
         } catch (Exception e) {
             L.info("患者基本信息获取{},{}", accountId, e);
             return buildExceptionMView();
@@ -248,8 +249,8 @@ public class MinMedicalPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(patientRecord.getAccountId() !=null){
-                patientRecord.setAccountId(Long.valueOf(rsaUtil.decryptValue(patientRecord.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(patientRecord.getAccountId())){
+                patientRecord.setAccountIds(Long.valueOf(rsaUtil.decryptValue(patientRecord.getAccountId())));
             }
             return buildSuccessMView(medicalPatientService.selectPatientRecordList(patientRecord, request));
         } catch (Exception e) {

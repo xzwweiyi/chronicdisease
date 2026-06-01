@@ -11,7 +11,9 @@ import lombok.Data;
 public class AccountForm {
     /** 主键 */
     @NotNull(message = "用户ID不能为空")
-    private Long accountId;
+    private String accountId;
+    private Long accountIds;
+
     private String headImage;//头像
 
     /** 真实姓名 */

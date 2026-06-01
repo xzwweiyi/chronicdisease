@@ -42,8 +42,8 @@ public class MedicalExamController extends ApiBaseController {
     @RequestMapping(value = "examFromInfo", method = RequestMethod.POST)
     public String examFromDetailInfo(FMedicalExamRes fMedicalExamRes) {
         try {
-            if(fMedicalExamRes.getAccountId() !=null){
-                fMedicalExamRes.setAccountId(Long.valueOf(rsaUtil.decryptValue(fMedicalExamRes.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(fMedicalExamRes.getAccountId())){
+                fMedicalExamRes.setAccountIds(Long.valueOf(rsaUtil.decryptValue(fMedicalExamRes.getAccountId())));
             }
             L.info("问卷查看详情json{}", JSON.toJSONString(fMedicalExamRes));
             return buildSuccessMView(medicalExamService.selectExamFromDetailInfo(fMedicalExamRes));

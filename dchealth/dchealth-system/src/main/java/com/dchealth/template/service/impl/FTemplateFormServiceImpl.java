@@ -228,11 +228,22 @@ public class FTemplateFormServiceImpl implements IFTemplateFormService
         if(fTemplatePropertyList.size()>0 && list.size()>0){
             Map<Long,List<FTemplateProperty>> propertyMaps = fTemplatePropertyList.stream().collect(Collectors.groupingBy(FTemplateProperty::getParentId));
             for(FTemplateForm f:list){
+                FTemplateForm fTemplateForm1 = new FTemplateForm();
+                fTemplateForm1.setParentId(f.getTemplateFormId());
+                List<FTemplateForm> chrenForms = fTemplateFormMapper.selectFTemplateFormList(fTemplateForm1);
+                List<FTemplateProperty> all = new ArrayList<>();
+                for(FTemplateForm chr:chrenForms){
+                    if(propertyMaps.containsKey(chr.getTemplateFormId())){
+                        all.addAll(propertyMaps.get(chr.getTemplateFormId()));
+                    }
+                }
                 if(propertyMaps.containsKey(f.getTemplateFormId())){
                     f.setPropertyNum(f.getPropertyNum()+propertyMaps.get(f.getTemplateFormId()).size()+f.getEdcNum());
                 }else{
+
                     f.setPropertyNum(f.getPropertyNum()+f.getEdcNum());
                 }
+                f.setPropertyNum(f.getPropertyNum()+all.size());
             }
         }else if(fTemplatePropertyList.size()==0 && list.size()>0){
             for(FTemplateForm f:list){

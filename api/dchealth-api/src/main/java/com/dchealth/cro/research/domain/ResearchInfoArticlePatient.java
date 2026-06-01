@@ -18,7 +18,9 @@ public class ResearchInfoArticlePatient extends BaseEntity {
     /**
      * 账号id
      */
-    private Long accountId;
+    private String accountId;
+
+    private Long accountIds;
 
     /**
      * 患教id

@@ -83,11 +83,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
-				if(messageSearchForm.getAccountId() != null){
-					messageSearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageSearchForm.getAccountId().toString())));
+				if(StringUtils.isNotEmpty(messageSearchForm.getAccountId())){
+					messageSearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageSearchForm.getAccountId())));
 				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageSearchForm.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageSearchForm.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.list(messageSearchForm,appType));
@@ -106,11 +106,11 @@ public class MessageController extends ApiBaseController {
 		public String setMessageRead(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
 										 @RequestAttribute(value = "appType", required = true) String appType,
 										 HttpServletRequest request) {
-			if(messageAccountNoticeVo.getAccountId() != null){
-				messageAccountNoticeVo.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+				messageAccountNoticeVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
 			}
 			// 权限校验
-			if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+			if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 				return buildAccessDeniedResponse();
 			}
 			return buildSuccessMView(messageService.setMessageRead(messageAccountNoticeVo,appType));
@@ -130,11 +130,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
-				if(messageAccountNoticeVo.getAccountId() != null){
-					messageAccountNoticeVo.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId().toString())));
+				if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+					messageAccountNoticeVo.setAccountIds( Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
 				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.personalCenterRedDot(messageAccountNoticeVo,appType));
@@ -157,11 +157,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
-				if(messageAccountNoticeVo.getAccountId() != null){
-					messageAccountNoticeVo.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId().toString())));
+				if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+					messageAccountNoticeVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
 				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.getMenuRedDotVo(messageAccountNoticeVo,appType));
@@ -199,11 +199,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
-				if(messageAccountNoticeVo.getAccountId() != null){
-					messageAccountNoticeVo.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId().toString())));
+				if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+					messageAccountNoticeVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
 				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.getPopHanderInfo(messageAccountNoticeVo,appType));

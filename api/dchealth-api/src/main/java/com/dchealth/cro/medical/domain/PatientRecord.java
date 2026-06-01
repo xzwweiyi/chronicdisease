@@ -260,7 +260,9 @@ public class PatientRecord extends BaseEntity {
 //    详情接口增加字段：isEditable 【true：可编辑，false：只读]
     private Boolean isEditable=true;
 
-    private Long accountId;
+    private String accountId;
+
+    private Long accountIds;
 
     private Double formComplentRate;
 

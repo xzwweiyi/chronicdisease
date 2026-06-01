@@ -296,7 +296,7 @@ public class CmsDoctorService {
     public DchealthCloudResponseEntity<CommonResult> save(CommentSaveForm commentSaveForm, String positionType) {
         DchealthCloudResponseEntity<CommonResult> result = new DchealthCloudResponseEntity<CommonResult>();
         CmsArticle cmsArticle = cmsArticleMapper.selectCmsArticleById(commentSaveForm.getArticleId());
-        if (commentSaveForm.getAccountId() == null || commentSaveForm.getAccountId() <1 ){
+        if (commentSaveForm.getAccountId() == null || commentSaveForm.getAccountIds() <1 ){
             result.setCode(CroApiCodeConstant.USER_NOT_LOGIN.getCode());
             return result;
         }
@@ -325,7 +325,7 @@ public class CmsDoctorService {
             }
         }
         CmsComment cmsComment = new CmsComment();
-        cmsComment.setAccountId(commentSaveForm.getAccountId());
+        cmsComment.setAccountId(commentSaveForm.getAccountIds());
         cmsComment.setArticleId(commentSaveForm.getArticleId());
         cmsComment.setContent(commentSaveForm.getContent());
         cmsComment.setCreateTime(DateUtils.getNowDate());

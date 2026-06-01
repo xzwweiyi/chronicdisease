@@ -1,5 +1,6 @@
 package com.dchealth.cro.account.controller;
 
+import com.dchealth.cro.common.config.KeyConfig;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ public class SystemController extends ApiBaseController {
 	private static final Logger L = LoggerFactory.getLogger(SystemService.class);
 	@Autowired
 	private SystemService systemService;
+	@Autowired
+	private KeyConfig keyConfig;
 
 	/**
 	 * 查询最新APP版本信息
@@ -76,5 +79,14 @@ public class SystemController extends ApiBaseController {
 			return buildExceptionMView();
 		}
 	}
-
+	@ResponseBody
+	@RequestMapping(value = "keyConfig", method = RequestMethod.GET)
+	public String keyConfig() {
+		try {
+			return buildSuccessMView(keyConfig);
+		} catch (Exception e) {
+			L.error("查询首页信息异常{}", e);
+			return buildExceptionMView();
+		}
+	}
 }

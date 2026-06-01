@@ -17,7 +17,8 @@ public class ResearchDiseases extends BaseEntity
 
     /** 病种id */
     private Long diseaseId;
-
+    /** 病种id */
+    private Long noDiseaseId;
     /** 病种名称 */
     @Excel(name = "病种名称")
     private String diseaseName;
@@ -38,6 +39,14 @@ public class ResearchDiseases extends BaseEntity
      * 基础病重ID
      */
     private String diseasesGroupsId;
+
+    public Long getNoDiseaseId() {
+        return noDiseaseId;
+    }
+
+    public void setNoDiseaseId(Long noDiseaseId) {
+        this.noDiseaseId = noDiseaseId;
+    }
 
     public String getDiseasesGroupsId() {
         return diseasesGroupsId;

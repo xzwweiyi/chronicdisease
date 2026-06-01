@@ -1,6 +1,7 @@
 package com.dchealth.cro.cms.controller;
 
 import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ public class CommentController extends ApiBaseController {
 	public String save(@Validated CommentSaveForm commentSaveForm, BindingResult bind,
 			@RequestAttribute("channel") String channel,@RequestAttribute("appType") String appType) {
 		try {
-			if(commentSaveForm.getAccountId() != null){
-				commentSaveForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(commentSaveForm.getAccountId())){
+				commentSaveForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId())));
 			}
 			commentSaveForm.setTenantId(channel);
 			if (bind.hasErrors()) {
@@ -61,8 +62,8 @@ public class CommentController extends ApiBaseController {
 	public String saveTip(@Validated CmsCommentTipForm cmsCommentTipForm, BindingResult bind,
 			@RequestAttribute("channel") String channel) {
 		try {
-			if(cmsCommentTipForm.getAccountId() != null){
-				cmsCommentTipForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(cmsCommentTipForm.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(cmsCommentTipForm.getAccountId())){
+				cmsCommentTipForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(cmsCommentTipForm.getAccountId())));
 			}
 			cmsCommentTipForm.setTenantId(channel);
 			if (bind.hasErrors()) {
@@ -83,8 +84,8 @@ public class CommentController extends ApiBaseController {
 	public String saveBlank(@Validated CmsCommentBlankForm cmsCommentBlankForm, BindingResult bind,
 			@RequestAttribute("channel") String channel) {
 		try {
-			if(cmsCommentBlankForm.getAccountId() != null){
-				cmsCommentBlankForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(cmsCommentBlankForm.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(cmsCommentBlankForm.getAccountId())){
+				cmsCommentBlankForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(cmsCommentBlankForm.getAccountId())));
 			}
 			cmsCommentBlankForm.setTenantId(channel);
 			if (bind.hasErrors()) {

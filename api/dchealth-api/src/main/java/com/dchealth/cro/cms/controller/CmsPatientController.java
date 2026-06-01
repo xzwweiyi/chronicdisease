@@ -91,8 +91,8 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(researchInfoArticlePatient.getAccountId() != null){
-                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
             }
             DchealthCloudResponseEntity<ArticleVO> result = articleService.latestPatientArticle(researchInfoArticlePatient);
             if (!"3".equals(request.getHeader("osType"))) {
@@ -124,8 +124,8 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(researchInfoArticlePatient.getAccountId() != null){
-                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
             }
             DchealthCloudResponseEntity<ArticleVO> result = articleService.allPatientArticle(researchInfoArticlePatient);
             if (!"3".equals(request.getHeader("osType"))) {
@@ -152,8 +152,8 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(researchInfoArticlePatient.getAccountId() != null){
-                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
             }
             return buildSuccessMView(articleService.ownQuestionnaire(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -172,8 +172,8 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(researchInfoArticlePatient.getAccountId() != null){
-                researchInfoArticlePatient.setAccountId(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
             }
             return buildSuccessMView(articleService.questionnaireList(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -256,8 +256,8 @@ public class CmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-            if(commentSaveForm.getAccountId() != null){
-                commentSaveForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(commentSaveForm.getAccountId())){
+                commentSaveForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId())));
             }
             return buildSuccessMView(articleService.save(commentSaveForm,appType));
         } catch (Exception e) {

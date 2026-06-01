@@ -1,5 +1,6 @@
 package com.dchealth.cro.cms.controller;
 
+import cn.hutool.core.net.URLDecoder;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -8,6 +9,7 @@ import com.dchealth.cro.cms.form.GuestBookForm;
 import com.dchealth.cro.cms.service.ArticleService;
 import com.dchealth.cro.cms.service.GuestBookService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.common.utils.http.HttpClientUtil;
 import com.dchealth.cro.core.config.CroCoreConfig;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +43,9 @@ public class CmsController extends ApiBaseController {
 	private CroCoreConfig  croCoreConfig;
 	@Value("${spring.profiles.active}")
 	private String active;
+
+	@Autowired
+	private RsaUtil rsaUtil;
 
 	/**
 	 * 综合查询资讯信息
@@ -82,12 +88,16 @@ public class CmsController extends ApiBaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "detail", method = RequestMethod.POST)
-	public String detail(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestAttribute("appType") String appType) {
+	public String detail(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) String accountId,@RequestAttribute("appType") String appType) {
 		try {
 			if (articleId < 1) {
 				return buildErrorParamMView();
 			}
-			return buildSuccessMView(articleService.detail(articleId,accountId,appType));
+			Long accountIds = null;
+			if(StringUtils.isNotEmpty(accountId)){
+				accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+			}
+			return buildSuccessMView(articleService.detail(articleId,accountIds,appType));
 		} catch (Exception e) {
 			L.info("查询资讯详情异常{}", articleId, e);
 			return buildExceptionMView();
@@ -99,12 +109,16 @@ public class CmsController extends ApiBaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "detailArticleComment", method = RequestMethod.POST)
-	public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
+	public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) String accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
 		try {
 			if (articleId < 1) {
 				return buildErrorParamMView();
 			}
-			return buildSuccessMView(articleService.detailComment(articleId,accountId, pageNo, pageSize));
+			Long accountIds = null;
+			if(StringUtils.isNotEmpty(accountId)){
+				accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+			}
+			return buildSuccessMView(articleService.detailComment(articleId,accountIds, pageNo, pageSize));
 		} catch (Exception e) {
 			L.info("查询资讯详情异常{}", articleId, e);
 			return buildExceptionMView();
@@ -149,6 +163,9 @@ public class CmsController extends ApiBaseController {
 						}
 					}
 				}
+			}
+			if(StringUtils.isNotEmpty(guestBookForm.getAccountId())){
+				guestBookForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId())));
 			}
 			guestBookForm.setList(images);
 			return buildSuccessMView(guestBookService.save(guestBookForm));

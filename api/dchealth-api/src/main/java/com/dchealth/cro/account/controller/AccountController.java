@@ -56,8 +56,8 @@ public class AccountController extends ApiBaseController {
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
 			}
-			if(accountForm.getAccountId() !=null){
-				accountForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(accountForm.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(accountForm.getAccountId())){
+				accountForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(accountForm.getAccountId())));
 			}
 			accountForm.setTenantId(channel);
 			accountForm.setPositionType(appType);
@@ -103,30 +103,32 @@ public class AccountController extends ApiBaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "index", method = RequestMethod.POST)
-	public String index(Long accountId) {
-		if(accountId !=null){
-			accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+	public String index(String accountId) {
+		Long accountIds = null;
+		if(StringUtils.isNotEmpty(accountId)){
+			accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
 		}
 		Boolean  b = notEmpty(accountId);
 		if (!b) {
 			return buildErrorParamMView();
 		}
-		return buildSuccessMView(accountService.index(accountId));
+		return buildSuccessMView(accountService.index(accountIds));
 	}
 	/**
 	 * 个人中心
 	 */
 	@ResponseBody
 	@RequestMapping(value = "detail", method = RequestMethod.POST)
-	public String detail(Long accountId) {
-		if(accountId !=null){
-			accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+	public String detail(String accountId) {
+		Long accountIds = null;
+		if(StringUtils.isNotEmpty(accountId)){
+			accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
 		}
 		Boolean  b = notEmpty(accountId);
 		if (!b) {
 			return buildErrorParamMView();
 		}
-		return buildSuccessMView(accountService.detail(accountId));
+		return buildSuccessMView(accountService.detail(accountIds));
 	}
 	
 	/**

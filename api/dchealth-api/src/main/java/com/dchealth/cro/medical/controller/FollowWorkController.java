@@ -106,8 +106,8 @@ public class FollowWorkController extends ApiBaseController {
     {
         try {
             L.info("随访列表参数{}", JSON.toJSONString(followWorkListForm));
-            if(followWorkListForm.getAccountId() !=null){
-                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(followWorkListForm.getAccountId())){
+                followWorkListForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.handleList(followWorkListForm));
         } catch (Exception e) {
@@ -126,8 +126,8 @@ public class FollowWorkController extends ApiBaseController {
     {
         L.info("超窗列表参数:{}",JSON.toJSONString(followWorkListForm));
         try {
-            if(followWorkListForm.getAccountId() !=null){
-                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(followWorkListForm.getAccountId())){
+                followWorkListForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.overList(followWorkListForm));
         } catch (Exception e) {
@@ -146,8 +146,8 @@ public class FollowWorkController extends ApiBaseController {
     {
             L.info("预警列表参数:{}" ,followWorkListForm);
         try {
-            if(followWorkListForm.getAccountId() !=null){
-                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(followWorkListForm.getAccountId())){
+                followWorkListForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.warnList(followWorkListForm));
         } catch (Exception e) {
@@ -166,8 +166,8 @@ public class FollowWorkController extends ApiBaseController {
     {
         L.info("followWorkListForm:{}",followWorkListForm);
         try {
-            if(followWorkListForm.getAccountId() !=null){
-                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(followWorkListForm.getAccountId())){
+                followWorkListForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.warnPatientList(followWorkListForm));
         } catch (Exception e) {
@@ -186,8 +186,8 @@ public class FollowWorkController extends ApiBaseController {
     {
 
         try {
-            if(followWorkListForm.getAccountId() !=null){
-                followWorkListForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(followWorkListForm.getAccountId())){
+                followWorkListForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(followWorkListForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.allocatedList(followWorkListForm));
         } catch (Exception e) {
@@ -291,8 +291,8 @@ public class FollowWorkController extends ApiBaseController {
     {
         L.info("followWorkHandleForm:{}",followWorkHandleForm);
         try {
-            if(followWorkHandleForm.getAccountId() !=null){
-                followWorkHandleForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(followWorkHandleForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(followWorkHandleForm.getAccountId())){
+                followWorkHandleForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(followWorkHandleForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.submitOpinionHandle(followWorkHandleForm));
         } catch (Exception e) {
@@ -361,8 +361,8 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "savePatientRecordEvaluation", method = RequestMethod.POST)
     public String savePatientRecordEvaluation(@Validated PatientRecordDetailForm infoForm) {
         try {
-            if(infoForm.getAccountId() !=null){
-                infoForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(infoForm.getAccountId())){
+                infoForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.savePatientRecordEvaluation(infoForm));
         } catch (Exception e) {
@@ -459,8 +459,8 @@ public class FollowWorkController extends ApiBaseController {
     @RequestMapping(value = "updatePatientRecordOver", method = RequestMethod.POST)
     public String updatePatientRecordOver(@Validated PatientRecordDetailForm infoForm) {
         try {
-            if(infoForm.getAccountId() !=null){
-                infoForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(infoForm.getAccountId())){
+                infoForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(infoForm.getAccountId())));
             }
             return buildSuccessMView(followWorkService.updatePatientRecordTime(infoForm));
         } catch (Exception e) {

@@ -55,8 +55,8 @@ public class GuestBookController extends ApiBaseController {
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
 			}
-			if(guestBookForm.getAccountId() != null){
-				guestBookForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(guestBookForm.getAccountId())){
+				guestBookForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId())));
 			}
 			List<MultipartFile> files = request.getFiles("files");
 			if (files != null && files.size() > 0) {
@@ -103,8 +103,8 @@ public class GuestBookController extends ApiBaseController {
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
 			}
-			if(guestBookForm.getAccountId() != null){
-				guestBookForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId().toString())));
+			if(StringUtils.isNotEmpty(guestBookForm.getAccountId())){
+				guestBookForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId())));
 			}
 			String imageList = guestBookForm.getImageListJson();
 			if(StringUtils.isNotBlankAndNotEmpty(imageList)) {

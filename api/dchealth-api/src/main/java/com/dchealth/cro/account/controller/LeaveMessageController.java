@@ -126,11 +126,11 @@ public class LeaveMessageController extends ApiBaseController {
             if(StringUtils.isNotEmpty(messageForm.getPersonId())){
                 messageForm.setPersonId(rsaUtil.decryptValue(messageForm.getPersonId()));
             }
-            if(messageForm.getAccountId() != null){
-                messageForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(messageForm.getAccountId())){
+                messageForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId())));
             }
             // 权限校验
-            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountId(), request)) {
+            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountIds(), request)) {
                 return buildAccessDeniedResponse();
             }
 
@@ -152,11 +152,11 @@ public class LeaveMessageController extends ApiBaseController {
             if(StringUtils.isNotEmpty(messageForm.getPersonId())){
                 messageForm.setPersonId(rsaUtil.decryptValue(messageForm.getPersonId()));
             }
-            if(messageForm.getAccountId() != null){
-                messageForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(messageForm.getAccountId())){
+                messageForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId())));
             }
             // 权限校验
-            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountId(), request)) {
+            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountIds(), request)) {
                 return buildAccessDeniedResponse();
             }
             return buildSuccessMView(leaveMessageService.reminder(messageForm));
@@ -178,11 +178,11 @@ public class LeaveMessageController extends ApiBaseController {
             if(StringUtils.isNotEmpty(messageForm.getPersonId())){
                 messageForm.setPersonId(rsaUtil.decryptValue(messageForm.getPersonId()));
             }
-            if(messageForm.getAccountId() != null){
-                messageForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(messageForm.getAccountId())){
+                messageForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId())));
             }
             // 权限校验
-            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountId(), request)) {
+            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountIds(), request)) {
                 return buildAccessDeniedResponse();
             }
             return buildSuccessMView(leaveMessageService.updateStatus(messageForm));
@@ -199,11 +199,11 @@ public class LeaveMessageController extends ApiBaseController {
             if(StringUtils.isNotEmpty(messageForm.getPersonId())){
                 messageForm.setPersonId(rsaUtil.decryptValue(messageForm.getPersonId()));
             }
-            if(messageForm.getAccountId() != null){
-                messageForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(messageForm.getAccountId())){
+                messageForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId())));
             }
             // 权限校验
-            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountId(), request)) {
+            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountIds(), request)) {
                 return buildAccessDeniedResponse();
             }
             return buildSuccessMView(leaveMessageService.clear(messageForm));
@@ -221,11 +221,11 @@ public class LeaveMessageController extends ApiBaseController {
             if(StringUtils.isNotEmpty(messageForm.getPersonId())){
                 messageForm.setPersonId(rsaUtil.decryptValue(messageForm.getPersonId()));
             }
-            if(messageForm.getAccountId() != null){
-                messageForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId().toString())));
+            if(StringUtils.isNotEmpty(messageForm.getAccountId())){
+                messageForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageForm.getAccountId())));
             }
             // 权限校验
-            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountId(), request)) {
+            if (!validateAccess(messageForm.getPersonId(), messageForm.getAccountIds(), request)) {
                 return buildAccessDeniedResponse();
             }
             return buildSuccessMView(leaveMessageService.beachClear(messageForm));

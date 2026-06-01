@@ -14,9 +14,9 @@ public class BindPatientForm {
     /**
      * 账号id
      */
-    @NotNull(message = "账号ID不能为空")
-    private Long accountId;
-
+    @NotBlank(message = "账号ID不能为空")
+    private String accountId;
+    private Long accountIds;
     /**
      * 身份证号
      */

@@ -48,9 +48,6 @@ public class CollectionController extends ApiBaseController {
 			if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
 				return true; // 无deviceToken时跳过校验（兼容旧逻辑）
 			}
-			if(accountId != null){
-				accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
-			}
 			PatientAccount currentAccount = patientAccountMapper.selectPatientAccountByOpenId(deviceToken);
 			if (currentAccount == null) {
 				L.warn("越权访问尝试: deviceToken={}, 用户不存在", deviceToken);
@@ -86,11 +83,11 @@ public class CollectionController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
-				if(collectionActicleSearchForm.getAccountId() != null){
-					collectionActicleSearchForm.setAccountId(Long.valueOf(rsaUtil.decryptValue(collectionActicleSearchForm.getAccountId().toString())));
+				if(StringUtils.isNotEmpty(collectionActicleSearchForm.getAccountId())){
+					collectionActicleSearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(collectionActicleSearchForm.getAccountId())));
 				}
 				// 权限校验
-				if (!validateAccountIdAccess(collectionActicleSearchForm.getAccountId(), request)) {
+				if (!validateAccountIdAccess(collectionActicleSearchForm.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				collectionActicleSearchForm.setTenantId(channel);
@@ -106,20 +103,21 @@ public class CollectionController extends ApiBaseController {
 		 */
 		@ResponseBody
 		@RequestMapping(value = "update", method = RequestMethod.POST)
-		public String list( @RequestParam(value = "accountId", required = true) Long accountId,
+		public String list( @RequestParam(value = "accountId", required = true) String accountId,
 				@RequestParam(value = "articleId", required = true) Long articleId,
 				@RequestAttribute("appType") String appType,
 				@RequestAttribute("channel") String channel,
 				HttpServletRequest request) {
 			try {
+				Long accountIds = null;
 				if(accountId != null){
-					accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+					accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
 				}
 				// 权限校验
-				if (!validateAccountIdAccess(accountId, request)) {
+				if (!validateAccountIdAccess(accountIds, request)) {
 					return buildAccessDeniedResponse();
 				}
-				return buildSuccessMView(articleService.update(accountId,articleId,channel,appType));
+				return buildSuccessMView(articleService.update(accountIds,articleId,channel,appType));
 			} catch (Exception e) {
 				L.info("用户收藏信息异常用户ID:{},文章ID:{},{}",accountId,articleId, e);
 				return buildExceptionMView();

@@ -1,7 +1,9 @@
 package com.dchealth.cro.account.controller;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
+import cn.hutool.core.net.URLDecoder;
 import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,16 +200,17 @@ public class PatientAccountController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "minLoginOut", method = RequestMethod.POST)
-    public String minLoginOut(Long accountId,String openId) {
+    public String minLoginOut(String accountId,String openId) {
     	try {
-			if(accountId != null){
-				accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+			Long accountIds = null;
+			if(StringUtils.isNotEmpty(accountId)){
+				accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
 			}
-    		boolean b = notEmpty(accountId,openId);
+    		boolean b = notEmpty(accountIds,openId);
     		if (!b) {
     			return buildErrorParamMView();
     		}
-    		return buildSuccessMView(patientAccountService.loginOut(accountId,openId));
+    		return buildSuccessMView(patientAccountService.loginOut(accountIds,openId));
     	} catch (Exception e) {
     		L.info("患者用户退出异常账号ID:{}OpenId:{}", accountId,openId, e);
     		return buildExceptionMView();
