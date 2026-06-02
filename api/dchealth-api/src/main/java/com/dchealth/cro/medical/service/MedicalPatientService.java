@@ -16,7 +16,9 @@ import com.dchealth.cro.common.base.CommonResult;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.cache.RedisPublishService;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.constant.DesensitizeType;
 import com.dchealth.cro.common.utils.DateUtils;
+import com.dchealth.cro.common.utils.DesensitizeUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.common.utils.XfServiceHttpClientUtil;
 import com.dchealth.cro.common.utils.bean.BeanUtils;
@@ -2389,9 +2391,20 @@ public class MedicalPatientService {
             patientAccountInfoVO.setPersonName(patientBaseInfo.getPersonName());
             patientAccountInfoVO.setBindStatus(patientAccount.getBindStatus());
             patientAccountInfoVO.setSex(HealthUtils.getSex(patientBaseInfo.getCardId()));
-            patientAccountInfoVO.setIdCard(patientBaseInfo.getCardId());
-            patientAccountInfoVO.setMobile(patientBaseInfo.getPhoneNumber());
-            patientAccountInfoVO.setLoginMobile(patientAccount.getMobile());
+            // ✅ 身份证号：立即脱敏（复用你已有的 DesensitizeUtil）
+            patientAccountInfoVO.setIdCard(DesensitizeUtil.mask(
+                    patientBaseInfo.getCardId(),
+                    DesensitizeType.ID_CARD));
+
+            // ✅ 手机号（随访）：立即脱敏
+            patientAccountInfoVO.setMobile(DesensitizeUtil.mask(
+                    patientBaseInfo.getPhoneNumber(),
+                    DesensitizeType.PHONE));
+
+            // ✅ 登录手机号：立即脱敏
+            patientAccountInfoVO.setLoginMobile(DesensitizeUtil.mask(
+                    patientAccount.getMobile(),
+                    DesensitizeType.PHONE));
         }
         patientAccountInfoVO.setAccountId(bindPatientForm.getAccountIds());
 

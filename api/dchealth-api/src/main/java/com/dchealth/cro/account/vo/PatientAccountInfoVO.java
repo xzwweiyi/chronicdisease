@@ -55,4 +55,6 @@ public class PatientAccountInfoVO {
     @Desensitize(type = DesensitizeType.PHONE)
     @JsonSerialize(using = DesensitizeSerializer.class)
     private String loginMobile;
+
+
 }

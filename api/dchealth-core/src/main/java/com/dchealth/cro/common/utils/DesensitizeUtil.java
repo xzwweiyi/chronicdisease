@@ -34,9 +34,47 @@ public class DesensitizeUtil {
         return phone.substring(0, 3) + "*****" + phone.substring(phone.length() - 2);
     }
 
+    /**
+     * 身份证号脱敏（兼容15位老证 & 18位新证）
+     * 规则：保留前4位 + 后4位，中间全部替换为 '*'
+     * 示例：
+     *   "110101123456789" (15位) → "1101******789"
+     *   "11010119900307235X" (18位) → "1101**********235X"
+     *
+     * @param id 身份证号（支持 null、空格、大小写 X）
+     * @return 脱敏后字符串；非法格式返回 "***"；null/空返回原值
+     */
     private static String maskIdCard(String id) {
-        if (id.length() < 8) return id;
-        return id.substring(0, 2) + "*********" + id.substring(id.length() - 2);
+        // 空值直返（不脱敏，避免 NPE）
+        if (id == null || id.trim().isEmpty()) {
+            return id;
+        }
+        String cleanId = id.trim();
+
+        // 长度校验：只接受 15 或 18 位
+        int len = cleanId.length();
+        if (len != 15 && len != 18) {
+            return "***";
+        }
+
+        // 格式校验：15位全数字；18位前17位数字 + 第18位数字或X/x
+        boolean isValid = false;
+        if (len == 15) {
+            isValid = cleanId.matches("\\d{15}");
+        } else if (len == 18) {
+            isValid = cleanId.matches("\\d{17}[\\dXx]");
+        }
+        if (!isValid) {
+            return "***";
+        }
+
+        // ✅ 核心脱敏：前4 + 中间* + 后4
+        int starCount = len - 8;
+        String maskedMiddle = starCount > 0
+                ? new String(new char[starCount]).replace("\0", "*")
+                : "";
+
+        return cleanId.substring(0, 4) + maskedMiddle + cleanId.substring(len - 4);
     }
 
     private static String maskSocialCard(String card) {
