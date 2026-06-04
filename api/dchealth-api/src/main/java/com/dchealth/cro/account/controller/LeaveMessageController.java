@@ -98,13 +98,14 @@ public class LeaveMessageController extends ApiBaseController {
             if (ObjectUtil.isNull(messageListReq.getPersonId())) {
                 return buildSuccessMView(new ArrayList<>());
             }
+            if(StringUtils.isNotEmpty(messageListReq.getPersonId())){
+                messageListReq.setPersonId(rsaUtil.decryptValue(messageListReq.getPersonId()));
+            }
             // 权限校验
             if (!validateAccess(messageListReq.getPersonId(), messageListReq.getFromUserId(), request)) {
                 return buildAccessDeniedResponse();
             }
-            if(StringUtils.isNotEmpty(messageListReq.getPersonId())){
-                messageListReq.setPersonId(rsaUtil.decryptValue(messageListReq.getPersonId()));
-            }
+
             return buildSuccessMView(leaveMessageService.list(messageListReq));
         } catch (Exception e) {
             log.info("获取留言信息列表异常{},{}", JSON.toJSONString(messageListReq), e.getMessage());

@@ -217,21 +217,22 @@ public class CmsPatientController extends ApiBaseController {
     @RequestMapping(value = "detail", method = RequestMethod.POST)
     public String detail(HttpServletRequest request,
             @RequestParam(value = "articleId", required = true) Long articleId,
-            @RequestParam(value = "accountId", required = false) Long accountId,
+            @RequestParam(value = "accountId", required = false) String accountId,
             @RequestParam("appType") String appType) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
-            if(accountId != null){
-                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            Long accountIds = null;
+            if(StringUtils.isNotEmpty(accountId)){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
             }
             // 权限校验
-            if (!validateAccountIdAccess(accountId, request)) {
+            if (!validateAccountIdAccess(accountIds, request)) {
                 return buildAccessDeniedResponse();
             }
             String osType = request.getHeader("osType");
-            DchealthCloudResponseEntity<ArticleDetailVO> result = articleService.detail(articleId, accountId, appType);
+            DchealthCloudResponseEntity<ArticleDetailVO> result = articleService.detail(articleId, accountIds, appType);
             ArticleDetailVO data = result.getData();
             if((!"3".equals(osType)) && "3".equals(data.getUploadType())
             && StringUtils.isBlank(data.getVideoUrl())){
