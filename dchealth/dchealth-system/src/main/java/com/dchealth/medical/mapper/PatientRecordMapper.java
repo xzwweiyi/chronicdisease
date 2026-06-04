@@ -232,5 +232,5 @@ public interface PatientRecordMapper
 
     PatientRecord selectNoFollowupOnePatientRecordByResearchId(@Param("researchId")Long researchId,@Param("patientId") Long patientId);
 
-    void updateManuallyFollowUpList();
+    List<PatientRecord> selectManuallyFollowUpList();
 }

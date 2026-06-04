@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -109,14 +110,29 @@ public class MedicalJob {
         resultStr = "操作成功,共插入"+insertRecord.size()+"条";
         return AjaxResult.success(resultStr);
     }
-
+   @PostConstruct
+   public void a(){
+       try {
+           manuallyFollowUpPlanJobHandler();
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+   }
     /**
      * 随访手动任务更新
      */
     @XxlJob("manuallyFollowUpPlanJobHandler")
     public void manuallyFollowUpPlanJobHandler() throws Exception {
         XxlJobHelper.log("随访手动任务更新",DateUtils.getTime());
-        patientRecordMapper.updateManuallyFollowUpList();
+        List<PatientRecord> patientRecords = patientRecordMapper.selectManuallyFollowUpList();
+        for (PatientRecord patientRecord:patientRecords){
+            PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
+            patientInfo.setIsEndCreateRecord("0");
+            patientInfoMapper.updatePatientInfo(patientInfo);
+            patientRecord.setFollowStatus("0");
+            patientRecordMapper.updatePatientRecord(patientRecord);
+        }
+
         XxlJobHelper.log("随访手动任务更新结束",DateUtils.getTime());
     }
     /**
