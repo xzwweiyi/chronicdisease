@@ -2395,16 +2395,17 @@ public class MedicalPatientService {
             patientAccountInfoVO.setIdCard(DesensitizeUtil.mask(
                     patientBaseInfo.getCardId(),
                     DesensitizeType.ID_CARD));
-
+            patientAccountInfoVO.setIdCardOrg(patientBaseInfo.getCardId());
             // ✅ 手机号（随访）：立即脱敏
             patientAccountInfoVO.setMobile(DesensitizeUtil.mask(
                     patientBaseInfo.getPhoneNumber(),
                     DesensitizeType.PHONE));
-
+            patientAccountInfoVO.setMobileOrg(patientBaseInfo.getPhoneNumber());
             // ✅ 登录手机号：立即脱敏
             patientAccountInfoVO.setLoginMobile(DesensitizeUtil.mask(
                     patientAccount.getMobile(),
                     DesensitizeType.PHONE));
+            patientAccountInfoVO.setLoginMobileOrg(patientAccount.getMobile());
         }
         patientAccountInfoVO.setAccountId(bindPatientForm.getAccountIds());
 

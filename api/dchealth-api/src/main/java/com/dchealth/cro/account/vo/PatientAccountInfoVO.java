@@ -35,6 +35,7 @@ public class PatientAccountInfoVO {
     @JsonSerialize(using = DesensitizeSerializer.class)
     private String idCard;
 
+    private String idCardOrg;
     /**
          * 入组处理状态1待处理3已完成
      */
@@ -49,6 +50,7 @@ public class PatientAccountInfoVO {
     @JsonSerialize(using = DesensitizeSerializer.class)
     private String mobile;
 
+    private String mobileOrg;
     /**
      * 登录手机号
      */
@@ -56,5 +58,6 @@ public class PatientAccountInfoVO {
     @JsonSerialize(using = DesensitizeSerializer.class)
     private String loginMobile;
 
+    private String loginMobileOrg;
 
 }
