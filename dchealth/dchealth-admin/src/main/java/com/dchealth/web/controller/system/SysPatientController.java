@@ -111,9 +111,8 @@ public class SysPatientController extends BaseController
      * 获取患者360url
      */
     @PreAuthorize("@ss.hasPermi('patient:manage:get360Url')")
-    @Log(title = "获取患者360url", businessType = BusinessType.EXPORT)
     @GetMapping("/get360Url")
     public AjaxResult get360Url(Long patientId) {
-        return AjaxResult.success(multimodalViewUrl+ "?patientId=" +patientId);
+        return AjaxResult.success("操作成功", multimodalViewUrl+ "?patientId=" +patientId);
     }
 }
