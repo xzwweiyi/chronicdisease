@@ -63,6 +63,9 @@ public class WxAccountController extends ApiBaseController {
         if(StringUtils.isNotEmpty(updateUserInfoReq.getAccountId())){
             updateUserInfoReq.setAccountIds(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId())));
         }
+        if(StringUtils.isNotEmpty(updateUserInfoReq.getPersonId())){
+            updateUserInfoReq.setPersonId(rsaUtil.decryptValue(updateUserInfoReq.getPersonId()));
+        }
         try {
             return buildSuccessMView(accountService.updatePatientInfo(updateUserInfoReq, channel));
         } catch (Exception e) {

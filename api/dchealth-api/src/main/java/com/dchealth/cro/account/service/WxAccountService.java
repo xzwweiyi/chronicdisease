@@ -90,9 +90,9 @@ public class WxAccountService {
             throw new ServiceException("用户不存在");
         }
 
-        // 判断用户是否加入队列，如果加入队列则不允许修改
+        // 判断用户是否加入队列，如果加入队列则不允许修改,返回值true没有加入
         Boolean joinQueue = isJoinQueue(updateUserInfoReq.getAccountIds(), channel);
-        if (!joinQueue) {
+        if (joinQueue) {
 
             MobileForm mobileForm = new MobileForm();
             mobileForm.setMobile(updateUserInfoReq.getMobile());
