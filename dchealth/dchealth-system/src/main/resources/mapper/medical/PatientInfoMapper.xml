@@ -597,6 +597,12 @@
                 #{patientId}
             </foreach>
         </if>
+        <if test="notPatientIds!=null  and notPatientIds.size > 0">
+            and f.patient_id not in
+            <foreach item="patientId" collection="notPatientIds" open="(" separator="," close=")">
+                #{patientId}
+            </foreach>
+        </if>
         <if test="patientId != null "> and patient_id = #{patientId}</if>
         <if test="idCard != null  and  idCard != ''"> and p.card_id like concat('%', #{idCard}, '%')</if>
         <if test="tdPatientId != null "> and p.person_id = #{tdPatientId}</if>
