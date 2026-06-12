@@ -2,6 +2,7 @@ package com.dchealth.cro.cms.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class GuestBookController extends ApiBaseController {
 	private CroCoreConfig  croCoreConfig;
 	@Value("${spring.profiles.active}")
 	private String active;
+	@Autowired
+	private RsaUtil rsaUtil;
 
 	/**
 	 * 保存投诉意见
@@ -51,6 +54,9 @@ public class GuestBookController extends ApiBaseController {
 			guestBookForm.setTenantId(channel);
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
+			}
+			if(StringUtils.isNotEmpty(guestBookForm.getAccountId())){
+				guestBookForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId())));
 			}
 			List<MultipartFile> files = request.getFiles("files");
 			if (files != null && files.size() > 0) {
@@ -96,6 +102,9 @@ public class GuestBookController extends ApiBaseController {
 			guestBookForm.setTenantId(channel);
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
+			}
+			if(StringUtils.isNotEmpty(guestBookForm.getAccountId())){
+				guestBookForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(guestBookForm.getAccountId())));
 			}
 			String imageList = guestBookForm.getImageListJson();
 			if(StringUtils.isNotBlankAndNotEmpty(imageList)) {

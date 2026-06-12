@@ -2,6 +2,8 @@ package com.dchealth.cro.medical.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.medical.form.SatisfactionForm;
 import com.dchealth.cro.medical.service.SatisfactionService;
 import com.dchealth.cro.medical.vo.DoctorSatisfactionEvaluationVo;
@@ -24,7 +26,8 @@ public class DoctorSatisfactionController extends ApiBaseController {
 	private static final Logger L = LoggerFactory.getLogger(DoctorSatisfactionController.class);
 	@Autowired
 	private SatisfactionService satisfactionService;
-
+	@Autowired
+	private RsaUtil rsaUtil;
 	/**
 	 * 新增医生满意度
 	 */
@@ -34,6 +37,9 @@ public class DoctorSatisfactionController extends ApiBaseController {
 		try {
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
+			}
+			if(StringUtils.isNotEmpty(doctorSatisfactionEvaluationVo.getAccountId())){
+				doctorSatisfactionEvaluationVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(doctorSatisfactionEvaluationVo.getAccountId())));
 			}
 			return buildSuccessMView(satisfactionService.add(doctorSatisfactionEvaluationVo));
 		} catch (Exception e) {
@@ -52,6 +58,9 @@ public class DoctorSatisfactionController extends ApiBaseController {
 		try {
 			if (bind.hasErrors()) {
 				return buildBindErrorParamMView(bind);
+			}
+			if(StringUtils.isNotEmpty(satisfactionForm.getAccountId())){
+				satisfactionForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(satisfactionForm.getAccountId())));
 			}
 			return buildSuccessMView(satisfactionService.list(satisfactionForm));
 		} catch (Exception e) {

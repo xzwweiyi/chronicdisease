@@ -109,7 +109,15 @@ public class ResearchDiseasesController extends BaseController
         ExcelUtil<ResearchDiseases> util = new ExcelUtil<ResearchDiseases>(ResearchDiseases.class);
         util.exportExcel(response, list, "病种数据");
     }
-
+    /**
+     * 病种列表
+     */
+    @PreAuthorize("@ss.hasPermi('research:diseases:query')")
+    @GetMapping("/getList")
+    public AjaxResult getList(ResearchDiseases researchDiseases) {
+        List<ResearchDiseases> list = researchDiseasesService.selectResearchDiseasesList(researchDiseases);
+        return AjaxResult.success(list);
+    }
     /**
      * 获取病种详细信息
      */

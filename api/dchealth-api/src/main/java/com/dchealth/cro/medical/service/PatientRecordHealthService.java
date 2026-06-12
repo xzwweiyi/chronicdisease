@@ -202,7 +202,7 @@ public class PatientRecordHealthService {
         PatientRecord record = new PatientRecord();
 
         PatientInfo patientInfo = patientInfoMapper.selectPatientInfoById(patientRecord.getPatientId());
-        patientRecord.setAccountId(patientInfo.getAccountId());
+        patientRecord.setAccountIds(patientInfo.getAccountId());
 
         // 动态表单的record_id 应该是health_id
         Snowflake snowflake = IdUtil.getSnowflake();

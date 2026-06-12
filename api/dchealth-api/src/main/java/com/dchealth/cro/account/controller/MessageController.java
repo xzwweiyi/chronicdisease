@@ -2,6 +2,7 @@ package com.dchealth.cro.account.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class MessageController extends ApiBaseController {
 		private MessageService messageService;
 		@Autowired
 		private PatientAccountMapper patientAccountMapper;
+		@Autowired
+		private RsaUtil rsaUtil;
 
 		/**
 		 * 权限校验：验证 accountId 是否属于当前登录用户
@@ -80,8 +83,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
+				if(StringUtils.isNotEmpty(messageSearchForm.getAccountId())){
+					messageSearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageSearchForm.getAccountId())));
+				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageSearchForm.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageSearchForm.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.list(messageSearchForm,appType));
@@ -100,8 +106,11 @@ public class MessageController extends ApiBaseController {
 		public String setMessageRead(@Validated MessageAccountNoticeVo messageAccountNoticeVo,
 										 @RequestAttribute(value = "appType", required = true) String appType,
 										 HttpServletRequest request) {
+			if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+				messageAccountNoticeVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
+			}
 			// 权限校验
-			if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+			if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 				return buildAccessDeniedResponse();
 			}
 			return buildSuccessMView(messageService.setMessageRead(messageAccountNoticeVo,appType));
@@ -121,8 +130,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
+				if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+					messageAccountNoticeVo.setAccountIds( Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
+				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.personalCenterRedDot(messageAccountNoticeVo,appType));
@@ -145,8 +157,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
+				if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+					messageAccountNoticeVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
+				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.getMenuRedDotVo(messageAccountNoticeVo,appType));
@@ -184,8 +199,11 @@ public class MessageController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
+				if(StringUtils.isNotEmpty(messageAccountNoticeVo.getAccountId())){
+					messageAccountNoticeVo.setAccountIds(Long.valueOf(rsaUtil.decryptValue(messageAccountNoticeVo.getAccountId())));
+				}
 				// 权限校验
-				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountId(), request)) {
+				if (!validateAccountIdAccess(messageAccountNoticeVo.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				return buildSuccessMView(messageService.getPopHanderInfo(messageAccountNoticeVo,appType));

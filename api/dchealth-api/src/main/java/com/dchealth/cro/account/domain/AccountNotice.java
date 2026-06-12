@@ -66,7 +66,7 @@ public class AccountNotice{
 
     public AccountNotice(){}
     public AccountNotice(PatientRecord patientRecord, String msgContent, String type){
-        this.accountId = patientRecord.getAccountId();
+        this.accountId = patientRecord.getAccountIds();
         this.recordId = patientRecord.getRecordId();
         this.type = type;
         this.setCreateTime(DateUtils.getNowDate());

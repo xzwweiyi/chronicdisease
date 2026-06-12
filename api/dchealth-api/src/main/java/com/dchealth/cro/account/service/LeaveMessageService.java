@@ -63,7 +63,7 @@ public class LeaveMessageService {
         AccountLeaveMessage leaveMessage = new AccountLeaveMessage();
         BeanUtils.copyProperties(leaveMessageForm, leaveMessage);
         leaveMessage.setCreateTime(new Date());
-        leaveMessage.setAccountId(leaveMessageForm.getAccountId())
+        leaveMessage.setAccountId(leaveMessageForm.getAccountIds())
                 .setSenderId(leaveMessageForm.getPersonId())
                 .setSendTime(new Date())
                 .setPersonId(leaveMessage.getPersonId())

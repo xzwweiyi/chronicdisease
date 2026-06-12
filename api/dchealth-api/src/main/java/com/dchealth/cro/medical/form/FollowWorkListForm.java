@@ -48,7 +48,8 @@ public class FollowWorkListForm {
      */
     private String allocatedHandlerStatus;
 
-    private Long accountId;
+    private String accountId;
+    private Long accountIds;
     private Integer pageNo =1;//页码
     private Integer pageSize =10;//每页记录数
     private String searchKey;//搜索值

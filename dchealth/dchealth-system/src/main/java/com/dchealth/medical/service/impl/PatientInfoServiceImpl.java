@@ -653,18 +653,15 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 patientRecord.setPatientId(patientInfo.getPatientId());
                 List<PatientRecord> patientRecords = patientRecordMapper.selectPatientRecordList(patientRecord);
                 Long[] recordIdArray = patientRecords.stream().map(research -> research.getRecordId()).toArray(Long[]::new);
-//                if (idArray == null && idArray.length == 0) {
-//                    throw new RuntimeException("患者队列数据有误");
-//                }
-                if (recordIdArray == null && recordIdArray.length == 0) {
-                    throw new RuntimeException("患者基线记录有误");
-                }
                 logger.info("patientId:{},researchPatientId{},patientRecordId{}", patientId, idArray, recordIdArray);
                 patientInfoMapper.deletePatientInfoByPatientId(patientId);
-                if(idArray.length > 0){
-                    researchPatientMapper.deleteResearchPatientByIds(idArray); //todo 重点观测
+                if(idArray !=null && idArray.length > 0){
+                    researchPatientMapper.deleteResearchPatientByIds(idArray);
                 }
-                patientRecordMapper.deletePatientRecordByRecordIds(recordIdArray);
+                if(recordIdArray !=null && recordIdArray.length > 0){
+                    patientRecordMapper.deletePatientRecordByRecordIds(recordIdArray);
+                }
+
                 num++;
             }
         }

@@ -114,7 +114,7 @@ public class MessageService {
 	public DchealthCloudResponseEntity<PersonalCenterRedDotVo> setMessageRead(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
 		DchealthCloudResponseEntity<PersonalCenterRedDotVo> result = new DchealthCloudResponseEntity<PersonalCenterRedDotVo>();
 		 accountNoticeMapper.updateReadById(messageAccountNoticeVo.getId());
-		PersonalCenterRedDotVo personalCenterRedDotVo = getPersonalCenterRedDotVo(messageAccountNoticeVo.getAccountId(),appType);
+		PersonalCenterRedDotVo personalCenterRedDotVo = getPersonalCenterRedDotVo(messageAccountNoticeVo.getAccountIds(),appType);
 		result.setData(personalCenterRedDotVo);
 		return result;
 	}
@@ -122,7 +122,7 @@ public class MessageService {
 
 	public DchealthCloudResponseEntity<PersonalCenterRedDotVo> personalCenterRedDot(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
 		DchealthCloudResponseEntity<PersonalCenterRedDotVo> result = new DchealthCloudResponseEntity<PersonalCenterRedDotVo>();
-		PersonalCenterRedDotVo personalCenterRedDotVo = getPersonalCenterRedDotVo(messageAccountNoticeVo.getAccountId(),appType);
+		PersonalCenterRedDotVo personalCenterRedDotVo = getPersonalCenterRedDotVo(messageAccountNoticeVo.getAccountIds(),appType);
 		result.setData(personalCenterRedDotVo);
 		return result;
 	}
@@ -160,7 +160,7 @@ public class MessageService {
 
 		if("1".equals(appType)){
 			//医生端
-			List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByDoctorId(messageAccountNoticeVo.getAccountId());
+			List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByDoctorId(messageAccountNoticeVo.getAccountIds());
 			List<ResearchInfo> distinctResearchInfos = researchInfos.stream().distinct().collect(Collectors.toList());
 			//随访未处理
 			FollowWorkListForm followWorkListForm = new FollowWorkListForm();
@@ -199,7 +199,7 @@ public class MessageService {
 //			if(patientBaseInfo==null){
 //				return result;
 //			}
-			List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountId());
+			List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountIds());
 			if (!CollectionUtils.isEmpty(patientInfoList)) {
 				List<SysPopNotice> sysPopNoticesAll = new ArrayList<>();
 				patientInfoList.forEach(patientInfo -> {
@@ -238,7 +238,7 @@ public class MessageService {
 				}
 				//预警未处理
 				FollowWorkListForm followWorkListForm = new FollowWorkListForm();
-				followWorkListForm.setAccountId(messageAccountNoticeVo.getAccountId());
+				followWorkListForm.setAccountIds(messageAccountNoticeVo.getAccountIds());
 				followWorkListForm.setWarnStatus("1");
 				List<FollowWorkListVO> warnWorkList = patientRecordMapper.selectFollowWorkWarnpatientList(followWorkListForm);
 				if(warnWorkList.size()>0){
@@ -285,7 +285,7 @@ public class MessageService {
 	public DchealthCloudResponseEntity<List<ConfirmEnrollmentVo>> getPopHanderInfo(MessageAccountNoticeVo messageAccountNoticeVo,String appType) {
 
 		DchealthCloudResponseEntity<List<ConfirmEnrollmentVo>> result = new DchealthCloudResponseEntity<>();
-		List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountId());
+		List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountIds());
 		if (!CollectionUtils.isEmpty(patientInfoList)) {
 			List<SysPopNotice> sysPopNoticesAll = new ArrayList<>();
 			patientInfoList.forEach(patientInfo -> {

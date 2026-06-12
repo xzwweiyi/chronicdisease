@@ -1,5 +1,7 @@
 package com.dchealth.cro.minprogram.controller;
 
+import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,8 @@ public class MinHealthController  extends ApiBaseController{
 	 private static final Logger L = LoggerFactory.getLogger(MinHealthController.class);
 	  @Autowired
 	  private HealthService healthService;
-	  
+	@Autowired
+	private RsaUtil rsaUtil;
 	  
 	  /**
 	     * 查询患者健康档案和体检报告列表
@@ -43,6 +46,9 @@ public class MinHealthController  extends ApiBaseController{
 	        	if (bind.hasErrors()) {
 	    			return buildBindErrorParamMView(bind);
 	    		}
+				if(StringUtils.isNotEmpty(healthListSearchForm.getPersonId())){
+					healthListSearchForm.setPersonId(rsaUtil.decryptValue(healthListSearchForm.getPersonId()));
+				}
 	            return buildSuccessMView(healthService.index(healthListSearchForm, request));
 	        	
 	        } catch (Exception e) {
@@ -67,6 +73,9 @@ public class MinHealthController  extends ApiBaseController{
         	if (bind.hasErrors()) {
     			return buildBindErrorParamMView(bind);
     		}
+			if(StringUtils.isNotEmpty(detail.getPersonId())){
+				detail.setPersonId(rsaUtil.decryptValue(detail.getPersonId()));
+			}
             return buildSuccessMView(healthService.detail(detail, request));
         } catch (Exception e) {
         	 L.error("查询患者基本信息，诊断信息异常：{}", e);
@@ -87,6 +96,9 @@ public class MinHealthController  extends ApiBaseController{
         	if (bind.hasErrors()) {
     			return buildBindErrorParamMView(bind);
     		}
+			if(StringUtils.isNotEmpty(detail.getPersonId())){
+				detail.setPersonId(rsaUtil.decryptValue(detail.getPersonId()));
+			}
             return  buildSuccessMView(healthService.checkExamItemList(detail, request));
         } catch (Exception e) {
         	 L.info("查询体检报告检查项目列表异常：{}", e);
@@ -109,6 +121,9 @@ public class MinHealthController  extends ApiBaseController{
         	if (bind.hasErrors()) {
     			return buildBindErrorParamMView(bind);
     		}
+			if(StringUtils.isNotEmpty(detail.getPersonId())){
+				detail.setPersonId(rsaUtil.decryptValue(detail.getPersonId()));
+			}
             result = buildSuccessMView(healthService.queryCheckTestItemList(detail, request));
         } catch (Exception e) {
         	 L.info("查询体检报告检验项目列表异常：{}", e);
@@ -127,6 +142,9 @@ public class MinHealthController  extends ApiBaseController{
 	public String mzTestItemList(DetailForm detail, HttpServletRequest request) {
 		String result;
 		try {
+			if(StringUtils.isNotEmpty(detail.getPersonId())){
+				detail.setPersonId(rsaUtil.decryptValue(detail.getPersonId()));
+			}
 			result = buildSuccessMView(healthService.mzTestItemList(detail, request));
 		} catch (Exception e) {
 			L.info("查询门诊检验项目列表异常：{}", e);
@@ -144,6 +162,9 @@ public class MinHealthController  extends ApiBaseController{
 	@RequestMapping(value = "/mzExamItemList", method = RequestMethod.POST)
 	public String mzExamItemList(DetailForm detail, HttpServletRequest request) {
 		try {
+			if(StringUtils.isNotEmpty(detail.getPersonId())){
+				detail.setPersonId(rsaUtil.decryptValue(detail.getPersonId()));
+			}
 			return  buildSuccessMView(healthService.mzExamItemList(detail, request));
 		} catch (Exception e) {
 			L.info("查询门诊检查项目列表异常：{}", e);
@@ -161,6 +182,9 @@ public class MinHealthController  extends ApiBaseController{
 	@RequestMapping(value = "/queryMzDiagnosis", method = RequestMethod.POST)
 	public String queryMzDiagnosis(DetailForm detail, HttpServletRequest request) {
 		try {
+			if(StringUtils.isNotEmpty(detail.getPersonId())){
+				detail.setPersonId(rsaUtil.decryptValue(detail.getPersonId()));
+			}
 			return buildSuccessMView(healthService.queryMzDiagnosis(detail ,request));
 		} catch (Exception e) {
 			L.error("查询患者基本信息，诊断信息异常：{}", e);

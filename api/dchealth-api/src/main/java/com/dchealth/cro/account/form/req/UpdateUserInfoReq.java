@@ -15,7 +15,13 @@ public class UpdateUserInfoReq {
     /**
      * 账号ID
      */
-    private Long accountId;
+    private String accountId;
+
+
+    /**
+     * 账号ID
+     */
+    private Long accountIds;
 
     /**
      * 患者i d

@@ -1,6 +1,10 @@
 package com.dchealth.cro.account.form.vo;
 
+import com.dchealth.cro.common.annoation.Desensitize;
+import com.dchealth.cro.common.constant.DesensitizeType;
+import com.dchealth.cro.common.serializers.DesensitizeSerializer;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.Date;

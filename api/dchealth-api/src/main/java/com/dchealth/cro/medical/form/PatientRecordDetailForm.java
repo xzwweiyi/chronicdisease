@@ -92,7 +92,9 @@ public class PatientRecordDetailForm {
      */
     private String loseReason;
 
-    private Long accountId;
+    private String accountId;
+
+    private Long accountIds;
     /**
      * 忽略本次的原因 0 患者本次不随访 1 患者已经完成随访
      */

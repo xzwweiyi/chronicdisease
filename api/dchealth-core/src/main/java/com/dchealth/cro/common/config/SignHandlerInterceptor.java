@@ -220,7 +220,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      * @return
      */
     public Boolean isExcludeApp(String requestPath) {
-        String[] excludeUrls = new String[]{"/research/queueTypeList", "/user/*", "/article/*", "/system/*", "/doctor/*", "/cmsDoctor/*", "/comment/*"};//进行APP权限认证的
+        String[] excludeUrls = new String[]{"/research/queueTypeList", "/user/*", "/article/*", "/system/*", "/doctor/*", "/cmsDoctor/*", "/comment/*", "/system/keyConfig"};//进行APP权限认证的
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
                 if (excludeUrl.lastIndexOf("*") != -1) {
@@ -314,7 +314,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      */
 
     public Boolean isExclude(String requestPath) {
-        String[] excludeUrls = new String[]{"/min_program/detailStandard", "/doctor/testMessagePush", "/transfer/sms/*", "/getIsShow", "/myQueue/*", "/medical/*", "/api/*", "/min_program/getOpenId"};//不需要验签的接口
+        String[] excludeUrls = new String[]{"/min_program/detailStandard", "/doctor/testMessagePush", "/transfer/sms/*", "/getIsShow", "/myQueue/*", "/medical/*", "/api/*", "/min_program/getOpenId", "/system/keyConfig"};//不需要验签的接口
 //		String[] excludeUrls = new String[] {  "/*"};//不需要验签的接口
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
@@ -340,7 +340,7 @@ public class SignHandlerInterceptor implements HandlerInterceptor {
      * @return
      */
     public Boolean isMinProgram(String requestPath) {
-        String[] excludeUrls = new String[]{"/min_program/*"};//不需要验签的接口
+        String[] excludeUrls = new String[]{"/min_program/*", "/system/keyConfig"};//不需要验签的接口
         for (String excludeUrl : excludeUrls) {
             if (StringUtils.isNotEmpty(requestPath) && StringUtils.isNotBlank(requestPath)) {
                 if (excludeUrl.lastIndexOf("*") != -1) {

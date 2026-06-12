@@ -27,7 +27,9 @@ public class LeaveMessageForm
 
     /** 用户ID */
     @NotNull(message = "用户ID不能为空")
-    private Long accountId;
+    private String accountId;
+
+    private Long accountIds;
 
     /** 用户类型 1医生 2患者 */
     private String userType;

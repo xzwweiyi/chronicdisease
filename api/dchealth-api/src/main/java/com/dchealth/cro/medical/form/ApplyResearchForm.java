@@ -2,6 +2,7 @@ package com.dchealth.cro.medical.form;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -10,9 +11,9 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ApplyResearchForm {
 
-    @NotNull(message = "账号ID不能为空")
-    private Long accountId;
-
+    @NotBlank(message = "账号ID不能为空")
+    private String accountId;
+    private Long accountIds;
     @NotNull(message = "队列ID不能为空")
     private Long researchId;
     

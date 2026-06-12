@@ -1,12 +1,15 @@
 package com.dchealth.cro.cms.form;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 @Data
 public class CommentSaveForm {
-	  @NotNull(message = "评论用户不能为空")
-	  private Long accountId;//用户ID
+	  @NotBlank(message = "评论用户不能为空")
+	  private String accountId;//用户ID
+
+	private Long accountIds;//用户ID
 	  private String tenantId;
 	  @NotNull(message = "资讯信息不能为空")
 	  private Long articleId;

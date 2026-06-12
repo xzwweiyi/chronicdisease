@@ -1,5 +1,6 @@
 package com.dchealth.cro.minprogram.controller;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class MinProgramCmsController extends ApiBaseController {
 	private static final Logger L = LoggerFactory.getLogger(MinProgramController.class);
 	@Autowired
 	private ArticleService articleService;
+	@Autowired
+	private RsaUtil rsaUtil;
 	/**
 	 * 综合查询资讯信息
 	 */
@@ -107,6 +110,9 @@ public class MinProgramCmsController extends ApiBaseController {
 		try {
 			if (articleId < 1) {
 				return buildErrorParamMView();
+			}
+			if(accountId !=null){
+				accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
 			}
 			return buildSuccessMView(articleService.detailComment(articleId,accountId, pageNo, pageSize));
 		} catch (Exception e) {

@@ -19,6 +19,9 @@ public class ResearchInfoVo extends BaseEntity {
     /** 主键 */
     private Long id;
 
+    /** 主键 */
+    private Long noId;
+
     /** 科室ID */
     @Excel(name = "科室ID")
     private Long deptId;

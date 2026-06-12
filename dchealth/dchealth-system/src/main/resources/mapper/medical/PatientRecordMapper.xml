@@ -875,12 +875,13 @@
         where record_id = #{recordId}
     </delete>
 
-    <delete id="deletePatientRecordByRecordIds" parameterType="String">
-        delete from patient_record where record_id in
+    <delete id="deletePatientRecordByRecordIds">
+        DELETE FROM patient_record WHERE record_id IN
         <foreach item="recordId" collection="array" open="(" separator="," close=")">
             #{recordId}
         </foreach>
     </delete>
+
 
     <insert id="batchInsertPatientRecord">
         insert into
@@ -1216,7 +1217,7 @@
     <select id="selectNoFollowupOnePatientRecordByResearchId" resultMap="PatientRecordResult">
         select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
     </select>
-    <update id="updateManuallyFollowUpList">
-        update patient_record set follow_status =0  where  follow_status =-1  <![CDATA[ AND DATE(visit_time) <= CURDATE() ]]>
-    </update>
+    <select id="selectManuallyFollowUpList" resultMap="PatientRecordResult">
+        select * from patient_record   where  follow_status =-1  <![CDATA[ AND DATE(visit_time) <= CURDATE() ]]>
+    </select>
 </mapper>

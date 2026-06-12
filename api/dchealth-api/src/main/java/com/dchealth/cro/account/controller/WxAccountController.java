@@ -1,13 +1,18 @@
 package com.dchealth.cro.account.controller;
 
 
+import cn.hutool.core.net.URLDecoder;
 import com.dchealth.cro.account.form.req.UpdateUserInfoReq;
 import com.dchealth.cro.account.service.WxAccountService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.medical.form.MobileForm;
 import com.dchealth.cro.medical.service.MedicalPatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * @Author: wangpf
@@ -21,7 +26,8 @@ public class WxAccountController extends ApiBaseController {
 
     @Autowired
     private WxAccountService accountService;
-
+    @Autowired
+    private RsaUtil rsaUtil;
 
     /**
      * 编辑登录手机号，personId
@@ -32,6 +38,9 @@ public class WxAccountController extends ApiBaseController {
         boolean b = notEmpty(updateUserInfoReq);
         if (!b) {
             return buildErrorParamMView();
+        }
+        if(StringUtils.isNotEmpty(updateUserInfoReq.getAccountId())){
+            updateUserInfoReq.setAccountIds(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId())));
         }
         try {
             return buildSuccessMView(accountService.updateLoginPhone(updateUserInfoReq, channel));
@@ -51,6 +60,12 @@ public class WxAccountController extends ApiBaseController {
         if (!b) {
             return buildErrorParamMView();
         }
+        if(StringUtils.isNotEmpty(updateUserInfoReq.getAccountId())){
+            updateUserInfoReq.setAccountIds(Long.valueOf(rsaUtil.decryptValue(updateUserInfoReq.getAccountId())));
+        }
+        if(StringUtils.isNotEmpty(updateUserInfoReq.getPersonId())){
+            updateUserInfoReq.setPersonId(rsaUtil.decryptValue(updateUserInfoReq.getPersonId()));
+        }
         try {
             return buildSuccessMView(accountService.updatePatientInfo(updateUserInfoReq, channel));
         } catch (Exception e) {
@@ -64,13 +79,17 @@ public class WxAccountController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "isJoinQueue", method = RequestMethod.POST)
-    public String isJoinQueue(Long accountId, @RequestAttribute("channel") String channel) {
+    public String isJoinQueue(String accountId, @RequestAttribute("channel") String channel) {
         boolean b = notEmpty(accountId);
         if (!b) {
             return buildErrorParamMView();
         }
+        Long accountIds = null;
+        if(StringUtils.isNotEmpty(accountId)){
+            accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+        }
         try {
-            return buildSuccessMView(accountService.isJoinQueue(accountId, channel));
+            return buildSuccessMView(accountService.isJoinQueue(accountIds, channel));
         } catch (Exception e) {
             return buildErrorParamMView(e);
         }

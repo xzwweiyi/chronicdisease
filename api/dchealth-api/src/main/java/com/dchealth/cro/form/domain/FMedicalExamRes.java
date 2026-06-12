@@ -12,8 +12,8 @@ public class FMedicalExamRes {
     private Long articleId;
 
     /** 账号id */
-    private Long accountId;
-
+    private String accountId;
+    private Long accountIds;
     /** 队列id */
     private Long researchId;
 

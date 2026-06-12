@@ -338,7 +338,7 @@ public class PatientInfoService {
                     tencentService.asyncSendSms(patientInfo);
                 }
                 //消息和推送
-                prd.setAccountId(patientInfo.getAccountId());
+                prd.setAccountIds(patientInfo.getAccountId());
                 String msgContent = "您被邀请加入随访队列";
                 AccountNotice accountNotice = new AccountNotice(prd, msgContent, "19");
                 Map<String, Object> extjson = new HashMap<>();

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dchealth.system.domain.PatientAccount;
 import com.dchealth.system.service.IPatientAccountService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,9 @@ public class SysPatientController extends BaseController
 {
     @Autowired
     private IPatientAccountService patientAccountService;
+
+    @Value("${multimodalView.url}")
+    private String multimodalViewUrl;
 
     /**
      * 查询患者账号表列表
@@ -101,5 +105,14 @@ public class SysPatientController extends BaseController
     public AjaxResult remove(@PathVariable Long[] accountIds)
     {
         return toAjax(patientAccountService.deletePatientAccountByAccountIds(accountIds));
+    }
+
+    /**
+     * 获取患者360url
+     */
+    @PreAuthorize("@ss.hasPermi('patient:manage:get360Url')")
+    @GetMapping("/get360Url")
+    public AjaxResult get360Url(Long patientId) {
+        return AjaxResult.success("操作成功", multimodalViewUrl+ "?patientId=" +patientId);
     }
 }

@@ -250,7 +250,7 @@ public class MedicalExamService {
 //                log.info("问卷详情：" + JSON.toJSONString(examSubjects));
                 fMedicalExamForm.setSubjectList(examSubjects);
                 //"再来一次"按钮是否显示处理
-                handleIsShowAgain(articleId, fMedicalExamRes.getAccountId(), fMedicalExamForm);
+                handleIsShowAgain(articleId, fMedicalExamRes.getAccountIds(), fMedicalExamForm);
             }
             return fMedicalExamForm;
         }
@@ -568,7 +568,7 @@ public class MedicalExamService {
     private void insertResearchInfoArticlePatient(FMedicalExamForm examForm, Long newExamRecordId) {
         ResearchInfoArticlePatient articlePatient = new ResearchInfoArticlePatient();
         articlePatient.setArticleId(examForm.getArticleId());
-        articlePatient.setAccountId(examForm.getPatientId());
+        articlePatient.setAccountId(examForm.getPatientId().toString());
         articlePatient.setResearchId(examForm.getResearchId());
         articlePatient.setExamRecordId(newExamRecordId);
         articlePatient.setFillStatus(examForm.getStatus());

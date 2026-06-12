@@ -1,11 +1,14 @@
 package com.dchealth.cro.cms.controller;
 
+import cn.hutool.core.net.URLDecoder;
 import com.alibaba.fastjson2.JSON;
 import com.dchealth.cro.account.domain.ArticleRequest;
 import com.dchealth.cro.cms.form.ActicleListSearchForm;
 import com.dchealth.cro.cms.form.CommentSaveForm;
 import com.dchealth.cro.cms.service.CmsDoctorService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * 医生端cms
@@ -25,6 +30,8 @@ public class CmsDoctorController extends ApiBaseController {
 
     @Autowired
     CmsDoctorService cmsDoctorService;
+    @Autowired
+    private RsaUtil rsaUtil;
 
 
     /**
@@ -36,6 +43,9 @@ public class CmsDoctorController extends ApiBaseController {
     public String findLiverGallDoctorIndex(@RequestBody ArticleRequest articleRequest) {
         try {
             L.info("infoForm:{}",JSON.toJSONString(articleRequest));
+            if(articleRequest.getAccountId() != null){
+                articleRequest.setAccountId(Long.valueOf(rsaUtil.decryptValue(articleRequest.getAccountId().toString())));
+            }
             return buildSuccessMView(cmsDoctorService.findAppIndex(articleRequest));
         } catch (Exception e) {
             L.error("查询首页信息异常{}", e);
@@ -75,13 +85,17 @@ public class CmsDoctorController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "detail", method = RequestMethod.POST)
-    public String detail(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestParam("appType") String appType) {
+    public String detail(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) String accountId,@RequestParam("appType") String appType) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
+            Long accountIds = null;
+            if(StringUtils.isNotEmpty(accountId)){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+            }
             L.info("articleId:{},accountId:{}",articleId,accountId);
-            return buildSuccessMView(cmsDoctorService.detail(articleId,accountId,appType));
+            return buildSuccessMView(cmsDoctorService.detail(articleId,accountIds,appType));
         } catch (Exception e) {
             L.info("查询资讯详情异常{}", articleId, e);
             return buildExceptionMView();
@@ -93,12 +107,16 @@ public class CmsDoctorController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "detailArticleComment", method = RequestMethod.POST)
-    public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
+    public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) String accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
-            return buildSuccessMView(cmsDoctorService.detailComment(articleId,accountId, pageNo, pageSize));
+            Long accountIds = null;
+            if(StringUtils.isNotEmpty(accountId)){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+            }
+            return buildSuccessMView(cmsDoctorService.detailComment(articleId,accountIds, pageNo, pageSize));
         } catch (Exception e) {
             L.info("查询资讯详情异常{}", articleId, e);
             return buildExceptionMView();
@@ -119,7 +137,9 @@ public class CmsDoctorController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-
+            if(StringUtils.isNotEmpty(commentSaveForm.getAccountId())){
+                commentSaveForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId())));
+            }
             return buildSuccessMView(cmsDoctorService.save(commentSaveForm,appType));
         } catch (Exception e) {
             L.info("文章评论意见异常{}", JSON.toJSONString(commentSaveForm), e);

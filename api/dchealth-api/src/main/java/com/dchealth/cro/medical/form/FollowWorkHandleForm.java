@@ -39,5 +39,7 @@ public class FollowWorkHandleForm {
      */
     private Long patientInfoId;
 
-    private Long accountId;
+    private String accountId;
+
+    private Long accountIds;
 }

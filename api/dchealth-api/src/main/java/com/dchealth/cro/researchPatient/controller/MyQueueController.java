@@ -1,11 +1,13 @@
 package com.dchealth.cro.researchPatient.controller;
 
+import cn.hutool.core.net.URLDecoder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dchealth.cro.account.domain.PatientAccount;
 import com.dchealth.cro.account.mapper.PatientAccountMapper;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.base.DchealthCloudResponseEntity;
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import com.dchealth.cro.common.utils.RsaUtil;
 import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.health.domain.MpPatientAccount;
 import com.dchealth.cro.health.mapper.MpPatientAccountMapper;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -41,7 +44,8 @@ public class MyQueueController extends ApiBaseController {
 
     @Autowired
     private MpPatientAccountMapper mpPatientAccountMapper;
-
+    @Autowired
+    private RsaUtil rsaUtil;
     /**
      * 权限校验：验证 personId 是否属于当前登录用户
      */
@@ -68,17 +72,20 @@ public class MyQueueController extends ApiBaseController {
      * 根据personId查询列表信息
      */
     @GetMapping("findList")
-    public String findList(@RequestParam(value = "personId", required = true) Long personId, HttpServletRequest request) {
+    public String findList(@RequestParam(value = "personId", required = true) String personId, HttpServletRequest request) {
         DchealthCloudResponseEntity<List<MyQueue>> result = new DchealthCloudResponseEntity<>();
-
+        Long personIds = null;
+        if(StringUtils.isNotEmpty(personId)){
+            personIds = Long.valueOf(rsaUtil.decryptValue(personId));
+        }
         // 权限校验
-        if (!validatePersonIdAccess(String.valueOf(personId), request)) {
+        if (!validatePersonIdAccess(String.valueOf(personIds), request)) {
             result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
             result.setMsg("无权访问该用户信息");
             return buildSuccessMView(result);
         }
 
-        List<MyQueue> list = queueService.findListByPersonId(personId);
+        List<MyQueue> list = queueService.findListByPersonId(personIds);
         result.setData(list);
         return buildSuccessMView(result);
     }
@@ -90,6 +97,9 @@ public class MyQueueController extends ApiBaseController {
     public String applyQuitQueue(@RequestBody QuitRecord quitRecord) {
         DchealthCloudResponseEntity<String> result = new DchealthCloudResponseEntity<>();
         try {
+            if(StringUtils.isNotEmpty(quitRecord.getPersonId())){
+                quitRecord.setPersonId(rsaUtil.decryptValue(quitRecord.getPersonId()));
+            }
             boolean save = quitRecordService.saveInfo(quitRecord);
             if(save) {
                 result.setCode(CroApiCodeConstant.APPLY_SUCCESS.getCode());
@@ -106,20 +116,23 @@ public class MyQueueController extends ApiBaseController {
      * 根据个人ID和队列ID查找退出记录列表
      */
     @GetMapping("findQuitList")
-    public String findQuitList(@RequestParam(value = "personId", required = true) Long personId,
+    public String findQuitList(@RequestParam(value = "personId", required = true) String personId,
                                @RequestParam(value = "queueId", required = true) Long queueId,
                                HttpServletRequest request) {
         DchealthCloudResponseEntity<List<QuitRecord>> result = new DchealthCloudResponseEntity<>();
-
+        Long personIds = null;
+        if(StringUtils.isNotEmpty(personId)){
+            personIds = Long.valueOf(rsaUtil.decryptValue(personId));
+        }
         // 权限校验
-        if (!validatePersonIdAccess(String.valueOf(personId), request)) {
+        if (!validatePersonIdAccess(String.valueOf(personIds), request)) {
             result.setCode(CroApiCodeConstant.ERROR_PARAM.getCode());
             result.setMsg("无权访问该用户信息");
             return buildSuccessMView(result);
         }
 
         LambdaQueryWrapper<QuitRecord> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(QuitRecord::getPersonId, personId);
+        wrapper.eq(QuitRecord::getPersonId, personIds);
         wrapper.eq(QuitRecord::getQueueId, queueId);
         List<QuitRecord> quitRecords = quitRecordService.list(wrapper);
         result.setData(quitRecords);

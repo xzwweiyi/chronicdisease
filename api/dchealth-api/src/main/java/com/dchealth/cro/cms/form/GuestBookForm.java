@@ -16,8 +16,9 @@ public class GuestBookForm {
 	private String userName;// 姓名
 	@NotBlank(message = "意见不能为空")
 	private String content;// 内容
-	@NotNull(message = "用户ID不能为空")
-	private Long accountId;// 用户ID
+	@NotBlank(message = "用户ID不能为空")
+	private String accountId;// 用户ID
+	private Long accountIds;// 用户ID
 	private String tenantId;// 租户ID
 	private List<String> list;//文件地址
 	private String imageListJson;//小程序上传

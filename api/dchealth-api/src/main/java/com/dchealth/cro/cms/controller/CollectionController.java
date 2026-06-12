@@ -2,6 +2,7 @@ package com.dchealth.cro.cms.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.dchealth.cro.common.utils.RsaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,11 @@ public class CollectionController extends ApiBaseController {
 		private ArticleService articleService;
 		@Autowired
 		private PatientAccountMapper patientAccountMapper;
+	@Autowired
+	private RsaUtil rsaUtil;
 
-		/**
+
+	/**
 		 * 权限校验：验证 accountId 是否属于当前登录用户
 		 */
 		private boolean validateAccountIdAccess(Long accountId, HttpServletRequest request) {
@@ -79,8 +83,11 @@ public class CollectionController extends ApiBaseController {
 				if (bind.hasErrors()) {
 					return buildBindErrorParamMView(bind);
 				}
+				if(StringUtils.isNotEmpty(collectionActicleSearchForm.getAccountId())){
+					collectionActicleSearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(collectionActicleSearchForm.getAccountId())));
+				}
 				// 权限校验
-				if (!validateAccountIdAccess(collectionActicleSearchForm.getAccountId(), request)) {
+				if (!validateAccountIdAccess(collectionActicleSearchForm.getAccountIds(), request)) {
 					return buildAccessDeniedResponse();
 				}
 				collectionActicleSearchForm.setTenantId(channel);
@@ -96,17 +103,21 @@ public class CollectionController extends ApiBaseController {
 		 */
 		@ResponseBody
 		@RequestMapping(value = "update", method = RequestMethod.POST)
-		public String list( @RequestParam(value = "accountId", required = true) Long accountId,
+		public String list( @RequestParam(value = "accountId", required = true) String accountId,
 				@RequestParam(value = "articleId", required = true) Long articleId,
 				@RequestAttribute("appType") String appType,
 				@RequestAttribute("channel") String channel,
 				HttpServletRequest request) {
 			try {
+				Long accountIds = null;
+				if(accountId != null){
+					accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+				}
 				// 权限校验
-				if (!validateAccountIdAccess(accountId, request)) {
+				if (!validateAccountIdAccess(accountIds, request)) {
 					return buildAccessDeniedResponse();
 				}
-				return buildSuccessMView(articleService.update(accountId,articleId,channel,appType));
+				return buildSuccessMView(articleService.update(accountIds,articleId,channel,appType));
 			} catch (Exception e) {
 				L.info("用户收藏信息异常用户ID:{},文章ID:{},{}",accountId,articleId, e);
 				return buildExceptionMView();

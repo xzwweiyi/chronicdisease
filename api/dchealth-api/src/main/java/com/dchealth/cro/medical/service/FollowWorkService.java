@@ -430,7 +430,7 @@ public class FollowWorkService  {
 //            accountNotice.setExtendJson(com.alibaba.fastjson.JSON.toJSONString(accountNoticeVo));
 
             String msgContent = "您已加入随访队列，可查看队列详情";
-            prd.setAccountId(pio.getAccountId());
+            prd.setAccountIds(pio.getAccountId());
             AccountNotice accountNotice = new AccountNotice(prd,msgContent,"11");
             accountNoticeMapper.insertAccountNotice(accountNotice);
 
@@ -482,7 +482,7 @@ public class FollowWorkService  {
 //            prd.setAccountId(pio.getAccountId());
 
             String msgContent = "您已拒绝加入随访队列";
-            prd.setAccountId(pio.getAccountId());
+            prd.setAccountIds(pio.getAccountId());
             AccountNotice accountNotice = new AccountNotice(prd,msgContent,"21");
             accountNoticeMapper.insertAccountNotice(accountNotice);
 
@@ -659,7 +659,7 @@ public class FollowWorkService  {
         PatientRecord patientRecord = new PatientRecord();
         patientRecord.setRecordId(followWorkHandleForm.getRecordId());
         patientRecord.setFollowOpinion(followWorkHandleForm.getFollowOpinion());
-        patientRecord.setFollowOpinionUserId(followWorkHandleForm.getAccountId());
+        patientRecord.setFollowOpinionUserId(followWorkHandleForm.getAccountIds());
         patientRecord.setEdcStatus("1");
         patientRecord.setFollowStatus("3");
         patientRecord.setUpdateBy(followWorkHandleForm.getUpdateBy());
@@ -705,7 +705,7 @@ public class FollowWorkService  {
             researchPatient.setCreateTime(DateUtils.getNowDate());
             researchPatientMapper.insertResearchPatient(researchPatient);
         }
-        patientRecord.setAccountId(old.getAccountId());
+        patientRecord.setAccountIds(old.getAccountId());
         String msgContent = "您有一条随访建议请及时查看";
         AccountNotice accountNotice = new AccountNotice(patientRecord,msgContent,"9");
         accountNoticeMapper.insertAccountNotice(accountNotice);
@@ -829,7 +829,7 @@ public class FollowWorkService  {
 
             PatientRecord prd = patientRecordMapper.selectPatientRecordByRecordId(Long.valueOf(followWorkQuestionForm.getRecordId()));
             PatientInfo pi = patientInfoMapper.selectPatientInfoById(prd.getPatientId());
-            patientRecord.setAccountId(pi.getAccountId());
+            patientRecord.setAccountIds(pi.getAccountId());
             String msgContent = "您有一条随访质疑请及时查看";
             AccountNotice accountNotice = new AccountNotice(patientRecord,msgContent,"10");
             accountNoticeMapper.insertAccountNotice(accountNotice);
@@ -1173,7 +1173,7 @@ public class FollowWorkService  {
             int rs = patientRecordMapper.updatePatientRecord(patientRecord);
             if (rs > 0) {
                 if (infoForm.getAccountId() != null) {
-                    patientRecordOperLogMapper.insertPatientRecordOperLog(new PatientRecordOperLog(infoForm.getAccountId(), infoForm.getRecordId(), "3", DateUtils.getNowDate()));
+                    patientRecordOperLogMapper.insertPatientRecordOperLog(new PatientRecordOperLog(infoForm.getAccountIds(), infoForm.getRecordId(), "3", DateUtils.getNowDate()));
                 }
                 commonResult.setResult(true);
                 result.setData(commonResult);

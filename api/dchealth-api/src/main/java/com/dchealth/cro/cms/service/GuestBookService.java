@@ -26,7 +26,7 @@ public class GuestBookService {
 	@Transactional
 	public CommonResult save(GuestBookForm guestBookForm) {
 		CmsGuestbook guestbook = new CmsGuestbook();
-		guestbook.setAccountId(guestBookForm.getAccountId());
+		guestbook.setAccountId(guestBookForm.getAccountIds());
 		guestbook.setContent(guestBookForm.getContent());
 		guestbook.setCreateTime(DateUtils.getNowDate());
 		guestbook.setDelFlag(DeleteFlag.OK.getCode());

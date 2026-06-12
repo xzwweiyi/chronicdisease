@@ -5,6 +5,8 @@ import com.dchealth.cro.cms.form.ActicleListSearchForm;
 import com.dchealth.cro.cms.form.CommentSaveForm;
 import com.dchealth.cro.cms.service.ArticleService;
 import com.dchealth.cro.common.base.ApiBaseController;
+import com.dchealth.cro.common.utils.RsaUtil;
+import com.dchealth.cro.common.utils.StringUtils;
 import com.dchealth.cro.research.domain.ResearchInfoArticlePatient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,8 @@ public class MinCmsPatientController extends ApiBaseController {
 
     @Autowired
     private ArticleService articleService;
-
+    @Autowired
+    private RsaUtil rsaUtil;
     /**
      * 最新患教文章
      *
@@ -38,6 +41,9 @@ public class MinCmsPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
             }
             return buildSuccessMView(articleService.latestPatientArticle(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -60,6 +66,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
+            }
             return buildSuccessMView(articleService.allPatientArticle(researchInfoArticlePatient));
         } catch (Exception e) {
             L.info("患教天地接口异常{}", JSON.toJSONString(researchInfoArticlePatient), e);
@@ -77,6 +86,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
+            }
             return buildSuccessMView(articleService.ownQuestionnaire(researchInfoArticlePatient));
         } catch (Exception e) {
             L.info("自评接口异常{}", JSON.toJSONString(researchInfoArticlePatient), e);
@@ -93,6 +105,9 @@ public class MinCmsPatientController extends ApiBaseController {
         try {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
+            }
+            if(StringUtils.isNotEmpty(researchInfoArticlePatient.getAccountId())){
+                researchInfoArticlePatient.setAccountIds(Long.valueOf(rsaUtil.decryptValue(researchInfoArticlePatient.getAccountId())));
             }
             return buildSuccessMView(articleService.questionnaireList(researchInfoArticlePatient));
         } catch (Exception e) {
@@ -133,12 +148,16 @@ public class MinCmsPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "detail", method = RequestMethod.POST)
-    public String detail(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestParam("appType") String appType) {
+    public String detail(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) String accountId,@RequestParam("appType") String appType) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
-            return buildSuccessMView(articleService.detail(articleId,accountId,appType));
+            Long accountIds = null;
+            if(StringUtils.isNotEmpty(accountId)){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+            }
+            return buildSuccessMView(articleService.detail(articleId,accountIds,appType));
         } catch (Exception e) {
             L.info("查询资讯详情异常{}", articleId, e);
             return buildExceptionMView();
@@ -157,7 +176,9 @@ public class MinCmsPatientController extends ApiBaseController {
             if (bind.hasErrors()) {
                 return buildBindErrorParamMView(bind);
             }
-
+            if(StringUtils.isNotEmpty(commentSaveForm.getAccountId())){
+                commentSaveForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(commentSaveForm.getAccountId())));
+            }
             return buildSuccessMView(articleService.save(commentSaveForm,appType));
         } catch (Exception e) {
             L.info("文章评论意见异常{}", JSON.toJSONString(commentSaveForm), e);
@@ -184,12 +205,16 @@ public class MinCmsPatientController extends ApiBaseController {
      */
     @ResponseBody
     @RequestMapping(value = "detailArticleComment", method = RequestMethod.POST)
-    public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) Long accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
+    public String detailComment(@RequestParam(value = "articleId", required = true) Long articleId,@RequestParam(value = "accountId", required = false) String accountId,@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
-            return buildSuccessMView(articleService.detailComment(articleId,accountId, pageNo, pageSize));
+            Long accountIds = null;
+            if(StringUtils.isNotEmpty(accountId)){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId));
+            }
+            return buildSuccessMView(articleService.detailComment(articleId,accountIds, pageNo, pageSize));
         } catch (Exception e) {
             L.info("查询资讯详情异常{}", articleId, e);
             return buildExceptionMView();
