@@ -237,7 +237,7 @@ public class PatientInfoController extends BaseController {
     @PostMapping("/moveEnrollment")
     public AjaxResult moveEnrollment(@RequestBody MoveEnrollmentBatchReqDto reqDto) {
         Map<String, Integer> result = patientInfoService.batchMoveEnrollment(reqDto.getSelectedList());
-        return AjaxResult.success("移动入组完成：成功 " + result.get("success") + " 个"+"，入组队列失败，因为已经存在目标队列" + result.get("exist") + " 个",result.get("success"));
+        return AjaxResult.success("移动入组完成：成功移动 " + result.get("success") + " 人"+"，跳过" + result.get("exist") + " 人",result.get("success"));
     }
 
     @PostMapping("/enrollmentList")
