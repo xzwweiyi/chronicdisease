@@ -6,6 +6,7 @@ import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.vo.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 患者信息Service接口
@@ -102,6 +103,8 @@ public interface IPatientInfoService
 
     int moveEnrollment(MoveEnrollmentVo moveEnrollmentVo);
 
-    int batchMoveEnrollment(List<MoveEnrollmentVo> voList);
+    Map<String,Integer> batchMoveEnrollment(List<MoveEnrollmentVo> voList);
     List<EnrollmentListVo> enrollmentList(MoveEnrollmentVo moveEnrollmentVo);
+
+    List<PatientEnrollmentInfoVo> patientEnrollmentInformationUnique(PatientInfo patientInfo);
 }

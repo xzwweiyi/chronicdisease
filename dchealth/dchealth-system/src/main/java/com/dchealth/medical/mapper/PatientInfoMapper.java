@@ -3,6 +3,7 @@ package com.dchealth.medical.mapper;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.form.FollowWorkListForm;
 import com.dchealth.medical.domain.vo.FollowWorkListVO;
+import com.dchealth.medical.domain.vo.PatientEnrollmentInfoVo;
 import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
 import com.dchealth.medical.domain.vo.ResearchPatientVO;
 import com.dchealth.statistics.domain.PatientDistribute;
@@ -177,4 +178,6 @@ public interface PatientInfoMapper
      * @return
      */
     List<StatisticsFollowRateVo> selectFollowEnrollmentList(StatisticsFollowRateVo statisticsParam);
+
+    List<PatientEnrollmentInfoVo> patientEnrollmentInformationUnique(PatientInfo patientInfo);
 }

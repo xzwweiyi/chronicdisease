@@ -1,6 +1,5 @@
 package com.dchealth.web.controller.medical;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dchealth.common.annotation.Log;
 import com.dchealth.common.core.controller.BaseController;
 import com.dchealth.common.core.domain.AjaxResult;
@@ -17,6 +16,7 @@ import com.dchealth.medical.domain.MpPerson;
 import com.dchealth.medical.domain.PatientInfo;
 import com.dchealth.medical.domain.vo.EnrollmentListVo;
 import com.dchealth.medical.domain.vo.MoveEnrollmentVo;
+import com.dchealth.medical.domain.vo.PatientEnrollmentInfoVo;
 import com.dchealth.medical.domain.vo.PatientEnrollmentVo;
 import com.dchealth.medical.dto.MoveEnrollmentBatchReqDto;
 import com.dchealth.medical.service.IPatientInfoService;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * 患者信息Controller
@@ -147,8 +147,18 @@ public class PatientInfoController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:info:list')")
     @GetMapping("/patientEnrollmentInformation")
-    public AjaxResult patientEnrollmentInformation(PatientInfo patientInfo) {
+    public TableDataInfo patientEnrollmentInformation(PatientInfo patientInfo) {
+        startPage();
         List<PatientEnrollmentVo> list = patientInfoService.patientEnrollmentInformation(patientInfo);
+        return getDataTable(list);
+    }
+    /**
+     * 查询入组患者信息唯一编码
+     */
+    @PreAuthorize("@ss.hasPermi('system:info:list')")
+    @GetMapping("/patientEnrollmentInformationUnique")
+    public AjaxResult patientEnrollmentInformationUnique(PatientInfo patientInfo) {
+        List<PatientEnrollmentInfoVo> list = patientInfoService.patientEnrollmentInformationUnique(patientInfo);
         return AjaxResult.success(list);
     }
     /**
@@ -226,8 +236,8 @@ public class PatientInfoController extends BaseController {
 
     @PostMapping("/moveEnrollment")
     public AjaxResult moveEnrollment(@RequestBody MoveEnrollmentBatchReqDto reqDto) {
-        int success = patientInfoService.batchMoveEnrollment(reqDto.getSelectedList());
-        return AjaxResult.success("部分移动入组完成：成功 " + success + " 个");
+        Map<String, Integer> result = patientInfoService.batchMoveEnrollment(reqDto.getSelectedList());
+        return AjaxResult.success("移动入组完成：成功 " + result.get("success") + " 个"+"，入组队列失败，因为已经存在目标队列" + result.get("exist") + " 个",result.get("success"));
     }
 
     @PostMapping("/enrollmentList")

@@ -498,7 +498,7 @@ public class ResearchInfoServiceImpl implements IResearchInfoService
             //动态表单
             dynamicFroms.init().createTableBySuffix(id.intValue());
             dynamicFromsLog.init().createTableBySuffix(id.intValue());
-        } catch (DynamicException e) {
+        } catch (Exception e) {
             L.error("ERROR",e);
         }
     }

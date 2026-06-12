@@ -217,7 +217,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectMpPersonByCardIdAndMobileBatch" resultMap="MpPersonResult">
         <include refid="selectMpPersonVo"/>
         <where>
-            (card_id, mobile) IN
+            (card_id, phone_number) IN
             <foreach collection="cardIdList" index="idx" item="cardId" open="(" separator="," close=")">
                 (#{cardId}, #{mobileList[${idx}]})
             </foreach>

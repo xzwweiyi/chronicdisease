@@ -894,12 +894,15 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public int batchMoveEnrollment(List<MoveEnrollmentVo> voList) {
-        if (CollUtil.isEmpty(voList)) return 0;
+    public Map<String,Integer> batchMoveEnrollment(List<MoveEnrollmentVo> voList) {
+        Map<String,Integer> result = new HashMap<>();
+        result.put("success",0);
+        result.put("exist",0);
+        if (CollUtil.isEmpty(voList)) return result;
 
         LoginUser loginUser = SecurityUtils.getLoginUser();
         int successCount = 0;
-
+        int existCount = 0;
         // ======================== 全局只查1次（公共数据） ========================
         // 1. 患者编码字典（全量缓存）
         SysDictData sysDictData = new SysDictData();
@@ -934,7 +937,7 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
             List<String> mobileList = researchVoList.stream().map(MoveEnrollmentVo::getMobile).collect(Collectors.toList());
             List<MpPerson> mpPersonList = mpPersonMapper.selectMpPersonByCardIdAndMobileBatch(cardIdList, mobileList);
             Map<String, MpPerson> personMap = mpPersonList.stream()
-                    .collect(Collectors.toMap(p -> p.getCardId() + "_" + p.getMobile(), p -> p));
+                    .collect(Collectors.toMap(p -> p.getCardId() + "_" + p.getPhoneNumber(), p -> p));
 
             // ===================== 开始批量处理患者 =====================
             for (MoveEnrollmentVo vo : researchVoList) {
@@ -945,7 +948,10 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
 
                     String personId = mpPerson.getPersonId();
                     // 已存在 → 跳过
-                    if (existPersonIdSet.contains(personId)) continue;
+                    if (existPersonIdSet.contains(personId)) {
+                        existCount++;
+                        continue;
+                    }
 
                     // ===================== 生成患者编码（只计算1次） =====================
                     String patientCode = generatePatientCode(researchId, existPatientList, queueCodeMap);
@@ -1008,13 +1014,14 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 } catch (Exception e) {
                     log.error("批量移动入组失败 cardId={}", vo.getCardId(), e);
                 }
+                result.put("success",successCount);
+                result.put("exist",existCount);
             }
-
             // 创建分表（每个研究只执行1次）
             researchInfoService.createTableInAddUser(researchId);
         }
 
-        return successCount;
+        return result;
     }
 
     private String generatePatientCode(Long researchId, List<PatientInfo> existPatientList, Map<String, String> queueCodeMap) {
@@ -1142,6 +1149,11 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
             results.add(vo);
         });
         return results;
+    }
+
+    @Override
+    public List<PatientEnrollmentInfoVo> patientEnrollmentInformationUnique(PatientInfo patientInfo) {
+        return  patientInfoMapper.patientEnrollmentInformationUnique(patientInfo);
     }
 
 
