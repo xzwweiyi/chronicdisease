@@ -147,3 +147,6 @@ xxl:
 # 讯飞服务请求域名
 xunfei:
   requestUrl: https://test.giantcro.com/xfapi/
+
+multimodalView:
+  url: http://10.131.101.219:8035/multimodal-view

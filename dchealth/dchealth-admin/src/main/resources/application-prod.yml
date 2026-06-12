@@ -160,3 +160,5 @@ xxl:
 xunfei:
   requestUrl: https://td.dchealthclinical.com/xfapi/
 
+multimodalView:
+  url: http://10.131.101.219:8035/multimodal-view
