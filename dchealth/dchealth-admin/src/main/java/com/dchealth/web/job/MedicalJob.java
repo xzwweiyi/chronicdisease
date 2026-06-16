@@ -127,8 +127,10 @@ public class MedicalJob {
         List<PatientRecord> patientRecords = patientRecordMapper.selectManuallyFollowUpList();
         for (PatientRecord patientRecord:patientRecords){
             PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientRecord.getPatientId());
-            patientInfo.setIsEndCreateRecord("0");
-            patientInfoMapper.updatePatientInfo(patientInfo);
+            if(patientInfo != null){
+                patientInfo.setIsEndCreateRecord("0");
+                patientInfoMapper.updatePatientInfo(patientInfo);
+            }
             patientRecord.setFollowStatus("0");
             patientRecordMapper.updatePatientRecord(patientRecord);
         }
