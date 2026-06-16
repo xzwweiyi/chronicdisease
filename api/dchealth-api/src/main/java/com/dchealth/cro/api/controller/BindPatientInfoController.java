@@ -6,6 +6,7 @@ import com.dchealth.cro.api.vo.BindPatientVo;
 import com.dchealth.cro.common.base.ApiBaseController;
 import com.dchealth.cro.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class BindPatientInfoController extends ApiBaseController {
 
     @Resource
     private BindPatientInfoService bindPatientInfoService;
+
 
     @ResponseBody
     @PostMapping(value = "bind")

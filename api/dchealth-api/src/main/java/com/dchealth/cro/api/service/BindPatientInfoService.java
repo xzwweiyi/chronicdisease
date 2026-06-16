@@ -27,8 +27,10 @@ import com.dchealth.cro.medical.mapper.AppLoginRecordMapper;
 import com.dchealth.cro.medical.mapper.PatientInfoMapper;
 import com.dchealth.cro.medical.mapper.PatientInformedMapper;
 import com.dchealth.cro.research.domain.ResearchInfo;
+import com.dchealth.cro.research.mapper.ResearchInfoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -76,6 +78,10 @@ public class BindPatientInfoService {
     @Resource
     private PatientInformedMapper patientInformedMapper;
 
+    @Resource
+    private ResearchInfoMapper researchInfoMapper;
+    @Value("${researchId}")
+    private String researchId;
 
     @Transactional
     public DchealthCloudResponseEntity<PatientAccountInfoVO> bindPatient(BindPatientVo bindPatientForm) {
@@ -235,7 +241,7 @@ public class BindPatientInfoService {
         insertAppRecordLog(patientAccount, "", bindResult);
 
         // 指定 部门内分泌科肥胖课题专属
-        ResearchInfo researchInfo = patientInfoService.autoEnrollmentList(BindDeptEnum.getSzCode("150002"));
+        ResearchInfo researchInfo = researchInfoMapper.selectResearchInfoById(Long.valueOf(researchId));
 
         //模拟登录成功，绑定患者号之后 默认将内分泌科患者导入到队列
 
