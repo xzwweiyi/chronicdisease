@@ -268,6 +268,9 @@ public class MedicalPatientController extends ApiBaseController {
     @RequestMapping(value = "scanCodeResearch", method = RequestMethod.POST)
     public String scanCodeResearch(@Validated ApplyResearchForm applyResearchForm) {
         try {
+            if(StringUtils.isNotEmpty(applyResearchForm.getAccountId())){
+                applyResearchForm.setAccountIds(Long.valueOf(rsaUtil.decryptValue(applyResearchForm.getAccountId())));
+            }
             return buildSuccessMView(medicalPatientService.scanCodeResearch(applyResearchForm));
         } catch (Exception e) {
             L.info("扫码申请队列异常{}", JSON.toJSONString(applyResearchForm), e);

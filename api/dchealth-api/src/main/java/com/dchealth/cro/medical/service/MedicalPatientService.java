@@ -2537,7 +2537,7 @@ public class MedicalPatientService {
             patientRecord.setPatientId(compeletetPatientInfo.getPatientId());
             patientRecord.setVisitTime(DateUtils.getNowDate());
             patientRecord.setFollowTipStatus(FollowTipStatusEnum.BASELINE_REMINDER.getIndex());
-            patientRecord.setUpdateBy(applyResearchForm.getAccountId().toString());
+            patientRecord.setUpdateBy(applyResearchForm.getAccountIds().toString());
             patientRecordMapper.insertPatientRecord(patientRecord);
         } else {
             L.error("patientInfoList 查询失败 ， patientInfo：{}", patientInfo);
