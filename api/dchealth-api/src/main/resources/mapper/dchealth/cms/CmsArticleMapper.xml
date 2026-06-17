@@ -132,7 +132,7 @@
               AND a.research_id = d.id
               AND b.person_id = c.person_id
               AND mpa.person_id = c.person_id
-              AND mpa.account_id = #{accountId}
+              AND mpa.account_id = #{accountIds}
               <if test="infoType != null  and infoType != ''">and a.type = #{infoType}</if>
               AND d.id in (${survivalResearchIds})
         )
@@ -364,7 +364,7 @@
                     FROM
                         research_info_article_patient rp
                     WHERE
-                        rp.account_id = #{accountId}
+                        rp.account_id = #{accountIds}
                 )
            )s left join  cms_article ca on s.article_id = ca.id
             where ca.del_flag = 'N'
@@ -436,7 +436,7 @@
         where a.research_id = b.research_id
         and b.person_id = c.person_id
         AND mpa.person_id = c.person_id
-        AND mpa.account_id = #{accountId}
+        AND mpa.account_id = #{accountIds}
         AND a.research_id = d.id
         AND d.id in (${survivalResearchIds}))S
 
@@ -446,7 +446,7 @@
         ca.del_flag = 'N'
         AND ca.type = 2
         AND FIND_IN_SET( "2", ca.position_type )
-        AND rp.account_id = #{accountId}
+        AND rp.account_id = #{accountIds}
         AND rp.fill_status =  #{fillStatus}
         order by rp.exam_record_id desc
         limit ${pageNo},${pageSize}
@@ -473,7 +473,7 @@
             ca.del_flag = 'N'
           AND ca.type = 2
           AND FIND_IN_SET( "2", ca.position_type )
-          AND rp.account_id = #{accountId}
+          AND rp.account_id = #{accountIds}
           AND rp.fill_status =  #{fillStatus}
         order by rp.exam_record_id desc
             limit ${pageNo},${pageSize}

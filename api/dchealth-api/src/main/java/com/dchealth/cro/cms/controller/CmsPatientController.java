@@ -46,9 +46,6 @@ public class CmsPatientController extends ApiBaseController {
         if (accountId == null) {
             return true; // accountId为可选参数，为空时不校验
         }
-        if(accountId != null){
-            accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
-        }
         String deviceToken = request.getHeader("deviceToken");
         if (!StringUtils.isNotBlankAndNotEmpty(deviceToken)) {
             return true; // 无deviceToken时跳过校验（兼容旧逻辑）
@@ -288,21 +285,22 @@ public class CmsPatientController extends ApiBaseController {
     @RequestMapping(value = "detailArticleComment", method = RequestMethod.POST)
     public String detailComment(HttpServletRequest request,
             @RequestParam(value = "articleId", required = true) Long articleId,
-            @RequestParam(value = "accountId", required = false) Long accountId,
+            @RequestParam(value = "accountId", required = false) String accountId,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo) {
         try {
             if (articleId < 1) {
                 return buildErrorParamMView();
             }
-            if(accountId != null){
-                accountId = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
+            Long accountIds = null;
+            if(accountIds != null){
+                accountIds = Long.valueOf(rsaUtil.decryptValue(accountId.toString()));
             }
             // 权限校验
-            if (!validateAccountIdAccess(accountId, request)) {
+            if (!validateAccountIdAccess(accountIds, request)) {
                 return buildAccessDeniedResponse();
             }
-            return buildSuccessMView(articleService.detailComment(articleId,accountId, pageNo, pageSize));
+            return buildSuccessMView(articleService.detailComment(articleId,accountIds, pageNo, pageSize));
         } catch (Exception e) {
             L.info("查询资讯详情异常{}", articleId, e);
             return buildExceptionMView();

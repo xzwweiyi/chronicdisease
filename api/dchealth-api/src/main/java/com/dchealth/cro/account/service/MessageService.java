@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.dchealth.cro.common.constant.CroApiCodeConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +38,7 @@ import com.dchealth.cro.research.mapper.ResearchInfoMapper;
 import com.dchealth.cro.research.service.ISysPopNoticeService;
 
 @Service
+@Slf4j
 public class MessageService {
 
 	@Autowired
@@ -158,7 +160,7 @@ public class MessageService {
 		menuRedDotVo.setFollowRedDotVoNum("0");
 		menuRedDotVo.setWarnRedDotVoNum("0");
 		menuRedDotVo.setOverRedDotVoNum("0");
-
+		log.info("----------------消息获取个人用户id----------------: "+messageAccountNoticeVo.getAccountIds());
 		if("1".equals(appType)){
 			//医生端
 			List<ResearchInfo> researchInfos = researchInfoMapper.selectResearchInfoByDoctorId(messageAccountNoticeVo.getAccountIds());
@@ -200,6 +202,7 @@ public class MessageService {
 //			if(patientBaseInfo==null){
 //				return result;
 //			}
+
 			List<PatientInfo> patientInfoList = patientInfoMapper.selectPatientInfoByAccountId(messageAccountNoticeVo.getAccountIds());
 			if (!CollectionUtils.isEmpty(patientInfoList)) {
 				List<SysPopNotice> sysPopNoticesAll = new ArrayList<>();

@@ -682,7 +682,7 @@ public class ArticleService {
     public DchealthCloudResponseEntity<CommonResult> save(CommentSaveForm commentSaveForm, String positionType) {
         DchealthCloudResponseEntity<CommonResult> result = new DchealthCloudResponseEntity<CommonResult>();
         CmsArticle cmsArticle = cmsArticleMapper.selectCmsArticleById(commentSaveForm.getArticleId());
-        if (commentSaveForm.getAccountId() == null || commentSaveForm.getAccountIds() < 1) {
+        if (commentSaveForm.getAccountIds() == null || commentSaveForm.getAccountIds() < 1) {
             result.setCode(CroApiCodeConstant.USER_NOT_LOGIN.getCode());
             return result;
         }

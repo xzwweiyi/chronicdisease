@@ -36,7 +36,7 @@
         research_info_article_patient as riap left join research_info as ri on riap.research_id = ri.id
         <where>
             <if test="articleId != null ">and riap.article_id = #{articleId}</if>
-            <if test="accountId != null ">and riap.account_id = #{accountId}</if>
+            <if test="accountId != null ">and riap.account_id = #{accountIds}</if>
             <if test="fillStatus != null ">and riap.fill_status = #{fillStatus}</if>
             <if test="survivalResearchIds != null and survivalResearchIds != '' ">and ri.id in
                 (${survivalResearchIds})
