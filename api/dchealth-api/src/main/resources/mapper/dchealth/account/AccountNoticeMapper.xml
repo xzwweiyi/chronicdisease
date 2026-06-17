@@ -133,7 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		left JOIN patient_record pr on a.record_id=pr.record_id
 		left join patient_info pi on pr.patient_id=pi.patient_id
 		left JOIN mp_person mp on pi.person_id=mp.person_id
-		where  a.account_id =#{accountId}
+		where  a.account_id =#{accountIds}
 		<if test="isDoctor != null  and isDoctor != ''"> and a.type &gt;=15 </if>
 		<if test="isPatient != null  and isPatient != ''"> and ((a.type &gt;=6 and a.type &lt;=14)or type=19 or type=20 or type=21) </if>
 		ORDER BY a.create_time

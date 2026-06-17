@@ -85,6 +85,7 @@ public class FollowWorkController extends BaseController {
      * @return
      */
     @PostMapping(value = "/saveOrUpdatePatientRecord")
+    @Log(title = "随访工作台-填写与提交（医生代填）", businessType = BusinessType.INSERT)
     public AjaxResult saveOrUpdatePatientRecord(@RequestBody PatientRecordSaveUpdateInfoForm detailsForm) {
         LoginUser loginUser = getLoginUser();
         return AjaxResult.success(followWorkService.saveOrUpdatePatientRecord(detailsForm, loginUser));
