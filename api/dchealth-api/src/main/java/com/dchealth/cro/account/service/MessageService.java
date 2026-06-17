@@ -70,6 +70,7 @@ public class MessageService {
 				AccountNoticeVO accountNoticeVO = new AccountNoticeVO();
 				accountNoticeVO.setContent(accountNotice.getContent());
 				accountNoticeVO.setId(accountNotice.getId());
+				accountNoticeVO.setAccountId(accountNotice.getAccountId());
 				accountNoticeVO.setMessageId(accountNotice.getId());
 				accountNoticeVO.setIsRead(accountNotice.getIsRead());
 				accountNoticeVO.setTitle(accountNotice.getTitle());

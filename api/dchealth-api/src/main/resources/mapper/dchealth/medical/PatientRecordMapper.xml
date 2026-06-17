@@ -346,7 +346,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select p.patient_id,p.person_id, p.patient_name, i.project_name, r.name as stage_name, r.create_time, r.record_id, b.phone_number as mobile
         from patient_record r, patient_info p, research_info i, mp_person b
         where i.id=p.research_id and p.patient_id=r.patient_id and b.person_id=p.person_id
-        and p.account_id = #{accountId}
+        and p.account_id = #{accountIds}
         and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
         <if test="warnStatus != null  and warnStatus != ''"> and r.warn_status = #{warnStatus}</if>
         <if test="overTimeStatus != null  and overTimeStatus != ''"> and r.over_time_status = #{overTimeStatus}</if>
