@@ -30,7 +30,7 @@ public class PatientFocusStatusRunner implements CommandLineRunner {
                 "SELECT COLUMN_NAME FROM information_schema.COLUMNS " +
                 "WHERE TABLE_SCHEMA = current_schema() AND TABLE_NAME = 'patient_info' AND COLUMN_NAME = 'focus_status'");
             if (!rs.next()) {
-                s.execute("ALTER TABLE patient_info ADD COLUMN focus_status char(1) NOT NULL DEFAULT '0' COMMENT '重点关注 0否1是'");
+                s.execute("ALTER TABLE patient_info ADD COLUMN focus_status char(1) NOT NULL DEFAULT '0'");
                 log.info("=== Added column: patient_info.focus_status ===");
             } else {
                 log.debug("=== Column already exists: patient_info.focus_status ===");

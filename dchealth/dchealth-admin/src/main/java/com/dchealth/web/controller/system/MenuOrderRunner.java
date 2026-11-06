@@ -153,9 +153,9 @@ public class MenuOrderRunner implements CommandLineRunner {
             s.execute(
                 "CREATE TABLE IF NOT EXISTS sys_migration (" +
                 "    version VARCHAR(64) PRIMARY KEY," +
-                "    applied_time DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                "    applied_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "    description VARCHAR(255)" +
-                ") COMMENT '迁移版本追踪表'"
+                ")"
             );
         }
     }

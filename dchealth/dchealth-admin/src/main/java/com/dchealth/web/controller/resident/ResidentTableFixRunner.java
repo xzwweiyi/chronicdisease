@@ -28,13 +28,13 @@ public class ResidentTableFixRunner implements CommandLineRunner {
              Statement s = conn.createStatement()) {
 
             String[][] columns = {
-                {"archive_code", "VARCHAR(50) COMMENT '档案编码'"},
-                {"age", "INT COMMENT '年龄'"},
-                {"managing_institution", "VARCHAR(100) COMMENT '管理机构'"},
-                {"managing_doctor", "VARCHAR(50) COMMENT '管理医生'"},
-                {"archive_source", "VARCHAR(2) COMMENT '档案来源'"},
-                {"transfer_in_date", "DATE COMMENT '转入管理日期'"},
-                {"is_signed", "VARCHAR(2) COMMENT '是否签约'"},
+                {"archive_code", "VARCHAR(50)"},
+                {"age", "INT"},
+                {"managing_institution", "VARCHAR(100)"},
+                {"managing_doctor", "VARCHAR(50)"},
+                {"archive_source", "VARCHAR(2)"},
+                {"transfer_in_date", "DATE"},
+                {"is_signed", "VARCHAR(2)"},
             };
 
             for (String[] col : columns) {
