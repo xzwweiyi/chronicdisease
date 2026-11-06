@@ -31,7 +31,14 @@
         </dependency>
 
 
-         <!-- Mysql驱动包 -->
+         <!-- KingbaseES 驱动包（国产数据库，适配信创环境） -->
+        <dependency>
+            <groupId>cn.com.kingbase</groupId>
+            <artifactId>kingbase8</artifactId>
+            <version>9.0.1</version>
+        </dependency>
+
+        <!-- MySQL 驱动包：ETL/数据同步等场景保留，如完全切换可移除 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

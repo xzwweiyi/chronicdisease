@@ -65,22 +65,22 @@ spring:
         max-wait: -1ms
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
+    driverClassName: com.kingbase8.Driver
     druid:
         # 主库数据源
         master:
-            url: jdbc:mysql://82.156.193.116:3306/chronic_disease?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
-            username: root
-            password: Study@2026#123
-            driver-class-name: com.mysql.cj.jdbc.Driver
+            url: jdbc:kingbase8://82.156.193.116:54321/chronic_disease?currentSchema=public&stringtype=unspecified
+            username: system
+            password: Mig@2026
+            driver-class-name: com.kingbase8.Driver
         # 从库数据源
         slave:
             # 从数据源开关/默认关闭
             enabled: false
-            url: jdbc:mysql://82.156.193.116:3306/chronic_disease?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
-            username: root
-            password: Study@2026#123
-            driver-class-name: com.mysql.cj.jdbc.Driver
+            url: jdbc:kingbase8://82.156.193.116:54321/chronic_disease?currentSchema=public&stringtype=unspecified
+            username: system
+            password: Mig@2026
+            driver-class-name: com.kingbase8.Driver
 
         hismysql:
           enabled: false
@@ -103,7 +103,7 @@ spring:
         # 配置一个连接在池中最大生存的时间，单位是毫秒
         maxEvictableIdleTimeMillis: 900000
         # 配置检测连接是否有效
-        validationQuery: SELECT 1 FROM DUAL
+        validationQuery: SELECT 1
         testWhileIdle: true
         testOnBorrow: false
         testOnReturn: false

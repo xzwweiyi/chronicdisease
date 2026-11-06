@@ -33,14 +33,40 @@ import java.util.Map;
 @Configuration
 public class DruidConfig
 {
+    /** 全局驱动类名，用于判断是否需要执行 MySQL 专有的连接初始化语句 */
+    @org.springframework.beans.factory.annotation.Value("${spring.datasource.driverClassName:}")
+    private String driverClassName;
+
+    /**
+     * 连接初始化语句：
+     * 1) MySQL 需要 SET NAMES utf8mb4 防乱码；
+     * 2) KingbaseES 需要把 public 显式排在 sys_catalog 前面——否则 sys_user / sys_role / sys_config
+     *    等与系统视图同名的业务表会被解析到 sys_catalog 下的系统视图，导致查询报“列不存在”；
+     *    同时统一会话时区，避免数据库默认 UTC 导致时间少 8 小时。
+     */
+    private void applyCharsetIfMysql(DruidDataSource dataSource)
+    {
+        boolean isMysql = driverClassName != null && driverClassName.toLowerCase().contains("mysql");
+        if (isMysql)
+        {
+            dataSource.setConnectionInitSqls(java.util.Collections.singletonList("SET NAMES utf8mb4"));
+            log.info("=== MySQL driver detected, connectionInitSqls: SET NAMES utf8mb4 ===");
+        }
+        else
+        {
+            dataSource.setConnectionInitSqls(java.util.Arrays.asList(
+                    "SET search_path TO public, sys_catalog",
+                    "SET TIME ZONE 'Asia/Shanghai'"));
+            log.info("=== KingbaseES driver detected, init search_path=public,sys_catalog & timezone=Asia/Shanghai ===");
+        }
+    }
+
     @Bean
     @ConfigurationProperties("spring.datasource.druid.master")
     public DataSource masterDataSource(DruidProperties druidProperties)
     {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-        // Enforce utf8mb4 charset on every connection to prevent Chinese garbled characters
-        dataSource.setConnectionInitSqls(java.util.Collections.singletonList("SET NAMES utf8mb4"));
-        log.info("=== Master DataSource connectionInitSqls set: SET NAMES utf8mb4 ===");
+        applyCharsetIfMysql(dataSource);
         return druidProperties.dataSource(dataSource);
     }
 
@@ -59,7 +85,7 @@ public class DruidConfig
     public DataSource slaveDataSource(DruidProperties druidProperties)
     {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-        dataSource.setConnectionInitSqls(java.util.Collections.singletonList("SET NAMES utf8mb4"));
+        applyCharsetIfMysql(dataSource);
         return druidProperties.dataSource(dataSource);
     }
     @Bean(name = "dynamicDataSource")

@@ -80,12 +80,10 @@ public class DruidProperties
         datasource.setTestOnBorrow(testOnBorrow);
         /** 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 */
         datasource.setTestOnReturn(testOnReturn);
-        /** 设置连接初始化SQL，强制UTF-8字符集防止中文乱码 */
+        /** 设置连接初始化SQL（仅 MySQL 需要 SET NAMES utf8mb4；KingbaseES 无需配置） */
         if (connectionInitSqls != null && !connectionInitSqls.isEmpty()) {
             log.info("=== Setting Druid connectionInitSqls: {} ===", connectionInitSqls);
             datasource.setConnectionInitSqls(java.util.Collections.singletonList(connectionInitSqls));
-        } else {
-            log.warn("=== Druid connectionInitSqls is NOT configured, Chinese chars may be garbled! ===");
         }
         return datasource;
     }

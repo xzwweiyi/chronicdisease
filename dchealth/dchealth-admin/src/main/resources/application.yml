@@ -47,7 +47,8 @@ mybatis:
 
 # PageHelper分页插件
 pagehelper: 
-  helperDialect: mysql
+  # KingbaseES 使用 PG 方言（生成 LIMIT ? OFFSET ?）
+  helperDialect: postgresql
   supportMethodsArguments: true
   params: count=countSql 
 
