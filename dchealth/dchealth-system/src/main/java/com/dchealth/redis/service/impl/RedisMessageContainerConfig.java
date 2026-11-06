@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.Message;
@@ -32,39 +33,37 @@ public class RedisMessageContainerConfig  {
 
     /**
      * Redis消息监听器容器
-     * 这个容器加载了RedisConnectionFactory和消息监听器
-     * 可以添加多个监听不同话题的redis监听器，只需要把消息监听器和相应的消息订阅处理器绑定，该消息监听器
-     * 通过反射技术调用消息订阅处理器的相关方法进行一些业务处理
-     *
-     * @param redisConnectionFactory 连接工厂
-     * @return redis消息监听容器
+     * Only created when Redis is reachable
      */
     @Bean
     public RedisMessageListenerContainer container2(RedisMessageListener listener) {
+        // Quick check if Redis is reachable
+        java.net.Socket socket = null;
+        try {
+            socket = new java.net.Socket();
+            socket.connect(new java.net.InetSocketAddress(this.host, this.port), 2000);
+        } catch (Exception e) {
+            log.warn("Redis not available at {}:{}, message listener disabled: {}", this.host, this.port, e.getMessage());
+            return null;
+        } finally {
+            try { if (socket != null) socket.close(); } catch (Exception ignored) {}
+        }
 
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setPort(this.port);
         jedisConnectionFactory.setPassword(this.password);
         jedisConnectionFactory.setHostName(this.host);
         jedisConnectionFactory.setDatabase(1);
+        jedisConnectionFactory.setTimeout(2000);
         jedisConnectionFactory.afterPropertiesSet();
 
-        final String TOPIC_NAME1 = "followTree"; // 订阅主题
-        final String TOPIC_NAME2 = "patientCard"; // 订阅主题
+        final String TOPIC_NAME1 = "followTree";
+        final String TOPIC_NAME2 = "patientCard";
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        // 监听所有库的key过期事件
         container.setConnectionFactory(jedisConnectionFactory);
-        // 所有的订阅消息，都需要在这里进行注册绑定,new PatternTopic(TOPIC_NAME1)表示发布的主题信息
-        // 可以添加多个 messageListener，配置不同的通道
         container.addMessageListener(listener, new PatternTopic(TOPIC_NAME1));
         container.addMessageListener(listener, new PatternTopic(TOPIC_NAME2));
-//        container.addMessageListener(adapter, new PatternTopic(TOPIC_NAME2));
 
-        /**
-         * 设置序列化对象
-         * 特别注意：1. 发布的时候需要设置序列化；订阅方也需要设置序列化
-         *         2. 设置序列化对象必须放在[加入消息监听器]这一步后面，否则会导致接收器接收不到消息
-         */
         Jackson2JsonRedisSerializer seria = new Jackson2JsonRedisSerializer(Object.class);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -75,4 +74,3 @@ public class RedisMessageContainerConfig  {
         return container;
     }
 }
-

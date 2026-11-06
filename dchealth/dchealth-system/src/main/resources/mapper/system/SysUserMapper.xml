@@ -356,8 +356,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<select id="medicalWorkloadList" parameterType="SysUser" resultMap="MedicalWorkloadVoResult">
-		select u.user_id, u.nick_name, u.phonenumber,d.dept_name, r.role_name,
-		( select count(1) from ( select rur.research_id from research_user_role rur,research_info ri where rur.research_id=ri.id and rur.user_id=u.user_id and ri.del_flag=0 group by rur.user_id,rur.research_id ) u  ) research_nums
+		select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ u.user_id, u.nick_name, u.phonenumber,d.dept_name, r.role_name,
+		( SELECT count(DISTINCT rur.research_id) FROM research_user_role rur INNER JOIN research_info ri ON rur.research_id = ri.id WHERE rur.user_id = u.user_id AND ri.del_flag = 0 ) research_nums
 		from sys_user u
 		left join sys_dept d on u.dept_id = d.dept_id
 		left join sys_user_role ur on u.user_id = ur.user_id

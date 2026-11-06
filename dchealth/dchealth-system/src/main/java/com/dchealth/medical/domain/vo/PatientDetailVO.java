@@ -24,6 +24,16 @@ public class PatientDetailVO {
     private String patientName;
 
     /**
+     * 患者手机号
+     */
+    private String phone;
+
+    /**
+     * 是否已绑定微信（公众号）
+     */
+    private Boolean hasWechat;
+
+    /**
      * 患者code
      */
     private String patientCode;

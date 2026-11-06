@@ -16,6 +16,7 @@
         <result property="doctorId"    column="doctor_id"    />
         <result property="patientMobile"    column="patient_mobile"    />
         <result property="patientStatus"    column="patient_status"    />
+        <result property="focusStatus"    column="focus_status"    />
         <result property="enrollmentStatus"    column="enrollment_status"    />
         <result property="lossCause"    column="loss_cause"    />
         <result property="lossCauseOther"    column="loss_cause_other"    />
@@ -128,6 +129,10 @@
         channel_type ,plan_scan_research_id,generated_manually
         from patient_info
     </sql>
+
+    <update id="updateFocusStatus">
+        update patient_info set focus_status = #{focusStatus} where patient_id = #{patientId}
+    </update>
 
     <select id="selectPatientInfoList" parameterType="PatientInfo" resultMap="PatientInfoResult">
         select g.patient_id, g.account_id, g.person_id, g.patient_name, g.clinic_no, g.patient_code, g.research_id, g.dept_id, g.doctor_id, g.patient_mobile, g.patient_status,
@@ -588,7 +593,7 @@
     </select>
 
     <select id="patientEnrollmentInformation" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
-        select f.patient_id, f.person_id, f.patient_name, p.card_id id_card, pc.mobile, f.create_time, f.plan_research_id, f.research_id, f.dept_id, f.account_id,
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ f.patient_id, f.person_id, f.patient_name, p.card_id id_card, pc.mobile, f.create_time, f.plan_research_id, f.research_id, f.dept_id, f.account_id,
                 p.phone_number base_mobile,f.enrollment_handler_status, f.enrollment_status, f.enrollment_result_content,case WHEN f.account_id = 0 THEN 0 else 1 END as bindStatus, f.patient_code
         from patient_info f
         INNER JOIN mp_person p on f.person_id=p.person_id
@@ -625,7 +630,7 @@
         group by f.person_id
     </select>
     <select id="patientEnrollmentInformationUnique" parameterType="PatientInfo" resultMap="PatientEnrollmentInfoVoResult">
-        select f.patient_id, p.card_id id_card, f.research_id, f.dept_id, f.account_id,
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ f.patient_id, p.card_id id_card, f.research_id, f.dept_id, f.account_id,
         p.phone_number base_mobile
         from patient_info f
         INNER JOIN mp_person p on f.person_id=p.person_id
@@ -716,9 +721,9 @@
         order by f.create_time desc
     </select>
     <select id="selectEnrollmentPatientInfoListLess" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
-        select f.patient_id
+        select distinct f.patient_id
         from patient_info f
-        INNER JOIN mp_person p on f.person_id=p.person_id
+        LEFT JOIN mp_person p on f.person_id=p.person_id
         LEFT JOIN mp_patient_account mpa on mpa.person_id=p.person_id
         LEFT JOIN patient_account pc on pc.account_id = mpa.account_id
         where  1=1
@@ -748,7 +753,7 @@
 
 
     <select id="queryPatientDistribute" parameterType="PatientDistribute" resultType="com.dchealth.statistics.domain.PatientDistributeVo">
-        SELECT
+        SELECT /*+ SET_VAR(optimizer_switch='derived_merge=off') */
         sar.area_name AS provinceName,
         pi.province_id AS provinceId,
         sa.area_name AS cityName,
@@ -791,7 +796,7 @@
     </select>
 
     <select id="queryPatientDistributeNew" parameterType="PatientDistribute" resultType="com.dchealth.statistics.domain.PatientDistributeVo">
-        SELECT
+        SELECT /*+ SET_VAR(optimizer_switch='derived_merge=off') */
         sar.area_name AS provinceName,
         pi.province_id AS provinceId,
         sa.area_name AS cityName,

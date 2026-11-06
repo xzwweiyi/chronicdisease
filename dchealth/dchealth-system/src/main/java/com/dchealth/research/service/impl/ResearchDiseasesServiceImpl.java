@@ -287,8 +287,6 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
                         for (ResearchDiseasesTreeSelect l : threeChildList) {
                             PatientInfo pi = new PatientInfo();
                             pi.setResearchId(l.getId());
-                            pi.setEnrollmentHandlerStatus("3");
-                            pi.setEnrollmentStatus("1");
                             pi.setDeptIdNoZero("1");
                             List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.selectEnrollmentPatientInfoListLess(pi);
                             l.setCount(patientEnrollmentVos.size());
@@ -311,8 +309,6 @@ public class ResearchDiseasesServiceImpl implements IResearchDiseasesService {
                 for (ResearchDiseasesTreeSelect l : childList) {
                     PatientInfo pi = new PatientInfo();
                     pi.setResearchId(l.getId());
-                    pi.setEnrollmentHandlerStatus("3");
-                    pi.setEnrollmentStatus("1");
                     pi.setDeptIdNoZero("1");
                     List<PatientEnrollmentVo> patientEnrollmentVos = patientInfoMapper.selectEnrollmentPatientInfoListLess(pi);
                     l.setCount(patientEnrollmentVos.size());

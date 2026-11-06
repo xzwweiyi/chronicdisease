@@ -1069,7 +1069,7 @@ public class FollowStatisticsServiceImpl implements FollowStatisticsService {
     }
 
     private boolean filterPatientDeptResearch(PatientRecord record, List<ResearchInfo> researchInfos, List<PatientInfo> deptPtatients, List<ResearchDiseases> deptResearchs) {
-        Optional<ResearchInfo> any = researchInfos.stream().filter(researchInfo -> record.getResearchId().longValue() == record.getResearchId().longValue()).findAny();
+        Optional<ResearchInfo> any = researchInfos.stream().filter(researchInfo -> Objects.nonNull(record.getResearchId()) && record.getResearchId().longValue() == researchInfo.getId().longValue()).findAny();
 
         Optional<PatientInfo> any1 = deptPtatients.stream().filter(p -> p.getPatientId().longValue() == record.getPatientId().longValue()).findAny();
         Optional<ResearchDiseases> any2 = deptResearchs.stream().filter(dr -> any.isPresent() && dr.getDiseaseId().longValue() == any.get().getDiseaseTypeId().longValue()).findAny();

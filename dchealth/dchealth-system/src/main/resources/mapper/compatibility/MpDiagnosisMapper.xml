@@ -50,7 +50,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by diagnosis_date desc
     </select>
-        
-   
+
+    <select id="selectPersonIdsByConditionName" resultType="string">
+        select distinct person_id from mp_diagnosis
+        where condition_name like concat('%', #{conditionName}, '%')
+    </select>
+
+    <select id="selectPersonIdsWithComorbidity" resultType="string">
+        select person_id from mp_diagnosis
+        where (condition_name like '%高血压%'
+            or condition_name like '%糖尿病%'
+            or condition_name like '%脑卒中%'
+            or condition_name like '%冠心病%'
+            or condition_name like '%慢阻肺%')
+        group by person_id
+        having count(distinct case
+            when condition_name like '%高血压%' then '1'
+            when condition_name like '%糖尿病%' then '2'
+            when condition_name like '%脑卒中%' then '3'
+            when condition_name like '%冠心病%' then '4'
+            when condition_name like '%慢阻肺%' then '5'
+        end) >= 2
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpDiagnosisResult">
+        <include refid="selectMpDiagnosisVo"/>
+        where person_id = #{personId}
+        order by diagnosis_date desc
+    </select>
 
 </mapper>

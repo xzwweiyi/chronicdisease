@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class ImageRequestWebFilter implements Filter {
 
@@ -59,10 +60,10 @@ public class ImageRequestWebFilter implements Filter {
             try {
                 InputStream inputStream = request.getInputStream();
                 if (inputStream != null) {
-                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
                     char[] charBuffer = new char[128];
                     int bytesRead = -1;
-                    while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+                    while ((bytesRead = bufferedReader.read(charBuffer)) != -1) {
                         stringBuilder.append(charBuffer, 0, bytesRead);
                     }
                 } else {
@@ -84,7 +85,7 @@ public class ImageRequestWebFilter implements Filter {
 
         @Override
         public ServletInputStream getInputStream() throws IOException {
-            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
+            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
             ServletInputStream servletInputStream = new ServletInputStream() {
                 public boolean isFinished() {
                     return false;
@@ -104,7 +105,7 @@ public class ImageRequestWebFilter implements Filter {
 
         @Override
         public BufferedReader getReader() throws IOException {
-            return new BufferedReader(new InputStreamReader(this.getInputStream()));
+            return new BufferedReader(new InputStreamReader(this.getInputStream(), StandardCharsets.UTF_8));
         }
         public String getBody() {
             return this.body;

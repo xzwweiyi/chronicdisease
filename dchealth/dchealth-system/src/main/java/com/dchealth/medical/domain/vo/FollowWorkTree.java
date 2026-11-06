@@ -1433,8 +1433,6 @@ public class FollowWorkTree {
     private List<FollowWorkTree> createNodeLevel3(String parentNodeId, Long researchId, Map<String, List<FollowWorkListVO>> mapInfo, String researchStatus) {
         List<FollowWorkTree> followWorkTrees = new ArrayList<FollowWorkTree>();
         if ("1".equals(researchStatus)) {
-            followWorkTrees.add(new FollowWorkTree(parentNodeId, "3", "1", "1", "0", researchId, mapInfo)
-                    .setChildrenListData(new String[]{"1", "2", "3"}));
             followWorkTrees.add(new FollowWorkTree(parentNodeId, "3", "1", "5", "0", researchId, mapInfo)
                     .setChildrenListData(new String[]{"5", "1"}));
             followWorkTrees.add(new FollowWorkTree(parentNodeId, "3", "1", "2", "0", researchId, mapInfo)
@@ -1446,9 +1444,7 @@ public class FollowWorkTree {
             followWorkTrees.add(new FollowWorkTree(parentNodeId, "3", "1", "6", "0", researchId, mapInfo)
                     .setChildrenListData(new String[]{"1", "3"}));
         } else {
-            //未发布随访  允许进行患者入组审核
-            followWorkTrees.add(new FollowWorkTree(parentNodeId, "3", "1", "1", "0", researchId, mapInfo)
-                    .setChildrenListData(new String[]{"1", "2", "3"}));
+            //未发布随访  仅基线节点
             followWorkTrees.add(new FollowWorkTree(parentNodeId, "3", "1", "5", "0", researchId, mapInfo)
                     .setChildrenListData(new String[]{"5", "1"}));
         }

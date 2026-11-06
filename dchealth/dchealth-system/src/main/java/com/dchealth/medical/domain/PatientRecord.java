@@ -206,6 +206,27 @@ public class PatientRecord extends BaseEntity{
      */
     private Long generatedManually;
 
+    // ========== 管理路径扩展字段 ==========
+
+    /** 节点类型 */
+    private String nodeType;
+
+    /** 退出原因 */
+    private String exitReason;
+
+    /** 退出时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date exitTime;
+
+    /** 干预内容 */
+    private String interventionContent;
+
+    /** 评估结果（JSON） */
+    private String assessmentResult;
+
+    /** 医嘱内容 */
+    private String ordersContent;
+
 
     public Date getStartTime() {
         return startTime;

@@ -15,10 +15,11 @@
         <result property="name"    column="name"    />
         <result property="sex"    column="sex"    />
         <result property="id"    column="id"    />
+        <result property="openId"    column="open_id"    />
     </resultMap>
 
     <sql id="selectPatientAccountVo">
-        select account_id, mobile, status, create_time, registry_signs, id_card, bind_status from patient_account
+        select account_id, mobile, status, create_time, registry_signs, id_card, bind_status, open_id from patient_account
     </sql>
 
     <select id="selectPatientAccountList" parameterType="com.dchealth.system.domain.PatientAccount" resultMap="PatientAccountResult">

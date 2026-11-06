@@ -51,6 +51,15 @@ public interface IPatientInfoService
     public int updatePatientInfo(PatientInfo patientInfo);
 
     /**
+     * 更新患者重点关注标记
+     *
+     * @param patientId 患者主键
+     * @param focusStatus 重点关注 0否 1是
+     * @return 结果
+     */
+    public int updateFocusStatus(Long patientId, String focusStatus);
+
+    /**
      * 批量删除患者信息
      * 
      * @param patientIds 需要删除的患者信息主键集合

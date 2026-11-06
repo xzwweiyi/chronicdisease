@@ -70,6 +70,29 @@ public class ResearchInfo extends BaseEntity
     /** 是否开启随访率：1-开启，0-关闭 */
     private Integer isFollowRate;
 
+    // ========== 管理路径扩展字段 ==========
+
+    /** 系统类型：1-队列管理，2-管理路径 */
+    private String systemType;
+
+    /** 路径阶段配置（JSON） */
+    private String pathwayStageConfig;
+
+    /** 基线配置（JSON） */
+    private String baselineConfig;
+
+    /** 评估配置（JSON） */
+    private String assessmentConfig;
+
+    /** 退出标准 */
+    private String exitCriteria;
+
+    /** 目标管理患者数 */
+    private Integer targetPatientNum;
+
+    /** 路径状态：0-草稿，1-已发布，2-进行中，3-已关闭 */
+    private String pathwayStatus;
+
     /** 发布时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date publicTime;

@@ -8,7 +8,7 @@ dchealth:
   copyrightYear: 2022
   # 实例演示开关
   demoEnabled: true
-  profile: /usr/local/server/mirco-server/upload_temp
+  profile: D:/dchealth/uploadPath
   fastPath: http://10.131.102.124:7910/fastdfs/
   # 获取ip地址开关
   addressEnabled: false
@@ -43,14 +43,14 @@ spring:
       enabled: true
   # redis 配置
   redis:
-    # 地址
-    host: 10.131.101.91
+    # 地址 (使用可用Redis实例)
+    host: 82.156.193.116
     # 端口，默认为6379
-    port: 16379
+    port: 6379
     # 数据库索引
     database: 0
     # 密码
-    password: Win2008$
+    password: Win2026$
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -69,24 +69,24 @@ spring:
     druid:
         # 主库数据源
         master:
-            url: jdbc:mysql://10.131.102.104:13306/dchealth_td_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+            url: jdbc:mysql://82.156.193.116:3306/chronic_disease?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
             username: root
-            password: Hebta.123
+            password: Study@2026#123
             driver-class-name: com.mysql.cj.jdbc.Driver
         # 从库数据源
         slave:
             # 从数据源开关/默认关闭
             enabled: false
-            url: jdbc:mysql://10.131.102.104:13306/dchealth_td_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
-            username:
-            password:
+            url: jdbc:mysql://82.156.193.116:3306/chronic_disease?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
+            username: root
+            password: Study@2026#123
             driver-class-name: com.mysql.cj.jdbc.Driver
 
         hismysql:
-          enabled: true
-          url: jdbc:mysql://10.131.101.3:3306/aki-yanshi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+          enabled: false
+          url: jdbc:mysql://82.156.193.116:3306/chronic_disease?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
           username: root
-          password: 123456
+          password: Study@2026#123
           driver-class-name: com.mysql.cj.jdbc.Driver
         # 初始连接数
         initialSize: 5
@@ -140,6 +140,7 @@ token:
 
 xxl:
   job:
+    enabled: false  # 直接禁用XXL-JOB
     admin:
       addresses: http://localhost:8032/dchealth-job-admin/
     # job, access token

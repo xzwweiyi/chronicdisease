@@ -147,8 +147,13 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                     info.setFollowName(patientRecord.getName());
                     info.setFollowId(patientRecord.getFollowId());
                 }
+                // 与随访工作台的随访任务节点联动：进行中阶段区分"待随访"（已生成、尚未提交的随访任务）
                 if ("0".equals(info.getPatientStatus()) || "1".equals(info.getPatientStatus()) || "2".equals(info.getPatientStatus())) {
-                    info.setSearchType("2");
+                    if (patientRecord != null && "1".equals(patientRecord.getFollowStatus())) {
+                        info.setSearchType("1");
+                    } else {
+                        info.setSearchType("2");
+                    }
                 } else {
                     info.setSearchType(info.getPatientStatus());
                 }
@@ -289,6 +294,11 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
     public int updatePatientInfo(PatientInfo patientInfo) {
         patientInfo.setUpdateTime(DateUtils.getNowDate());
         return patientInfoMapper.updatePatientInfo(patientInfo);
+    }
+
+    @Override
+    public int updateFocusStatus(Long patientId, String focusStatus) {
+        return patientInfoMapper.updateFocusStatus(patientId, focusStatus);
     }
 
     /**
@@ -528,18 +538,15 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                     patientInfo.setPatientStatus("0");
                     patientInfo.setCreateTime(DateUtils.getNowDate());
                     patientInfo.setEnrollmentTime(DateUtils.getNowDate());
-                    patientInfo.setEnrollmentStatus("0");
+                    patientInfo.setEnrollmentStatus("1");
                     patientInfo.setChannelType("1");//渠道来源1后台2扫码
                     patientInfo.setCreateBy(userName);
                     patientInfo.setPersonId(baseInfo.getPersonId());
                     patientInfoMapper.insertPatientInfo(patientInfo);
-//                    patientInfo.setEnrollmentResult("3");
-//                    patientInfo.setEnrollmentHandlerStatus("3");
-//                    patientInfo.setAllocatedHandlerStatus("3");
-//                    patientInfo.setEnrollmentResultContent("确认入组");
-                    patientInfo.setEnrollmentResult("0");
-                    patientInfo.setEnrollmentHandlerStatus("1");
-                    patientInfo.setAllocatedHandlerStatus("0");
+                    patientInfo.setEnrollmentResult("3");
+                    patientInfo.setEnrollmentHandlerStatus("3");
+                    patientInfo.setAllocatedHandlerStatus("3");
+                    patientInfo.setEnrollmentResultContent("确认入组");
                     patientInfo.setAllocatedStatus("0");
                     patientInfoMapper.updatePatientInfo(patientInfo);
                     ResearchPatient researchPatient = new ResearchPatient();
@@ -826,18 +833,15 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                 patientInfo.setPatientStatus("0");
                 patientInfo.setCreateTime(DateUtils.getNowDate());
                 patientInfo.setEnrollmentTime(DateUtils.getNowDate());
-                patientInfo.setEnrollmentStatus("0");
+                patientInfo.setEnrollmentStatus("1");
                 patientInfo.setChannelType("3");//渠道来源1后台2扫码  3为预问诊自动导入
                 patientInfo.setCreateBy(loginUser.getUsername());
                 patientInfo.setPersonId(mpPerson.getPersonId());
                 patientInfoMapper.insertPatientInfo(patientInfo);
-//                    patientInfo.setEnrollmentResult("3");
-//                    patientInfo.setEnrollmentHandlerStatus("3");
-//                    patientInfo.setAllocatedHandlerStatus("3");
-//                    patientInfo.setEnrollmentResultContent("确认入组");
-                patientInfo.setEnrollmentResult("0");
-                patientInfo.setEnrollmentHandlerStatus("1");
-                patientInfo.setAllocatedHandlerStatus("0");
+                patientInfo.setEnrollmentResult("3");
+                patientInfo.setEnrollmentHandlerStatus("3");
+                patientInfo.setAllocatedHandlerStatus("3");
+                patientInfo.setEnrollmentResultContent("确认入组");
                 patientInfo.setAllocatedStatus("0");
                 patientInfoMapper.updatePatientInfo(patientInfo);
                 ResearchPatient researchPatient = new ResearchPatient();
@@ -963,14 +967,15 @@ public class PatientInfoServiceImpl implements IPatientInfoService {
                     patientInfo.setDeptId(Long.valueOf(vo.getDeptId()));
                     patientInfo.setPatientCode(patientCode);
                     patientInfo.setPatientStatus("0");
-                    patientInfo.setEnrollmentStatus("0");
+                    patientInfo.setEnrollmentStatus("1");
                     patientInfo.setChannelType("3");
                     patientInfo.setCreateTime(DateUtils.getNowDate());
                     patientInfo.setEnrollmentTime(DateUtils.getNowDate());
                     patientInfo.setCreateBy(loginUser.getUsername());
-                    patientInfo.setEnrollmentResult("0");
-                    patientInfo.setEnrollmentHandlerStatus("1");
-                    patientInfo.setAllocatedHandlerStatus("0");
+                    patientInfo.setEnrollmentResult("3");
+                    patientInfo.setEnrollmentResultContent("确认入组");
+                    patientInfo.setEnrollmentHandlerStatus("3");
+                    patientInfo.setAllocatedHandlerStatus("3");
                     patientInfo.setAllocatedStatus("0");
                     if (vo.getAccountId() != null) {
                         patientInfo.setAccountId(Long.valueOf(vo.getAccountId()));

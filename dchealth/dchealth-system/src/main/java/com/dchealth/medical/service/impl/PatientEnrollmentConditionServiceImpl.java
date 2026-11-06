@@ -290,20 +290,20 @@ public class PatientEnrollmentConditionServiceImpl implements IPatientEnrollment
         patientInfo.setPatientMobile(String.valueOf(esMap.get("mobile")));
         patientInfo.setPatientStatus("0");
         patientInfo.setCreateTime(DateUtils.getNowDate());
-//        patientInfo.setEnrollmentTime(DateUtils.getNowDate());
+        patientInfo.setEnrollmentTime(DateUtils.getNowDate());
         //入组状态0待分配1已入组2已分配3已完成4失访
-        patientInfo.setEnrollmentStatus("0");
+        patientInfo.setEnrollmentStatus("1");
         patientInfo.setPersonId(String.valueOf(esMap.get("patientId")));
         //渠道来源1后台2扫码
         patientInfo.setChannelType("1");
         patientInfo.setAdjustType("1");
         patientInfo.setCreateBy("adminJob");
         //入组结果0待分配1已入组2已分配3已完成4失访
-        patientInfo.setEnrollmentResult("0");
+        patientInfo.setEnrollmentResult("3");
         //入组处理状态0待处理1已处理2已取消3已完成4失访
-        patientInfo.setEnrollmentHandlerStatus("1");
+        patientInfo.setEnrollmentHandlerStatus("3");
         //分配处理状态0待处理1已处理2已取消3已完成4失访
-        patientInfo.setAllocatedHandlerStatus("0");
+        patientInfo.setAllocatedHandlerStatus("3");
         patientInfo.setEnrollmentResultContent("确认入组");
         patientInfo.setAllocatedStatus("0");
         patientInfo.setLossCause("0");

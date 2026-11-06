@@ -144,6 +144,11 @@ public class FollowWorkListVO {
     private Integer patientStatus;
 
     /**
+     * 重点关注 0否 1是
+     */
+    private String focusStatus;
+
+    /**
      * 填写状态 0未填写1已填写
      */
     private Integer fillStatus;

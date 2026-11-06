@@ -127,7 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectGroupResearchIdList" parameterType="PatientRecordOutbound" resultMap="PatientRecordOutboundResult">
-        select g.research_id
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ g.research_id
         from patient_record_outbound g
         INNER JOIN patient_record pr on g.record_id=pr.record_id
         INNER JOIN patient_info pi on pi.patient_id=pr.patient_id

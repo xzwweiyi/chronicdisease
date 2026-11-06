@@ -101,8 +101,6 @@ public class ResearchInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('research:patient:query')")
     @GetMapping(value = "/getResearchPatientList")
     public TableDataInfo getResearchPatientList(PatientInfo patientInfo){
-        patientInfo.setEnrollmentHandlerStatus("3");
-        patientInfo.setEnrollmentStatus("1");
         startPage();
         List<PatientInfo> list = patientInfoService.selectPatientInfoList(patientInfo);
         return getDataTable(list);

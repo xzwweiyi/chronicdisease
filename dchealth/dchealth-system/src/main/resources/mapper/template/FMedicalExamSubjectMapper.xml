@@ -148,7 +148,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="queryStatisticalData" resultType="com.dchealth.template.domain.FMedicalExamSubject">
-            SELECT s.property_name  as propertyName,
+            SELECT /*+ SET_VAR(optimizer_switch='derived_merge=off') */ s.property_name  as propertyName,
                    s.property_code  as propertyCode,
                    s.property_type  as propertyType,
                    s.dict_type      as dictType,

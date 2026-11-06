@@ -7,6 +7,8 @@ import com.alibaba.fastjson2.JSONObject;
 import com.dchealth.account.domain.AccountNotice;
 import com.dchealth.account.mapper.AccountNoticeMapper;
 import com.dchealth.base.service.TencentService;
+import com.dchealth.base.service.VoiceBoxService;
+import com.dchealth.base.service.WeChatGzhService;
 import com.dchealth.cms.domain.PatientRecordFilesForm;
 import com.dchealth.common.DynamicSql;
 import com.dchealth.common.FollowTipStatusEnum;
@@ -43,6 +45,8 @@ import com.dchealth.research.mapper.ResearchInfoMapper;
 import com.dchealth.research.mapper.ResearchOutboundMapper;
 import com.dchealth.research.mapper.ResearchUserRoleMapper;
 import com.dchealth.research.service.ISysPopNoticeService;
+import com.dchealth.system.domain.PatientAccount;
+import com.dchealth.system.mapper.PatientAccountMapper;
 import com.dchealth.system.mapper.SysUserMapper;
 import com.dchealth.template.domain.*;
 import com.dchealth.template.mapper.*;
@@ -139,6 +143,15 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
     @Autowired
     private TencentService tencentService;
 
+    @Autowired
+    private PatientAccountMapper patientAccountMapper;
+
+    @Autowired
+    private VoiceBoxService voiceBoxService;
+
+    @Autowired
+    private WeChatGzhService weChatGzhService;
+
     ExecutorService executorService = new ThreadPoolExecutor(10, 20,
             60L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>(100));
@@ -160,6 +173,11 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
         PatientDetailVO patientDetailVO = new PatientDetailVO();
         patientBaseInfo(followWorkDetailsForm.getPatientId(), patientDetailVO, x -> {
         });
+
+        // 补充患者手机号、微信绑定状态（供右侧浮动联系面板显示与操作）
+        PatientContactVO contact = getPatientContact(followWorkDetailsForm.getPatientId());
+        patientDetailVO.setPhone(contact.getPhone());
+        patientDetailVO.setHasWechat(contact.getHasWechat());
 
         if (followWorkDetailsForm.getRecordId() == null) {
             PatientRecord pr = patientRecordMapper.selectOldByPatientId(followWorkDetailsForm.getPatientId());
@@ -1433,6 +1451,28 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
     }
 
     @Override
+    public Map<String, List<FollowWorkListVO>> patientFollowNodes(String cardId) {
+        List<FollowWorkListVO> nodes = patientRecordMapper.selectPatientFollowNodesByCardId(cardId);
+        List<FollowWorkListVO> pending = new ArrayList<>();
+        List<FollowWorkListVO> completed = new ArrayList<>();
+        if (nodes != null) {
+            for (FollowWorkListVO node : nodes) {
+                String status = node.getFollowStatus();
+                // 随访状态：0无状态 1待处理 2进行中 3已完成 4已完成(待评价)
+                if ("3".equals(status) || "4".equals(status)) {
+                    completed.add(node);
+                } else {
+                    pending.add(node);
+                }
+            }
+        }
+        Map<String, List<FollowWorkListVO>> result = new LinkedHashMap<>();
+        result.put("pending", pending);
+        result.put("completed", completed);
+        return result;
+    }
+
+    @Override
     public synchronized List<FollowWorkListVO> overList(FollowWorkListForm followWorkListForm) {
         if (Integer.valueOf(0).equals(followWorkListForm.getOverTimeStatus())) {
             followWorkListForm.setOverTimeStatus(1);
@@ -1828,6 +1868,55 @@ public class FollowWorkServiceImpl extends CommonService implements IFollowWorkS
             }
         }
         return null;
+    }
+
+    @Override
+    public PatientContactVO getPatientContact(Long patientId) {
+        PatientContactVO contactVO = new PatientContactVO();
+        PatientInfo patientInfo = patientInfoMapper.selectPatientInfoByPatientId(patientId);
+        if (patientInfo == null) {
+            return contactVO;
+        }
+        contactVO.setPatientId(patientId);
+        contactVO.setPatientName(patientInfo.getPatientName());
+
+        String phone = patientInfo.getPatientMobile();
+        // 患者手机号为空时回退到 mp_person 联系电话
+        if (StringUtils.isEmpty(phone)) {
+            MpPerson mpPerson = mpPersonMapper.selectMpPersonByPatientId(patientId);
+            if (mpPerson != null) {
+                phone = mpPerson.getPhoneNumber();
+            }
+        }
+        contactVO.setPhone(phone);
+
+        contactVO.setHasWechat(Boolean.FALSE);
+        if (patientInfo.getAccountId() != null && patientInfo.getAccountId() != 0) {
+            PatientAccount patientAccount = patientAccountMapper.selectPatientAccountByAccountId(patientInfo.getAccountId());
+            if (patientAccount != null && StringUtils.isNotEmpty(patientAccount.getOpenId())) {
+                contactVO.setOpenId(patientAccount.getOpenId());
+                contactVO.setHasWechat(Boolean.TRUE);
+            }
+        }
+        return contactVO;
+    }
+
+    @Override
+    public boolean callPatient(Long patientId) {
+        PatientContactVO contact = getPatientContact(patientId);
+        if (StringUtils.isEmpty(contact.getPhone())) {
+            throw new ServiceException("患者无手机号");
+        }
+        return voiceBoxService.dial(contact.getPhone());
+    }
+
+    @Override
+    public boolean sendWechatFollowReminder(Long patientId, String content) {
+        PatientContactVO contact = getPatientContact(patientId);
+        if (!Boolean.TRUE.equals(contact.getHasWechat())) {
+            throw new ServiceException("患者未绑定微信");
+        }
+        return weChatGzhService.sendFollowReminder(contact.getOpenId(), contact.getPatientName(), content);
     }
 
     @Override

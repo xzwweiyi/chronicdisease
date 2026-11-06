@@ -85,6 +85,14 @@ public interface PatientRecordMapper
     public List<FollowWorkListVO> selectFollowWorkPatientRecordListNew(FollowWorkListForm followWorkListForm);
 
     /**
+     * 档案管理-随访管理：按身份证号查询患者全部随访节点（不区分状态）
+     *
+     * @param cardId 身份证号（mp_person.card_id）
+     * @return 随访节点集合
+     */
+    public List<FollowWorkListVO> selectPatientFollowNodesByCardId(@Param("cardId") String cardId);
+
+    /**
      * 评价列表
      * @param evaluateForm
      * @return

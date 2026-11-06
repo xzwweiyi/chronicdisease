@@ -5,6 +5,11 @@ server:
   servlet:
     # 应用的访问路径
     context-path: /dchealthadmin
+    # 请求/响应编码（防止中文乱码）
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   tomcat:
     # tomcat的URI编码
     uri-encoding: UTF-8
@@ -28,8 +33,9 @@ spring:
   messages:
     # 国际化资源文件路径
     basename: i18n/messages
-  profiles: 
+  profiles:
     active: dev
+
 # MyBatis配置
 mybatis:
     # 搜索指定包别名
@@ -77,4 +83,14 @@ image:
   newDomain: http://172.100.45.33
   #图片IP转换域名拦截路径
   requestPath: /cms/*,/template/*,/research/info/*
+
+# 语音盒（座席）拨号服务地址（占位，未配置则一键拨号不可用）
+voicebox:
+  url:
+
+# 微信公众号模板消息（占位，接入公众号后填写）
+wechat:
+  gzh:
+    appid:
+    secret:
 

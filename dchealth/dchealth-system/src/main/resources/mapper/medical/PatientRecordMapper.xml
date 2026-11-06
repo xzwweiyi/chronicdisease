@@ -91,6 +91,7 @@
         <result property="formComplentRate" column="form_complent_rate"/>
         <result property="followNum" column="follow_num"/>
         <result property="cardId" column="card_id"/>
+        <result property="focusStatus" column="focus_status"/>
         <result property="generatedManually" column="generated_manually"/>
         <result property="visitTime" column="visit_time"/>
         <result property="lockVisitTime" column="lock_visit_time"/>
@@ -332,12 +333,12 @@
         select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,r.follow_status,
-        r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.form_complent_rate, ac.id_card card_id
+        r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.form_complent_rate, p.focus_status, ac.id_card card_id
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
         INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
-        INNER JOIN patient_account ac on p.account_id=ac.account_id
+        LEFT JOIN patient_account ac on p.account_id=ac.account_id
         where prt.follow_num = 0 AND i.del_flag = '0'
         <!-- and p.patient_activity_status = '1' -->
         <if test="researchId != null ">and r.research_id = #{researchId}</if>
@@ -370,13 +371,13 @@
         ac.mobile,
         r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time,r.stage_add_num,
         r.over_time_create_time
-,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,
+,r.over_time_handle_status,r.over_time_handle_time,p.person_id,r.fill_status,r.create_by,r.form_complent_rate,p.focus_status,
          prt.follow_num, ac.id_card card_id, ac.id_card card_id,r.generated_manually,r.visit_time,r.lock_visit_time
         FROM patient_record r
         INNER JOIN patient_info p on p.patient_id = r.patient_id
         INNER JOIN research_info i on i.id = p.research_id
         INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
-        INNER JOIN patient_account ac on p.account_id=ac.account_id
+        LEFT JOIN patient_account ac on p.account_id=ac.account_id
         where prt.follow_num > 0 AND i.del_flag = '0'
         and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and
         q.research_id = p.research_id and q.person_id = p.person_id)
@@ -448,6 +449,27 @@
         and p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
           and r.follow_status !=-1
 
+    </select>
+
+    <!-- 档案管理-随访管理：按身份证号查询患者全部随访节点（不区分状态，排除基线与特殊记录） -->
+    <select id="selectPatientFollowNodesByCardId" parameterType="String" resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, p.enrollment_time, i.project_name, r.name, r.create_time, r.record_id,
+               ac.mobile,
+               r.research_id, r.question_time, r.follow_complete_time, r.follow_submit_time, r.stage_add_num,
+               r.over_time_create_time, r.over_time_handle_status, r.over_time_handle_time, p.person_id, r.fill_status,
+               r.create_by, r.form_complent_rate, prt.follow_num, ac.id_card card_id, r.generated_manually,
+               r.visit_time, r.lock_visit_time, r.follow_status
+        FROM patient_record r
+        INNER JOIN patient_info p on p.patient_id = r.patient_id
+        INNER JOIN research_info i on i.id = p.research_id
+        INNER JOIN patient_record_template prt on prt.follow_id = r.follow_id
+        LEFT JOIN patient_account ac on p.account_id = ac.account_id
+        WHERE prt.follow_num > 0
+          AND i.del_flag = '0'
+          AND r.follow_status != -1
+          AND r.person_id IN (SELECT person_id FROM mp_person WHERE card_id = #{cardId})
+          AND p.research_id not in (select DISTINCT(q.research_id) from quit_record q where q.is_agree = 1 and q.research_id = p.research_id and q.person_id = p.person_id)
+        ORDER BY r.lock_visit_time DESC, r.create_time DESC
     </select>
 
     <select id="selectPatientRecordByRecordId" parameterType="Long" resultMap="PatientRecordResult">
@@ -1167,7 +1189,7 @@
     </select>
 
     <select id="selectFollowListBySuccess" resultType="com.dchealth.statistics.domain.StatisticsFollowRateVo">
-        SELECT a.record_id recordId,
+        SELECT /*+ SET_VAR(optimizer_switch='derived_merge=off') */ a.record_id recordId,
         a.patient_id patientId,
         a.name followName,
         a.research_id researchId,

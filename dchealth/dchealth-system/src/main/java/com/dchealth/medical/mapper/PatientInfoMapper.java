@@ -95,6 +95,15 @@ public interface PatientInfoMapper
     public int updatePatientInfo(PatientInfo patientInfo);
 
     /**
+     * 更新患者重点关注标记
+     *
+     * @param patientId 患者主键
+     * @param focusStatus 重点关注 0否 1是
+     * @return 结果
+     */
+    public int updateFocusStatus(@Param("patientId") Long patientId, @Param("focusStatus") String focusStatus);
+
+    /**
      * 删除患者信息
      * 
      * @param patientId 患者信息主键

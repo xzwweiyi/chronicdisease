@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 public class DchealthApplication
 {
-	 private static final Logger log = LoggerFactory.getLogger(DchealthApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(DchealthApplication.class);
     public static void main(String[] args)
     {
     	

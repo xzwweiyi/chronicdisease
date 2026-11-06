@@ -290,6 +290,32 @@ public class FollowWorkController extends BaseController {
     }
 
     /**
+     * 档案管理-随访管理：查询某患者的待随访与已完成随访节点
+     *
+     * @param cardId 身份证号（mp_person.card_id）
+     * @return {pending:[...], completed:[...]}
+     */
+    @GetMapping("/patient/nodes")
+    public AjaxResult patientNodes(@RequestParam String cardId) {
+        return AjaxResult.success(followWorkService.patientFollowNodes(cardId));
+    }
+
+    /**
+     * 重点关注患者打标签 / 取消重点关注
+     *
+     * @param patientId 患者ID
+     * @param focusStatus 0取消 1重点关注
+     * @return 结果
+     */
+    @PostMapping("/focus/toggle")
+    public AjaxResult focusToggle(@RequestParam Long patientId, @RequestParam String focusStatus) {
+        if (patientId == null || (!"0".equals(focusStatus) && !"1".equals(focusStatus))) {
+            return AjaxResult.error("参数不合法");
+        }
+        return toAjax(patientInfoService.updateFocusStatus(patientId, focusStatus));
+    }
+
+    /**
      * 超窗列表
      *
      * @return
@@ -400,6 +426,42 @@ public class FollowWorkController extends BaseController {
     @GetMapping(value = "/isCall/{recordId}")
     public AjaxResult isCall(@PathVariable("recordId") Long recordId) {
         return AjaxResult.success(followWorkService.isCall(recordId));
+    }
+
+    /**
+     * 一键拨打电话（语音盒）
+     *
+     * @param patientId 患者ID
+     */
+    @PostMapping("/call")
+    @Log(title = "随访工作站拨打电话", businessType = BusinessType.OTHER)
+    public AjaxResult call(@RequestParam Long patientId) {
+        return toAjax(followWorkService.callPatient(patientId));
+    }
+
+    /**
+     * 发送短信（复用腾讯云短信）
+     *
+     * @param patientId 患者ID
+     */
+    @PostMapping("/sendSms")
+    @Log(title = "随访工作站发送短信", businessType = BusinessType.INSERT)
+    public AjaxResult sendSms(@RequestParam Long patientId) {
+        tencentService.sendSms(String.valueOf(patientId));
+        return AjaxResult.success();
+    }
+
+    /**
+     * 发送微信随访提醒
+     *
+     * @param patientId 患者ID
+     * @param content   提醒内容
+     */
+    @PostMapping("/sendWechat")
+    @Log(title = "随访工作站发送微信提醒", businessType = BusinessType.INSERT)
+    public AjaxResult sendWechat(@RequestParam Long patientId, @RequestParam(required = false) String content) {
+        followWorkService.sendWechatFollowReminder(patientId, content);
+        return AjaxResult.success();
     }
 
     /**

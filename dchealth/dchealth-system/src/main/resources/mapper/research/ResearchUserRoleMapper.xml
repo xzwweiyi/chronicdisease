@@ -22,7 +22,7 @@
     </select>
 
     <select id="selectListGroupByUserIdAndResearchId" parameterType="ResearchUserRole" resultMap="ResearchUserRoleResult">
-        select g.user_id, g.role_id ,g.research_id
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ g.user_id, g.role_id ,g.research_id
         from research_user_role g
         INNER JOIN research_info ri on g.research_id=ri.id
         <where>
@@ -74,7 +74,7 @@
     </select>
 
     <select id="findUserRoleGroupByUserId" parameterType="Long" resultMap="ResearchUserRoleResult">
-        select g.user_id, g.role_id ,g.research_id
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ g.user_id, g.role_id ,g.research_id
         from research_user_role g
         INNER JOIN research_info ri on g.research_id=ri.id
         where research_id = #{researchId}

@@ -3,6 +3,8 @@ package com.dchealth.framework.config.properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import com.alibaba.druid.pool.DruidDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * druid 配置属性
@@ -12,6 +14,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 @Configuration
 public class DruidProperties
 {
+    private static final Logger log = LoggerFactory.getLogger(DruidProperties.class);
+
     @Value("${spring.datasource.druid.initialSize}")
     private int initialSize;
 
@@ -45,6 +49,10 @@ public class DruidProperties
     @Value("${spring.datasource.druid.testOnReturn}")
     private boolean testOnReturn;
 
+    /** Connection init SQLs to enforce charset (prevent Chinese mojibake) */
+    @Value("${spring.datasource.druid.connection-init-sqls:#{null}}")
+    private String connectionInitSqls;
+
     public DruidDataSource dataSource(DruidDataSource datasource)
     {
         /** 配置初始化大小、最小、最大 */
@@ -72,6 +80,13 @@ public class DruidProperties
         datasource.setTestOnBorrow(testOnBorrow);
         /** 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。 */
         datasource.setTestOnReturn(testOnReturn);
+        /** 设置连接初始化SQL，强制UTF-8字符集防止中文乱码 */
+        if (connectionInitSqls != null && !connectionInitSqls.isEmpty()) {
+            log.info("=== Setting Druid connectionInitSqls: {} ===", connectionInitSqls);
+            datasource.setConnectionInitSqls(java.util.Collections.singletonList(connectionInitSqls));
+        } else {
+            log.warn("=== Druid connectionInitSqls is NOT configured, Chinese chars may be garbled! ===");
+        }
         return datasource;
     }
 }

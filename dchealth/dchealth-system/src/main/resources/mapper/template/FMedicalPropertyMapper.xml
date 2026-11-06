@@ -100,6 +100,7 @@
             <if test="followId != null">follow_id,</if>
             <if test="sortNum != null">sort_num,</if>
             <if test="articleId != null">article_id,</if>
+            is_deleted,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="propertyCode != null and propertyCode != ''">#{propertyCode},</if>
@@ -115,6 +116,7 @@
             <if test="followId != null">#{followId},</if>
             <if test="sortNum != null">#{sortNum},</if>
             <if test="articleId != null">#{articleId},</if>
+            0,
         </trim>
     </insert>
 

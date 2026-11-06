@@ -40,6 +40,14 @@ public class CmsArticle extends BaseEntity{
     @Excel(name = "分类名称")
     private String categoryName;
 
+    /** 宣教分类编号 */
+    @Excel(name = "宣教分类编号")
+    private Long eduCategoryId;
+
+    /** 宣教分类名称 */
+    @Excel(name = "宣教分类名称")
+    private String eduCategoryName;
+
     /** 标题 */
     @Excel(name = "标题")
     private String title;
@@ -244,6 +252,22 @@ public class CmsArticle extends BaseEntity{
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public Long getEduCategoryId() {
+        return eduCategoryId;
+    }
+
+    public void setEduCategoryId(Long eduCategoryId) {
+        this.eduCategoryId = eduCategoryId;
+    }
+
+    public String getEduCategoryName() {
+        return eduCategoryName;
+    }
+
+    public void setEduCategoryName(String eduCategoryName) {
+        this.eduCategoryName = eduCategoryName;
     }
 
     public String getTitle() {

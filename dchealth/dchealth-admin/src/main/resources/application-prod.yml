@@ -8,15 +8,17 @@ dchealth:
   copyrightYear: 2022
   # 实例演示开关
   demoEnabled: true
-  profile: /usr/local/server/mirco-server/upload_temp
-  fastPath: http://fastdfs-server:7910/fastdfs/
+  profile: D:/dchealth/uploadPath
+  fastPath: http://10.131.102.124:7910/fastdfs/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
+
+
 elasticsearch:
   schema: http
-  address: 172.100.45.40:9200
+  address: lucky2:9200
   connectTimeout: 10000
   socketTimeout: 15000
   connectionRequestTimeout: 20000
@@ -24,30 +26,31 @@ elasticsearch:
   maxConnectPerRoute: 100
   index: "edcdatas"
   username: elastic
-  passwd: dchealthelastic
+  passwd: 2wsx#EDC
 
 # 数据源配置
 spring:
- # 服务模块
+  servlet:
+    multipart:
+      # 文件大小改成100M
+      max-file-size: 100MB
+      max-request-size: 500MB
+      location: D:/dchealth/uploadPath
+  # 服务模块
   devtools:
     restart:
       # 热部署开关
       enabled: true
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 500MB
-      location: /usr/local/server/mirco-server/upload_temp
   # redis 配置
   redis:
-    # 地址
-    host: 172.100.45.34
+    # 地址 (使用可用Redis实例)
+    host: 10.131.101.91
     # 端口，默认为6379
-    port: 6379
+    port: 16379
     # 数据库索引
     database: 0
     # 密码
-    password: dchealth2023*#6
+    password: Win2008$
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -64,101 +67,99 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     druid:
-        # 主库数据源
-        master:
-            url: jdbc:mysql://172.100.45.31:3306/dchealth?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
-            username: root
-            password: Ajs&1Hjs(&8hs
-        # 从库数据源
-        slave:
-            # 从数据源开关/默认关闭
-            enabled: false
-            url:
-            username:
-            password:
+      # 主库数据源
+      master:
+        url: jdbc:mysql://10.131.102.104:13306/chronic_disease_new?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
+        username: root
+        password: Hebta.123
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      # 从库数据源
+      slave:
+        # 从数据源开关/默认关闭
+        enabled: false
+        url: jdbc:mysql://10.131.102.104:13306/chronic_disease_new?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
+        username:
+        password:
+        driver-class-name: com.mysql.cj.jdbc.Driver
 
-        hismysql:
+      hismysql:
+        enabled: true
+        url: jdbc:mysql://10.131.102.104:13306/chronic_disease_new?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true&sessionVariables=sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION',optimizer_switch='derived_merge=off'
+        username: root
+        password: Hebta.123
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      webStatFilter:
+        enabled: true
+      statViewServlet:
+        enabled: true
+        # 设置白名单，不填则允许所有访问
+        allow:
+        url-pattern: /druid/*
+        # 控制台管理用户名和密码
+        login-username: dchealth
+        login-password: 123456
+      filter:
+        stat:
           enabled: true
-          url: jdbc:mysql://10.10.10.27:23001/messageplat?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowMultiQueries=true
-          username: MBSF
-          password: MBSF
-          driver-class-name: com.mysql.cj.jdbc.Driver
-
-        # 初始连接数
-        initialSize: 5
-        # 最小连接池数量
-        minIdle: 10
-        # 最大连接池数量
-        maxActive: 500
-        # 配置获取连接等待超时的时间
-        maxWait: 60000
-        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-        timeBetweenEvictionRunsMillis: 60000
-        # 配置一个连接在池中最小生存的时间，单位是毫秒
-        minEvictableIdleTimeMillis: 300000
-        # 配置一个连接在池中最大生存的时间，单位是毫秒
-        maxEvictableIdleTimeMillis: 900000
-        # 配置检测连接是否有效
-        validationQuery: SELECT 1 FROM DUAL
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        webStatFilter:
-            enabled: true
-        statViewServlet:
-            enabled: true
-            # 设置白名单，不填则允许所有访问
-            allow:
-            url-pattern: /druid/*
-            # 控制台管理用户名和密码
-            login-username: dchealth
-            login-password: 123456
-        filter:
-            stat:
-                enabled: true
-                # 慢SQL记录
-                log-slow-sql: true
-                slow-sql-millis: 1000
-                merge-sql: true
-            wall:
-                config:
-                    multi-statement-allow: true
+          # 慢SQL记录
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true
+    databaseName: dchealth
 
 # token配置
 token:
-    # 令牌自定义标识
-    header: Authorization
-    # 令牌密钥
-    secret: abcdefghijklmnopqrstuvwxyz
-    # 令牌有效期（默认30分钟）
-    expireTime: 300
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30分钟）
+  expireTime: 300
+
 xxl:
   job:
-    # 调度中心配置
+    enabled: false  # 直接禁用XXL-JOB
     admin:
-      addresses: http://172.100.45.33:8032/jobadmin/  # 调度中心地址（确保端口和路径正确）
-    accessToken: default_token  # 调度中心通讯TOKEN（需与admin端一致）
-
-    # 执行器配置
+      addresses: http://localhost:8032/dchealth-job-admin/
+    # job, access token
+    accessToken: default_token
+    # job executor appname
     executor:
-      appname: tangdu  # 执行器名称（需唯一）
-      address:  # 执行器地址（自动注册时可为空）
-      ip: 172.100.45.33  # 执行器IP（建议显式配置）
-      port: 8866  # 执行器端口（确保未被占用）
-      logpath: /usr/local/server/mirco-server/logs/jobhandler  # 任务日志路径
-      logretentiondays: 30  # 日志保留天数
-
-    # 网络超时配置（关键修复项）
-    http:
-      timeout: 15000  # 连接调度中心超时（毫秒，默认5000，建议15秒）
-      readTimeout: 30000  # 读取调度中心响应超时（毫秒，默认10000，建议30秒）
-
-
-
+      appname: tangdu
+      address:
+      ip: 127.0.0.1
+      port: 8866
+      logpath: /usr/local/server/mirco-server/logs/jobhandler
+      #executor log-retention-days
+      logretentiondays: 30
 
 # 讯飞服务请求域名
 xunfei:
-  requestUrl: https://td.dchealthclinical.com/xfapi/
+  #  requestUrl: https://test.giantcro.com/xfapi/
+  # 直连发送
+  requestUrl: http://test.giantcro.com:7925/xfapi/
 
 multimodalView:
   url: http://10.131.101.219:8035/multimodal-view

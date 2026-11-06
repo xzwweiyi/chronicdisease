@@ -67,6 +67,9 @@ public class PatientInfo extends BaseEntity
     // 查询使用
     private String notPatientStatus;
 
+    /** 重点关注 0否 1是 */
+    private String focusStatus;
+
     private String edcNames;
 
     //搜索状态 2进行中3已完成4失访
@@ -215,6 +218,20 @@ public class PatientInfo extends BaseEntity
      * 手动入组次数
      */
     private long generatedManually;
+
+    // ========== 管理路径扩展字段 ==========
+
+    /** 系统类型：1-队列，2-路径 */
+    private String systemType;
+
+    /** 当前路径阶段 */
+    private String pathwayStage;
+
+    /** 基线是否完成：0-否，1-是 */
+    private Integer baselineCompleted;
+
+    /** 路径进度百分比（0-100） */
+    private Double pathwayProgress;
 
     public PatientInfo(){}
 

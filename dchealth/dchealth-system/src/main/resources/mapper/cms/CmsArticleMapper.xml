@@ -8,6 +8,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="tenantId"    column="tenant_id"    />
         <result property="categoryId"    column="category_id"    />
+        <result property="eduCategoryId"    column="edu_category_id"    />
+        <result property="eduCategoryName"    column="eduCategoryName"    />
         <result property="title"    column="title"    />
         <result property="link"    column="link"    />
         <result property="uploadType"    column="upload_type"    />
@@ -50,15 +52,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectCmsInformationList"  parameterType="CmsArticle" resultMap="CmsArticleResult">
-        select a.id, a.tenant_id, a.category_id, a.title, a.link, a.upload_type, a.forward_link, a.video_url,
+        select a.id, a.tenant_id, a.category_id, a.edu_category_id, ec.name as eduCategoryName, a.title, a.link, a.upload_type, a.forward_link, a.video_url,
         a.video_image, a.image, a.keywords, a.description, a.list_order_num, a.list_show, a.position_type, a.create_by,
         a.create_id, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag, a.dept_id, a.disease_id, a.type,
         c.name categoryName, a.article_status, a.ques_num
         from cms_article a left join cms_category c on a.category_id = c.id
+        left join cms_edu_category ec on a.edu_category_id = ec.id
         <where>
             a.del_flag = 'N' and c.del_flag = 'N'
             <if test="tenantId != null  and tenantId != ''">and a.tenant_id =#{tenantId}    </if>
             <if test="categoryId != null ">and a.category_id = #{categoryId}</if>
+            <if test="eduCategoryId != null ">and a.edu_category_id = #{eduCategoryId}</if>
             <if test="title != null  and title != ''">and a.title like concat( '%', #{title}, '%')</if>
             <if test="link != null  and link != ''">and a.link =#{link}</if>
             <if test="uploadType != null  and uploadType != ''"> and a.upload_type = #{uploadType}</if>
@@ -325,7 +329,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectCmsArticleById" parameterType="Long" resultMap="CmsArticleResult">
-        select id, tenant_id, category_id, title, upload_type, forward_link, link, video_url, video_image, image, keywords, description, list_order_num, list_show,
+        select id, tenant_id, category_id, edu_category_id, title, upload_type, forward_link, link, video_url, video_image, image, keywords, description, list_order_num, list_show,
                position_type, create_id, create_by, create_time, update_by, update_time, remark, del_flag, dept_id, dept_ids, disease_id, type, article_status,
                ques_num, article_type ,scores_total_val from cms_article
         where id = #{id}
@@ -336,6 +340,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="tenantId != null">tenant_id,</if>
             <if test="categoryId != null">category_id,</if>
+            <if test="eduCategoryId != null">edu_category_id,</if>
             <if test="title != null and title != ''">title,</if>
             <if test="link != null">link,</if>
             <if test="uploadType != null">upload_type,</if>
@@ -367,6 +372,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tenantId != null">#{tenantId},</if>
             <if test="categoryId != null">#{categoryId},</if>
+            <if test="eduCategoryId != null">#{eduCategoryId},</if>
             <if test="title != null and title != ''">#{title},</if>
             <if test="link != null">#{link},</if>
             <if test="uploadType != null">#{uploadType},</if>
@@ -402,6 +408,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="eduCategoryId != null">edu_category_id = #{eduCategoryId},</if>
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="link != null">link = #{link},</if>
             <if test="uploadType != null">upload_type = #{uploadType},</if>

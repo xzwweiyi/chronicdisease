@@ -38,6 +38,9 @@ public class DruidConfig
     public DataSource masterDataSource(DruidProperties druidProperties)
     {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+        // Enforce utf8mb4 charset on every connection to prevent Chinese garbled characters
+        dataSource.setConnectionInitSqls(java.util.Collections.singletonList("SET NAMES utf8mb4"));
+        log.info("=== Master DataSource connectionInitSqls set: SET NAMES utf8mb4 ===");
         return druidProperties.dataSource(dataSource);
     }
 
@@ -46,6 +49,7 @@ public class DruidConfig
     @ConditionalOnProperty(prefix = "spring.datasource.druid.hismysql", name = "enabled", havingValue = "true")
     public DataSource hisMysqlDataSource(DruidProperties druidProperties) {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+        dataSource.setConnectionInitSqls(java.util.Collections.singletonList("SET NAMES utf8mb4"));
         return druidProperties.dataSource(dataSource);
     }
 
@@ -55,6 +59,7 @@ public class DruidConfig
     public DataSource slaveDataSource(DruidProperties druidProperties)
     {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+        dataSource.setConnectionInitSqls(java.util.Collections.singletonList("SET NAMES utf8mb4"));
         return druidProperties.dataSource(dataSource);
     }
     @Bean(name = "dynamicDataSource")

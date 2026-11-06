@@ -43,3 +43,6 @@ gen/
 
 # VSCode
 .vscode/
+
+# 本地 redis 运行时二进制
+dchealth/redis-binaries/

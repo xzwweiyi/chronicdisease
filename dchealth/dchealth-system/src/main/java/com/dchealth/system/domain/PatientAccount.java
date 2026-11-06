@@ -63,6 +63,11 @@ public class PatientAccount extends BaseEntity {
     //@Excel(name = "绑定状态0未绑定1已绑定")
     private String bindStatus;
 
+    /**
+     * 公众号 openId
+     */
+    private String openId;
+
     //科室id
     private Long[] deptIds;
 }

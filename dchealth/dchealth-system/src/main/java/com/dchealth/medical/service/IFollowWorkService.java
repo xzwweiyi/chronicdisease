@@ -8,6 +8,7 @@ import com.dchealth.medical.domain.vo.*;
 import com.dchealth.research.domain.ResearchInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 随访工作站业务层
@@ -177,4 +178,37 @@ public interface IFollowWorkService {
     public void createPopNotice(ResearchInfo researchInfo, String patientId);
 
     public void clearFollowRecord(PatientInfo patientInfo);
+
+    /**
+     * 档案管理-随访管理：查询某患者的待随访与已完成随访节点
+     *
+     * @param cardId 身份证号（mp_person.card_id）
+     * @return key=pending 待随访节点集合 / key=completed 已完成随访节点集合
+     */
+    public Map<String, List<FollowWorkListVO>> patientFollowNodes(String cardId);
+
+    /**
+     * 查询患者联系方式（手机号、公众号 openId）
+     *
+     * @param patientId 患者ID
+     * @return 联系方式
+     */
+    public PatientContactVO getPatientContact(Long patientId);
+
+    /**
+     * 一键拨打电话（语音盒）
+     *
+     * @param patientId 患者ID
+     * @return true 拨号请求已触发
+     */
+    public boolean callPatient(Long patientId);
+
+    /**
+     * 发送微信随访提醒
+     *
+     * @param patientId 患者ID
+     * @param content   提醒内容
+     * @return true 发送成功
+     */
+    public boolean sendWechatFollowReminder(Long patientId, String content);
 }

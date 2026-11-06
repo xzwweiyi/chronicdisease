@@ -68,4 +68,30 @@ public class PatientRecordTemplate extends BaseEntity
     /** 随访对应的模板信息 */
     private List<FMedicalForm> fmedicalForms;
 
+    // ========== 管理路径节点扩展字段 ==========
+
+    /** 节点类型：follow_up-随访，assessment-评估，intervention-干预，education-宣教，reminder-提醒，orders-医嘱 */
+    private String nodeType;
+
+    /** 节点专属配置（JSON） */
+    private String nodeConfig;
+
+    /** 节点排序号 */
+    private Integer nodeOrder;
+
+    /** 是否为基线节点：0-否，1-是 */
+    private Integer isBaseline;
+
+    /** 提醒提前天数 */
+    private Integer reminderAdvanceDays;
+
+    /** 提醒模板ID */
+    private Long reminderTemplateId;
+
+    /** 必填表单列表（JSON数组） */
+    private String requiredForms;
+
+    /** 可选表单列表（JSON数组） */
+    private String optionalForms;
+
 }

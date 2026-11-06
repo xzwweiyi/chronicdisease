@@ -5,6 +5,8 @@ import com.dchealth.common.core.domain.BaseEntity;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 患者信息-对应omop对象 mp_person
  * 
@@ -87,5 +89,11 @@ public class MpPerson extends BaseEntity{
 
 
     private String patientName;
-   
+
+    /** 建档开始日期（查询用，非表字段） */
+    private Date beginCreateTime;
+
+    /** 建档结束日期（查询用，非表字段） */
+    private Date endCreateTime;
+
 }

@@ -42,13 +42,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cardType != null  and cardType != ''"> and card_type = #{cardType}</if>
             <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
             <if test="locationId != null  and locationId != ''"> and location_id = #{locationId}</if>
-            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
             <if test="contactsName != null  and contactsName != ''"> and contacts_name like concat('%', #{contactsName}, '%')</if>
             <if test="contactsPhone != null  and contactsPhone != ''"> and contacts_phone = #{contactsPhone}</if>
             <if test="personCareer != null  and personCareer != ''"> and person_career = #{personCareer}</if>
             <if test="maritalStatus != null  and maritalStatus != ''"> and marital_status = #{maritalStatus}</if>
             <if test="degreeOfEducation != null  and degreeOfEducation != ''"> and degree_of_education = #{degreeOfEducation}</if>
             <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="beginCreateTime != null"> and create_time &gt;= #{beginCreateTime}</if>
+            <if test="endCreateTime != null"> and create_time &lt;= #{endCreateTime}</if>
         </where>
     </select>
 

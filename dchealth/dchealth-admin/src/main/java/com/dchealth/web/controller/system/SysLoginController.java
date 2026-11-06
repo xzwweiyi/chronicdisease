@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 登录验证
@@ -40,6 +42,8 @@ public class SysLoginController
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    private static final Logger log = LoggerFactory.getLogger(SysLoginController.class);
 
     /**
      * 登录方法
@@ -92,6 +96,18 @@ public class SysLoginController
     {
         Long userId = SecurityUtils.getUserId();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
+        // Debug: log menu count
+        int totalMenus = countAllMenus(menus);
+        log.info("getRouters userId={}, topLevel={}, totalMenus={}", userId, menus.size(), totalMenus);
         return AjaxResult.success(menuService.buildMenus(menus));
     }
+
+    private int countAllMenus(List<SysMenu> menus) {
+        int count = menus.size();
+        for (SysMenu m : menus) {
+            if (m.getChildren() != null) count += countAllMenus(m.getChildren());
+        }
+        return count;
+    }
+
 }
