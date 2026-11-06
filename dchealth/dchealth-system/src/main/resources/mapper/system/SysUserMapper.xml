@@ -86,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="deptId != null  and deptId != '' and deptId!='100'.toString()">and u.dept_id = #{deptId}</if>
 
 <!--		<if test="deptId != null and deptId != 0">-->
-<!--			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE (strpos(',' || ancestors || ',', ',' || #{deptId} || ',') > 0) ))-->
+<!--			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE (strpos(concat(',', ancestors, ','), concat(',', #{deptId}, ',')) > 0) ))-->
 <!--		</if>-->
 
 <!--		<if test="researchUserId != null  and researchUserId != '' and researchUserId!=1 and deptId != null and deptId != '' and deptId==100 ">-->
@@ -308,7 +308,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
 		</if>
 		<if test="deptId != null and deptId != ''">
-			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE (strpos(',' || ancestors || ',', ',' || #{deptId} || ',') > 0) ))
+			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE (strpos(concat(',', ancestors, ','), concat(',', #{deptId}, ',')) > 0) ))
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
@@ -329,7 +329,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			AND u.phonenumber like concat('%', #{phonenumber}, '%')
 		</if>
 		<if test="deptId != null and deptId != ''">
-			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE (strpos(',' || ancestors || ',', ',' || #{deptId} || ',') > 0) ))
+			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE (strpos(concat(',', ancestors, ','), concat(',', #{deptId}, ',')) > 0) ))
 		</if>
 <!--		<if test="userId != null  and userId != '' and userId!=1 and deptId != null and deptId != '' and deptId==100 ">-->
 <!--			and u.dept_id in (-->

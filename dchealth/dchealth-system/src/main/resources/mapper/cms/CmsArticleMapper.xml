@@ -311,7 +311,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
         ca.del_flag = 'N'
         AND ca.type = 2
-        AND (strpos(',' || ca.position_type || ',', ',' || "2" || ',') > 0)
+        AND (strpos(concat(',', ca.position_type, ','), concat(',', "2", ',')) > 0)
         AND rp.fill_status = 2
 
 
