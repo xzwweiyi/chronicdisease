@@ -296,7 +296,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByOutboundAndRemindType" resultMap="PatientRecordOutboundResult">
         <include refid="selectPatientRecordOutboundVo"/>
-        where g.record_id = #{recordId} and g.outbound_type = #{outboundType} and g.remind_type = #{remindType}  limit 0,1
+        where g.record_id = #{recordId} and g.outbound_type = #{outboundType} and g.remind_type = #{remindType}  limit 1 OFFSET 0
     </select>
 
 
@@ -315,7 +315,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="patientName != null  and patientName != '' "> and pi.patient_name like concat('%', #{patientName}, '%')</if>
             <if test="patientId != null  and patientId != '' "> and pi.patient_id like concat('%', #{patientId}, '%')</if>
         </where>
-        limit 0,1
+        limit 1 OFFSET 0
     </select>
     <select id="selectOneId" parameterType="PatientRecordOutbound" resultMap="PatientRecordOutboundResult">
           select g.id
@@ -336,7 +336,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="patientName != null  and patientName != '' "> and pi.patient_name like concat('%', #{patientName}, '%')</if>
             <if test="patientId != null  and patientId != '' "> and pi.patient_id like concat('%', #{patientId}, '%')</if>
         </where>
-        limit 0,1
+        limit 1 OFFSET 0
     </select>
 
     <update id="updateChangeOutboundStatusByRecordId">

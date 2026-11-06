@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="replyUserId != null "> and reply_user_id = #{replyUserId}</if>
             <if test="replyContent != null  and replyContent != ''"> and reply_content = #{replyContent}</if>
             <if test="questionStatus != null  and questionStatus != ''"> and question_status = #{questionStatus}</if>
-            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="type != null  and type != ''"> and "type" = #{type}</if>
             <if test="fromTime != null "> and from_time = #{fromTime}</if>
             <if test="replyTime != null "> and reply_time = #{replyTime}</if>
         </where>
@@ -48,9 +48,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="medicalFormId != null "> and prds.medical_form_id = #{medicalFormId}</if>
             <if test="edcStatus != null "> and prds.edc_status = #{edcStatus}</if>
             <if test="questionStatus != null  and questionStatus != ''"> and question_status = #{questionStatus}</if>
-            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="type != null  and type != ''"> and "type" = #{type}</if>
         </where>
-        ORDER BY g.from_time desc LIMIT 0,1
+        ORDER BY g.from_time desc LIMIT 1 OFFSET 0
     </select>
     
     <select id="selectQuestionRecordByQuestionId" parameterType="Long" resultMap="QuestionRecordResult">
@@ -76,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="replyUserId != null">reply_user_id,</if>
             <if test="replyContent != null">reply_content,</if>
             <if test="questionStatus != null and questionStatus != ''">question_status,</if>
-            <if test="type != null and type != ''">`type`,</if>
+            <if test="type != null and type != ''">"type",</if>
             <if test="fromTime != null">from_time,</if>
             <if test="replyTime != null">reply_time,</if>
          </trim>
@@ -102,7 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="replyUserId != null">reply_user_id = #{replyUserId},</if>
             <if test="replyContent != null">reply_content = #{replyContent},</if>
             <if test="questionStatus != null and questionStatus != ''">question_status = #{questionStatus},</if>
-            <if test="type != null and type != ''">`type` = #{type},</if>
+            <if test="type != null and type != ''">"type" = #{type},</if>
             <if test="fromTime != null">from_time = #{fromTime},</if>
             <if test="replyTime != null">reply_time = #{replyTime},</if>
         </trim>

@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 
 	<select id="getDeptIdsByUserId" resultType="String">
-	    select GROUP_CONCAT(t.dept_id) dept_ids from  (
+	    select string_agg(CAST(t.dept_id AS VARCHAR), ',') dept_ids from  (
 			select DISTINCT g.dept_id
 			from sys_role_dept g
 			INNER JOIN sys_user_role sur on g.role_id=sur.role_id

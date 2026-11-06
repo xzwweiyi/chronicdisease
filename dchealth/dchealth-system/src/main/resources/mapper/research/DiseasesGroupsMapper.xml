@@ -89,7 +89,7 @@
 
     <select id="selectBydiseasesGroupsName" resultMap="DiseasesGroupsResult" parameterType="String">
         <include refid="selectDiseasesGroupsVo"/>
-        where diseases_groups_name = #{diseasesGroupsName} and del_flag = '0' order by create_time asc limit 0,1
+        where diseases_groups_name = #{diseasesGroupsName} and del_flag = '0' order by create_time asc limit 1 OFFSET 0
     </select>
 
 </mapper>

@@ -24,7 +24,7 @@
         select
           id, tb_order, tb_pre, tb_full_name, create_time, is_del
         from tb_dynamic_record
-        limit #{offset}, #{limit}
+        limit #{limit} OFFSET #{offset}
     </select>
 
     <!--通过实体作为筛选条件查询-->

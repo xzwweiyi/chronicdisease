@@ -194,7 +194,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByResearchIdAndNum"  resultMap="PatientRecordTemplateResult">
         <include refid="selectPatientRecordTemplateVo"/>
-        where research_id = #{researchId} and follow_num = #{followNum} limit 0,1
+        where research_id = #{researchId} and follow_num = #{followNum} limit 1 OFFSET 0
     </select>
 
     <select id="selectPatientMedicalPropertyExamRes" resultMap="PatientMedicalPropertyResResult">

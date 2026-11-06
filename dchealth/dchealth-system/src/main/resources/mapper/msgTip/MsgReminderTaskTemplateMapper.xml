@@ -60,7 +60,7 @@
                 and update_time = #{updateTime}
             </if>
         </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
+        limit #{pageable.pageSize} OFFSET #{pageable.offset}
     </select>
 
     <!--统计总行数-->

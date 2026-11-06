@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="selectByUserId"  resultMap="SysUserRoleResult">
 		select user_id,role_id from sys_user_role
-		where user_id = #{userId}  limit 0,1
+		where user_id = #{userId}  limit 1 OFFSET 0
 	</select>
 
 	<delete id="deleteUserRoleByUserId" parameterType="Long">

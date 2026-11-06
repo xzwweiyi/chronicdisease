@@ -314,7 +314,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         c.warn_status warnStatus,
         c.lose_type loseType,
         c.lose_reason loseReason,
-        c.`name` name,
+        c."name" name,
         a.medical_form_id medicalFormId,
         b.medical_code medicalCode,
         b.form_type formType,
@@ -330,9 +330,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         d.person_id personId
         FROM f_medical_property a
         left JOIN
-        `f_medical_form` b on a.medical_form_id = b.medical_form_id
+        "f_medical_form" b on a.medical_form_id = b.medical_form_id
         left JOIN patient_record c on c.follow_id = b.follow_id
-        left JOIN `patient_info` d on c.patient_id = d.patient_id
+        left JOIN "patient_info" d on c.patient_id = d.patient_id
         LEFT JOIN research_info e on e.id = d.research_id
         where c.fill_status = '1' and b.form_type in ('0', '1', '3') and b.is_deleted = 0 and a.is_deleted = 0
         <if test="createTime != null">
@@ -349,7 +349,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         c.warn_status warnStatus,
         c.lose_type loseType,
         c.lose_reason loseReason,
-        c.`name` name,
+        c."name" name,
         a.medical_form_id medicalFormId,
         b.medical_code medicalCode,
         b.form_type formType,
@@ -365,9 +365,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         d.person_id personId
         FROM f_medical_property a
         left JOIN
-        `f_medical_form` b on a.medical_form_id = b.medical_form_id
+        "f_medical_form" b on a.medical_form_id = b.medical_form_id
         left JOIN patient_record c on c.follow_id = b.follow_id
-        left JOIN `patient_info` d on c.patient_id = d.patient_id
+        left JOIN "patient_info" d on c.patient_id = d.patient_id
         LEFT JOIN research_info e on e.id = d.research_id
         where c.fill_status = '1' and b.form_type in ('0', '1', '3') and b.is_deleted = 0 and a.is_deleted = 0
         <if test="createTime != null">

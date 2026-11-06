@@ -97,7 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBySpeedId" parameterType="String" resultMap="ResearchXunfeiTemplateResult">
         <include refid="selectResearchXunfeiTemplateVo"/>
-        where speech_id = #{speechId} limit 0,1
+        where speech_id = #{speechId} limit 1 OFFSET 0
     </select>
 
 

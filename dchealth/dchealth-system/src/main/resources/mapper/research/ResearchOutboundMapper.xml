@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectByResearchIdAndType" resultMap="ResearchOutboundResult">
         <include refid="selectResearchOutboundVo"/>
-         where research_id = #{researchId} and type = #{type} and del_flag='0' limit 0,1
+         where research_id = #{researchId} and type = #{type} and del_flag='0' limit 1 OFFSET 0
     </select>
 
     <insert id="insertResearchOutbound" parameterType="ResearchOutbound" useGeneratedKeys="true" keyProperty="id">

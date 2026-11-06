@@ -108,7 +108,7 @@
         select count(distinct mp.card_id)
         from mp_person mp
         inner join resident_archive ra on mp.card_id = ra.id_card
-        where DATE_FORMAT(ra.create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+        where to_char(ra.create_time, 'YYYY-MM') = to_char(NOW(), 'YYYY-MM')
     </select>
 
     <select id="countCrossInstitution" resultType="long">
@@ -221,7 +221,7 @@
     <select id="crossOrgDistribution" resultType="map">
         select ra.managing_institution as institutionName,
                count(distinct mp.card_id) as totalArchives,
-               sum(case when DATE_FORMAT(ra.create_time,'%Y-%m') = DATE_FORMAT(now(),'%Y-%m') then 1 else 0 end) as newThisMonth,
+               sum(case when to_char(ra.create_time, 'YYYY-MM') = to_char(now(), 'YYYY-MM') then 1 else 0 end) as newThisMonth,
                sum(case when ra.disease_types like '%高血压%' then 1 else 0 end) as hypertension,
                sum(case when ra.disease_types like '%糖尿病%' then 1 else 0 end) as diabetes,
                sum(case when ra.disease_types like '%脑卒中%' then 1 else 0 end) as stroke,

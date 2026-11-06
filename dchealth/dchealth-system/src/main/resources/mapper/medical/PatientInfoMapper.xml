@@ -139,9 +139,9 @@
         g.enrollment_status, g.loss_cause, g.loss_cause_other, g.update_by, g.create_by, g.create_time, g.update_time, g.enrollment_time, g.plan_research_id, g.enrollment_result,
         g.enrollment_result_content, g.enrollment_handler_status, g.allocated_status, g.allocated_handler_status, g.patient_activity_status, g.adjust_type, g.old_patient_id ,
         g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card,
-        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` = '基线' and follow_status = 3 and patient_id = g.patient_id) as is_submit_base,
-        (select case when count(1)>0 then 0 else 1 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status != 3 and patient_id = g.patient_id) as is_complete_followup,
-        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and `name` != '基线' and follow_status = 3 and patient_id = g.patient_id) as exists_complete_followup,
+        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and "name" = '基线' and follow_status = 3 and patient_id = g.patient_id) as is_submit_base,
+        (select case when count(1)>0 then 0 else 1 end from patient_record where research_id = ri.id and "name" != '基线' and follow_status != 3 and patient_id = g.patient_id) as is_complete_followup,
+        (select case when count(1)>0 then 1 else 0 end from patient_record where research_id = ri.id and "name" != '基线' and follow_status = 3 and patient_id = g.patient_id) as exists_complete_followup,
         g.generated_manually
         from patient_info g
         INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
@@ -327,8 +327,8 @@
             <if test="searchType != null  and searchType != '' and searchType=='4'.toString()"> and g.patient_status = #{searchType} </if>
 
             <if test="startTime != null  and endTime != null"> and
-                date_format(g.enrollment_time,'%Y-%m-%d') >= date_format(#{startTime},'%Y-%m-%d')
-                and date_format(#{endTime},'%Y-%m-%d') >= date_format(g.enrollment_time,'%Y-%m-%d')
+                to_char(g.enrollment_time, 'YYYY-MM-DD') >= to_char(#{startTime}, 'YYYY-MM-DD')
+                and to_char(#{endTime}, 'YYYY-MM-DD') >= to_char(g.enrollment_time, 'YYYY-MM-DD')
             </if>
         </where>
         order by g.enrollment_time asc
@@ -365,8 +365,8 @@
             <if test="searchType != null  and searchType != '' and searchType=='4'.toString()"> and g.patient_status = #{searchType} </if>
 
             <if test="startTime != null  and endTime != null"> and
-                date_format(g.enrollment_time,'%Y-%m-%d') >= date_format(#{startTime},'%Y-%m-%d')
-                and date_format(#{endTime},'%Y-%m-%d') >= date_format(g.enrollment_time,'%Y-%m-%d')
+                to_char(g.enrollment_time, 'YYYY-MM-DD') >= to_char(#{startTime}, 'YYYY-MM-DD')
+                and to_char(#{endTime}, 'YYYY-MM-DD') >= to_char(g.enrollment_time, 'YYYY-MM-DD')
             </if>
         </where>
         order by g.enrollment_time asc
@@ -917,10 +917,10 @@
         INNER join sys_user su on su.user_name=b.create_by
         WHERE a.enrollment_status = 1 and b.del_flag = '0' and b.research_status != 0 and a.patient_status != 6 and b.is_follow_rate =1
         <if test="inputStartTime != null">
-            and DATE_FORMAT(a.enrollment_time,'%Y-%m-%d') &gt;= #{inputStartTime}
+            and to_char(a.enrollment_time, 'YYYY-MM-DD') &gt;= #{inputStartTime}
         </if>
         <if test="inputEndTime != null">
-            and DATE_FORMAT(a.enrollment_time,'%Y-%m-%d') &lt;= #{inputEndTime}
+            and to_char(a.enrollment_time, 'YYYY-MM-DD') &lt;= #{inputEndTime}
         </if>
         <if test="deptId != null">
             and a.dept_id = #{deptId}

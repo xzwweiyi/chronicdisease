@@ -3,7 +3,7 @@
 <mapper namespace="com.dchealth.notice.mapper.HisNoticeMapper">
     <insert id="batchInsert" parameterType="java.util.List">
 
-        INSERT IGNORE INTO message (
+        INSERT INTO message (
         info_no,
         insert_time,
         send_time,
@@ -45,6 +45,7 @@
             #{item.miniprogramOriginalId}
             )
         </foreach>
+        ON CONFLICT DO NOTHING
     </insert>
 
 </mapper>

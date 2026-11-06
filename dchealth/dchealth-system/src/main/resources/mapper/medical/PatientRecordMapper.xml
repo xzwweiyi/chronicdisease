@@ -550,7 +550,7 @@
                    (select MAX(r.record_id) as new_record_id
                     from patient_record r
                     where r.research_id = #{researchId}  and r.follow_status !=-1
-                      and date_format(r.lock_visit_time, '%y-%m') &lt;= date_format(#{handleDate}, '%y-%m')
+                      and to_char(r.lock_visit_time, 'YY-MM') &lt;= to_char(#{handleDate}, 'YY-MM')
                     group by r.patient_id) pd
               where pr.record_id = pd.new_record_id) c on c.patient_id = pi.patient_id
         where pi.research_id = #{researchId}
@@ -563,10 +563,10 @@
         where pr.research_id = #{researchId}
           and exists (select 1
                       from patient_record pr2
-                      where pr.patient_id = pr2.patient_id and `name` != '基线' and follow_status = 3)
+                      where pr.patient_id = pr2.patient_id and "name" != '基线' and follow_status = 3)
           and not exists (select 1
                           from patient_record pr2
-                          where pr.patient_id = pr2.patient_id and `name` != '基线' and follow_status != 3)
+                          where pr.patient_id = pr2.patient_id and "name" != '基线' and follow_status != 3)
           and pr.follow_status !=-1
 
     </select>
@@ -928,7 +928,7 @@
     <select id="selectPatientRecordByResearchIdAndPatientId2" resultMap="PatientRecordResult">
         SELECT re.*, b.edcNames
         FROM patient_record re
-                 LEFT JOIN (SELECT patient_id, GROUP_CONCAT(name) AS edcNames
+                 LEFT JOIN (SELECT patient_id, string_agg(name, ',') AS edcNames
                             FROM patient_record
                             WHERE patient_id = #{patientId}
                               AND research_id = #{researchId}
@@ -980,7 +980,7 @@
 
     <select id="selectOldByPatientId" resultMap="PatientRecordResult">
         <include refid="selectPatientRecordVo"/>
-        where patient_id = #{patientId} order by create_time asc limit 0,1
+        where patient_id = #{patientId} order by create_time asc limit 1 OFFSET 0
     </select>
 
     <select id="selectPatientRecordListForStatistics" parameterType="com.dchealth.statistics.domain.StatisticsParam"
@@ -1003,7 +1003,7 @@
     <select id="selectPatientRecordListForStatistics2" parameterType="com.dchealth.statistics.domain.StatisticsParam"
             resultMap="PatientRecordResult">
         select p.patient_id,p.patient_name, r.record_id
-        ,p.dept_id,r.warn_status,r.over_time_create_time,p.research_id,r.`name`, r.follow_status, r.over_time_status
+        ,p.dept_id,r.warn_status,r.over_time_create_time,p.research_id,r."name", r.follow_status, r.over_time_status
         from patient_record r, patient_info p, research_info i, patient_record_template prt
         , sys_user su, research_diseases rd
         where i.id=p.research_id and p.patient_id=r.patient_id and prt.follow_id=r.follow_id and rd.disease_id =
@@ -1211,7 +1211,7 @@
         and c.del_flag = '0' and c.research_status != 0 and b.patient_status != 6 and c.is_follow_rate =1
 
         <if test="followStartTime != null and followEndTime != null">
-            AND DATE_FORMAT(a.follow_submit_time,'%Y-%m-%d') BETWEEN #{followStartTime} and #{followEndTime}
+            AND to_char(a.follow_submit_time, 'YYYY-MM-DD') BETWEEN #{followStartTime} and #{followEndTime}
         </if>
         <if test="deptId != null ">
             AND b.dept_id = #{deptId}
@@ -1226,10 +1226,10 @@
             AND c.disease_type_id = #{diseaseId}
         </if>
         <if test="inputStartTime != null">
-            AND DATE_FORMAT(b.enrollment_time,'%Y-%m-%d') &gt;= #{inputStartTime}
+            AND to_char(b.enrollment_time, 'YYYY-MM-DD') &gt;= #{inputStartTime}
         </if>
         <if test="inputEndTime != null">
-            AND DATE_FORMAT(b.enrollment_time,'%Y-%m-%d') &lt;= #{inputEndTime}
+            AND to_char(b.enrollment_time, 'YYYY-MM-DD') &lt;= #{inputEndTime}
         </if>
         <if test="userId != null ">and (c.id in (select research_id from research_user_role where user_id = #{userId})
             or su.user_id = #{userId} )
@@ -1240,6 +1240,6 @@
         select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
     </select>
     <select id="selectManuallyFollowUpList" resultMap="PatientRecordResult">
-        select * from patient_record   where  follow_status =-1  <![CDATA[ AND DATE(visit_time) <= CURDATE() ]]>
+        select * from patient_record   where  follow_status =-1  <![CDATA[ AND DATE(visit_time) <= CURRENT_DATE ]]>
     </select>
 </mapper>

@@ -107,7 +107,7 @@ public class DiseasePatientController extends BaseController {
                     "SELECT COUNT(DISTINCT mp.card_id) FROM mp_person mp " +
                     "INNER JOIN resident_archive ra ON mp.card_id = ra.id_card " +
                     "WHERE " + diseaseFilter +
-                    " AND DATE_FORMAT(ra.create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')", Long.class);
+                    " AND to_char(ra.create_time, 'YYYY-MM') = to_char(NOW(), 'YYYY-MM')", Long.class);
                 result.put("newThisMonth", newThisMonth != null ? newThisMonth : 0L);
             } else {
                 result.put("newThisMonth", 0L);

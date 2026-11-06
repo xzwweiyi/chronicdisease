@@ -13,6 +13,6 @@
     </select>
 
     <select id="querySamePreTable" resultType="string" parameterType="string">
-        select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = DATABASE() and TABLE_NAME like concat(#{tableNamePre}, '%');
+        select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = current_schema() and TABLE_NAME like concat(#{tableNamePre}, '%');
     </select>
 </mapper>

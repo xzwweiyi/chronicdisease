@@ -272,7 +272,7 @@
         inner join td_diagnosis td on pbi.patient_id = td.patient_id
         where td.result_date = #{startDate}
         order by td.id asc
-        limit #{offset}, #{pageSize}
+        limit #{pageSize} OFFSET #{offset}
     </select>
     <select id="queryDiagnosisInfos2" resultMap="TdHealthIndexMap">
 <!--        需要就诊id,患者id, 患者姓名, 性别, 出生日期,  手机号,  诊断描述, 诊断日期, 诊断结果日期 出院时间diagnosis_date, 入院时间 admission_hospital_date -->
@@ -285,7 +285,7 @@
 <!--        inner join mp_diagnosis c on b.person_id=c.person_id AND b.visit_occurrence_id=c.visit_occurrence_id AND b.care_site_id=c.care_site_id-->
 <!--        where c.result_date = #{params.startDate}-->
 <!--        order by c.id asc-->
-<!--        limit #{params.offset}, #{params.pageSize}-->
+<!--        limit #{params.pageSize}--> OFFSET #{params.offset}
 
         SELECT
         a.id as baseId,a.person_id as patient_id ,a.person_name as name,a.marital_status , a.gender_source_value as sex, SUBSTRING(a.card_id, 7, 8) AS 'birthday',
@@ -296,7 +296,7 @@
         left JOIN mp_patient_account c on a.person_id=c.person_id
         where b.result_date = #{params.startDate}
         order by b.id asc
-        limit #{params.offset}, #{params.pageSize}
+        limit #{params.pageSize} OFFSET #{params.offset}
     </select>
 
 </mapper>

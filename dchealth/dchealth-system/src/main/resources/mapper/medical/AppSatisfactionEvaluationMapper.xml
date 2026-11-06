@@ -49,7 +49,7 @@
             </if>
         </where>
         order by id desc
-        limit #{pageable.offset}, #{pageable.pageSize}
+        limit #{pageable.pageSize} OFFSET #{pageable.offset}
     </select>
 
     <!--统计总行数-->
@@ -81,7 +81,7 @@
         </where>
     </select>
     <select id="selectEvaluationList" resultMap="AppSatisfactionEvaluationMap">
-        select ase.id,ase.`type`,ase.user_id,ase.evaluation_scores,ase.evaluation_desc,ase.create_time,
+        select ase.id,ase."type",ase.user_id,ase.evaluation_scores,ase.evaluation_desc,ase.create_time,
             su.user_id,su.user_name name,sd.dept_name
         from app_satisfaction_evaluation ase
         left join sys_user su on ase.user_id = su.user_id
@@ -103,7 +103,7 @@
     </select>
     <select id="queryEvaluation" resultType="java.util.Map">
         select
-        IFNULL(CAST(AVG(ase.evaluation_scores) AS DECIMAL(10,2)),0) avgScores
+        coalesce(CAST(AVG(ase.evaluation_scores) AS DECIMAL(10,2)), 0) avgScores
         from app_satisfaction_evaluation ase
         left join sys_user su on ase.user_id = su.user_id
         left join sys_dept sd on sd.dept_id = su.dept_id

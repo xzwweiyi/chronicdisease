@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSmsTemplateByName" parameterType="String" resultMap="SmsTemplateResult">
         <include refid="selectSmsTemplateVo"/>
-        where template_name like concat('%', #{templateName}, '%') and status=1 LIMIT 0,1
+        where template_name like concat('%', #{templateName}, '%') and status=1 LIMIT 1 OFFSET 0
     </select>
         
     <insert id="insertSmsTemplate" parameterType="SmsTemplate" useGeneratedKeys="true" keyProperty="id">

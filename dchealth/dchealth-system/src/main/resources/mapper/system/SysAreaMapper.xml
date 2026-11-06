@@ -128,6 +128,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sys_area sa
                  left join sys_area sa2 on sa2.area_id  = sa.parent_id
                  left join sys_area sa3 on sa3.area_id  = sa2.parent_id
-        where sa.`level` = 3
+        where sa."level" = 3
     </select>
 </mapper>

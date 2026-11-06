@@ -80,11 +80,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectChildrenDeptById" parameterType="Long" resultMap="SysDeptResult">
-		select * from sys_dept where find_in_set(#{deptId}, ancestors)
+		select * from sys_dept where (strpos(',' || ancestors || ',', ',' || #{deptId} || ',') > 0)
 	</select>
 	
 	<select id="selectNormalChildrenDeptById" parameterType="Long" resultType="int">
-		select count(*) from sys_dept where status = 0 and del_flag = '0' and find_in_set(#{deptId}, ancestors)
+		select count(*) from sys_dept where status = 0 and del_flag = '0' and (strpos(',' || ancestors || ',', ',' || #{deptId} || ',') > 0)
 	</select>
 	
 	<select id="checkDeptNameUnique" resultMap="SysDeptResult">
@@ -174,7 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="findDeptListByAncestors" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
-		 where find_in_set(#{deptId}, ancestors)
+		 where (strpos(',' || ancestors || ',', ',' || #{deptId} || ',') > 0)
 	</select>
 
 	<select id="findDeptByDeptType" resultMap="SysDeptResult">

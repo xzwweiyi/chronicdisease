@@ -76,7 +76,7 @@
                 and create_time = #{createTime}
             </if>
         </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
+        limit #{pageable.pageSize} OFFSET #{pageable.offset}
     </select>
 
     <!--统计总行数-->
@@ -211,8 +211,8 @@
         select pr.patient_id ,'2',qr.record_id ,0,${sysMessage.msgType},'${sysMessage.msgContent}',null,null,null,null,3,null,null,null,null,null,null
         from question_record qr
         inner join patient_record pr on qr.record_id = pr.record_id
-        where  `type` =1
-        and from_time &lt; DATE_SUB(NOW(), INTERVAL ${offSet} DAY)
+        where  "type" =1
+        and from_time &lt; (NOW() - ((${offSet}) * INTERVAL '1 day'))
         and reply_time is null
         and not exists (select id from sys_message sm where sm.record_id = qr.record_id and sm.msg_type = ${sysMessage.msgType})
     </update>
@@ -222,7 +222,7 @@
         from patient_record pr
         where pr.warn_status = '1'
         and exists (
-        select wer.record_id from warn_early_record wer where pr.record_id = wer.record_id and wer.create_time &lt; DATE_SUB(NOW(), INTERVAL ${offSet} DAY)
+        select wer.record_id from warn_early_record wer where pr.record_id = wer.record_id and wer.create_time &lt; (NOW() - ((${offSet}) * INTERVAL '1 day'))
         )
         and not exists (select id from sys_message sm where sm.record_id = pr.record_id and sm.msg_type =${sysMessage.msgType})
     </update>
@@ -230,7 +230,7 @@
         insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, tip_type,template,redial_num,redial_interval,redial_interval_unit,reminder_start_time,reminder_end_time)
         select pr.patient_id ,'2',pr.record_id ,0,${sysMessage.msgType},'${sysMessage.msgContent}',null,null,null,null,3,null,null,null,null,null,null
         from patient_record pr
-        where pr.is_submit = 1 and pr.update_time &lt; DATE_SUB(NOW(), INTERVAL ${offSet} DAY)
+        where pr.is_submit = 1 and pr.update_time &lt; (NOW() - ((${offSet}) * INTERVAL '1 day'))
         and not exists (select id from sys_message sm where sm.record_id = pr.record_id and sm.msg_type =${sysMessage.msgType})
     </update>
 

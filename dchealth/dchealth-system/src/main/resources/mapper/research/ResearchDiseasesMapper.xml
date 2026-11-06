@@ -103,7 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name from sys_dept d
         left join research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
         <where>
-            and d.del_flag='0' and d.dept_type = '2' and d.parent_id >0 and d.`status`='0'
+            and d.del_flag='0' and d.dept_type = '2' and d.parent_id >0 and d."status"='0'
             <if test="deptId != null and deptId!='100'.toString() "> and d.dept_id = #{deptId}</if>
         </where>
         <!-- 数据范围过滤 -->

@@ -252,7 +252,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectMinStatusByRecordIdAndMedicalFormId" resultType="Integer">
         select min(k.edc_status)
         from (
-                 select pr.name,g.medical_form_id,IFNULL(pres.edc_status,1)  edc_status
+                 select pr.name,g.medical_form_id,coalesce(pres.edc_status, 1)  edc_status
                  from f_medical_form g
                           INNER JOIN patient_record pr on g.follow_id=pr.follow_id
                           left JOIN patient_record_edc_status pres on g.medical_form_id=pres.medical_form_id and pres.record_id=pr.record_id

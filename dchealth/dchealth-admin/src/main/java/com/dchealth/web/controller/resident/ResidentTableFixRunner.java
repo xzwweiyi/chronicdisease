@@ -44,7 +44,7 @@ public class ResidentTableFixRunner implements CommandLineRunner {
                     // 使用 information_schema 精确查询当前数据库的列（避免 JDBC metadata 的跨库误报）
                     java.sql.ResultSet rs = s.executeQuery(
                         "SELECT COLUMN_NAME FROM information_schema.COLUMNS " +
-                        "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'resident_archive' AND COLUMN_NAME = '" + colName + "'");
+                        "WHERE TABLE_SCHEMA = current_schema() AND TABLE_NAME = 'resident_archive' AND COLUMN_NAME = '" + colName + "'");
                     if (!rs.next()) {
                         s.execute("ALTER TABLE resident_archive ADD COLUMN " + colName + " " + colDef);
                         log.info("=== Added column: {} ===", colName);

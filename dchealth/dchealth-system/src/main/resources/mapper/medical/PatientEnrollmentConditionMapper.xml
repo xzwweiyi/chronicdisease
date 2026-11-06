@@ -180,7 +180,7 @@
     </select>
 
     <select id="selectPatientBaseInfo" parameterType="string" resultType="com.dchealth.medical.domain.vo.PatientEnrollmentSearchVo">
-        select id, patient_id as patientId,`name`,sex,birthday,discharge_hospital_date as dischargeHospitalDate,patient_clinic_time as patientClinicTime,admission_hospital_date as admissionHospitalDate from patient_base_info
+        select id, patient_id as patientId,"name",sex,birthday,discharge_hospital_date as dischargeHospitalDate,patient_clinic_time as patientClinicTime,admission_hospital_date as admissionHospitalDate from patient_base_info
         <if test="patientParam != null and patientParam !=''">
             ${patientParam}
         </if>

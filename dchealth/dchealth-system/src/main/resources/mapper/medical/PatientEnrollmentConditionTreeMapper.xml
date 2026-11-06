@@ -69,7 +69,7 @@
             </if>
         </where>
         order by level asc , order_num asc
-        limit #{pageable.offset}, #{pageable.pageSize}
+        limit #{pageable.pageSize} OFFSET #{pageable.offset}
     </select>
 
     <!--统计总行数-->

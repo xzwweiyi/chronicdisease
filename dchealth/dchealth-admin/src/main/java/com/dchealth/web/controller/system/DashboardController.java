@@ -76,7 +76,7 @@ public class DashboardController {
                 "  COUNT(*) AS total, " +
                 "  COALESCE(SUM(CASE WHEN pr.fill_status = '1' AND pr.follow_status = '1' THEN 1 ELSE 0 END), 0) AS completed " +
                 "FROM patient_record pr " +
-                "WHERE DATE_FORMAT(pr.visit_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')");
+                "WHERE to_char(pr.visit_time, 'YYYY-MM') = to_char(NOW(), 'YYYY-MM')");
             long total = ((Number) followRate.get("total")).longValue();
             long completed = ((Number) followRate.get("completed")).longValue();
             double rate = total > 0 ? Math.round(completed * 10000.0 / total) / 100.0 : 0;
@@ -134,7 +134,7 @@ public class DashboardController {
                 "LEFT JOIN patient_info p ON pr.patient_id = p.patient_id " +
                 "LEFT JOIN mp_person mp ON p.person_id = mp.person_id " +
                 "WHERE pr.fill_status = '0' " +
-                "  AND pr.visit_time BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY) " +
+                "  AND pr.visit_time BETWEEN CURRENT_DATE AND (CURRENT_DATE + ((3) * INTERVAL '1 day')) " +
                 "ORDER BY pr.visit_time ASC LIMIT 5");
             for (Map<String, Object> item : upcomingFollows) {
                 item.put("tag", "随访");
@@ -193,13 +193,13 @@ public class DashboardController {
                 "SELECT " +
                 "  COALESCE(p.patient_name, mp.person_name) AS name, " +
                 "  CASE WHEN mp.sex = '1' THEN '男' WHEN mp.sex = '2' THEN '女' ELSE COALESCE(mp.gender_source_value, '未知') END AS gender, " +
-                "  CASE WHEN CHAR_LENGTH(COALESCE(mp.card_id, '')) >= 18 THEN YEAR(CURDATE()) - CAST(SUBSTRING(mp.card_id, 7, 4) AS UNSIGNED) ELSE NULL END AS age, " +
+                "  CASE WHEN CHAR_LENGTH(COALESCE(mp.card_id, '')) >= 18 THEN extract(year from CURRENT_DATE) - CAST(SUBSTRING(mp.card_id, 7, 4) AS INTEGER) ELSE NULL END AS age, " +
                 "  COALESCE(rd.disease_name, '未分类') AS disease, " +
                 "  COALESCE(mp.phone_number, p.patient_mobile) AS phone, " +
                 "  CASE WHEN pr.warn_status = '1' THEN '高危' " +
                 "       WHEN pr.over_time_status = '1' THEN '中危' " +
                 "       ELSE '关注' END AS riskLevel, " +
-                "  COALESCE(DATE_FORMAT(pr.visit_time, '%Y-%m-%d'), DATE_FORMAT(pr.create_time, '%Y-%m-%d')) AS lastFollowDate, " +
+                "  COALESCE(to_char(pr.visit_time, 'YYYY-MM-DD'), to_char(pr.create_time, 'YYYY-MM-DD')) AS lastFollowDate, " +
                 "  CASE p.patient_status " +
                 "       WHEN '3' THEN '已完成' " +
                 "       WHEN '4' THEN '失访' " +
@@ -223,11 +223,11 @@ public class DashboardController {
                     "SELECT " +
                     "  mp.person_name AS name, " +
                     "  CASE WHEN mp.sex = '1' THEN '男' WHEN mp.sex = '2' THEN '女' ELSE COALESCE(mp.gender_source_value, '未知') END AS gender, " +
-                    "  CASE WHEN CHAR_LENGTH(COALESCE(mp.card_id, '')) >= 18 THEN YEAR(CURDATE()) - CAST(SUBSTRING(mp.card_id, 7, 4) AS UNSIGNED) ELSE NULL END AS age, " +
+                    "  CASE WHEN CHAR_LENGTH(COALESCE(mp.card_id, '')) >= 18 THEN extract(year from CURRENT_DATE) - CAST(SUBSTRING(mp.card_id, 7, 4) AS INTEGER) ELSE NULL END AS age, " +
                     "  '未入组' AS disease, " +
                     "  COALESCE(mp.phone_number, mp.contacts_phone) AS phone, " +
                     "  '关注' AS riskLevel, " +
-                    "  DATE_FORMAT(mp.create_time, '%Y-%m-%d') AS lastFollowDate " +
+                    "  to_char(mp.create_time, 'YYYY-MM-DD') AS lastFollowDate " +
                     "FROM mp_person mp " +
                     "ORDER BY mp.create_time DESC LIMIT 8");
             } catch (Exception e2) {
@@ -298,7 +298,7 @@ public class DashboardController {
         try {
             List<Map<String, Object>> rows = jdbc.queryForList(
                 "SELECT " +
-                "  DATE_FORMAT(ra.create_time, '%Y-%m') AS month, " +
+                "  to_char(ra.create_time, 'YYYY-MM') AS month, " +
                 "  SUM(CASE WHEN ra.disease_types LIKE '%高血压%' THEN 1 ELSE 0 END) AS hypertension, " +
                 "  SUM(CASE WHEN ra.disease_types LIKE '%糖尿病%' THEN 1 ELSE 0 END) AS diabetes, " +
                 "  SUM(CASE WHEN ra.disease_types LIKE '%脑卒中%' THEN 1 ELSE 0 END) AS stroke, " +
@@ -306,8 +306,8 @@ public class DashboardController {
                 "  SUM(CASE WHEN ra.disease_types LIKE '%慢阻肺%' THEN 1 ELSE 0 END) AS copd " +
                 "FROM resident_archive ra " +
                 "WHERE ra.archive_status = '0' " +
-                "  AND ra.create_time >= DATE_SUB(NOW(), INTERVAL 12 MONTH) " +
-                "GROUP BY DATE_FORMAT(ra.create_time, '%Y-%m') " +
+                "  AND ra.create_time >= (NOW() - ((12) * INTERVAL '1 month')) " +
+                "GROUP BY to_char(ra.create_time, 'YYYY-MM') " +
                 "ORDER BY month");
 
             for (int d = 0; d < diseaseNames.length; d++) {

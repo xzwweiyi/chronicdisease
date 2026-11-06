@@ -238,7 +238,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ca.update_time,
         ca.id,
         cda.category_id,
-        cc.`name`,
+        cc."name",
         cc.parent_id,
         cc.parent_ids,
         ca.forward_link,
@@ -311,7 +311,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
         ca.del_flag = 'N'
         AND ca.type = 2
-        AND FIND_IN_SET( "2", ca.position_type )
+        AND (strpos(',' || ca.position_type || ',', ',' || "2" || ',') > 0)
         AND rp.fill_status = 2
 
 
@@ -321,7 +321,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="projectName != null  and projectName != ''"> and  s.project_name like concat('%', #{projectName}, '%')</if>
         <if test="examRecordId != null  and examRecordId != ''"> and  rp.exam_record_id =#{examRecordId}</if>
         <if test="submitTime != null">
-            and date_format(per.create_time,'%y%m%d') = date_format(#{submitTime},'%y%m%d')
+            and to_char(per.create_time, 'YYMMDD') = to_char(#{submitTime}, 'YYMMDD')
         </if>
 
         order by rp.exam_record_id desc

@@ -244,7 +244,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectAllChildCategoryById" parameterType="Long" resultMap="CmsCategoryResult">
         <include refid="selectCmsCategoryVo"/>
-        where  LOCATE(',${id},',CONCAT(parent_ids,',')) or id = #{id}
+        where  strpos(CONCAT(parent_ids,','), ',${id},') or id = #{id}
     </select>
 
 </mapper>
