@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cms.mapper.CmsArticleDataMapper">
+    
+    <resultMap type="CmsArticleData" id="CmsArticleDataResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="copyFrom"    column="copy_from"    />
+        <result property="relation"    column="relation"    />
+        <result property="allowComment"    column="allow_comment"    />
+    </resultMap>
+
+    <sql id="selectCmsArticleDataVo">
+        select id, content, copy_from, relation, allow_comment from cms_article_data
+    </sql>
+
+    <select id="selectCmsArticleDataList" parameterType="CmsArticleData" resultMap="CmsArticleDataResult">
+        <include refid="selectCmsArticleDataVo"/>
+        <where>  
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="copyFrom != null  and copyFrom != ''"> and copy_from = #{copyFrom}</if>
+            <if test="relation != null  and relation != ''"> and relation = #{relation}</if>
+            <if test="allowComment != null  and allowComment != ''"> and allow_comment = #{allowComment}</if>
+        </where>
+    </select>
+    
+    <select id="selectCmsArticleDataById" parameterType="Long" resultMap="CmsArticleDataResult">
+        <include refid="selectCmsArticleDataVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCmsArticleData" parameterType="CmsArticleData">
+        insert into cms_article_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="content != null">content,</if>
+            <if test="copyFrom != null">copy_from,</if>
+            <if test="relation != null">relation,</if>
+            <if test="allowComment != null">allow_comment,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="content != null">#{content},</if>
+            <if test="copyFrom != null">#{copyFrom},</if>
+            <if test="relation != null">#{relation},</if>
+            <if test="allowComment != null">#{allowComment},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsArticleData" parameterType="CmsArticleData">
+        update cms_article_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="copyFrom != null">copy_from = #{copyFrom},</if>
+            <if test="relation != null">relation = #{relation},</if>
+            <if test="allowComment != null">allow_comment = #{allowComment},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsArticleDataById" parameterType="Long">
+        delete from cms_article_data where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsArticleDataByIds" parameterType="String">
+        delete from cms_article_data where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

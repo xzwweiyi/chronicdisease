@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.account.mapper.AccountNoticeMapper">
+
+    <resultMap type="AccountNotice" id="AccountNoticeResult">
+        <result property="id"    column="id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="title"    column="title"    />
+        <result property="type"    column="type"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="isRead"    column="is_read"    />
+        <result property="content"    column="content"    />
+        <result property="extendJson"    column="extend_json"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectAccountNoticeVo">
+        select id, account_id, record_id, title, type, tenant_id, is_read, content, extend_json, update_time, create_time from account_notice
+    </sql>
+
+    <select id="selectAccountNoticeList" parameterType="AccountNotice" resultMap="AccountNoticeResult">
+        <include refid="selectAccountNoticeVo"/>
+        <where>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+            <if test="isRead != null  and isRead != ''"> and is_read = #{isRead}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="extendJson != null  and extendJson != ''"> and extend_json = #{extendJson}</if>
+        </where>
+    </select>
+
+    <select id="selectAccountNoticeById" parameterType="Long" resultMap="AccountNoticeResult">
+        <include refid="selectAccountNoticeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAccountNotice" parameterType="AccountNotice" useGeneratedKeys="true" keyProperty="id">
+        insert into account_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">account_id,</if>
+            <if test="recordId != null">record_id,</if>
+            <if test="title != null">title,</if>
+            <if test="type != null">type,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="isRead != null">is_read,</if>
+            <if test="content != null">content,</if>
+            <if test="extendJson != null">extend_json,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">#{accountId},</if>
+            <if test="recordId != null">#{recordId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="type != null">#{type},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="isRead != null">#{isRead},</if>
+            <if test="content != null">#{content},</if>
+            <if test="extendJson != null">#{extendJson},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAccountNotice" parameterType="AccountNotice">
+        update account_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="extendJson != null">extend_json = #{extendJson},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAccountNoticeById" parameterType="Long">
+        delete from account_notice where id = #{id}
+    </delete>
+
+    <delete id="deleteAccountNoticeByIds" parameterType="String">
+        delete from account_notice where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <insert id="batchInsertList">
+        insert into
+        account_notice(account_id,record_id,title,type,tenant_id,is_read,content,extend_json,create_time) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.accountId},#{item.recordId},#{item.title},#{item.type},#{item.tenantId},#{item.isRead},#{item.content},#{item.extendJson},#{item.createTime})
+        </foreach>
+    </insert>
+</mapper>

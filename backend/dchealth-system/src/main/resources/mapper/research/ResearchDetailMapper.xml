@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchDetailMapper">
+    
+    <resultMap type="ResearchDetail" id="ResearchDetailResult">
+        <result property="researchId"    column="research_id"    />
+        <result property="researchIntro"    column="research_intro"    />
+        <result property="researchScheme"    column="research_scheme"    />
+        <result property="researchStandard"    column="research_standard"    />
+    </resultMap>
+
+    <sql id="selectResearchDetailVo">
+        select research_id, research_intro, research_scheme, research_standard from research_detail
+    </sql>
+
+    <select id="selectResearchDetailList" parameterType="ResearchDetail" resultMap="ResearchDetailResult">
+        <include refid="selectResearchDetailVo"/>
+        <where>  
+            <if test="researchIntro != null  and researchIntro != ''"> and research_intro = #{researchIntro}</if>
+            <if test="researchScheme != null  and researchScheme != ''"> and research_scheme = #{researchScheme}</if>
+            <if test="researchStandard != null  and researchStandard != ''"> and research_standard = #{researchStandard}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearchDetailByResearchId" parameterType="Long" resultMap="ResearchDetailResult">
+        <include refid="selectResearchDetailVo"/>
+        where research_id = #{researchId}
+    </select>
+        
+    <insert id="insertResearchDetail" parameterType="ResearchDetail">
+        insert into research_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="researchIntro != null">research_intro,</if>
+            <if test="researchScheme != null">research_scheme,</if>
+            <if test="researchStandard != null">research_standard,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="researchIntro != null">#{researchIntro},</if>
+            <if test="researchScheme != null">#{researchScheme},</if>
+            <if test="researchStandard != null">#{researchStandard},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchDetail" parameterType="ResearchDetail">
+        update research_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchIntro != null">research_intro = #{researchIntro},</if>
+            <if test="researchScheme != null">research_scheme = #{researchScheme},</if>
+            <if test="researchStandard != null">research_standard = #{researchStandard},</if>
+        </trim>
+        where research_id = #{researchId}
+    </update>
+
+    <delete id="deleteResearchDetailByResearchId" parameterType="Long">
+        delete from research_detail where research_id = #{researchId}
+    </delete>
+
+    <delete id="deleteResearchDetailByResearchIds" parameterType="String">
+        delete from research_detail where research_id in 
+        <foreach item="researchId" collection="array" open="(" separator="," close=")">
+            #{researchId}
+        </foreach>
+    </delete>
+</mapper>

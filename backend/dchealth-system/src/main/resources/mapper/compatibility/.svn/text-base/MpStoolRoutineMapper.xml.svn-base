@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpStoolRoutineMapper">
+    
+    <resultMap type="MpStoolRoutine" id="MpStoolRoutineResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="fecesColour"    column="feces_colour"    />
+        <result property="fecesCharacter"    column="feces_character"    />
+        <result property="fecesRbc"    column="feces_rbc"    />
+        <result property="fecesWbc"    column="feces_wbc"    />
+        <result property="fecesOb"    column="feces_ob"    />
+        <result property="fecesAscarid"    column="feces_ascarid"    />
+        <result property="fecesWhipworm"    column="feces_whipworm"    />
+        <result property="fecesPinworm"    column="feces_pinworm"    />
+        <result property="fecesTapeworm"    column="feces_tapeworm"    />
+    </resultMap>
+
+    <sql id="selectMpStoolRoutineVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, feces_colour, feces_character, feces_rbc, feces_wbc, feces_ob, feces_ascarid, feces_whipworm, feces_pinworm, feces_tapeworm from mp_stool_routine
+    </sql>
+
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpStoolRoutineResult">
+        <include refid="selectMpStoolRoutineVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpStoolRoutineResult">
+        <include refid="selectMpStoolRoutineVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.QuitRecordMapper">
+
+    <resultMap type="quitRecord" id="quitRecordResult">
+        <id property="id" column="id"/>
+        <result property="personId" column="person_id"/>
+        <result property="researchId" column="research_id"/>
+        <result property="quitTime" column="quit_time"/>
+        <result property="quitReason" column="quit_reason"/>
+        <result property="isAgree" column="is_agree"/>
+        <result property="agreeTime" column="agree_time"/>
+        <result property="rejectReason" column="reject_reason"/>
+        <result property="rejectTime" column="reject_time"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="patientId" column="patient_id"/>
+        <result property="recordId" column="record_id"/>
+    </resultMap>
+
+    <select id="findList" resultMap="quitRecordResult" parameterType="com.dchealth.medical.domain.form.QuitRecordForm">
+        select
+            qr.id, qr.person_id, qr.research_id, qr.quit_time, qr.quit_reason,qr.is_agree, qr.agree_time, qr.reject_reason, qr.reject_time,
+            pi.patient_name,pi.patient_id
+        from quit_record qr
+        left join patient_info pi on pi.person_id = qr.person_id and pi.research_id = qr. research_id
+        where qr.research_id = #{form.researchId}
+        <if test="form.status == 1">
+            and qr.is_agree is not null
+        </if>
+        <if test="form.status == 0">
+            and qr.is_agree is null
+        </if>
+        <if test="form.patientName != null and form.patientName != ''">
+            and pi.patient_name like concat('%',#{form.patientName},'%')
+        </if>
+        <if test="form.personId != null and form.personId != ''">
+            and qr.person_id like concat('%',#{form.personId},'%')
+        </if>
+        order by qr.quit_time desc
+    </select>
+
+    <update id="updateQuitRecord">
+        update quit_record
+        <set>
+            <if test="quitRecord.isAgree != null">
+                is_agree = #{quitRecord.isAgree},
+            </if>
+            <if test="quitRecord.agreeTime != null">
+                agree_time = #{quitRecord.agreeTime},
+            </if>
+            <if test="quitRecord.rejectReason != null">
+                reject_reason = #{quitRecord.rejectReason},
+            </if>
+            <if test="quitRecord.rejectTime != null">
+                reject_time = #{quitRecord.rejectTime},
+            </if>
+        </set>
+        where id = #{quitRecord.id}
+    </update>
+
+    <!--更新患者状态为已退出审核-->
+    <update id="updatePatientStatus">
+        update patient_info
+        set patient_status = 6
+        where person_id = #{personId}
+        and research_id = #{researchId}
+    </update>
+
+    <update id="recoverPatientStatus">
+        update patient_info
+        set patient_status = old_patient_status,
+            old_patient_status = null
+        where person_id = #{personId}
+        and research_id = #{researchId}
+    </update>
+
+    <resultMap id="record" type="com.dchealth.medical.domain.PatientRecord">
+        <result column="record_id" property="recordId"/>
+        <result column="research_id" property="researchId"/>
+    </resultMap>
+
+    <select id="findRecord" resultMap="record">
+        select pr.research_id, pr.record_id
+        from patient_record pr
+        left join patient_info pi on pi.patient_id = pr.patient_id and pr.research_id = pi.research_id
+        where pi.person_id = #{personId} and pi.research_id = #{researchId}
+    </select>
+
+    <update id="removeRecordOutbound">
+        delete from patient_record_outbound where record_id = #{record.recordId} and research_id = #{record.researchId} and status = 1
+    </update>
+
+    <update id="removeNowDayRecord">
+        delete from patient_record where record_id = #{record.recordId} and date(create_time) = date(now()) and fill_status = 0
+    </update>
+
+    <select id="selectPatient" resultMap="quitRecordResult" >
+        select * from quit_record where is_agree =1 and research_id =#{researchId} and person_id=#{personId}
+    </select>
+</mapper>

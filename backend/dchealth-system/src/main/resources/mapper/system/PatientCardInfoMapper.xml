@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.system.mapper.PatientCardInfoMapper">
+    
+    <resultMap type="PatientCardInfo" id="PatientCardInfoResult">
+        <result property="id"    column="id"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="personId"    column="person_id"    />
+        <result property="patientMasterNo"    column="patient_master_no"    />
+        <result property="updateStatus"    column="update_status"    />
+        <result property="personIdGenerateTime"    column="person_id_generate_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectPatientCardInfoVo">
+        select id, id_card, person_id, patient_master_no, update_status, person_id_generate_time, create_time,
+               update_time, create_by, update_by,name from patient_card_info
+    </sql>
+
+
+    <select id="selectPatientCardInfoList" parameterType="PatientCardInfo" resultMap="PatientCardInfoResult">
+        <include refid="selectPatientCardInfoVo"/>
+        <where>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="patientMasterNo != null "> and patient_master_no = #{patientMasterNo}</if>
+            <if test="updateStatus != null "> and update_status = #{updateStatus}</if>
+        </where>
+        order by id_card, update_time desc
+    </select>
+
+    <select id="selectPatientCardInfoById" parameterType="Long" resultMap="PatientCardInfoResult">
+        <include refid="selectPatientCardInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPatientCardInfo" parameterType="PatientCardInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_card_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="idCard != null">id_card,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="patientMasterNo != null">patient_master_no,</if>
+            <if test="updateStatus != null">update_status,</if>
+            <if test="personIdGenerateTime != null">person_id_generate_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="name != null">name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="idCard != null">#{idCard},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="patientMasterNo != null">#{patientMasterNo},</if>
+            <if test="updateStatus != null">#{updateStatus},</if>
+            <if test="personIdGenerateTime != null">#{personIdGenerateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="name != null">#{name},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientCardInfo" parameterType="PatientCardInfo">
+        update patient_card_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="patientMasterNo != null">patient_master_no = #{patientMasterNo},</if>
+            <if test="updateStatus != null">update_status = #{updateStatus},</if>
+            <if test="personIdGenerateTime != null">person_id_generate_time = #{personIdGenerateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+    <update id="updatePatientCardInfoAll" parameterType="PatientCardInfo">
+        update patient_card_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="patientMasterNo != null">patient_master_no = #{patientMasterNo},</if>
+            <if test="updateStatus != null">update_status = #{updateStatus},</if>
+            <if test="personIdGenerateTime != null">person_id_generate_time = #{personIdGenerateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where update_status=0
+    </update>
+
+    <delete id="deletePatientCardInfoById" parameterType="Long">
+        delete from patient_card_info where id = #{id}
+    </delete>
+
+    <delete id="deletePatientCardInfoByIds" parameterType="String">
+        delete from patient_card_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+    <update id="updatePatientAllPersonId" parameterType="SysDictData">
+        UPDATE ${dictValue} a
+        INNER JOIN patient_card_info b ON a.person_id = b.person_id
+        INNER JOIN patient_card_info c ON b.id_card = c.id_card AND c.patient_master_no = 1 and LENGTH(c.id_card) = 18 AND c.id_card!='000000000000000000'
+        SET a.person_id = c.person_id
+        where c.update_status=0
+        ;
+    </update>
+
+    <update id="updatePatientAllPersonIdOfPatientAccount" >
+        UPDATE patient_account a
+        INNER JOIN patient_card_info b ON a.registry_signs = b.person_id
+        INNER JOIN patient_card_info c ON b.id_card = c.id_card AND c.patient_master_no = 1 and LENGTH(c.id_card) = 18 AND c.id_card!='000000000000000000'
+        SET a.registry_signs = c.person_id
+        where c.update_status=0
+        ;
+    </update>
+
+    <update id="updateMasterPeson" >
+
+       WITH latest_updates AS (
+            SELECT
+                id,
+                id_card,
+                patient_master_no,
+                update_status,
+                update_time,
+                person_id_generate_time,
+                ROW_NUMBER() OVER (PARTITION BY id_card ORDER BY person_id_generate_time DESC) as rn
+            FROM patient_card_info
+        )
+        UPDATE patient_card_info
+        SET patient_master_no = CASE
+            WHEN id IN (SELECT id FROM latest_updates WHERE rn = 1) THEN 1
+            ELSE 0
+        END;
+
+    </update>
+
+</mapper>

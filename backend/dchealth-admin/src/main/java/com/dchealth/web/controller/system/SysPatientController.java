@@ -1,0 +1,118 @@
+package com.dchealth.web.controller.system;
+
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
+import com.dchealth.system.domain.PatientAccount;
+import com.dchealth.system.service.IPatientAccountService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.dchealth.common.annotation.Log;
+import com.dchealth.common.core.controller.BaseController;
+import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.enums.BusinessType;
+import com.dchealth.common.utils.poi.ExcelUtil;
+import com.dchealth.common.core.page.TableDataInfo;
+
+/**
+ * 患者账号表Controller
+ *
+ * @author lchbu
+ * @date 2022-09-14
+ */
+@RestController
+@RequestMapping("/system/patient")
+public class SysPatientController extends BaseController
+{
+    @Autowired
+    private IPatientAccountService patientAccountService;
+
+    @Value("${multimodalView.url}")
+    private String multimodalViewUrl;
+
+    /**
+     * 查询患者账号表列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:patient:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(PatientAccount patientAccount)
+    {
+        startPage();
+        List<PatientAccount> list = patientAccountService.selectPatientAccountList(patientAccount);
+        return getDataTable(list);
+    }
+
+    /**
+     * 导出患者账号表列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:patient:export')")
+    @Log(title = "患者账号表", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, PatientAccount patientAccount)
+    {
+        List<PatientAccount> list = patientAccountService.selectPatientAccountList(patientAccount);
+        ExcelUtil<PatientAccount> util = new ExcelUtil<PatientAccount>(PatientAccount.class);
+        util.exportExcel(response, list, "患者用户列表");
+    }
+
+    /**
+     * 获取患者账号表详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('system:patient:query')")
+    @GetMapping(value = "/{accountId}")
+    public AjaxResult getInfo(@PathVariable("accountId") Long accountId)
+    {
+        return AjaxResult.success(patientAccountService.selectPatientAccountByAccountId(accountId));
+    }
+
+    /**
+     * 新增患者账号表
+     */
+    @PreAuthorize("@ss.hasPermi('system:patient:add')")
+    @Log(title = "患者账号表", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody PatientAccount patientAccount)
+    {
+        return toAjax(patientAccountService.insertPatientAccount(patientAccount));
+    }
+
+    /**
+     * 修改患者账号表
+     */
+    @PreAuthorize("@ss.hasPermi('system:patient:edit')")
+    @Log(title = "患者账号表", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody PatientAccount patientAccount)
+    {
+        return toAjax(patientAccountService.updatePatientAccount(patientAccount));
+    }
+
+    /**
+     * 删除患者账号表
+     */
+    @PreAuthorize("@ss.hasPermi('system:patient:remove')")
+    @Log(title = "患者账号表", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{accountIds}")
+    public AjaxResult remove(@PathVariable Long[] accountIds)
+    {
+        return toAjax(patientAccountService.deletePatientAccountByAccountIds(accountIds));
+    }
+
+    /**
+     * 获取患者360url
+     */
+    @PreAuthorize("@ss.hasPermi('patient:manage:get360Url')")
+    @GetMapping("/get360Url")
+    public AjaxResult get360Url(Long patientId) {
+        return AjaxResult.success("操作成功", multimodalViewUrl+ "?patientId=" +patientId);
+    }
+}

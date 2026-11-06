@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.user.mapper.UserInfoLogMapper">
+
+    <resultMap type="UserInfoLog" id="UserInfoLogResult">
+        <result property="logId"    column="log_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="education"    column="education"    />
+        <result property="provinceId"    column="province_id"    />
+        <result property="cityId"    column="city_id"    />
+        <result property="areaId"    column="area_id"    />
+        <result property="streetId"    column="street_id"    />
+        <result property="detailAddress"    column="detail_address"    />
+        <result property="title"    column="title"    />
+        <result property="expert"    column="expert"    />
+        <result property="personalIntro"    column="personal_intro"    />
+        <result property="workYear"    column="work_year"    />
+        <result property="figureImage"    column="figure_image"    />
+        <result property="authStatus"    column="auth_status"    />
+        <result property="authContext"    column="auth_context"    />
+    </resultMap>
+
+    <sql id="selectUserInfoLogVo">
+        select log_id, user_id, birthday, education, province_id, city_id, area_id, street_id, detail_address, title, expert, personal_intro, work_year, figure_image, auth_status, auth_context from user_info_log
+    </sql>
+
+    <select id="selectUserInfoLogList" parameterType="UserInfoLog" resultMap="UserInfoLogResult">
+        <include refid="selectUserInfoLogVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="education != null  and education != ''"> and education = #{education}</if>
+            <if test="provinceId != null "> and province_id = #{provinceId}</if>
+            <if test="cityId != null "> and city_id = #{cityId}</if>
+            <if test="areaId != null "> and area_id = #{areaId}</if>
+            <if test="streetId != null "> and street_id = #{streetId}</if>
+            <if test="detailAddress != null  and detailAddress != ''"> and detail_address = #{detailAddress}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="expert != null  and expert != ''"> and expert = #{expert}</if>
+            <if test="personalIntro != null  and personalIntro != ''"> and personal_intro = #{personalIntro}</if>
+            <if test="workYear != null  and workYear != ''"> and work_year = #{workYear}</if>
+            <if test="figureImage != null  and figureImage != ''"> and figure_image = #{figureImage}</if>
+            <if test="authStatus != null  and authStatus != ''"> and auth_status = #{authStatus}</if>
+            <if test="authContext != null  and authContext != ''"> and auth_context = #{authContext}</if>
+        </where>
+    </select>
+
+    <select id="selectUserInfoLogByLogId" parameterType="Long" resultMap="UserInfoLogResult">
+        <include refid="selectUserInfoLogVo"/>
+        where log_id = #{logId}
+    </select>
+
+    <insert id="insertUserInfoLog" parameterType="UserInfoLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into user_info_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="education != null">education,</if>
+            <if test="provinceId != null">province_id,</if>
+            <if test="cityId != null">city_id,</if>
+            <if test="areaId != null">area_id,</if>
+            <if test="streetId != null">street_id,</if>
+            <if test="detailAddress != null">detail_address,</if>
+            <if test="title != null">title,</if>
+            <if test="expert != null">expert,</if>
+            <if test="personalIntro != null">personal_intro,</if>
+            <if test="workYear != null">work_year,</if>
+            <if test="figureImage != null">figure_image,</if>
+            <if test="authStatus != null">auth_status,</if>
+            <if test="authContext != null">auth_context,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="education != null">#{education},</if>
+            <if test="provinceId != null">#{provinceId},</if>
+            <if test="cityId != null">#{cityId},</if>
+            <if test="areaId != null">#{areaId},</if>
+            <if test="streetId != null">#{streetId},</if>
+            <if test="detailAddress != null">#{detailAddress},</if>
+            <if test="title != null">#{title},</if>
+            <if test="expert != null">#{expert},</if>
+            <if test="personalIntro != null">#{personalIntro},</if>
+            <if test="workYear != null">#{workYear},</if>
+            <if test="figureImage != null">#{figureImage},</if>
+            <if test="authStatus != null">#{authStatus},</if>
+            <if test="authContext != null">#{authContext},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserInfoLog" parameterType="UserInfoLog">
+        update user_info_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="provinceId != null">province_id = #{provinceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="streetId != null">street_id = #{streetId},</if>
+            <if test="detailAddress != null">detail_address = #{detailAddress},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="expert != null">expert = #{expert},</if>
+            <if test="personalIntro != null">personal_intro = #{personalIntro},</if>
+            <if test="workYear != null">work_year = #{workYear},</if>
+            <if test="figureImage != null">figure_image = #{figureImage},</if>
+            <if test="authStatus != null">auth_status = #{authStatus},</if>
+            <if test="authContext != null">auth_context = #{authContext},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteUserInfoLogByLogId" parameterType="Long">
+        delete from user_info_log where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteUserInfoLogByLogIds" parameterType="String">
+        delete from user_info_log where log_id in
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+</mapper>

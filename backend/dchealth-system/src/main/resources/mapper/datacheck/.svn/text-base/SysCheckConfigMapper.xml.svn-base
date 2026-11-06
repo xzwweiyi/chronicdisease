@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.datacheck.mapper.SysCheckConfigMapper">
+    
+    <resultMap type="SysCheckConfig" id="SysCheckConfigResult">
+        <result property="id"    column="id"    />
+        <result property="tableCnName"    column="table_cn_name"    />
+        <result property="tableEnName"    column="table_en_name"    />
+        <result property="fieldCn"    column="field_cn"    />
+        <result property="fieldEn"    column="field_en"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSysCheckConfigVo">
+        select id, table_cn_name, table_en_name, field_cn, field_en, create_time from sys_check_config
+    </sql>
+
+    <select id="selectSysCheckConfigList" parameterType="SysCheckConfig" resultMap="SysCheckConfigResult">
+        <include refid="selectSysCheckConfigVo"/>
+        <where>  
+            <if test="tableCnName != null  and tableCnName != ''"> and table_cn_name like concat('%', #{tableCnName}, '%')</if>
+            <if test="tableEnName != null  and tableEnName != ''"> and table_en_name like concat('%', #{tableEnName}, '%')</if>
+            <if test="fieldCn != null  and fieldCn != ''"> and field_cn = #{fieldCn}</if>
+            <if test="fieldEn != null  and fieldEn != ''"> and field_en = #{fieldEn}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysCheckConfigById" parameterType="Long" resultMap="SysCheckConfigResult">
+        <include refid="selectSysCheckConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysCheckConfig" parameterType="SysCheckConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_check_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tableCnName != null">table_cn_name,</if>
+            <if test="tableEnName != null">table_en_name,</if>
+            <if test="fieldCn != null">field_cn,</if>
+            <if test="fieldEn != null">field_en,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tableCnName != null">#{tableCnName},</if>
+            <if test="tableEnName != null">#{tableEnName},</if>
+            <if test="fieldCn != null">#{fieldCn},</if>
+            <if test="fieldEn != null">#{fieldEn},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysCheckConfig" parameterType="SysCheckConfig">
+        update sys_check_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tableCnName != null">table_cn_name = #{tableCnName},</if>
+            <if test="tableEnName != null">table_en_name = #{tableEnName},</if>
+            <if test="fieldCn != null">field_cn = #{fieldCn},</if>
+            <if test="fieldEn != null">field_en = #{fieldEn},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysCheckConfigById" parameterType="Long">
+        delete from sys_check_config where id = #{id}
+    </delete>
+
+    <delete id="deleteSysCheckConfigByIds" parameterType="String">
+        delete from sys_check_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

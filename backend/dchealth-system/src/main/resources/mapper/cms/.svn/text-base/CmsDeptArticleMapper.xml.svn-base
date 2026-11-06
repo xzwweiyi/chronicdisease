@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cms.mapper.CmsDeptArticleMapper">
+
+
+        
+    <insert id="insertCmsDeptArticle" parameterType="CmsDeptArticle" >
+        insert into cms_dept_Article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">dept_id,</if>
+            <if test="articleId != null">article_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">#{deptId},</if>
+            <if test="articleId != null">#{articleId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="deleteCmsDeptArticleById">
+        update cms_dept_Article set del_flag = 'Y'
+        where dept_id = #{deptId} and dept_id != 100 and article_id = #{articleId}
+    </update>
+
+    <update id="deleteCmsDeptArticleByCategoryId">
+        update cms_dept_Article set del_flag = 'Y'
+        where category_id = #{categoryId}
+    </update>
+
+
+    <sql id="selectCmsDeptArticleVo">
+        select cda.id, cda.article_id as articleId, cda.dept_id as deptId, cda.category_id as categoryId, cda.create_by as createBy,cc.name as categoryName  from cms_dept_article cda left join
+            cms_category cc on cc.id = cda.category_id
+    </sql>
+
+
+    <select id="selectCmsDeptArticle" parameterType="Long" resultType="CmsDeptArticle">
+        <include refid="selectCmsDeptArticleVo"/>
+        <where>
+            cda.del_flag = 'N'
+            <if test="articleId != null "> and cda.article_id = #{articleId}</if>
+            <if test="categoryId != null "> and cda.category_id = #{categoryId}</if>
+            <if test="deptId != null"> and cda.dept_id = #{deptId}</if>
+        </where>
+
+    </select>
+
+    <update id="updateCmsDeptArticleCategoryAndDeptId">
+        <foreach collection="list" item="item" separator=";" open="" close="">
+            update cms_dept_Article cda set
+            cda.category_id = #{item.newCategoryId},
+            cda.dept_id = #{item.newDeptId}
+            where      cda.del_flag = 'N'
+            and cda.article_id = #{item.articleId}
+            and cda.dept_id = #{item.deptId}
+        </foreach>
+    </update>
+
+    <select id="batchSelectCmsDeptArticle" resultType="CmsDeptArticle">
+        select cda.id, cda.article_id as articleId, cda.dept_id as deptId, cda.category_id as categoryId, cda.create_by as createBy from cms_dept_article cda
+        WHERE  cda.del_flag = 'N' and cda.dept_id = #{deptId}
+        and cda.article_id IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <update id="updateCmsDeptArticleCategory">
+        <foreach collection="list" item="item" separator=";" open="" close="">
+            update cms_dept_Article cda set
+            cda.category_id = #{item.categoryId}
+            where      cda.del_flag = 'N'
+            and cda.article_id = #{item.articleId}
+            and cda.dept_id = #{item.deptId}
+        </foreach>
+    </update>
+
+    <insert id="batchInsertCmsDeptArticle"  parameterType="list" >
+        insert into cms_dept_Article (dept_id,article_id,create_by,update_by,create_time,update_time,category_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.deptId},#{item.articleId},#{item.createBy},#{item.updateBy},now(),now(),#{item.categoryId})
+        </foreach>
+    </insert>
+
+
+    <select id="selectCmsDeptArticleByArticleIdList" parameterType="Long" resultType="CmsDeptArticle">
+        select cda.id, cda.article_id as articleId, cda.dept_id as deptId, cda.category_id as categoryId, cda.create_by as createBy from cms_dept_article cda
+        WHERE  cda.del_flag = 'N' and cda.article_id IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

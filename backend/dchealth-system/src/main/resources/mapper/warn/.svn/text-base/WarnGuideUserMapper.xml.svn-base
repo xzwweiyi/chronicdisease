@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.warn.mapper.WarnGuideUserMapper">
+    
+    <resultMap type="WarnGuideUser" id="WarnGuideUserResult">
+        <result property="warnGuideUserId"    column="warn_guide_user_id"    />
+        <result property="warnGuideConverId"    column="warn_guide_conver_id"    />
+        <result property="fromUserType"    column="from_user_type"    />
+        <result property="memberId"    column="member_id"    />
+    </resultMap>
+
+    <sql id="selectWarnGuideUserVo">
+        select warn_guide_user_id, warn_guide_conver_id, from_user_type, member_id from warn_guide_user
+    </sql>
+
+    <select id="selectWarnGuideUserList" parameterType="WarnGuideUser" resultMap="WarnGuideUserResult">
+        <include refid="selectWarnGuideUserVo"/>
+        <where>  
+            <if test="warnGuideConverId != null "> and warn_guide_conver_id = #{warnGuideConverId}</if>
+            <if test="fromUserType != null  and fromUserType != ''"> and from_user_type = #{fromUserType}</if>
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnGuideUserByWarnGuideUserId" parameterType="Long" resultMap="WarnGuideUserResult">
+        <include refid="selectWarnGuideUserVo"/>
+        where warn_guide_user_id = #{warnGuideUserId}
+    </select>
+
+    <select id="selectWarnGuideUserListByRecordId" parameterType="Long" resultMap="WarnGuideUserResult">
+        select u.* from warn_guide_user u, warn_guide_conver c
+        where u.warn_guide_conver_id=c.warn_guide_conver_id and c.record_id=#{recordId}
+    </select>
+        
+    <insert id="insertWarnGuideUser" parameterType="WarnGuideUser" useGeneratedKeys="true" keyProperty="warnGuideUserId">
+        insert into warn_guide_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="warnGuideConverId != null">warn_guide_conver_id,</if>
+            <if test="fromUserType != null">from_user_type,</if>
+            <if test="memberId != null">member_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="warnGuideConverId != null">#{warnGuideConverId},</if>
+            <if test="fromUserType != null">#{fromUserType},</if>
+            <if test="memberId != null">#{memberId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnGuideUser" parameterType="WarnGuideUser">
+        update warn_guide_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="warnGuideConverId != null">warn_guide_conver_id = #{warnGuideConverId},</if>
+            <if test="fromUserType != null">from_user_type = #{fromUserType},</if>
+            <if test="memberId != null">member_id = #{memberId},</if>
+        </trim>
+        where warn_guide_user_id = #{warnGuideUserId}
+    </update>
+
+    <delete id="deleteWarnGuideUserByWarnGuideUserId" parameterType="Long">
+        delete from warn_guide_user where warn_guide_user_id = #{warnGuideUserId}
+    </delete>
+
+    <delete id="deleteWarnGuideUserByWarnGuideUserIds" parameterType="String">
+        delete from warn_guide_user where warn_guide_user_id in 
+        <foreach item="warnGuideUserId" collection="array" open="(" separator="," close=")">
+            #{warnGuideUserId}
+        </foreach>
+    </delete>
+</mapper>

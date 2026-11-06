@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.DiagnosisMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.Diagnosis" id="DiagnosisMap">
+        <result property="patientId" column="PATIENT_ID" jdbcType="VARCHAR"/>
+        <result property="visitId" column="VISIT_ID" jdbcType="VARCHAR"/>
+        <result property="diagnosisType" column="DIAGNOSIS_TYPE" jdbcType="VARCHAR"/>
+        <result property="diagnosisNo" column="DIAGNOSIS_NO" jdbcType="VARCHAR"/>
+        <result property="diagnosisDesc" column="DIAGNOSIS_DESC" jdbcType="VARCHAR"/>
+        <result property="diagnosisDate" column="DIAGNOSIS_DATE" jdbcType="TIMESTAMP"/>
+        <result property="treatDays" column="TREAT_DAYS" jdbcType="INTEGER"/>
+        <result property="treatResult" column="TREAT_RESULT" jdbcType="VARCHAR"/>
+        <result property="operTreatIndicator" column="OPER_TREAT_INDICATOR" jdbcType="INTEGER"/>
+        <result property="diagnosisCode" column="DIAGNOSIS_CODE" jdbcType="VARCHAR"/>
+        <result property="admissionCondition" column="ADMISSION_CONDITION" jdbcType="VARCHAR"/>
+        <result property="diagnosisPosition" column="DIAGNOSIS_POSITION" jdbcType="VARCHAR"/>
+        <result property="pathologyNo" column="PATHOLOGY_NO" jdbcType="VARCHAR"/>
+        <result property="diagnosisCodeLocal" column="DIAGNOSIS_CODE_LOCAL" jdbcType="VARCHAR"/>
+        <result property="diagnosisMemo" column="DIAGNOSIS_MEMO" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DiagnosisMap">
+        select
+          PATIENT_ID, VISIT_ID, DIAGNOSIS_TYPE, DIAGNOSIS_NO, DIAGNOSIS_DESC, DIAGNOSIS_DATE, TREAT_DAYS, TREAT_RESULT, OPER_TREAT_INDICATOR, DIAGNOSIS_CODE, ADMISSION_CONDITION, DIAGNOSIS_POSITION, PATHOLOGY_NO, DIAGNOSIS_CODE_LOCAL, DIAGNOSIS_MEMO
+        from diagnosis
+        where PATIENT_ID = #{patientId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DiagnosisMap">
+        select
+          PATIENT_ID, VISIT_ID, DIAGNOSIS_TYPE, DIAGNOSIS_NO, DIAGNOSIS_DESC, DIAGNOSIS_DATE, TREAT_DAYS, TREAT_RESULT, OPER_TREAT_INDICATOR, DIAGNOSIS_CODE, ADMISSION_CONDITION, DIAGNOSIS_POSITION, PATHOLOGY_NO, DIAGNOSIS_CODE_LOCAL, DIAGNOSIS_MEMO
+        from diagnosis
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and VISIT_ID = #{visitId}
+            </if>
+            <if test="diagnosisType != null and diagnosisType != ''">
+                and DIAGNOSIS_TYPE = #{diagnosisType}
+            </if>
+            <if test="diagnosisNo != null and diagnosisNo != ''">
+                and DIAGNOSIS_NO = #{diagnosisNo}
+            </if>
+            <if test="diagnosisDesc != null and diagnosisDesc != ''">
+                and DIAGNOSIS_DESC = #{diagnosisDesc}
+            </if>
+            <if test="diagnosisDate != null and diagnosisDate != ''">
+                and DIAGNOSIS_DATE = #{diagnosisDate}
+            </if>
+            <if test="treatDays != null">
+                and TREAT_DAYS = #{treatDays}
+            </if>
+            <if test="treatResult != null and treatResult != ''">
+                and TREAT_RESULT = #{treatResult}
+            </if>
+            <if test="operTreatIndicator != null">
+                and OPER_TREAT_INDICATOR = #{operTreatIndicator}
+            </if>
+            <if test="diagnosisCode != null and diagnosisCode != ''">
+                and DIAGNOSIS_CODE = #{diagnosisCode}
+            </if>
+            <if test="admissionCondition != null and admissionCondition != ''">
+                and ADMISSION_CONDITION = #{admissionCondition}
+            </if>
+            <if test="diagnosisPosition != null and diagnosisPosition != ''">
+                and DIAGNOSIS_POSITION = #{diagnosisPosition}
+            </if>
+            <if test="pathologyNo != null and pathologyNo != ''">
+                and PATHOLOGY_NO = #{pathologyNo}
+            </if>
+            <if test="diagnosisCodeLocal != null and diagnosisCodeLocal != ''">
+                and DIAGNOSIS_CODE_LOCAL = #{diagnosisCodeLocal}
+            </if>
+            <if test="diagnosisMemo != null and diagnosisMemo != ''">
+                and DIAGNOSIS_MEMO = #{diagnosisMemo}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from diagnosis
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and VISIT_ID = #{visitId}
+            </if>
+            <if test="diagnosisType != null and diagnosisType != ''">
+                and DIAGNOSIS_TYPE = #{diagnosisType}
+            </if>
+            <if test="diagnosisNo != null and diagnosisNo != ''">
+                and DIAGNOSIS_NO = #{diagnosisNo}
+            </if>
+            <if test="diagnosisDesc != null and diagnosisDesc != ''">
+                and DIAGNOSIS_DESC = #{diagnosisDesc}
+            </if>
+            <if test="diagnosisDate != null and diagnosisDate != ''">
+                and DIAGNOSIS_DATE = #{diagnosisDate}
+            </if>
+            <if test="treatDays != null">
+                and TREAT_DAYS = #{treatDays}
+            </if>
+            <if test="treatResult != null and treatResult != ''">
+                and TREAT_RESULT = #{treatResult}
+            </if>
+            <if test="operTreatIndicator != null">
+                and OPER_TREAT_INDICATOR = #{operTreatIndicator}
+            </if>
+            <if test="diagnosisCode != null and diagnosisCode != ''">
+                and DIAGNOSIS_CODE = #{diagnosisCode}
+            </if>
+            <if test="admissionCondition != null and admissionCondition != ''">
+                and ADMISSION_CONDITION = #{admissionCondition}
+            </if>
+            <if test="diagnosisPosition != null and diagnosisPosition != ''">
+                and DIAGNOSIS_POSITION = #{diagnosisPosition}
+            </if>
+            <if test="pathologyNo != null and pathologyNo != ''">
+                and PATHOLOGY_NO = #{pathologyNo}
+            </if>
+            <if test="diagnosisCodeLocal != null and diagnosisCodeLocal != ''">
+                and DIAGNOSIS_CODE_LOCAL = #{diagnosisCodeLocal}
+            </if>
+            <if test="diagnosisMemo != null and diagnosisMemo != ''">
+                and DIAGNOSIS_MEMO = #{diagnosisMemo}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+        select count(1)
+        from diagnosis
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and date_format(DIAGNOSIS_DATE,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySyncInfoByPage" resultMap="DiagnosisMap">
+        select
+          PATIENT_ID, VISIT_ID, DIAGNOSIS_TYPE, DIAGNOSIS_NO, DIAGNOSIS_DESC, DIAGNOSIS_DATE, TREAT_DAYS, TREAT_RESULT, OPER_TREAT_INDICATOR, DIAGNOSIS_CODE, ADMISSION_CONDITION, DIAGNOSIS_POSITION, PATHOLOGY_NO, DIAGNOSIS_CODE_LOCAL, DIAGNOSIS_MEMO
+        from diagnosis
+        <where>
+            <if test="diagnosis.params.patientId != null and diagnosis.params.patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="diagnosis.params.recordingDate != null and diagnosis.params.recordingDate != ''">
+                and date_format(DIAGNOSIS_DATE,'%Y-%m-%d') = #{diagnosis.params.recordingDate}
+            </if>
+        </where>
+        order by DIAGNOSIS_DATE asc
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into diagnosis(PATIENT_ID, VISIT_ID, DIAGNOSIS_TYPE, DIAGNOSIS_NO, DIAGNOSIS_DESC, DIAGNOSIS_DATE, TREAT_DAYS, TREAT_RESULT, OPER_TREAT_INDICATOR, DIAGNOSIS_CODE, ADMISSION_CONDITION, DIAGNOSIS_POSITION, PATHOLOGY_NO, DIAGNOSIS_CODE_LOCAL, DIAGNOSIS_MEMO)
+        values (#{patientId}, #{visitId}, #{diagnosisType}, #{diagnosisNo}, #{diagnosisDesc}, #{diagnosisDate}, #{treatDays}, #{treatResult}, #{operTreatIndicator}, #{diagnosisCode}, #{admissionCondition}, #{diagnosisPosition}, #{pathologyNo}, #{diagnosisCodeLocal}, #{diagnosisMemo})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into diagnosis(PATIENT_ID, VISIT_ID, DIAGNOSIS_TYPE, DIAGNOSIS_NO, DIAGNOSIS_DESC, DIAGNOSIS_DATE, TREAT_DAYS, TREAT_RESULT, OPER_TREAT_INDICATOR, DIAGNOSIS_CODE, ADMISSION_CONDITION, DIAGNOSIS_POSITION, PATHOLOGY_NO, DIAGNOSIS_CODE_LOCAL, DIAGNOSIS_MEMO)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.visitId}, #{entity.diagnosisType}, #{entity.diagnosisNo}, #{entity.diagnosisDesc}, #{entity.diagnosisDate}, #{entity.treatDays}, #{entity.treatResult}, #{entity.operTreatIndicator}, #{entity.diagnosisCode}, #{entity.admissionCondition}, #{entity.diagnosisPosition}, #{entity.pathologyNo}, #{entity.diagnosisCodeLocal}, #{entity.diagnosisMemo})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into diagnosis(PATIENT_ID, VISIT_ID, DIAGNOSIS_TYPE, DIAGNOSIS_NO, DIAGNOSIS_DESC, DIAGNOSIS_DATE, TREAT_DAYS, TREAT_RESULT, OPER_TREAT_INDICATOR, DIAGNOSIS_CODE, ADMISSION_CONDITION, DIAGNOSIS_POSITION, PATHOLOGY_NO, DIAGNOSIS_CODE_LOCAL, DIAGNOSIS_MEMO)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.visitId}, #{entity.diagnosisType}, #{entity.diagnosisNo}, #{entity.diagnosisDesc}, #{entity.diagnosisDate}, #{entity.treatDays}, #{entity.treatResult}, #{entity.operTreatIndicator}, #{entity.diagnosisCode}, #{entity.admissionCondition}, #{entity.diagnosisPosition}, #{entity.pathologyNo}, #{entity.diagnosisCodeLocal}, #{entity.diagnosisMemo})
+        </foreach>
+        on duplicate key update
+        PATIENT_ID = values(PATIENT_ID),
+        VISIT_ID = values(VISIT_ID),
+        DIAGNOSIS_TYPE = values(DIAGNOSIS_TYPE),
+        DIAGNOSIS_NO = values(DIAGNOSIS_NO),
+        DIAGNOSIS_DESC = values(DIAGNOSIS_DESC),
+        DIAGNOSIS_DATE = values(DIAGNOSIS_DATE),
+        TREAT_DAYS = values(TREAT_DAYS),
+        TREAT_RESULT = values(TREAT_RESULT),
+        OPER_TREAT_INDICATOR = values(OPER_TREAT_INDICATOR),
+        DIAGNOSIS_CODE = values(DIAGNOSIS_CODE),
+        ADMISSION_CONDITION = values(ADMISSION_CONDITION),
+        DIAGNOSIS_POSITION = values(DIAGNOSIS_POSITION),
+        PATHOLOGY_NO = values(PATHOLOGY_NO),
+        DIAGNOSIS_CODE_LOCAL = values(DIAGNOSIS_CODE_LOCAL),
+        DIAGNOSIS_MEMO = values(DIAGNOSIS_MEMO)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update diagnosis
+        <set>
+            <if test="patientId != null and patientId != ''">
+                PATIENT_ID = #{patientId},
+            </if>
+            <if test="visitId != null and visitId != ''">
+                VISIT_ID = #{visitId},
+            </if>
+            <if test="diagnosisType != null and diagnosisType != ''">
+                DIAGNOSIS_TYPE = #{diagnosisType},
+            </if>
+            <if test="diagnosisNo != null and diagnosisNo != ''">
+                DIAGNOSIS_NO = #{diagnosisNo},
+            </if>
+            <if test="diagnosisDesc != null and diagnosisDesc != ''">
+                DIAGNOSIS_DESC = #{diagnosisDesc},
+            </if>
+            <if test="diagnosisDate != null and diagnosisDate != ''">
+                DIAGNOSIS_DATE = #{diagnosisDate},
+            </if>
+            <if test="treatDays != null">
+                TREAT_DAYS = #{treatDays},
+            </if>
+            <if test="treatResult != null and treatResult != ''">
+                TREAT_RESULT = #{treatResult},
+            </if>
+            <if test="operTreatIndicator != null">
+                OPER_TREAT_INDICATOR = #{operTreatIndicator},
+            </if>
+            <if test="diagnosisCode != null and diagnosisCode != ''">
+                DIAGNOSIS_CODE = #{diagnosisCode},
+            </if>
+            <if test="admissionCondition != null and admissionCondition != ''">
+                ADMISSION_CONDITION = #{admissionCondition},
+            </if>
+            <if test="diagnosisPosition != null and diagnosisPosition != ''">
+                DIAGNOSIS_POSITION = #{diagnosisPosition},
+            </if>
+            <if test="pathologyNo != null and pathologyNo != ''">
+                PATHOLOGY_NO = #{pathologyNo},
+            </if>
+            <if test="diagnosisCodeLocal != null and diagnosisCodeLocal != ''">
+                DIAGNOSIS_CODE_LOCAL = #{diagnosisCodeLocal},
+            </if>
+            <if test="diagnosisMemo != null and diagnosisMemo != ''">
+                DIAGNOSIS_MEMO = #{diagnosisMemo},
+            </if>
+        </set>
+        where PATIENT_ID = #{patientId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from diagnosis where PATIENT_ID = #{patientId}
+    </delete>
+
+</mapper>
+

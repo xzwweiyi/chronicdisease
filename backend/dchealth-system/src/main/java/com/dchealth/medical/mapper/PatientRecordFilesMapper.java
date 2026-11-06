@@ -1,0 +1,94 @@
+package com.dchealth.medical.mapper;
+
+import com.dchealth.medical.domain.PatientRecordFiles;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 患者档案图片Mapper接口
+ * 
+ * @author lchbu
+ * @date 2022-09-15
+ */
+public interface PatientRecordFilesMapper 
+{
+    /**
+     * 查询患者档案图片
+     * 
+     * @param id 患者档案图片主键
+     * @return 患者档案图片
+     */
+    public PatientRecordFiles selectPatientRecordFilesById(Long id);
+
+    /**
+     * 查询患者档案图片列表
+     * 
+     * @param patientRecordFiles 患者档案图片
+     * @return 患者档案图片集合
+     */
+    public List<PatientRecordFiles> selectPatientRecordFilesList(PatientRecordFiles patientRecordFiles);
+
+    /**
+     * 新增患者档案图片
+     * 
+     * @param patientRecordFiles 患者档案图片
+     * @return 结果
+     */
+    public int insertPatientRecordFiles(PatientRecordFiles patientRecordFiles);
+
+    /**
+     * 修改患者档案图片
+     * 
+     * @param patientRecordFiles 患者档案图片
+     * @return 结果
+     */
+    public int updatePatientRecordFiles(PatientRecordFiles patientRecordFiles);
+
+    /**
+     * 删除患者档案图片
+     * 
+     * @param id 患者档案图片主键
+     * @return 结果
+     */
+    public int deletePatientRecordFilesById(Long id);
+
+
+    public int deletePatientRecordFilesByRecordId(Long recordId);
+
+    /**
+     * 批量删除患者档案图片
+     * 
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deletePatientRecordFilesByIds(Long[] ids);
+
+    /**
+     * 根据表单id查询图片信息
+     * @param medicalFormId
+     * @return
+     */
+    List<PatientRecordFiles> selectPatientRecordFilesByMedicalFormId(Long medicalFormId);
+
+
+    List<PatientRecordFiles> selectPatientRecordFilesByRecordId(Long recordId);
+
+    List<PatientRecordFiles> selectFilesByRecordIdAndMedicalFormId(@Param("medicalFormId")Long medicalFormId, @Param("recordId")Long recordId);
+
+    /**
+     * 根据模板属性id查询图片、文件
+     * @param propertyId
+     * @return
+     */
+    List<PatientRecordFiles> selectPatientRecordFilesByProId(Long propertyId);
+
+    List<PatientRecordFiles> selectPatientRecordFiles(@Param("propertyId") Long propertyId,@Param("examRecordId")Long examRecordId);
+
+    /**
+     * 根据健康检查id查询图片、文件
+     * @param healthId
+     * @return
+     */
+    List<PatientRecordFiles> selectPatientRecordFilesByHealthId(Long healthId);
+}

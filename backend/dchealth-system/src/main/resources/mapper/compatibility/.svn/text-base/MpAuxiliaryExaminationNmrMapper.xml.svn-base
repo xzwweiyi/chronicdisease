@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpAuxiliaryExaminationNmrMapper">
+    
+    <resultMap type="MpAuxiliaryExaminationNmr" id="MpAuxiliaryExaminationNmrResult">
+        <result property="id"    column="id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="examNo"    column="exam_no"    />
+        <result property="testNo"    column="test_no"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="mri"    column="mri"    />
+        <result property="cranialVascularImaging"    column="cranial_vascular_imaging"    />
+        <result property="cranialVenousMrv"    column="cranial_venous_mrv"    />
+        <result property="cranialArteryMra"    column="cranial_artery_mra"    />
+        <result property="cardiacCoronaryAngiography"    column="cardiac_coronary_angiography"    />
+        <result property="headFlatScan15"    column="head_flat_scan15"    />
+        <result property="csFlatScan15"    column="cs_flat_scan15"    />
+        <result property="lsFlatScan15"    column="ls_flat_scan15"    />
+        <result property="headFlatScan3"    column="head_flat_scan3"    />
+        <result property="csFlatScan3"    column="cs_flat_scan3"    />
+        <result property="lsFlatScan3"    column="ls_flat_scan3"    />
+        <result property="dwi"    column="dwi"    />
+        <result property="asl"    column="asl"    />
+        <result property="chestXray"    column="chest_xray"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="technologyGroup"    column="technology_group"    />
+        <result property="positionSctid"    column="position_sctid"    />
+        <result property="position"    column="position"    />
+        <result property="testMethod"    column="test_method"    />
+        <result property="subjectiveHints"    column="subjective_hints"    />
+        <result property="relevantClinicDiagnosis"    column="relevant_clinic_diagnosis"    />
+        <result property="reportType"    column="report_type"    />
+    </resultMap>
+
+    <sql id="selectMpAuxiliaryExaminationNmrVo">
+        select id, visit_occurrence_id, person_id, exam_no, test_no, create_time, update_time, result_time, mri, cranial_vascular_imaging, cranial_venous_mrv, cranial_artery_mra, cardiac_coronary_angiography, head_flat_scan15, cs_flat_scan15, ls_flat_scan15, head_flat_scan3, cs_flat_scan3, ls_flat_scan3, dwi, asl, chest_xray, care_site_id, technology_group, position_sctid, position, test_method, subjective_hints, relevant_clinic_diagnosis, report_type from mp_auxiliary_examination_nmr
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpAuxiliaryExaminationNmrResult">
+        <include refid="selectMpAuxiliaryExaminationNmrVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+    
+
+</mapper>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FMedicalExamFormMapper">
+    
+    <resultMap type="FMedicalExamForm" id="FMedicalExamFormResult">
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="medicalCode"    column="medical_code"    />
+        <result property="medicalName"    column="medical_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="openImage"    column="open_image"    />
+        <result property="openProperty"    column="open_property"    />
+        <result property="openMultiple"    column="open_multiple"    />
+        <result property="attribute"    column="attribute"    />
+        <result property="versionCode"    column="version_code"    />
+        <result property="formType"    column="form_type"    />
+        <result property="dynamic"    column="dynamic"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createId"    column="create_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="formSource"    column="form_source"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptIds"    column="dept_ids"    />
+    </resultMap>
+
+    <sql id="selectFMedicalExamFormVo">
+        select medical_form_id, follow_id, medical_code, medical_name, parent_id, open_image, open_property, open_multiple, attribute, version_code, form_type, dynamic, create_time, update_time, create_by, create_id, update_by, form_source, article_id, dept_id, dept_ids
+        from f_medical_exam_form
+    </sql>
+
+    <select id="selectFMedicalExamFormList" parameterType="FMedicalExamForm" resultMap="FMedicalExamFormResult">
+        <include refid="selectFMedicalExamFormVo"/>
+        <where>  
+            <if test="followId != null "> and follow_id = #{followId}</if>
+            <if test="medicalCode != null  and medicalCode != ''"> and medical_code = #{medicalCode}</if>
+            <if test="medicalName != null  and medicalName != ''"> and medical_name like concat('%', #{medicalName}, '%')</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="openImage != null  and openImage != ''"> and open_image = #{openImage}</if>
+            <if test="openProperty != null  and openProperty != ''"> and open_property = #{openProperty}</if>
+            <if test="openMultiple != null  and openMultiple != ''"> and open_multiple = #{openMultiple}</if>
+            <if test="attribute != null  and attribute != ''"> and attribute = #{attribute}</if>
+            <if test="versionCode != null  and versionCode != ''"> and version_code = #{versionCode}</if>
+            <if test="formType != null  and formType != ''"> and form_type = #{formType}</if>
+            <if test="dynamic != null  and dynamic != ''"> and dynamic = #{dynamic}</if>
+            <if test="formSource != null  and formSource != ''"> and form_source = #{formSource}</if>
+            <if test="articleId != null  and articleId != ''"> and article_id = #{articleId}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and dept_id = #{deptId}</if>
+            <if test="deptIds != null  and deptIds != ''"> and dept_ids = #{deptIds}</if>
+        </where>
+    </select>
+    
+    <select id="selectFMedicalExamFormByMedicalFormId" parameterType="Long" resultMap="FMedicalExamFormResult">
+        <include refid="selectFMedicalExamFormVo"/>
+        where medical_form_id = #{medicalFormId}
+    </select>
+        
+    <insert id="insertFMedicalExamForm" parameterType="FMedicalExamForm" useGeneratedKeys="true" keyProperty="medicalFormId">
+        insert into f_medical_exam_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="followId != null">follow_id,</if>
+            <if test="medicalCode != null and medicalCode != ''">medical_code,</if>
+            <if test="medicalName != null">medical_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="openImage != null">open_image,</if>
+            <if test="openProperty != null">open_property,</if>
+            <if test="openMultiple != null">open_multiple,</if>
+            <if test="attribute != null">attribute,</if>
+            <if test="versionCode != null">version_code,</if>
+            <if test="formType != null">form_type,</if>
+            <if test="dynamic != null">dynamic,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="formSource != null">form_source,</if>
+            <if test="articleId != null">article_id,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="deptIds != null">dept_ids,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="followId != null">#{followId},</if>
+            <if test="medicalCode != null and medicalCode != ''">#{medicalCode},</if>
+            <if test="medicalName != null">#{medicalName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="openImage != null">#{openImage},</if>
+            <if test="openProperty != null">#{openProperty},</if>
+            <if test="openMultiple != null">#{openMultiple},</if>
+            <if test="attribute != null">#{attribute},</if>
+            <if test="versionCode != null">#{versionCode},</if>
+            <if test="formType != null">#{formType},</if>
+            <if test="dynamic != null">#{dynamic},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="formSource != null">#{formSource},</if>
+            <if test="articleId != null">#{articleId},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="deptIds != null">#{deptIds},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFMedicalExamForm" parameterType="FMedicalExamForm">
+        update f_medical_exam_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="followId != null">follow_id = #{followId},</if>
+            <if test="medicalCode != null and medicalCode != ''">medical_code = #{medicalCode},</if>
+            <if test="medicalName != null">medical_name = #{medicalName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="openImage != null">open_image = #{openImage},</if>
+            <if test="openProperty != null">open_property = #{openProperty},</if>
+            <if test="openMultiple != null">open_multiple = #{openMultiple},</if>
+            <if test="attribute != null">attribute = #{attribute},</if>
+            <if test="versionCode != null">version_code = #{versionCode},</if>
+            <if test="formType != null">form_type = #{formType},</if>
+            <if test="dynamic != null">dynamic = #{dynamic},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="formSource != null">form_source = #{formSource},</if>
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="deptIds != null">dept_ids = #{deptIds},</if>
+        </trim>
+        where medical_form_id = #{medicalFormId}
+    </update>
+
+    <delete id="deleteFMedicalExamFormByMedicalFormId" parameterType="Long">
+        delete from f_medical_exam_form where medical_form_id = #{medicalFormId}
+    </delete>
+
+    <delete id="deleteFMedicalExamFormByMedicalFormIds" parameterType="String">
+        delete from f_medical_exam_form where medical_form_id in 
+        <foreach item="medicalFormId" collection="array" open="(" separator="," close=")">
+            #{medicalFormId}
+        </foreach>
+    </delete>
+
+    <select id="selectFMedicalFormByMedicalFormId" parameterType="Long" resultMap="FMedicalExamFormResult">
+        <include refid="selectFMedicalExamFormVo"/>
+        where medical_form_id = #{medicalFormId}
+    </select>
+
+    <select id="selectFMedicalExamFormByArticleId" parameterType="Long" resultMap="FMedicalExamFormResult">
+        <include refid="selectFMedicalExamFormVo"/>
+        where article_id = #{articleId}
+    </select>
+
+    <update id="updateFMedicalExamFormByArticleId" parameterType="FMedicalExamForm">
+        update f_medical_exam_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="followId != null">follow_id = #{followId},</if>
+            <if test="medicalCode != null and medicalCode != ''">medical_code = #{medicalCode},</if>
+            <if test="medicalName != null">medical_name = #{medicalName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="openImage != null">open_image = #{openImage},</if>
+            <if test="openProperty != null">open_property = #{openProperty},</if>
+            <if test="openMultiple != null">open_multiple = #{openMultiple},</if>
+            <if test="attribute != null">attribute = #{attribute},</if>
+            <if test="versionCode != null">version_code = #{versionCode},</if>
+            <if test="formType != null">form_type = #{formType},</if>
+            <if test="dynamic != null">dynamic = #{dynamic},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="formSource != null">form_source = #{formSource},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="deptIds != null">dept_ids = #{deptIds},</if>
+        </trim>
+        where article_id = #{articleId}
+    </update>
+</mapper>

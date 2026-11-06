@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FollowPropertyMapper">
+
+    <select id="getFollowProperty" resultType="com.dchealth.template.domain.FollowProperty">
+        SELECT
+            research_id researchId,
+            property_name propertyName,
+            follow_id followId,
+            property_code propertyCode,
+            property_table propertyTable,
+            property_column propertyColumn,
+            column_name columnName,
+            conditions conditions
+        from t_follow_property
+        where follow_id=#{followId}
+        <if test="propertyCodeList!=null">
+        and property_code in
+        <foreach collection="propertyCodeList" item="item" open="(" close=")" separator=",">
+         #{item}
+        </foreach>
+        </if>
+    </select>
+
+
+    <select id="getResult" resultType="java.util.Map">
+        select lr.report_item_name propertyName,
+               CONCAT(lr.result,lr.units) result
+        from (select test_no from mp_lab_test_master where patient_id=#{personId}
+              ORDER BY results_rpt_date_time desc limit 1) lm
+                 inner join mp_lab_result lr on lr.test_no=lm.test_no
+        where (${condition})
+    </select>
+
+
+
+    <select id="insertTextData" >
+        insert into res_text_${researchId} (
+            record_id,
+            form_id,
+            property_code,
+            property_value,
+            property_id,
+            type
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{recordId},
+             #{item.formId},
+             #{item.propertyCode},
+             #{item.propertyValue},
+             #{item.propertyId},
+             1
+             )
+        </foreach>
+
+    </select>
+
+
+    <select id="getDict" resultType="java.lang.Long">
+        select distinct dict_value from sys_dict_data where dict_type=#{dictType}
+    </select>
+
+</mapper>

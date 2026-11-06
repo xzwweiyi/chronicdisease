@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchRoleModuleMapper">
+
+    <resultMap type="ResearchRoleModule" id="ResearchRoleModuleResult">
+        <result property="roleId"     column="role_id"      />
+        <result property="followId"   column="follow_id"    />
+    </resultMap>
+
+
+    <sql id="selectResearchRoleModuleVo">
+        select role_id, follow_id from research_role_module
+    </sql>
+
+    <select id="findRoleModuleByRoleId" parameterType="Long" resultMap="ResearchRoleModuleResult">
+        <include refid="selectResearchRoleModuleVo"/>
+        where role_id = #{roleId}
+    </select>
+
+    <delete id="deleteRoleModuleByRoleId" parameterType="Long">
+		delete from research_role_module where role_id = #{roleId}
+	</delete>
+
+
+    <insert id="batchRoleModule">
+        insert into research_role_module(role_id, follow_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.roleId},#{item.followId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRoleModuleByRoleIds" parameterType="Long">
+        delete from research_role_module where role_id in
+        <foreach collection="array" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <select id="findRoleModuleByRoleIds" parameterType="Long" resultMap="ResearchRoleModuleResult">
+        <include refid="selectResearchRoleModuleVo"/>
+        where role_id in
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
+</mapper>

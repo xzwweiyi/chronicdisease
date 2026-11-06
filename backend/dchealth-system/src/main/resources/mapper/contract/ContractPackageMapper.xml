@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.contract.mapper.ContractPackageMapper">
+
+    <resultMap type="com.dchealth.contract.domain.ContractPackage" id="ContractPackageResult">
+        <id property="id" column="id"/>
+        <result property="packageName" column="package_name"/>
+        <result property="packageType" column="package_type"/>
+        <result property="price" column="price"/>
+        <result property="description" column="description"/>
+        <result property="serviceIds" column="service_ids"/>
+        <result property="applicableDiseases" column="applicable_diseases"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectContractPackageVo">
+        select id, package_name, package_type, price, description, service_ids, applicable_diseases, status, create_by, create_time, update_by, update_time, remark
+        from contract_package
+    </sql>
+
+    <select id="selectContractPackageList" parameterType="ContractPackage" resultMap="ContractPackageResult">
+        <include refid="selectContractPackageVo"/>
+        <where>
+            <if test="packageName != null and packageName != ''">and package_name like concat('%', #{packageName}, '%')</if>
+            <if test="packageType != null and packageType != ''">and package_type like concat('%', #{packageType}, '%')</if>
+            <if test="price != null">and price = #{price}</if>
+            <if test="description != null and description != ''">and description like concat('%', #{description}, '%')</if>
+            <if test="serviceIds != null and serviceIds != ''">and service_ids like concat('%', #{serviceIds}, '%')</if>
+            <if test="applicableDiseases != null and applicableDiseases != ''">and applicable_diseases like concat('%', #{applicableDiseases}, '%')</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectContractPackageById" parameterType="Long" resultMap="ContractPackageResult">
+        <include refid="selectContractPackageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertContractPackage" parameterType="ContractPackage" useGeneratedKeys="true" keyProperty="id">
+        insert into contract_package (package_name, package_type, price, description, service_ids, applicable_diseases, status, create_by, create_time, remark)
+        values (#{packageName}, #{packageType}, #{price}, #{description}, #{serviceIds}, #{applicableDiseases}, #{status}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateContractPackage" parameterType="ContractPackage">
+        update contract_package
+        <set>
+            <if test="packageName != null">package_name = #{packageName},</if>
+            <if test="packageType != null">package_type = #{packageType},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="serviceIds != null">service_ids = #{serviceIds},</if>
+            <if test="applicableDiseases != null">applicable_diseases = #{applicableDiseases},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteContractPackageById" parameterType="Long">
+        delete from contract_package where id = #{id}
+    </delete>
+
+    <delete id="deleteContractPackageByIds" parameterType="String">
+        delete from contract_package where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

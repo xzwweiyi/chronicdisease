@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpAuxiliaryExaminationCtMapper">
+    
+    <resultMap type="MpAuxiliaryExaminationCt" id="MpAuxiliaryExaminationCtResult">
+        <result property="id"    column="id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="examNo"    column="exam_no"    />
+        <result property="testNo"    column="test_no"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="ct"    column="ct"    />
+        <result property="petCt"    column="pet_ct"    />
+        <result property="headPlainScanCt"    column="head_plain_scan_ct"    />
+        <result property="chestPlainScanCt"    column="chest_plain_scan_ct"    />
+        <result property="clpCt"    column="clp_ct"    />
+        <result property="upperAbdominalCtPs"    column="upper_abdominal_ct_ps"    />
+        <result property="lowerAbdominalCtPs"    column="lower_abdominal_ct_ps"    />
+        <result property="upperAbdominalCt"    column="upper_abdominal_ct"    />
+        <result property="lowerAbdominalCt"    column="lower_abdominal_ct"    />
+        <result property="ulAbdominalCt"    column="ul_abdominal_ct"    />
+        <result property="pelvicCt"    column="pelvic_ct"    />
+        <result property="boneStaticImaging"    column="bone_static_imaging"    />
+        <result property="petMr"    column="pet_mr"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="technologyGroup"    column="technology_group"    />
+        <result property="positionSctid"    column="position_sctid"    />
+        <result property="position"    column="position"    />
+        <result property="testMethod"    column="test_method"    />
+        <result property="subjectiveHints"    column="subjective_hints"    />
+        <result property="relevantClinicDiagnosis"    column="relevant_clinic_diagnosis"    />
+        <result property="reportType"    column="report_type"    />
+    </resultMap>
+
+    <sql id="selectMpAuxiliaryExaminationCtVo">
+        select id, visit_occurrence_id, person_id, exam_no, test_no, create_time, update_time, result_time, ct, pet_ct, head_plain_scan_ct, chest_plain_scan_ct, clp_ct, upper_abdominal_ct_ps, lower_abdominal_ct_ps, upper_abdominal_ct, lower_abdominal_ct, ul_abdominal_ct, pelvic_ct, bone_static_imaging, pet_mr, care_site_id, technology_group, position_sctid, position, test_method, subjective_hints, relevant_clinic_diagnosis, report_type from mp_auxiliary_examination_ct
+    </sql>
+
+   
+    
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpAuxiliaryExaminationCtResult">
+        <include refid="selectMpAuxiliaryExaminationCtVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+  
+
+</mapper>

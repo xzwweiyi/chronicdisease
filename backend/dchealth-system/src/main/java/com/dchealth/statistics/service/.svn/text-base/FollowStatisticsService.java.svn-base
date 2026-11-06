@@ -1,0 +1,22 @@
+package com.dchealth.statistics.service;
+
+import com.dchealth.statistics.domain.PatientDistribute;
+import com.dchealth.statistics.domain.ResearchStatusOfNumStatisticsVo;
+import com.dchealth.statistics.domain.StatisticsParam;
+import com.dchealth.statistics.domain.StatisticsVo;
+
+import java.util.List;
+import java.util.Map;
+
+public interface FollowStatisticsService {
+
+    Map<String, List<StatisticsVo>> followDistribute(StatisticsParam statisticsParam);
+
+    Map<String, List<StatisticsVo>> patientDistribute(StatisticsParam statisticsParam);
+
+    Map<String, Object> hospitalView();
+
+    List<ResearchStatusOfNumStatisticsVo> researchStatusNum(StatisticsParam statisticsParam);
+
+    Map<String, Object> queryPatientDistribute(PatientDistribute distributeParam);
+}

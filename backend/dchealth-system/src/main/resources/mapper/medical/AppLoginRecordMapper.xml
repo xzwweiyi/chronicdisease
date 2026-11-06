@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.AppLoginRecordMapper">
+    
+    <resultMap type="AppLoginRecord" id="AppLoginRecordResult">
+        <result property="id"    column="id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="appType"    column="app_type"    />
+        <result property="deviceToken"    column="device_token"    />
+        <result property="monthStat"    column="month_stat"    />
+        <result property="yearStat"    column="year_stat"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectAppLoginRecordVo">
+        select id, account_id, mobile, app_type, device_token, month_stat, year_stat, create_time from app_login_record
+    </sql>
+
+    <select id="selectAppLoginRecordList" parameterType="AppLoginRecord" resultMap="AppLoginRecordResult">
+        <include refid="selectAppLoginRecordVo"/>
+        <where>  
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+            <if test="mobile != null  and mobile != ''"> and mobile = #{mobile}</if>
+            <if test="appType != null  and appType != ''"> and app_type = #{appType}</if>
+            <if test="deviceToken != null  and deviceToken != ''"> and device_token = #{deviceToken}</if>
+            <if test="monthStat != null "> and month_stat = #{monthStat}</if>
+            <if test="yearStat != null "> and year_stat = #{yearStat}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppLoginRecordById" parameterType="Long" resultMap="AppLoginRecordResult">
+        <include refid="selectAppLoginRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAppLoginRecord" parameterType="AppLoginRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into app_login_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">account_id,</if>
+            <if test="mobile != null and mobile != ''">mobile,</if>
+            <if test="appType != null">app_type,</if>
+            <if test="deviceToken != null">device_token,</if>
+            <if test="monthStat != null">month_stat,</if>
+            <if test="yearStat != null">year_stat,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">#{accountId},</if>
+            <if test="mobile != null and mobile != ''">#{mobile},</if>
+            <if test="appType != null">#{appType},</if>
+            <if test="deviceToken != null">#{deviceToken},</if>
+            <if test="monthStat != null">#{monthStat},</if>
+            <if test="yearStat != null">#{yearStat},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppLoginRecord" parameterType="AppLoginRecord">
+        update app_login_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
+            <if test="appType != null">app_type = #{appType},</if>
+            <if test="deviceToken != null">device_token = #{deviceToken},</if>
+            <if test="monthStat != null">month_stat = #{monthStat},</if>
+            <if test="yearStat != null">year_stat = #{yearStat},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppLoginRecordById" parameterType="Long">
+        delete from app_login_record where id = #{id}
+    </delete>
+
+    <delete id="deleteAppLoginRecordByIds" parameterType="String">
+        delete from app_login_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

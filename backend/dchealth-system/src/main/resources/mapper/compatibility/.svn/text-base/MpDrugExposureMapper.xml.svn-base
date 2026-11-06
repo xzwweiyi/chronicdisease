@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpDrugExposureMapper">
+    
+    <resultMap type="MpDrugExposure" id="MpDrugExposureResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="drugExposureId"    column="drug_exposure_id"    />
+        <result property="drugType"    column="drug_type"    />
+        <result property="drugSctid"    column="drug_sctid"    />
+        <result property="drugValue"    column="drug_value"    />
+        <result property="dosageForm"    column="dosage_form"    />
+        <result property="drugExposureStartDate"    column="drug_exposure_start_date"    />
+        <result property="daysSupply"    column="days_supply"    />
+        <result property="departmentName"    column="department_name"    />
+    </resultMap>
+
+    <sql id="selectMpDrugExposureVo">
+        select id, care_site_id, person_id, visit_occurrence_id, drug_exposure_id, drug_type, drug_sctid, drug_value, dosage_form, drug_exposure_start_date, days_supply, department_name from mp_drug_exposure
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpDrugExposureResult">
+        <include refid="selectMpDrugExposureVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+
+</mapper>

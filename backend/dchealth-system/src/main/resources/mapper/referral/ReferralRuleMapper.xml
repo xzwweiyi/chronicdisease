@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.referral.mapper.ReferralRuleMapper">
+
+    <resultMap type="com.dchealth.referral.domain.ReferralRule" id="ReferralRuleResult">
+        <id property="id" column="id"/>
+        <result property="ruleName" column="rule_name"/>
+        <result property="diseaseType" column="disease_type"/>
+        <result property="upwardConditions" column="upward_conditions"/>
+        <result property="downwardConditions" column="downward_conditions"/>
+        <result property="emergencyConditions" column="emergency_conditions"/>
+        <result property="priority" column="priority"/>
+        <result property="effectiveDate" column="effective_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectReferralRuleVo">
+        select id, rule_name, disease_type, upward_conditions, downward_conditions, emergency_conditions, priority, effective_date, create_by, create_time, update_by, update_time, remark
+        from referral_rule
+    </sql>
+
+    <select id="selectReferralRuleList" parameterType="ReferralRule" resultMap="ReferralRuleResult">
+        <include refid="selectReferralRuleVo"/>
+        <where>
+            <if test="ruleName != null and ruleName != ''">and rule_name like concat('%', #{ruleName}, '%')</if>
+            <if test="diseaseType != null and diseaseType != ''">and disease_type like concat('%', #{diseaseType}, '%')</if>
+            <if test="upwardConditions != null and upwardConditions != ''">and upward_conditions like concat('%', #{upwardConditions}, '%')</if>
+            <if test="downwardConditions != null and downwardConditions != ''">and downward_conditions like concat('%', #{downwardConditions}, '%')</if>
+            <if test="emergencyConditions != null and emergencyConditions != ''">and emergency_conditions like concat('%', #{emergencyConditions}, '%')</if>
+            <if test="priority != null">and priority = #{priority}</if>
+            <if test="effectiveDate != null">and effective_date = #{effectiveDate}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectReferralRuleById" parameterType="Long" resultMap="ReferralRuleResult">
+        <include refid="selectReferralRuleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertReferralRule" parameterType="ReferralRule" useGeneratedKeys="true" keyProperty="id">
+        insert into referral_rule (rule_name, disease_type, upward_conditions, downward_conditions, emergency_conditions, priority, effective_date, create_by, create_time, remark)
+        values (#{ruleName}, #{diseaseType}, #{upwardConditions}, #{downwardConditions}, #{emergencyConditions}, #{priority}, #{effectiveDate}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateReferralRule" parameterType="ReferralRule">
+        update referral_rule
+        <set>
+            <if test="ruleName != null">rule_name = #{ruleName},</if>
+            <if test="diseaseType != null">disease_type = #{diseaseType},</if>
+            <if test="upwardConditions != null">upward_conditions = #{upwardConditions},</if>
+            <if test="downwardConditions != null">downward_conditions = #{downwardConditions},</if>
+            <if test="emergencyConditions != null">emergency_conditions = #{emergencyConditions},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="effectiveDate != null">effective_date = #{effectiveDate},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteReferralRuleById" parameterType="Long">
+        delete from referral_rule where id = #{id}
+    </delete>
+
+    <delete id="deleteReferralRuleByIds" parameterType="String">
+        delete from referral_rule where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

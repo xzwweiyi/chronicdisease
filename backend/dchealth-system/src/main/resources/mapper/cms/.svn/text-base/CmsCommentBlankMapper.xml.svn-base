@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.cms.mapper.CmsCommentBlankMapper">
+    
+    <resultMap type="CmsCommentBlank" id="CmsCommentBlankResult">
+        <result property="id"    column="id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="commentId"    column="comment_id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCmsCommentBlankVo">
+        select id, article_id, comment_id, tenant_id, account_id, create_time from cms_comment_blank
+    </sql>
+
+    <select id="selectCmsCommentBlankList" parameterType="CmsCommentBlank" resultMap="CmsCommentBlankResult">
+        <include refid="selectCmsCommentBlankVo"/>
+        <where>  
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="commentId != null "> and comment_id = #{commentId}</if>
+            <if test="tenantId != null  and tenantId != ''"> and tenant_id = #{tenantId}</if>
+            <if test="accountId != null "> and account_id = #{accountId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCmsCommentBlankById" parameterType="Long" resultMap="CmsCommentBlankResult">
+        <include refid="selectCmsCommentBlankVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCmsCommentBlank" parameterType="CmsCommentBlank" useGeneratedKeys="true" keyProperty="id">
+        insert into cms_comment_blank
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">article_id,</if>
+            <if test="commentId != null">comment_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="accountId != null">account_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">#{articleId},</if>
+            <if test="commentId != null">#{commentId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="accountId != null">#{accountId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmsCommentBlank" parameterType="CmsCommentBlank">
+        update cms_comment_blank
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="commentId != null">comment_id = #{commentId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCmsCommentBlankById" parameterType="Long">
+        delete from cms_comment_blank where id = #{id}
+    </delete>
+
+    <delete id="deleteCmsCommentBlankByIds" parameterType="String">
+        delete from cms_comment_blank where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

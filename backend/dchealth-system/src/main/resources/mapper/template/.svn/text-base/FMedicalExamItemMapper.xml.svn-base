@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FMedicalExamItemMapper">
+
+    <resultMap type="FMedicalExamItem" id="FMedicalExamItemResult">
+        <result property="id"    column="id"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="itemValue"    column="item_value"    />
+        <result property="itemLabel"    column="item_label"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="itemScores"    column="item_scores"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+    </resultMap>
+
+    <sql id="selectFMedicalExamItemVo">
+        select id, property_id, item_value, item_label, order_num, create_time, item_scores, medical_form_id from f_medical_exam_item
+    </sql>
+
+    <select id="selectFMedicalExamItemList" parameterType="FMedicalExamItem" resultMap="FMedicalExamItemResult">
+        <include refid="selectFMedicalExamItemVo"/>
+        <where>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+            <if test="itemValue != null  and itemValue != ''"> and item_value = #{itemValue}</if>
+            <if test="itemLabel != null  and itemLabel != ''"> and item_label = #{itemLabel}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="itemScores != null "> and item_scores = #{itemScores}</if>
+            <if test="medicalFormId != null "> and medical_form_id = #{medicalFormId}</if>
+        </where>
+    </select>
+
+    <select id="selectFMedicalExamItemById" parameterType="Long" resultMap="FMedicalExamItemResult">
+        <include refid="selectFMedicalExamItemVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFMedicalExamItem" parameterType="FMedicalExamItem" useGeneratedKeys="true" keyProperty="id">
+        insert into f_medical_exam_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propertyId != null">property_id,</if>
+            <if test="itemValue != null">item_value,</if>
+            <if test="itemLabel != null">item_label,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="itemScores != null">item_scores,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="itemValue != null">#{itemValue},</if>
+            <if test="itemLabel != null">#{itemLabel},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="itemScores != null">#{itemScores},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFMedicalExamItem" parameterType="FMedicalExamItem">
+        update f_medical_exam_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="itemValue != null">item_value = #{itemValue},</if>
+            <if test="itemLabel != null">item_label = #{itemLabel},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="itemScores != null">item_scores = #{itemScores},</if>
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFMedicalExamItemById" parameterType="Long">
+        delete from f_medical_exam_item where id = #{id}
+    </delete>
+
+    <delete id="deleteFMedicalExamItemByIds" parameterType="String">
+        delete from f_medical_exam_item where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectFMedicalExamItemByProId" parameterType="Long" resultMap="FMedicalExamItemResult">
+        <include refid="selectFMedicalExamItemVo"/>
+        where property_id = #{propertyId}
+    </select>
+
+    <select id="selectExamItemMaxOrderNum" resultType="Integer" parameterType="Long">
+        select max(order_num) from f_medical_exam_item where property_id = #{propertyId}
+    </select>
+
+    <delete id="deleteFMedicalExamItemByMedicalFormId" parameterType="Long">
+        delete from f_medical_exam_item where medical_form_id = #{medicalFormId}
+    </delete>
+
+    <select id="selectFMedicalExamItemByFromId" parameterType="Long" resultMap="FMedicalExamItemResult">
+        <include refid="selectFMedicalExamItemVo"/>
+        where medical_form_id = #{medicalFormId}
+    </select>
+
+    <select id="selectFMedicalExamItemByProIdAndValue" parameterType="String" resultMap="FMedicalExamItemResult">
+        <include refid="selectFMedicalExamItemVo"/>
+        where property_id = #{propertyId} and item_value in
+        <foreach collection="list" item="value" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </select>
+</mapper>

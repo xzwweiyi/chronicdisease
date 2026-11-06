@@ -1,0 +1,1586 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.JcxxMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.Jcxx" id="JcxxMap">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="sfzh" column="SFZH" jdbcType="VARCHAR"/>
+        <result property="vipid" column="VIPID" jdbcType="VARCHAR"/>
+        <result property="xm" column="XM" jdbcType="VARCHAR"/>
+        <result property="xb" column="XB" jdbcType="VARCHAR"/>
+        <result property="csny" column="CSNY" jdbcType="VARCHAR"/>
+        <result property="hf" column="HF" jdbcType="VARCHAR"/>
+        <result property="mz" column="MZ" jdbcType="VARCHAR"/>
+        <result property="txdz" column="TXDZ" jdbcType="VARCHAR"/>
+        <result property="lxdh" column="LXDH" jdbcType="VARCHAR"/>
+        <result property="whcd" column="WHCD" jdbcType="VARCHAR"/>
+        <result property="zy" column="ZY" jdbcType="VARCHAR"/>
+        <result property="ssss" column="SSSS" jdbcType="VARCHAR"/>
+        <result property="ssqx" column="SSQX" jdbcType="VARCHAR"/>
+        <result property="jcrq" column="JCRQ" jdbcType="VARCHAR"/>
+        <result property="jdrq" column="JDRQ" jdbcType="VARCHAR"/>
+        <result property="dwdm" column="DWDM" jdbcType="VARCHAR"/>
+        <result property="dwfzdm" column="DWFZDM" jdbcType="VARCHAR"/>
+        <result property="gwdm" column="GWDM" jdbcType="VARCHAR"/>
+        <result property="gzdm" column="GZDM" jdbcType="VARCHAR"/>
+        <result property="photo" column="PHOTO" jdbcType="VARCHAR"/>
+        <result property="djxm" column="DJXM" jdbcType="VARCHAR"/>
+        <result property="newdjxm" column="NEWDJXM" jdbcType="VARCHAR"/>
+        <result property="jcxm" column="JCXM" jdbcType="VARCHAR"/>
+        <result property="ycxm" column="YCXM" jdbcType="VARCHAR"/>
+        <result property="wcxm" column="WCXM" jdbcType="VARCHAR"/>
+        <result property="djje" column="DJJE" jdbcType="VARCHAR"/>
+        <result property="je" column="JE" jdbcType="VARCHAR"/>
+        <result property="ssje" column="SSJE" jdbcType="VARCHAR"/>
+        <result property="xjje" column="XJJE" jdbcType="VARCHAR"/>
+        <result property="card" column="CARD" jdbcType="VARCHAR"/>
+        <result property="gh" column="GH" jdbcType="VARCHAR"/>
+        <result property="djys" column="DJYS" jdbcType="VARCHAR"/>
+        <result property="hyxm" column="HYXM" jdbcType="VARCHAR"/>
+        <result property="pacsxm" column="PACSXM" jdbcType="VARCHAR"/>
+        <result property="jclb" column="JCLB" jdbcType="VARCHAR"/>
+        <result property="zhxmdm" column="ZHXMDM" jdbcType="VARCHAR"/>
+        <result property="jlys" column="JLYS" jdbcType="VARCHAR"/>
+        <result property="sqys" column="SQYS" jdbcType="VARCHAR"/>
+        <result property="sfbj" column="SFBJ" jdbcType="VARCHAR"/>
+        <result property="ysfbj" column="YSFBJ" jdbcType="VARCHAR"/>
+        <result property="djcount" column="DJCount" jdbcType="INTEGER"/>
+        <result property="sfys" column="SFYS" jdbcType="VARCHAR"/>
+        <result property="xjje1" column="XJJE1" jdbcType="VARCHAR"/>
+        <result property="xjje2" column="XJJE2" jdbcType="VARCHAR"/>
+        <result property="xjje3" column="XJJE3" jdbcType="VARCHAR"/>
+        <result property="xjje4" column="XJJE4" jdbcType="VARCHAR"/>
+        <result property="xjje5" column="XJJE5" jdbcType="VARCHAR"/>
+        <result property="xjje6" column="XJJE6" jdbcType="VARCHAR"/>
+        <result property="xjje7" column="XJJE7" jdbcType="VARCHAR"/>
+        <result property="xjje8" column="XJJE8" jdbcType="VARCHAR"/>
+        <result property="xjje9" column="XJJE9" jdbcType="VARCHAR"/>
+        <result property="xjje10" column="XJJE10" jdbcType="VARCHAR"/>
+        <result property="xjje11" column="XJJE11" jdbcType="VARCHAR"/>
+        <result property="nowje" column="NowJE" jdbcType="VARCHAR"/>
+        <result property="nowssje" column="NowSSJE" jdbcType="VARCHAR"/>
+        <result property="cyrq" column="CYRQ" jdbcType="TIMESTAMP"/>
+        <result property="printcount" column="PrintCount" jdbcType="INTEGER"/>
+        <result property="printdate" column="PrintDate" jdbcType="VARCHAR"/>
+        <result property="printys" column="PrintYS" jdbcType="VARCHAR"/>
+        <result property="ifupdown" column="IFUpDown" jdbcType="VARCHAR"/>
+        <result property="updowntime" column="UpDownTime" jdbcType="VARCHAR"/>
+        <result property="zkl" column="ZKL" jdbcType="NUMERIC"/>
+        <result property="wcks" column="WCKS" jdbcType="VARCHAR"/>
+        <result property="password" column="PassWord" jdbcType="VARCHAR"/>
+        <result property="gzks" column="GZKS" jdbcType="VARCHAR"/>
+        <result property="hsdate" column="HSDate" jdbcType="VARCHAR"/>
+        <result property="hsys" column="HSYS" jdbcType="VARCHAR"/>
+        <result property="gb" column="GB" jdbcType="VARCHAR"/>
+        <result property="email" column="Email" jdbcType="VARCHAR"/>
+        <result property="borthaddress" column="BorthAddress" jdbcType="VARCHAR"/>
+        <result property="grdnh" column="GRDNH" jdbcType="VARCHAR"/>
+        <result property="insureseriesid" column="InsureSeriesID" jdbcType="VARCHAR"/>
+        <result property="operaid" column="OperaID" jdbcType="VARCHAR"/>
+        <result property="etdate" column="ETDate" jdbcType="VARCHAR"/>
+        <result property="ckdate" column="CKDate" jdbcType="VARCHAR"/>
+        <result property="rcardflag" column="RCardFlag" jdbcType="VARCHAR"/>
+        <result property="rcarddate" column="RCardDate" jdbcType="VARCHAR"/>
+        <result property="medicalNo" column="Medical_No" jdbcType="VARCHAR"/>
+        <result property="hosptialNo" column="Hosptial_No" jdbcType="VARCHAR"/>
+        <result property="clinicNo" column="Clinic_No" jdbcType="VARCHAR"/>
+        <result property="notices" column="Notices" jdbcType="VARCHAR"/>
+        <result property="countFlag" column="Count_Flag" jdbcType="VARCHAR"/>
+        <result property="countFlagDate" column="Count_Flag_Date" jdbcType="VARCHAR"/>
+        <result property="countStatus" column="Count_Status" jdbcType="VARCHAR"/>
+        <result property="tjfb" column="TJFB" jdbcType="VARCHAR"/>
+        <result property="histfbj" column="HISTFBJ" jdbcType="VARCHAR"/>
+        <result property="hisgroupsfid" column="HISGroupSFID" jdbcType="VARCHAR"/>
+        <result property="specialflag" column="SpecialFlag" jdbcType="VARCHAR"/>
+        <result property="hdyrq" column="HDYRQ" jdbcType="TIMESTAMP"/>
+        <result property="hdyys" column="HDYYS" jdbcType="VARCHAR"/>
+        <result property="deptcode" column="DeptCode" jdbcType="VARCHAR"/>
+        <result property="ctype" column="CTYPE" jdbcType="VARCHAR"/>
+        <result property="rylxbh" column="RYLXBH" jdbcType="VARCHAR"/>
+        <result property="yyrq" column="YYRQ" jdbcType="VARCHAR"/>
+        <result property="orderid" column="ORDERID" jdbcType="VARCHAR"/>
+        <result property="paymode" column="PAYMODE" jdbcType="VARCHAR"/>
+        <result property="ifweixin" column="IFWEIXIN" jdbcType="VARCHAR"/>
+        <result property="lastmodiys" column="LastModiYS" jdbcType="VARCHAR"/>
+        <result property="lastmodidate" column="LastModiDate" jdbcType="VARCHAR"/>
+        <result property="pntbarcode" column="PntBarCode" jdbcType="VARCHAR"/>
+        <result property="pntbarcodetime" column="PntBarCodeTime" jdbcType="VARCHAR"/>
+        <result property="recall" column="ReCall" jdbcType="VARCHAR"/>
+        <result property="xmsx" column="XMSX" jdbcType="VARCHAR"/>
+        <result property="queueid" column="QUEUEID" jdbcType="VARCHAR"/>
+        <result property="contractId" column="Contract_ID" jdbcType="VARCHAR"/>
+        <result property="weixinorderid" column="WeiXinOrderID" jdbcType="VARCHAR"/>
+        <result property="queuedate" column="QueueDate" jdbcType="VARCHAR"/>
+        <result property="queueinfo" column="QueueInfo" jdbcType="VARCHAR"/>
+        <result property="ifsms" column="IFSMS" jdbcType="INTEGER"/>
+        <result property="tjxmtypemc" column="TJXMTypeMC" jdbcType="VARCHAR"/>
+        <result property="fcid" column="FCID" jdbcType="VARCHAR"/>
+        <result property="djysdm" column="DJYSDM" jdbcType="VARCHAR"/>
+        <result property="sfysdm" column="SFYSDM" jdbcType="INTEGER"/>
+        <result property="sqysdm" column="SQYSDM" jdbcType="VARCHAR"/>
+        <result property="yyrq1" column="YYRQ1" jdbcType="VARCHAR"/>
+        <result property="yyrqstr" column="YYRQStr" jdbcType="VARCHAR"/>
+        <result property="ifsend" column="IFSend" jdbcType="VARCHAR"/>
+        <result property="rylb" column="RYLB" jdbcType="VARCHAR"/>
+        <result property="notices1" column="Notices1" jdbcType="VARCHAR"/>
+        <result property="jjlxdh" column="JJLXDH" jdbcType="VARCHAR"/>
+        <result property="ifyy" column="IFYY" jdbcType="VARCHAR"/>
+        <result property="lqway" column="LQWay" jdbcType="VARCHAR"/>
+        <result property="plevel" column="PLevel" jdbcType="VARCHAR"/>
+        <result property="jlpatientbz" column="JLPatientBZ" jdbcType="VARCHAR"/>
+        <result property="tcje" column="TCJE" jdbcType="VARCHAR"/>
+        <result property="vipflag" column="VIPFlag" jdbcType="VARCHAR"/>
+        <result property="isPqzt" column="is_PQZT" jdbcType="VARCHAR"/>
+        <result property="fptitle" column="FPTitle" jdbcType="VARCHAR"/>
+        <result property="lqfs" column="LQFS" jdbcType="VARCHAR"/>
+        <result property="queuearea" column="QueueArea" jdbcType="VARCHAR"/>
+        <result property="tzdprinter" column="TZDPrinter" jdbcType="VARCHAR"/>
+        <result property="glfzdm" column="GLFZDM" jdbcType="VARCHAR"/>
+        <result property="ifems" column="IFEMS" jdbcType="VARCHAR"/>
+        <result property="idtype" column="IDType" jdbcType="VARCHAR"/>
+        <result property="printflag" column="PrintFlag" jdbcType="VARCHAR"/>
+        <result property="yyrq2" column="YYRQ2" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="JcxxMap">
+        select
+          ID, SFZH, VIPID, XM, XB, CSNY, HF, MZ, TXDZ, LXDH, WHCD, ZY, SSSS, SSQX, JCRQ, JDRQ, DWDM, DWFZDM, GWDM, GZDM, PHOTO, DJXM, NEWDJXM, JCXM, YCXM, WCXM, DJJE, JE, SSJE, XJJE, CARD, GH, DJYS, HYXM, PACSXM, JCLB, ZHXMDM, JLYS, SQYS, SFBJ, YSFBJ, DJCount, SFYS, XJJE1, XJJE2, XJJE3, XJJE4, XJJE5, XJJE6, XJJE7, XJJE8, XJJE9, XJJE10, XJJE11, NowJE, NowSSJE, CYRQ, PrintCount, PrintDate, PrintYS, IFUpDown, UpDownTime, ZKL, WCKS, PassWord, GZKS, HSDate, HSYS, GB, Email, BorthAddress, GRDNH, InsureSeriesID, OperaID, ETDate, CKDate, RCardFlag, RCardDate, Medical_No, Hosptial_No, Clinic_No, Notices, Count_Flag, Count_Flag_Date, Count_Status, TJFB, HISTFBJ, HISGroupSFID, SpecialFlag, HDYRQ, HDYYS, DeptCode, CTYPE, RYLXBH, YYRQ, ORDERID, PAYMODE, IFWEIXIN, LastModiYS, LastModiDate, PntBarCode, PntBarCodeTime, ReCall, XMSX, QUEUEID, Contract_ID, WeiXinOrderID, QueueDate, QueueInfo, IFSMS, TJXMTypeMC, FCID, DJYSDM, SFYSDM, SQYSDM, YYRQ1, YYRQStr, IFSend, RYLB, Notices1, JJLXDH, IFYY, LQWay, PLevel, JLPatientBZ, TCJE, VIPFlag, is_PQZT, FPTitle, LQFS, QueueArea, TZDPrinter, GLFZDM, IFEMS, IDType, PrintFlag, YYRQ2
+        from jcxx
+        where ID = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="JcxxMap">
+        select
+          ID, SFZH, VIPID, XM, XB, CSNY, HF, MZ, TXDZ, LXDH, WHCD, ZY, SSSS, SSQX, JCRQ, JDRQ, DWDM, DWFZDM, GWDM, GZDM, PHOTO, DJXM, NEWDJXM, JCXM, YCXM, WCXM, DJJE, JE, SSJE, XJJE, CARD, GH, DJYS, HYXM, PACSXM, JCLB, ZHXMDM, JLYS, SQYS, SFBJ, YSFBJ, DJCount, SFYS, XJJE1, XJJE2, XJJE3, XJJE4, XJJE5, XJJE6, XJJE7, XJJE8, XJJE9, XJJE10, XJJE11, NowJE, NowSSJE, CYRQ, PrintCount, PrintDate, PrintYS, IFUpDown, UpDownTime, ZKL, WCKS, PassWord, GZKS, HSDate, HSYS, GB, Email, BorthAddress, GRDNH, InsureSeriesID, OperaID, ETDate, CKDate, RCardFlag, RCardDate, Medical_No, Hosptial_No, Clinic_No, Notices, Count_Flag, Count_Flag_Date, Count_Status, TJFB, HISTFBJ, HISGroupSFID, SpecialFlag, HDYRQ, HDYYS, DeptCode, CTYPE, RYLXBH, YYRQ, ORDERID, PAYMODE, IFWEIXIN, LastModiYS, LastModiDate, PntBarCode, PntBarCodeTime, ReCall, XMSX, QUEUEID, Contract_ID, WeiXinOrderID, QueueDate, QueueInfo, IFSMS, TJXMTypeMC, FCID, DJYSDM, SFYSDM, SQYSDM, YYRQ1, YYRQStr, IFSend, RYLB, Notices1, JJLXDH, IFYY, LQWay, PLevel, JLPatientBZ, TCJE, VIPFlag, is_PQZT, FPTitle, LQFS, QueueArea, TZDPrinter, GLFZDM, IFEMS, IDType, PrintFlag, YYRQ2
+        from jcxx
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id}
+            </if>
+            <if test="sfzh != null and sfzh != ''">
+                and SFZH = #{sfzh}
+            </if>
+            <if test="vipid != null and vipid != ''">
+                and VIPID = #{vipid}
+            </if>
+            <if test="xm != null and xm != ''">
+                and XM = #{xm}
+            </if>
+            <if test="xb != null and xb != ''">
+                and XB = #{xb}
+            </if>
+            <if test="csny != null and csny != ''">
+                and CSNY = #{csny}
+            </if>
+            <if test="hf != null and hf != ''">
+                and HF = #{hf}
+            </if>
+            <if test="mz != null and mz != ''">
+                and MZ = #{mz}
+            </if>
+            <if test="txdz != null and txdz != ''">
+                and TXDZ = #{txdz}
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                and LXDH = #{lxdh}
+            </if>
+            <if test="whcd != null and whcd != ''">
+                and WHCD = #{whcd}
+            </if>
+            <if test="zy != null and zy != ''">
+                and ZY = #{zy}
+            </if>
+            <if test="ssss != null and ssss != ''">
+                and SSSS = #{ssss}
+            </if>
+            <if test="ssqx != null and ssqx != ''">
+                and SSQX = #{ssqx}
+            </if>
+            <if test="jcrq != null and jcrq != ''">
+                and JCRQ = #{jcrq}
+            </if>
+            <if test="jdrq != null and jdrq != ''">
+                and JDRQ = #{jdrq}
+            </if>
+            <if test="dwdm != null and dwdm != ''">
+                and DWDM = #{dwdm}
+            </if>
+            <if test="dwfzdm != null and dwfzdm != ''">
+                and DWFZDM = #{dwfzdm}
+            </if>
+            <if test="gwdm != null and gwdm != ''">
+                and GWDM = #{gwdm}
+            </if>
+            <if test="gzdm != null and gzdm != ''">
+                and GZDM = #{gzdm}
+            </if>
+            <if test="photo != null and photo != ''">
+                and PHOTO = #{photo}
+            </if>
+            <if test="djxm != null and djxm != ''">
+                and DJXM = #{djxm}
+            </if>
+            <if test="newdjxm != null and newdjxm != ''">
+                and NEWDJXM = #{newdjxm}
+            </if>
+            <if test="jcxm != null and jcxm != ''">
+                and JCXM = #{jcxm}
+            </if>
+            <if test="ycxm != null and ycxm != ''">
+                and YCXM = #{ycxm}
+            </if>
+            <if test="wcxm != null and wcxm != ''">
+                and WCXM = #{wcxm}
+            </if>
+            <if test="djje != null">
+                and DJJE = #{djje}
+            </if>
+            <if test="je != null">
+                and JE = #{je}
+            </if>
+            <if test="ssje != null">
+                and SSJE = #{ssje}
+            </if>
+            <if test="xjje != null">
+                and XJJE = #{xjje}
+            </if>
+            <if test="card != null and card != ''">
+                and CARD = #{card}
+            </if>
+            <if test="gh != null and gh != ''">
+                and GH = #{gh}
+            </if>
+            <if test="djys != null and djys != ''">
+                and DJYS = #{djys}
+            </if>
+            <if test="hyxm != null and hyxm != ''">
+                and HYXM = #{hyxm}
+            </if>
+            <if test="pacsxm != null and pacsxm != ''">
+                and PACSXM = #{pacsxm}
+            </if>
+            <if test="jclb != null and jclb != ''">
+                and JCLB = #{jclb}
+            </if>
+            <if test="zhxmdm != null and zhxmdm != ''">
+                and ZHXMDM = #{zhxmdm}
+            </if>
+            <if test="jlys != null and jlys != ''">
+                and JLYS = #{jlys}
+            </if>
+            <if test="sqys != null and sqys != ''">
+                and SQYS = #{sqys}
+            </if>
+            <if test="sfbj != null and sfbj != ''">
+                and SFBJ = #{sfbj}
+            </if>
+            <if test="ysfbj != null and ysfbj != ''">
+                and YSFBJ = #{ysfbj}
+            </if>
+            <if test="djcount != null">
+                and DJCount = #{djcount}
+            </if>
+            <if test="sfys != null and sfys != ''">
+                and SFYS = #{sfys}
+            </if>
+            <if test="xjje1 != null">
+                and XJJE1 = #{xjje1}
+            </if>
+            <if test="xjje2 != null">
+                and XJJE2 = #{xjje2}
+            </if>
+            <if test="xjje3 != null">
+                and XJJE3 = #{xjje3}
+            </if>
+            <if test="xjje4 != null">
+                and XJJE4 = #{xjje4}
+            </if>
+            <if test="xjje5 != null">
+                and XJJE5 = #{xjje5}
+            </if>
+            <if test="xjje6 != null">
+                and XJJE6 = #{xjje6}
+            </if>
+            <if test="xjje7 != null">
+                and XJJE7 = #{xjje7}
+            </if>
+            <if test="xjje8 != null">
+                and XJJE8 = #{xjje8}
+            </if>
+            <if test="xjje9 != null">
+                and XJJE9 = #{xjje9}
+            </if>
+            <if test="xjje10 != null">
+                and XJJE10 = #{xjje10}
+            </if>
+            <if test="xjje11 != null">
+                and XJJE11 = #{xjje11}
+            </if>
+            <if test="nowje != null and nowje != ''">
+                and NowJE = #{nowje}
+            </if>
+            <if test="nowssje != null">
+                and NowSSJE = #{nowssje}
+            </if>
+            <if test="cyrq != null and cyrq != ''">
+                and CYRQ = #{cyrq}
+            </if>
+            <if test="printcount != null">
+                and PrintCount = #{printcount}
+            </if>
+            <if test="printdate != null and printdate != ''">
+                and PrintDate = #{printdate}
+            </if>
+            <if test="printys != null and printys != ''">
+                and PrintYS = #{printys}
+            </if>
+            <if test="ifupdown != null and ifupdown != ''">
+                and IFUpDown = #{ifupdown}
+            </if>
+            <if test="updowntime != null and updowntime != ''">
+                and UpDownTime = #{updowntime}
+            </if>
+            <if test="zkl != null">
+                and ZKL = #{zkl}
+            </if>
+            <if test="wcks != null and wcks != ''">
+                and WCKS = #{wcks}
+            </if>
+            <if test="password != null and password != ''">
+                and PassWord = #{password}
+            </if>
+            <if test="gzks != null and gzks != ''">
+                and GZKS = #{gzks}
+            </if>
+            <if test="hsdate != null and hsdate != ''">
+                and HSDate = #{hsdate}
+            </if>
+            <if test="hsys != null and hsys != ''">
+                and HSYS = #{hsys}
+            </if>
+            <if test="gb != null and gb != ''">
+                and GB = #{gb}
+            </if>
+            <if test="email != null and email != ''">
+                and Email = #{email}
+            </if>
+            <if test="borthaddress != null and borthaddress != ''">
+                and BorthAddress = #{borthaddress}
+            </if>
+            <if test="grdnh != null and grdnh != ''">
+                and GRDNH = #{grdnh}
+            </if>
+            <if test="insureseriesid != null and insureseriesid != ''">
+                and InsureSeriesID = #{insureseriesid}
+            </if>
+            <if test="operaid != null and operaid != ''">
+                and OperaID = #{operaid}
+            </if>
+            <if test="etdate != null and etdate != ''">
+                and ETDate = #{etdate}
+            </if>
+            <if test="ckdate != null and ckdate != ''">
+                and CKDate = #{ckdate}
+            </if>
+            <if test="rcardflag != null and rcardflag != ''">
+                and RCardFlag = #{rcardflag}
+            </if>
+            <if test="rcarddate != null and rcarddate != ''">
+                and RCardDate = #{rcarddate}
+            </if>
+            <if test="medicalNo != null and medicalNo != ''">
+                and Medical_No = #{medicalNo}
+            </if>
+            <if test="hosptialNo != null and hosptialNo != ''">
+                and Hosptial_No = #{hosptialNo}
+            </if>
+            <if test="clinicNo != null and clinicNo != ''">
+                and Clinic_No = #{clinicNo}
+            </if>
+            <if test="notices != null and notices != ''">
+                and Notices = #{notices}
+            </if>
+            <if test="countFlag != null and countFlag != ''">
+                and Count_Flag = #{countFlag}
+            </if>
+            <if test="countFlagDate != null and countFlagDate != ''">
+                and Count_Flag_Date = #{countFlagDate}
+            </if>
+            <if test="countStatus != null and countStatus != ''">
+                and Count_Status = #{countStatus}
+            </if>
+            <if test="tjfb != null and tjfb != ''">
+                and TJFB = #{tjfb}
+            </if>
+            <if test="histfbj != null and histfbj != ''">
+                and HISTFBJ = #{histfbj}
+            </if>
+            <if test="hisgroupsfid != null and hisgroupsfid != ''">
+                and HISGroupSFID = #{hisgroupsfid}
+            </if>
+            <if test="specialflag != null and specialflag != ''">
+                and SpecialFlag = #{specialflag}
+            </if>
+            <if test="hdyrq != null">
+                and HDYRQ = #{hdyrq}
+            </if>
+            <if test="hdyys != null and hdyys != ''">
+                and HDYYS = #{hdyys}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and DeptCode = #{deptcode}
+            </if>
+            <if test="ctype != null and ctype != ''">
+                and CTYPE = #{ctype}
+            </if>
+            <if test="rylxbh != null and rylxbh != ''">
+                and RYLXBH = #{rylxbh}
+            </if>
+            <if test="yyrq != null and yyrq != ''">
+                and YYRQ = #{yyrq}
+            </if>
+            <if test="orderid != null and orderid != ''">
+                and ORDERID = #{orderid}
+            </if>
+            <if test="paymode != null and paymode != ''">
+                and PAYMODE = #{paymode}
+            </if>
+            <if test="ifweixin != null and ifweixin != ''">
+                and IFWEIXIN = #{ifweixin}
+            </if>
+            <if test="lastmodiys != null and lastmodiys != ''">
+                and LastModiYS = #{lastmodiys}
+            </if>
+            <if test="lastmodidate != null and lastmodidate != ''">
+                and LastModiDate = #{lastmodidate}
+            </if>
+            <if test="pntbarcode != null and pntbarcode != ''">
+                and PntBarCode = #{pntbarcode}
+            </if>
+            <if test="pntbarcodetime != null and pntbarcodetime != ''">
+                and PntBarCodeTime = #{pntbarcodetime}
+            </if>
+            <if test="recall != null and recall != ''">
+                and ReCall = #{recall}
+            </if>
+            <if test="xmsx != null and xmsx != ''">
+                and XMSX = #{xmsx}
+            </if>
+            <if test="queueid != null and queueid != ''">
+                and QUEUEID = #{queueid}
+            </if>
+            <if test="contractId != null and contractId != ''">
+                and Contract_ID = #{contractId}
+            </if>
+            <if test="weixinorderid != null and weixinorderid != ''">
+                and WeiXinOrderID = #{weixinorderid}
+            </if>
+            <if test="queuedate != null and queuedate != ''">
+                and QueueDate = #{queuedate}
+            </if>
+            <if test="queueinfo != null and queueinfo != ''">
+                and QueueInfo = #{queueinfo}
+            </if>
+            <if test="ifsms != null">
+                and IFSMS = #{ifsms}
+            </if>
+            <if test="tjxmtypemc != null and tjxmtypemc != ''">
+                and TJXMTypeMC = #{tjxmtypemc}
+            </if>
+            <if test="fcid != null and fcid != ''">
+                and FCID = #{fcid}
+            </if>
+            <if test="djysdm != null and djysdm != ''">
+                and DJYSDM = #{djysdm}
+            </if>
+            <if test="sfysdm != null">
+                and SFYSDM = #{sfysdm}
+            </if>
+            <if test="sqysdm != null and sqysdm != ''">
+                and SQYSDM = #{sqysdm}
+            </if>
+            <if test="yyrq1 != null and yyrq1 != ''">
+                and YYRQ1 = #{yyrq1}
+            </if>
+            <if test="yyrqstr != null and yyrqstr != ''">
+                and YYRQStr = #{yyrqstr}
+            </if>
+            <if test="ifsend != null and ifsend != ''">
+                and IFSend = #{ifsend}
+            </if>
+            <if test="rylb != null and rylb != ''">
+                and RYLB = #{rylb}
+            </if>
+            <if test="notices1 != null and notices1 != ''">
+                and Notices1 = #{notices1}
+            </if>
+            <if test="jjlxdh != null and jjlxdh != ''">
+                and JJLXDH = #{jjlxdh}
+            </if>
+            <if test="ifyy != null and ifyy != ''">
+                and IFYY = #{ifyy}
+            </if>
+            <if test="lqway != null and lqway != ''">
+                and LQWay = #{lqway}
+            </if>
+            <if test="plevel != null and plevel != ''">
+                and PLevel = #{plevel}
+            </if>
+            <if test="jlpatientbz != null and jlpatientbz != ''">
+                and JLPatientBZ = #{jlpatientbz}
+            </if>
+            <if test="tcje != null and tcje != ''">
+                and TCJE = #{tcje}
+            </if>
+            <if test="vipflag != null and vipflag != ''">
+                and VIPFlag = #{vipflag}
+            </if>
+            <if test="isPqzt != null and isPqzt != ''">
+                and is_PQZT = #{isPqzt}
+            </if>
+            <if test="fptitle != null and fptitle != ''">
+                and FPTitle = #{fptitle}
+            </if>
+            <if test="lqfs != null and lqfs != ''">
+                and LQFS = #{lqfs}
+            </if>
+            <if test="queuearea != null and queuearea != ''">
+                and QueueArea = #{queuearea}
+            </if>
+            <if test="tzdprinter != null and tzdprinter != ''">
+                and TZDPrinter = #{tzdprinter}
+            </if>
+            <if test="glfzdm != null and glfzdm != ''">
+                and GLFZDM = #{glfzdm}
+            </if>
+            <if test="ifems != null and ifems != ''">
+                and IFEMS = #{ifems}
+            </if>
+            <if test="idtype != null and idtype != ''">
+                and IDType = #{idtype}
+            </if>
+            <if test="printflag != null and printflag != ''">
+                and PrintFlag = #{printflag}
+            </if>
+            <if test="yyrq2 != null and yyrq2 != ''">
+                and YYRQ2 = #{yyrq2}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from jcxx
+        <where>
+            <if test="id != null and id != ''">
+                and ID = #{id}
+            </if>
+            <if test="sfzh != null and sfzh != ''">
+                and SFZH = #{sfzh}
+            </if>
+            <if test="vipid != null and vipid != ''">
+                and VIPID = #{vipid}
+            </if>
+            <if test="xm != null and xm != ''">
+                and XM = #{xm}
+            </if>
+            <if test="xb != null and xb != ''">
+                and XB = #{xb}
+            </if>
+            <if test="csny != null and csny != ''">
+                and CSNY = #{csny}
+            </if>
+            <if test="hf != null and hf != ''">
+                and HF = #{hf}
+            </if>
+            <if test="mz != null and mz != ''">
+                and MZ = #{mz}
+            </if>
+            <if test="txdz != null and txdz != ''">
+                and TXDZ = #{txdz}
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                and LXDH = #{lxdh}
+            </if>
+            <if test="whcd != null and whcd != ''">
+                and WHCD = #{whcd}
+            </if>
+            <if test="zy != null and zy != ''">
+                and ZY = #{zy}
+            </if>
+            <if test="ssss != null and ssss != ''">
+                and SSSS = #{ssss}
+            </if>
+            <if test="ssqx != null and ssqx != ''">
+                and SSQX = #{ssqx}
+            </if>
+            <if test="jcrq != null and jcrq != ''">
+                and JCRQ = #{jcrq}
+            </if>
+            <if test="jdrq != null and jdrq != ''">
+                and JDRQ = #{jdrq}
+            </if>
+            <if test="dwdm != null and dwdm != ''">
+                and DWDM = #{dwdm}
+            </if>
+            <if test="dwfzdm != null and dwfzdm != ''">
+                and DWFZDM = #{dwfzdm}
+            </if>
+            <if test="gwdm != null and gwdm != ''">
+                and GWDM = #{gwdm}
+            </if>
+            <if test="gzdm != null and gzdm != ''">
+                and GZDM = #{gzdm}
+            </if>
+            <if test="photo != null and photo != ''">
+                and PHOTO = #{photo}
+            </if>
+            <if test="djxm != null and djxm != ''">
+                and DJXM = #{djxm}
+            </if>
+            <if test="newdjxm != null and newdjxm != ''">
+                and NEWDJXM = #{newdjxm}
+            </if>
+            <if test="jcxm != null and jcxm != ''">
+                and JCXM = #{jcxm}
+            </if>
+            <if test="ycxm != null and ycxm != ''">
+                and YCXM = #{ycxm}
+            </if>
+            <if test="wcxm != null and wcxm != ''">
+                and WCXM = #{wcxm}
+            </if>
+            <if test="djje != null">
+                and DJJE = #{djje}
+            </if>
+            <if test="je != null">
+                and JE = #{je}
+            </if>
+            <if test="ssje != null">
+                and SSJE = #{ssje}
+            </if>
+            <if test="xjje != null">
+                and XJJE = #{xjje}
+            </if>
+            <if test="card != null and card != ''">
+                and CARD = #{card}
+            </if>
+            <if test="gh != null and gh != ''">
+                and GH = #{gh}
+            </if>
+            <if test="djys != null and djys != ''">
+                and DJYS = #{djys}
+            </if>
+            <if test="hyxm != null and hyxm != ''">
+                and HYXM = #{hyxm}
+            </if>
+            <if test="pacsxm != null and pacsxm != ''">
+                and PACSXM = #{pacsxm}
+            </if>
+            <if test="jclb != null and jclb != ''">
+                and JCLB = #{jclb}
+            </if>
+            <if test="zhxmdm != null and zhxmdm != ''">
+                and ZHXMDM = #{zhxmdm}
+            </if>
+            <if test="jlys != null and jlys != ''">
+                and JLYS = #{jlys}
+            </if>
+            <if test="sqys != null and sqys != ''">
+                and SQYS = #{sqys}
+            </if>
+            <if test="sfbj != null and sfbj != ''">
+                and SFBJ = #{sfbj}
+            </if>
+            <if test="ysfbj != null and ysfbj != ''">
+                and YSFBJ = #{ysfbj}
+            </if>
+            <if test="djcount != null">
+                and DJCount = #{djcount}
+            </if>
+            <if test="sfys != null and sfys != ''">
+                and SFYS = #{sfys}
+            </if>
+            <if test="xjje1 != null">
+                and XJJE1 = #{xjje1}
+            </if>
+            <if test="xjje2 != null">
+                and XJJE2 = #{xjje2}
+            </if>
+            <if test="xjje3 != null">
+                and XJJE3 = #{xjje3}
+            </if>
+            <if test="xjje4 != null">
+                and XJJE4 = #{xjje4}
+            </if>
+            <if test="xjje5 != null">
+                and XJJE5 = #{xjje5}
+            </if>
+            <if test="xjje6 != null">
+                and XJJE6 = #{xjje6}
+            </if>
+            <if test="xjje7 != null">
+                and XJJE7 = #{xjje7}
+            </if>
+            <if test="xjje8 != null">
+                and XJJE8 = #{xjje8}
+            </if>
+            <if test="xjje9 != null">
+                and XJJE9 = #{xjje9}
+            </if>
+            <if test="xjje10 != null">
+                and XJJE10 = #{xjje10}
+            </if>
+            <if test="xjje11 != null">
+                and XJJE11 = #{xjje11}
+            </if>
+            <if test="nowje != null and nowje != ''">
+                and NowJE = #{nowje}
+            </if>
+            <if test="nowssje != null">
+                and NowSSJE = #{nowssje}
+            </if>
+            <if test="cyrq != null and cyrq != ''">
+                and CYRQ = #{cyrq}
+            </if>
+            <if test="printcount != null">
+                and PrintCount = #{printcount}
+            </if>
+            <if test="printdate != null and printdate != ''">
+                and PrintDate = #{printdate}
+            </if>
+            <if test="printys != null and printys != ''">
+                and PrintYS = #{printys}
+            </if>
+            <if test="ifupdown != null and ifupdown != ''">
+                and IFUpDown = #{ifupdown}
+            </if>
+            <if test="updowntime != null and updowntime != ''">
+                and UpDownTime = #{updowntime}
+            </if>
+            <if test="zkl != null">
+                and ZKL = #{zkl}
+            </if>
+            <if test="wcks != null and wcks != ''">
+                and WCKS = #{wcks}
+            </if>
+            <if test="password != null and password != ''">
+                and PassWord = #{password}
+            </if>
+            <if test="gzks != null and gzks != ''">
+                and GZKS = #{gzks}
+            </if>
+            <if test="hsdate != null and hsdate != ''">
+                and HSDate = #{hsdate}
+            </if>
+            <if test="hsys != null and hsys != ''">
+                and HSYS = #{hsys}
+            </if>
+            <if test="gb != null and gb != ''">
+                and GB = #{gb}
+            </if>
+            <if test="email != null and email != ''">
+                and Email = #{email}
+            </if>
+            <if test="borthaddress != null and borthaddress != ''">
+                and BorthAddress = #{borthaddress}
+            </if>
+            <if test="grdnh != null and grdnh != ''">
+                and GRDNH = #{grdnh}
+            </if>
+            <if test="insureseriesid != null and insureseriesid != ''">
+                and InsureSeriesID = #{insureseriesid}
+            </if>
+            <if test="operaid != null and operaid != ''">
+                and OperaID = #{operaid}
+            </if>
+            <if test="etdate != null and etdate != ''">
+                and ETDate = #{etdate}
+            </if>
+            <if test="ckdate != null and ckdate != ''">
+                and CKDate = #{ckdate}
+            </if>
+            <if test="rcardflag != null and rcardflag != ''">
+                and RCardFlag = #{rcardflag}
+            </if>
+            <if test="rcarddate != null and rcarddate != ''">
+                and RCardDate = #{rcarddate}
+            </if>
+            <if test="medicalNo != null and medicalNo != ''">
+                and Medical_No = #{medicalNo}
+            </if>
+            <if test="hosptialNo != null and hosptialNo != ''">
+                and Hosptial_No = #{hosptialNo}
+            </if>
+            <if test="clinicNo != null and clinicNo != ''">
+                and Clinic_No = #{clinicNo}
+            </if>
+            <if test="notices != null and notices != ''">
+                and Notices = #{notices}
+            </if>
+            <if test="countFlag != null and countFlag != ''">
+                and Count_Flag = #{countFlag}
+            </if>
+            <if test="countFlagDate != null and countFlagDate != ''">
+                and Count_Flag_Date = #{countFlagDate}
+            </if>
+            <if test="countStatus != null and countStatus != ''">
+                and Count_Status = #{countStatus}
+            </if>
+            <if test="tjfb != null and tjfb != ''">
+                and TJFB = #{tjfb}
+            </if>
+            <if test="histfbj != null and histfbj != ''">
+                and HISTFBJ = #{histfbj}
+            </if>
+            <if test="hisgroupsfid != null and hisgroupsfid != ''">
+                and HISGroupSFID = #{hisgroupsfid}
+            </if>
+            <if test="specialflag != null and specialflag != ''">
+                and SpecialFlag = #{specialflag}
+            </if>
+            <if test="hdyrq != null">
+                and HDYRQ = #{hdyrq}
+            </if>
+            <if test="hdyys != null and hdyys != ''">
+                and HDYYS = #{hdyys}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and DeptCode = #{deptcode}
+            </if>
+            <if test="ctype != null and ctype != ''">
+                and CTYPE = #{ctype}
+            </if>
+            <if test="rylxbh != null and rylxbh != ''">
+                and RYLXBH = #{rylxbh}
+            </if>
+            <if test="yyrq != null and yyrq != ''">
+                and YYRQ = #{yyrq}
+            </if>
+            <if test="orderid != null and orderid != ''">
+                and ORDERID = #{orderid}
+            </if>
+            <if test="paymode != null and paymode != ''">
+                and PAYMODE = #{paymode}
+            </if>
+            <if test="ifweixin != null and ifweixin != ''">
+                and IFWEIXIN = #{ifweixin}
+            </if>
+            <if test="lastmodiys != null and lastmodiys != ''">
+                and LastModiYS = #{lastmodiys}
+            </if>
+            <if test="lastmodidate != null and lastmodidate != ''">
+                and LastModiDate = #{lastmodidate}
+            </if>
+            <if test="pntbarcode != null and pntbarcode != ''">
+                and PntBarCode = #{pntbarcode}
+            </if>
+            <if test="pntbarcodetime != null and pntbarcodetime != ''">
+                and PntBarCodeTime = #{pntbarcodetime}
+            </if>
+            <if test="recall != null and recall != ''">
+                and ReCall = #{recall}
+            </if>
+            <if test="xmsx != null and xmsx != ''">
+                and XMSX = #{xmsx}
+            </if>
+            <if test="queueid != null and queueid != ''">
+                and QUEUEID = #{queueid}
+            </if>
+            <if test="contractId != null and contractId != ''">
+                and Contract_ID = #{contractId}
+            </if>
+            <if test="weixinorderid != null and weixinorderid != ''">
+                and WeiXinOrderID = #{weixinorderid}
+            </if>
+            <if test="queuedate != null and queuedate != ''">
+                and QueueDate = #{queuedate}
+            </if>
+            <if test="queueinfo != null and queueinfo != ''">
+                and QueueInfo = #{queueinfo}
+            </if>
+            <if test="ifsms != null">
+                and IFSMS = #{ifsms}
+            </if>
+            <if test="tjxmtypemc != null and tjxmtypemc != ''">
+                and TJXMTypeMC = #{tjxmtypemc}
+            </if>
+            <if test="fcid != null and fcid != ''">
+                and FCID = #{fcid}
+            </if>
+            <if test="djysdm != null and djysdm != ''">
+                and DJYSDM = #{djysdm}
+            </if>
+            <if test="sfysdm != null">
+                and SFYSDM = #{sfysdm}
+            </if>
+            <if test="sqysdm != null and sqysdm != ''">
+                and SQYSDM = #{sqysdm}
+            </if>
+            <if test="yyrq1 != null and yyrq1 != ''">
+                and YYRQ1 = #{yyrq1}
+            </if>
+            <if test="yyrqstr != null and yyrqstr != ''">
+                and YYRQStr = #{yyrqstr}
+            </if>
+            <if test="ifsend != null and ifsend != ''">
+                and IFSend = #{ifsend}
+            </if>
+            <if test="rylb != null and rylb != ''">
+                and RYLB = #{rylb}
+            </if>
+            <if test="notices1 != null and notices1 != ''">
+                and Notices1 = #{notices1}
+            </if>
+            <if test="jjlxdh != null and jjlxdh != ''">
+                and JJLXDH = #{jjlxdh}
+            </if>
+            <if test="ifyy != null and ifyy != ''">
+                and IFYY = #{ifyy}
+            </if>
+            <if test="lqway != null and lqway != ''">
+                and LQWay = #{lqway}
+            </if>
+            <if test="plevel != null and plevel != ''">
+                and PLevel = #{plevel}
+            </if>
+            <if test="jlpatientbz != null and jlpatientbz != ''">
+                and JLPatientBZ = #{jlpatientbz}
+            </if>
+            <if test="tcje != null and tcje != ''">
+                and TCJE = #{tcje}
+            </if>
+            <if test="vipflag != null and vipflag != ''">
+                and VIPFlag = #{vipflag}
+            </if>
+            <if test="isPqzt != null and isPqzt != ''">
+                and is_PQZT = #{isPqzt}
+            </if>
+            <if test="fptitle != null and fptitle != ''">
+                and FPTitle = #{fptitle}
+            </if>
+            <if test="lqfs != null and lqfs != ''">
+                and LQFS = #{lqfs}
+            </if>
+            <if test="queuearea != null and queuearea != ''">
+                and QueueArea = #{queuearea}
+            </if>
+            <if test="tzdprinter != null and tzdprinter != ''">
+                and TZDPrinter = #{tzdprinter}
+            </if>
+            <if test="glfzdm != null and glfzdm != ''">
+                and GLFZDM = #{glfzdm}
+            </if>
+            <if test="ifems != null and ifems != ''">
+                and IFEMS = #{ifems}
+            </if>
+            <if test="idtype != null and idtype != ''">
+                and IDType = #{idtype}
+            </if>
+            <if test="printflag != null and printflag != ''">
+                and PrintFlag = #{printflag}
+            </if>
+            <if test="yyrq2 != null and yyrq2 != ''">
+                and YYRQ2 = #{yyrq2}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="JcxxMap">
+        select
+          ID, SFZH, VIPID, XM, XB, CSNY, HF, MZ, LXDH, CYRQ
+        from jcxx
+        <where>
+            <if test="jcxx.id != null and jcxx.id != ''">
+                and ID > #{jcxx.id}
+            </if>
+        </where>
+        order by id
+        limit #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into jcxx(SFZH, VIPID, XM, XB, CSNY, HF, MZ, TXDZ, LXDH, WHCD, ZY, SSSS, SSQX, JCRQ, JDRQ, DWDM, DWFZDM, GWDM, GZDM, PHOTO, DJXM, NEWDJXM, JCXM, YCXM, WCXM, DJJE, JE, SSJE, XJJE, CARD, GH, DJYS, HYXM, PACSXM, JCLB, ZHXMDM, JLYS, SQYS, SFBJ, YSFBJ, DJCount, SFYS, XJJE1, XJJE2, XJJE3, XJJE4, XJJE5, XJJE6, XJJE7, XJJE8, XJJE9, XJJE10, XJJE11, NowJE, NowSSJE, CYRQ, PrintCount, PrintDate, PrintYS, IFUpDown, UpDownTime, ZKL, WCKS, PassWord, GZKS, HSDate, HSYS, GB, Email, BorthAddress, GRDNH, InsureSeriesID, OperaID, ETDate, CKDate, RCardFlag, RCardDate, Medical_No, Hosptial_No, Clinic_No, Notices, Count_Flag, Count_Flag_Date, Count_Status, TJFB, HISTFBJ, HISGroupSFID, SpecialFlag, HDYRQ, HDYYS, DeptCode, CTYPE, RYLXBH, YYRQ, ORDERID, PAYMODE, IFWEIXIN, LastModiYS, LastModiDate, PntBarCode, PntBarCodeTime, ReCall, XMSX, QUEUEID, Contract_ID, WeiXinOrderID, QueueDate, QueueInfo, IFSMS, TJXMTypeMC, FCID, DJYSDM, SFYSDM, SQYSDM, YYRQ1, YYRQStr, IFSend, RYLB, Notices1, JJLXDH, IFYY, LQWay, PLevel, JLPatientBZ, TCJE, VIPFlag, is_PQZT, FPTitle, LQFS, QueueArea, TZDPrinter, GLFZDM, IFEMS, IDType, PrintFlag, YYRQ2)
+        values (#{sfzh}, #{vipid}, #{xm}, #{xb}, #{csny}, #{hf}, #{mz}, #{txdz}, #{lxdh}, #{whcd}, #{zy}, #{ssss}, #{ssqx}, #{jcrq}, #{jdrq}, #{dwdm}, #{dwfzdm}, #{gwdm}, #{gzdm}, #{photo}, #{djxm}, #{newdjxm}, #{jcxm}, #{ycxm}, #{wcxm}, #{djje}, #{je}, #{ssje}, #{xjje}, #{card}, #{gh}, #{djys}, #{hyxm}, #{pacsxm}, #{jclb}, #{zhxmdm}, #{jlys}, #{sqys}, #{sfbj}, #{ysfbj}, #{djcount}, #{sfys}, #{xjje1}, #{xjje2}, #{xjje3}, #{xjje4}, #{xjje5}, #{xjje6}, #{xjje7}, #{xjje8}, #{xjje9}, #{xjje10}, #{xjje11}, #{nowje}, #{nowssje}, #{cyrq}, #{printcount}, #{printdate}, #{printys}, #{ifupdown}, #{updowntime}, #{zkl}, #{wcks}, #{password}, #{gzks}, #{hsdate}, #{hsys}, #{gb}, #{email}, #{borthaddress}, #{grdnh}, #{insureseriesid}, #{operaid}, #{etdate}, #{ckdate}, #{rcardflag}, #{rcarddate}, #{medicalNo}, #{hosptialNo}, #{clinicNo}, #{notices}, #{countFlag}, #{countFlagDate}, #{countStatus}, #{tjfb}, #{histfbj}, #{hisgroupsfid}, #{specialflag}, #{hdyrq}, #{hdyys}, #{deptcode}, #{ctype}, #{rylxbh}, #{yyrq}, #{orderid}, #{paymode}, #{ifweixin}, #{lastmodiys}, #{lastmodidate}, #{pntbarcode}, #{pntbarcodetime}, #{recall}, #{xmsx}, #{queueid}, #{contractId}, #{weixinorderid}, #{queuedate}, #{queueinfo}, #{ifsms}, #{tjxmtypemc}, #{fcid}, #{djysdm}, #{sfysdm}, #{sqysdm}, #{yyrq1}, #{yyrqstr}, #{ifsend}, #{rylb}, #{notices1}, #{jjlxdh}, #{ifyy}, #{lqway}, #{plevel}, #{jlpatientbz}, #{tcje}, #{vipflag}, #{isPqzt}, #{fptitle}, #{lqfs}, #{queuearea}, #{tzdprinter}, #{glfzdm}, #{ifems}, #{idtype}, #{printflag}, #{yyrq2})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into jcxx(SFZH, VIPID, XM, XB, CSNY, HF, MZ, TXDZ, LXDH, WHCD, ZY, SSSS, SSQX, JCRQ, JDRQ, DWDM, DWFZDM, GWDM, GZDM, PHOTO, DJXM, NEWDJXM, JCXM, YCXM, WCXM, DJJE, JE, SSJE, XJJE, CARD, GH, DJYS, HYXM, PACSXM, JCLB, ZHXMDM, JLYS, SQYS, SFBJ, YSFBJ, DJCount, SFYS, XJJE1, XJJE2, XJJE3, XJJE4, XJJE5, XJJE6, XJJE7, XJJE8, XJJE9, XJJE10, XJJE11, NowJE, NowSSJE, CYRQ, PrintCount, PrintDate, PrintYS, IFUpDown, UpDownTime, ZKL, WCKS, PassWord, GZKS, HSDate, HSYS, GB, Email, BorthAddress, GRDNH, InsureSeriesID, OperaID, ETDate, CKDate, RCardFlag, RCardDate, Medical_No, Hosptial_No, Clinic_No, Notices, Count_Flag, Count_Flag_Date, Count_Status, TJFB, HISTFBJ, HISGroupSFID, SpecialFlag, HDYRQ, HDYYS, DeptCode, CTYPE, RYLXBH, YYRQ, ORDERID, PAYMODE, IFWEIXIN, LastModiYS, LastModiDate, PntBarCode, PntBarCodeTime, ReCall, XMSX, QUEUEID, Contract_ID, WeiXinOrderID, QueueDate, QueueInfo, IFSMS, TJXMTypeMC, FCID, DJYSDM, SFYSDM, SQYSDM, YYRQ1, YYRQStr, IFSend, RYLB, Notices1, JJLXDH, IFYY, LQWay, PLevel, JLPatientBZ, TCJE, VIPFlag, is_PQZT, FPTitle, LQFS, QueueArea, TZDPrinter, GLFZDM, IFEMS, IDType, PrintFlag, YYRQ2)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.sfzh}, #{entity.vipid}, #{entity.xm}, #{entity.xb}, #{entity.csny}, #{entity.hf}, #{entity.mz}, #{entity.txdz}, #{entity.lxdh}, #{entity.whcd}, #{entity.zy}, #{entity.ssss}, #{entity.ssqx}, #{entity.jcrq}, #{entity.jdrq}, #{entity.dwdm}, #{entity.dwfzdm}, #{entity.gwdm}, #{entity.gzdm}, #{entity.photo}, #{entity.djxm}, #{entity.newdjxm}, #{entity.jcxm}, #{entity.ycxm}, #{entity.wcxm}, #{entity.djje}, #{entity.je}, #{entity.ssje}, #{entity.xjje}, #{entity.card}, #{entity.gh}, #{entity.djys}, #{entity.hyxm}, #{entity.pacsxm}, #{entity.jclb}, #{entity.zhxmdm}, #{entity.jlys}, #{entity.sqys}, #{entity.sfbj}, #{entity.ysfbj}, #{entity.djcount}, #{entity.sfys}, #{entity.xjje1}, #{entity.xjje2}, #{entity.xjje3}, #{entity.xjje4}, #{entity.xjje5}, #{entity.xjje6}, #{entity.xjje7}, #{entity.xjje8}, #{entity.xjje9}, #{entity.xjje10}, #{entity.xjje11}, #{entity.nowje}, #{entity.nowssje}, #{entity.cyrq}, #{entity.printcount}, #{entity.printdate}, #{entity.printys}, #{entity.ifupdown}, #{entity.updowntime}, #{entity.zkl}, #{entity.wcks}, #{entity.password}, #{entity.gzks}, #{entity.hsdate}, #{entity.hsys}, #{entity.gb}, #{entity.email}, #{entity.borthaddress}, #{entity.grdnh}, #{entity.insureseriesid}, #{entity.operaid}, #{entity.etdate}, #{entity.ckdate}, #{entity.rcardflag}, #{entity.rcarddate}, #{entity.medicalNo}, #{entity.hosptialNo}, #{entity.clinicNo}, #{entity.notices}, #{entity.countFlag}, #{entity.countFlagDate}, #{entity.countStatus}, #{entity.tjfb}, #{entity.histfbj}, #{entity.hisgroupsfid}, #{entity.specialflag}, #{entity.hdyrq}, #{entity.hdyys}, #{entity.deptcode}, #{entity.ctype}, #{entity.rylxbh}, #{entity.yyrq}, #{entity.orderid}, #{entity.paymode}, #{entity.ifweixin}, #{entity.lastmodiys}, #{entity.lastmodidate}, #{entity.pntbarcode}, #{entity.pntbarcodetime}, #{entity.recall}, #{entity.xmsx}, #{entity.queueid}, #{entity.contractId}, #{entity.weixinorderid}, #{entity.queuedate}, #{entity.queueinfo}, #{entity.ifsms}, #{entity.tjxmtypemc}, #{entity.fcid}, #{entity.djysdm}, #{entity.sfysdm}, #{entity.sqysdm}, #{entity.yyrq1}, #{entity.yyrqstr}, #{entity.ifsend}, #{entity.rylb}, #{entity.notices1}, #{entity.jjlxdh}, #{entity.ifyy}, #{entity.lqway}, #{entity.plevel}, #{entity.jlpatientbz}, #{entity.tcje}, #{entity.vipflag}, #{entity.isPqzt}, #{entity.fptitle}, #{entity.lqfs}, #{entity.queuearea}, #{entity.tzdprinter}, #{entity.glfzdm}, #{entity.ifems}, #{entity.idtype}, #{entity.printflag}, #{entity.yyrq2})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into jcxx(SFZH, VIPID, XM, XB, CSNY, HF, MZ, TXDZ, LXDH, WHCD, ZY, SSSS, SSQX, JCRQ, JDRQ, DWDM, DWFZDM, GWDM, GZDM, PHOTO, DJXM, NEWDJXM, JCXM, YCXM, WCXM, DJJE, JE, SSJE, XJJE, CARD, GH, DJYS, HYXM, PACSXM, JCLB, ZHXMDM, JLYS, SQYS, SFBJ, YSFBJ, DJCount, SFYS, XJJE1, XJJE2, XJJE3, XJJE4, XJJE5, XJJE6, XJJE7, XJJE8, XJJE9, XJJE10, XJJE11, NowJE, NowSSJE, CYRQ, PrintCount, PrintDate, PrintYS, IFUpDown, UpDownTime, ZKL, WCKS, PassWord, GZKS, HSDate, HSYS, GB, Email, BorthAddress, GRDNH, InsureSeriesID, OperaID, ETDate, CKDate, RCardFlag, RCardDate, Medical_No, Hosptial_No, Clinic_No, Notices, Count_Flag, Count_Flag_Date, Count_Status, TJFB, HISTFBJ, HISGroupSFID, SpecialFlag, HDYRQ, HDYYS, DeptCode, CTYPE, RYLXBH, YYRQ, ORDERID, PAYMODE, IFWEIXIN, LastModiYS, LastModiDate, PntBarCode, PntBarCodeTime, ReCall, XMSX, QUEUEID, Contract_ID, WeiXinOrderID, QueueDate, QueueInfo, IFSMS, TJXMTypeMC, FCID, DJYSDM, SFYSDM, SQYSDM, YYRQ1, YYRQStr, IFSend, RYLB, Notices1, JJLXDH, IFYY, LQWay, PLevel, JLPatientBZ, TCJE, VIPFlag, is_PQZT, FPTitle, LQFS, QueueArea, TZDPrinter, GLFZDM, IFEMS, IDType, PrintFlag, YYRQ2)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.sfzh}, #{entity.vipid}, #{entity.xm}, #{entity.xb}, #{entity.csny}, #{entity.hf}, #{entity.mz}, #{entity.txdz}, #{entity.lxdh}, #{entity.whcd}, #{entity.zy}, #{entity.ssss}, #{entity.ssqx}, #{entity.jcrq}, #{entity.jdrq}, #{entity.dwdm}, #{entity.dwfzdm}, #{entity.gwdm}, #{entity.gzdm}, #{entity.photo}, #{entity.djxm}, #{entity.newdjxm}, #{entity.jcxm}, #{entity.ycxm}, #{entity.wcxm}, #{entity.djje}, #{entity.je}, #{entity.ssje}, #{entity.xjje}, #{entity.card}, #{entity.gh}, #{entity.djys}, #{entity.hyxm}, #{entity.pacsxm}, #{entity.jclb}, #{entity.zhxmdm}, #{entity.jlys}, #{entity.sqys}, #{entity.sfbj}, #{entity.ysfbj}, #{entity.djcount}, #{entity.sfys}, #{entity.xjje1}, #{entity.xjje2}, #{entity.xjje3}, #{entity.xjje4}, #{entity.xjje5}, #{entity.xjje6}, #{entity.xjje7}, #{entity.xjje8}, #{entity.xjje9}, #{entity.xjje10}, #{entity.xjje11}, #{entity.nowje}, #{entity.nowssje}, #{entity.cyrq}, #{entity.printcount}, #{entity.printdate}, #{entity.printys}, #{entity.ifupdown}, #{entity.updowntime}, #{entity.zkl}, #{entity.wcks}, #{entity.password}, #{entity.gzks}, #{entity.hsdate}, #{entity.hsys}, #{entity.gb}, #{entity.email}, #{entity.borthaddress}, #{entity.grdnh}, #{entity.insureseriesid}, #{entity.operaid}, #{entity.etdate}, #{entity.ckdate}, #{entity.rcardflag}, #{entity.rcarddate}, #{entity.medicalNo}, #{entity.hosptialNo}, #{entity.clinicNo}, #{entity.notices}, #{entity.countFlag}, #{entity.countFlagDate}, #{entity.countStatus}, #{entity.tjfb}, #{entity.histfbj}, #{entity.hisgroupsfid}, #{entity.specialflag}, #{entity.hdyrq}, #{entity.hdyys}, #{entity.deptcode}, #{entity.ctype}, #{entity.rylxbh}, #{entity.yyrq}, #{entity.orderid}, #{entity.paymode}, #{entity.ifweixin}, #{entity.lastmodiys}, #{entity.lastmodidate}, #{entity.pntbarcode}, #{entity.pntbarcodetime}, #{entity.recall}, #{entity.xmsx}, #{entity.queueid}, #{entity.contractId}, #{entity.weixinorderid}, #{entity.queuedate}, #{entity.queueinfo}, #{entity.ifsms}, #{entity.tjxmtypemc}, #{entity.fcid}, #{entity.djysdm}, #{entity.sfysdm}, #{entity.sqysdm}, #{entity.yyrq1}, #{entity.yyrqstr}, #{entity.ifsend}, #{entity.rylb}, #{entity.notices1}, #{entity.jjlxdh}, #{entity.ifyy}, #{entity.lqway}, #{entity.plevel}, #{entity.jlpatientbz}, #{entity.tcje}, #{entity.vipflag}, #{entity.isPqzt}, #{entity.fptitle}, #{entity.lqfs}, #{entity.queuearea}, #{entity.tzdprinter}, #{entity.glfzdm}, #{entity.ifems}, #{entity.idtype}, #{entity.printflag}, #{entity.yyrq2})
+        </foreach>
+        on duplicate key update
+        SFZH = values(SFZH),
+        VIPID = values(VIPID),
+        XM = values(XM),
+        XB = values(XB),
+        CSNY = values(CSNY),
+        HF = values(HF),
+        MZ = values(MZ),
+        TXDZ = values(TXDZ),
+        LXDH = values(LXDH),
+        WHCD = values(WHCD),
+        ZY = values(ZY),
+        SSSS = values(SSSS),
+        SSQX = values(SSQX),
+        JCRQ = values(JCRQ),
+        JDRQ = values(JDRQ),
+        DWDM = values(DWDM),
+        DWFZDM = values(DWFZDM),
+        GWDM = values(GWDM),
+        GZDM = values(GZDM),
+        PHOTO = values(PHOTO),
+        DJXM = values(DJXM),
+        NEWDJXM = values(NEWDJXM),
+        JCXM = values(JCXM),
+        YCXM = values(YCXM),
+        WCXM = values(WCXM),
+        DJJE = values(DJJE),
+        JE = values(JE),
+        SSJE = values(SSJE),
+        XJJE = values(XJJE),
+        CARD = values(CARD),
+        GH = values(GH),
+        DJYS = values(DJYS),
+        HYXM = values(HYXM),
+        PACSXM = values(PACSXM),
+        JCLB = values(JCLB),
+        ZHXMDM = values(ZHXMDM),
+        JLYS = values(JLYS),
+        SQYS = values(SQYS),
+        SFBJ = values(SFBJ),
+        YSFBJ = values(YSFBJ),
+        DJCount = values(DJCount),
+        SFYS = values(SFYS),
+        XJJE1 = values(XJJE1),
+        XJJE2 = values(XJJE2),
+        XJJE3 = values(XJJE3),
+        XJJE4 = values(XJJE4),
+        XJJE5 = values(XJJE5),
+        XJJE6 = values(XJJE6),
+        XJJE7 = values(XJJE7),
+        XJJE8 = values(XJJE8),
+        XJJE9 = values(XJJE9),
+        XJJE10 = values(XJJE10),
+        XJJE11 = values(XJJE11),
+        NowJE = values(NowJE),
+        NowSSJE = values(NowSSJE),
+        CYRQ = values(CYRQ),
+        PrintCount = values(PrintCount),
+        PrintDate = values(PrintDate),
+        PrintYS = values(PrintYS),
+        IFUpDown = values(IFUpDown),
+        UpDownTime = values(UpDownTime),
+        ZKL = values(ZKL),
+        WCKS = values(WCKS),
+        PassWord = values(PassWord),
+        GZKS = values(GZKS),
+        HSDate = values(HSDate),
+        HSYS = values(HSYS),
+        GB = values(GB),
+        Email = values(Email),
+        BorthAddress = values(BorthAddress),
+        GRDNH = values(GRDNH),
+        InsureSeriesID = values(InsureSeriesID),
+        OperaID = values(OperaID),
+        ETDate = values(ETDate),
+        CKDate = values(CKDate),
+        RCardFlag = values(RCardFlag),
+        RCardDate = values(RCardDate),
+        Medical_No = values(Medical_No),
+        Hosptial_No = values(Hosptial_No),
+        Clinic_No = values(Clinic_No),
+        Notices = values(Notices),
+        Count_Flag = values(Count_Flag),
+        Count_Flag_Date = values(Count_Flag_Date),
+        Count_Status = values(Count_Status),
+        TJFB = values(TJFB),
+        HISTFBJ = values(HISTFBJ),
+        HISGroupSFID = values(HISGroupSFID),
+        SpecialFlag = values(SpecialFlag),
+        HDYRQ = values(HDYRQ),
+        HDYYS = values(HDYYS),
+        DeptCode = values(DeptCode),
+        CTYPE = values(CTYPE),
+        RYLXBH = values(RYLXBH),
+        YYRQ = values(YYRQ),
+        ORDERID = values(ORDERID),
+        PAYMODE = values(PAYMODE),
+        IFWEIXIN = values(IFWEIXIN),
+        LastModiYS = values(LastModiYS),
+        LastModiDate = values(LastModiDate),
+        PntBarCode = values(PntBarCode),
+        PntBarCodeTime = values(PntBarCodeTime),
+        ReCall = values(ReCall),
+        XMSX = values(XMSX),
+        QUEUEID = values(QUEUEID),
+        Contract_ID = values(Contract_ID),
+        WeiXinOrderID = values(WeiXinOrderID),
+        QueueDate = values(QueueDate),
+        QueueInfo = values(QueueInfo),
+        IFSMS = values(IFSMS),
+        TJXMTypeMC = values(TJXMTypeMC),
+        FCID = values(FCID),
+        DJYSDM = values(DJYSDM),
+        SFYSDM = values(SFYSDM),
+        SQYSDM = values(SQYSDM),
+        YYRQ1 = values(YYRQ1),
+        YYRQStr = values(YYRQStr),
+        IFSend = values(IFSend),
+        RYLB = values(RYLB),
+        Notices1 = values(Notices1),
+        JJLXDH = values(JJLXDH),
+        IFYY = values(IFYY),
+        LQWay = values(LQWay),
+        PLevel = values(PLevel),
+        JLPatientBZ = values(JLPatientBZ),
+        TCJE = values(TCJE),
+        VIPFlag = values(VIPFlag),
+        is_PQZT = values(is_PQZT),
+        FPTitle = values(FPTitle),
+        LQFS = values(LQFS),
+        QueueArea = values(QueueArea),
+        TZDPrinter = values(TZDPrinter),
+        GLFZDM = values(GLFZDM),
+        IFEMS = values(IFEMS),
+        IDType = values(IDType),
+        PrintFlag = values(PrintFlag),
+        YYRQ2 = values(YYRQ2)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update jcxx
+        <set>
+            <if test="sfzh != null and sfzh != ''">
+                SFZH = #{sfzh},
+            </if>
+            <if test="vipid != null and vipid != ''">
+                VIPID = #{vipid},
+            </if>
+            <if test="xm != null and xm != ''">
+                XM = #{xm},
+            </if>
+            <if test="xb != null and xb != ''">
+                XB = #{xb},
+            </if>
+            <if test="csny != null and csny != ''">
+                CSNY = #{csny},
+            </if>
+            <if test="hf != null and hf != ''">
+                HF = #{hf},
+            </if>
+            <if test="mz != null and mz != ''">
+                MZ = #{mz},
+            </if>
+            <if test="txdz != null and txdz != ''">
+                TXDZ = #{txdz},
+            </if>
+            <if test="lxdh != null and lxdh != ''">
+                LXDH = #{lxdh},
+            </if>
+            <if test="whcd != null and whcd != ''">
+                WHCD = #{whcd},
+            </if>
+            <if test="zy != null and zy != ''">
+                ZY = #{zy},
+            </if>
+            <if test="ssss != null and ssss != ''">
+                SSSS = #{ssss},
+            </if>
+            <if test="ssqx != null and ssqx != ''">
+                SSQX = #{ssqx},
+            </if>
+            <if test="jcrq != null and jcrq != ''">
+                JCRQ = #{jcrq},
+            </if>
+            <if test="jdrq != null and jdrq != ''">
+                JDRQ = #{jdrq},
+            </if>
+            <if test="dwdm != null and dwdm != ''">
+                DWDM = #{dwdm},
+            </if>
+            <if test="dwfzdm != null and dwfzdm != ''">
+                DWFZDM = #{dwfzdm},
+            </if>
+            <if test="gwdm != null and gwdm != ''">
+                GWDM = #{gwdm},
+            </if>
+            <if test="gzdm != null and gzdm != ''">
+                GZDM = #{gzdm},
+            </if>
+            <if test="photo != null and photo != ''">
+                PHOTO = #{photo},
+            </if>
+            <if test="djxm != null and djxm != ''">
+                DJXM = #{djxm},
+            </if>
+            <if test="newdjxm != null and newdjxm != ''">
+                NEWDJXM = #{newdjxm},
+            </if>
+            <if test="jcxm != null and jcxm != ''">
+                JCXM = #{jcxm},
+            </if>
+            <if test="ycxm != null and ycxm != ''">
+                YCXM = #{ycxm},
+            </if>
+            <if test="wcxm != null and wcxm != ''">
+                WCXM = #{wcxm},
+            </if>
+            <if test="djje != null">
+                DJJE = #{djje},
+            </if>
+            <if test="je != null">
+                JE = #{je},
+            </if>
+            <if test="ssje != null">
+                SSJE = #{ssje},
+            </if>
+            <if test="xjje != null">
+                XJJE = #{xjje},
+            </if>
+            <if test="card != null and card != ''">
+                CARD = #{card},
+            </if>
+            <if test="gh != null and gh != ''">
+                GH = #{gh},
+            </if>
+            <if test="djys != null and djys != ''">
+                DJYS = #{djys},
+            </if>
+            <if test="hyxm != null and hyxm != ''">
+                HYXM = #{hyxm},
+            </if>
+            <if test="pacsxm != null and pacsxm != ''">
+                PACSXM = #{pacsxm},
+            </if>
+            <if test="jclb != null and jclb != ''">
+                JCLB = #{jclb},
+            </if>
+            <if test="zhxmdm != null and zhxmdm != ''">
+                ZHXMDM = #{zhxmdm},
+            </if>
+            <if test="jlys != null and jlys != ''">
+                JLYS = #{jlys},
+            </if>
+            <if test="sqys != null and sqys != ''">
+                SQYS = #{sqys},
+            </if>
+            <if test="sfbj != null and sfbj != ''">
+                SFBJ = #{sfbj},
+            </if>
+            <if test="ysfbj != null and ysfbj != ''">
+                YSFBJ = #{ysfbj},
+            </if>
+            <if test="djcount != null">
+                DJCount = #{djcount},
+            </if>
+            <if test="sfys != null and sfys != ''">
+                SFYS = #{sfys},
+            </if>
+            <if test="xjje1 != null">
+                XJJE1 = #{xjje1},
+            </if>
+            <if test="xjje2 != null">
+                XJJE2 = #{xjje2},
+            </if>
+            <if test="xjje3 != null">
+                XJJE3 = #{xjje3},
+            </if>
+            <if test="xjje4 != null">
+                XJJE4 = #{xjje4},
+            </if>
+            <if test="xjje5 != null">
+                XJJE5 = #{xjje5},
+            </if>
+            <if test="xjje6 != null">
+                XJJE6 = #{xjje6},
+            </if>
+            <if test="xjje7 != null">
+                XJJE7 = #{xjje7},
+            </if>
+            <if test="xjje8 != null">
+                XJJE8 = #{xjje8},
+            </if>
+            <if test="xjje9 != null">
+                XJJE9 = #{xjje9},
+            </if>
+            <if test="xjje10 != null">
+                XJJE10 = #{xjje10},
+            </if>
+            <if test="xjje11 != null">
+                XJJE11 = #{xjje11},
+            </if>
+            <if test="nowje != null and nowje != ''">
+                NowJE = #{nowje},
+            </if>
+            <if test="nowssje != null">
+                NowSSJE = #{nowssje},
+            </if>
+            <if test="cyrq != null and cyrq != ''">
+                CYRQ = #{cyrq},
+            </if>
+            <if test="printcount != null">
+                PrintCount = #{printcount},
+            </if>
+            <if test="printdate != null and printdate != ''">
+                PrintDate = #{printdate},
+            </if>
+            <if test="printys != null and printys != ''">
+                PrintYS = #{printys},
+            </if>
+            <if test="ifupdown != null and ifupdown != ''">
+                IFUpDown = #{ifupdown},
+            </if>
+            <if test="updowntime != null and updowntime != ''">
+                UpDownTime = #{updowntime},
+            </if>
+            <if test="zkl != null">
+                ZKL = #{zkl},
+            </if>
+            <if test="wcks != null and wcks != ''">
+                WCKS = #{wcks},
+            </if>
+            <if test="password != null and password != ''">
+                PassWord = #{password},
+            </if>
+            <if test="gzks != null and gzks != ''">
+                GZKS = #{gzks},
+            </if>
+            <if test="hsdate != null and hsdate != ''">
+                HSDate = #{hsdate},
+            </if>
+            <if test="hsys != null and hsys != ''">
+                HSYS = #{hsys},
+            </if>
+            <if test="gb != null and gb != ''">
+                GB = #{gb},
+            </if>
+            <if test="email != null and email != ''">
+                Email = #{email},
+            </if>
+            <if test="borthaddress != null and borthaddress != ''">
+                BorthAddress = #{borthaddress},
+            </if>
+            <if test="grdnh != null and grdnh != ''">
+                GRDNH = #{grdnh},
+            </if>
+            <if test="insureseriesid != null and insureseriesid != ''">
+                InsureSeriesID = #{insureseriesid},
+            </if>
+            <if test="operaid != null and operaid != ''">
+                OperaID = #{operaid},
+            </if>
+            <if test="etdate != null and etdate != ''">
+                ETDate = #{etdate},
+            </if>
+            <if test="ckdate != null and ckdate != ''">
+                CKDate = #{ckdate},
+            </if>
+            <if test="rcardflag != null and rcardflag != ''">
+                RCardFlag = #{rcardflag},
+            </if>
+            <if test="rcarddate != null and rcarddate != ''">
+                RCardDate = #{rcarddate},
+            </if>
+            <if test="medicalNo != null and medicalNo != ''">
+                Medical_No = #{medicalNo},
+            </if>
+            <if test="hosptialNo != null and hosptialNo != ''">
+                Hosptial_No = #{hosptialNo},
+            </if>
+            <if test="clinicNo != null and clinicNo != ''">
+                Clinic_No = #{clinicNo},
+            </if>
+            <if test="notices != null and notices != ''">
+                Notices = #{notices},
+            </if>
+            <if test="countFlag != null and countFlag != ''">
+                Count_Flag = #{countFlag},
+            </if>
+            <if test="countFlagDate != null and countFlagDate != ''">
+                Count_Flag_Date = #{countFlagDate},
+            </if>
+            <if test="countStatus != null and countStatus != ''">
+                Count_Status = #{countStatus},
+            </if>
+            <if test="tjfb != null and tjfb != ''">
+                TJFB = #{tjfb},
+            </if>
+            <if test="histfbj != null and histfbj != ''">
+                HISTFBJ = #{histfbj},
+            </if>
+            <if test="hisgroupsfid != null and hisgroupsfid != ''">
+                HISGroupSFID = #{hisgroupsfid},
+            </if>
+            <if test="specialflag != null and specialflag != ''">
+                SpecialFlag = #{specialflag},
+            </if>
+            <if test="hdyrq != null">
+                HDYRQ = #{hdyrq},
+            </if>
+            <if test="hdyys != null and hdyys != ''">
+                HDYYS = #{hdyys},
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                DeptCode = #{deptcode},
+            </if>
+            <if test="ctype != null and ctype != ''">
+                CTYPE = #{ctype},
+            </if>
+            <if test="rylxbh != null and rylxbh != ''">
+                RYLXBH = #{rylxbh},
+            </if>
+            <if test="yyrq != null and yyrq != ''">
+                YYRQ = #{yyrq},
+            </if>
+            <if test="orderid != null and orderid != ''">
+                ORDERID = #{orderid},
+            </if>
+            <if test="paymode != null and paymode != ''">
+                PAYMODE = #{paymode},
+            </if>
+            <if test="ifweixin != null and ifweixin != ''">
+                IFWEIXIN = #{ifweixin},
+            </if>
+            <if test="lastmodiys != null and lastmodiys != ''">
+                LastModiYS = #{lastmodiys},
+            </if>
+            <if test="lastmodidate != null and lastmodidate != ''">
+                LastModiDate = #{lastmodidate},
+            </if>
+            <if test="pntbarcode != null and pntbarcode != ''">
+                PntBarCode = #{pntbarcode},
+            </if>
+            <if test="pntbarcodetime != null and pntbarcodetime != ''">
+                PntBarCodeTime = #{pntbarcodetime},
+            </if>
+            <if test="recall != null and recall != ''">
+                ReCall = #{recall},
+            </if>
+            <if test="xmsx != null and xmsx != ''">
+                XMSX = #{xmsx},
+            </if>
+            <if test="queueid != null and queueid != ''">
+                QUEUEID = #{queueid},
+            </if>
+            <if test="contractId != null and contractId != ''">
+                Contract_ID = #{contractId},
+            </if>
+            <if test="weixinorderid != null and weixinorderid != ''">
+                WeiXinOrderID = #{weixinorderid},
+            </if>
+            <if test="queuedate != null and queuedate != ''">
+                QueueDate = #{queuedate},
+            </if>
+            <if test="queueinfo != null and queueinfo != ''">
+                QueueInfo = #{queueinfo},
+            </if>
+            <if test="ifsms != null">
+                IFSMS = #{ifsms},
+            </if>
+            <if test="tjxmtypemc != null and tjxmtypemc != ''">
+                TJXMTypeMC = #{tjxmtypemc},
+            </if>
+            <if test="fcid != null and fcid != ''">
+                FCID = #{fcid},
+            </if>
+            <if test="djysdm != null and djysdm != ''">
+                DJYSDM = #{djysdm},
+            </if>
+            <if test="sfysdm != null">
+                SFYSDM = #{sfysdm},
+            </if>
+            <if test="sqysdm != null and sqysdm != ''">
+                SQYSDM = #{sqysdm},
+            </if>
+            <if test="yyrq1 != null and yyrq1 != ''">
+                YYRQ1 = #{yyrq1},
+            </if>
+            <if test="yyrqstr != null and yyrqstr != ''">
+                YYRQStr = #{yyrqstr},
+            </if>
+            <if test="ifsend != null and ifsend != ''">
+                IFSend = #{ifsend},
+            </if>
+            <if test="rylb != null and rylb != ''">
+                RYLB = #{rylb},
+            </if>
+            <if test="notices1 != null and notices1 != ''">
+                Notices1 = #{notices1},
+            </if>
+            <if test="jjlxdh != null and jjlxdh != ''">
+                JJLXDH = #{jjlxdh},
+            </if>
+            <if test="ifyy != null and ifyy != ''">
+                IFYY = #{ifyy},
+            </if>
+            <if test="lqway != null and lqway != ''">
+                LQWay = #{lqway},
+            </if>
+            <if test="plevel != null and plevel != ''">
+                PLevel = #{plevel},
+            </if>
+            <if test="jlpatientbz != null and jlpatientbz != ''">
+                JLPatientBZ = #{jlpatientbz},
+            </if>
+            <if test="tcje != null and tcje != ''">
+                TCJE = #{tcje},
+            </if>
+            <if test="vipflag != null and vipflag != ''">
+                VIPFlag = #{vipflag},
+            </if>
+            <if test="isPqzt != null and isPqzt != ''">
+                is_PQZT = #{isPqzt},
+            </if>
+            <if test="fptitle != null and fptitle != ''">
+                FPTitle = #{fptitle},
+            </if>
+            <if test="lqfs != null and lqfs != ''">
+                LQFS = #{lqfs},
+            </if>
+            <if test="queuearea != null and queuearea != ''">
+                QueueArea = #{queuearea},
+            </if>
+            <if test="tzdprinter != null and tzdprinter != ''">
+                TZDPrinter = #{tzdprinter},
+            </if>
+            <if test="glfzdm != null and glfzdm != ''">
+                GLFZDM = #{glfzdm},
+            </if>
+            <if test="ifems != null and ifems != ''">
+                IFEMS = #{ifems},
+            </if>
+            <if test="idtype != null and idtype != ''">
+                IDType = #{idtype},
+            </if>
+            <if test="printflag != null and printflag != ''">
+                PrintFlag = #{printflag},
+            </if>
+            <if test="yyrq2 != null and yyrq2 != ''">
+                YYRQ2 = #{yyrq2},
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from jcxx where ID = #{id}
+    </delete>
+
+</mapper>
+

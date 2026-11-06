@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.health.mapper.PatientRecordHealthMapper">
+    
+    <resultMap type="PatientRecordHealth" id="PatientRecordHealthResult">
+        <result property="healthId"    column="health_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="followId"    column="follow_id"    />
+        <result property="submitTime"    column="submit_time"    />
+        <result property="healthManageType"    column="health_manage_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordHealthVo">
+        select health_id, record_id, patient_id, research_id, follow_id, submit_time, health_manage_type, create_time, update_time, create_by, update_by, is_delete from patient_record_health
+    </sql>
+
+    <select id="selectPatientRecordHealthList" parameterType="PatientRecordHealth" resultMap="PatientRecordHealthResult">
+        <include refid="selectPatientRecordHealthVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="followId != null "> and follow_id = #{followId}</if>
+            <if test="submitTime != null "> and submit_time = #{submitTime}</if>
+            <if test="healthManageType != null "> and health_manage_type = #{healthManageType}</if>
+            <if test="isDelete != null "> and is_delete = #{isDelete}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientRecordHealthByHealthId" parameterType="Long" resultMap="PatientRecordHealthResult">
+        <include refid="selectPatientRecordHealthVo"/>
+        where health_id = #{healthId}
+    </select>
+        
+    <insert id="insertPatientRecordHealth" parameterType="PatientRecordHealth" useGeneratedKeys="true" keyProperty="healthId">
+        insert into patient_record_health
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="patientId != null">patient_id,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="followId != null">follow_id,</if>
+            <if test="submitTime != null">submit_time,</if>
+            <if test="healthManageType != null">health_manage_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="patientId != null">#{patientId},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="followId != null">#{followId},</if>
+            <if test="submitTime != null">#{submitTime},</if>
+            <if test="healthManageType != null">#{healthManageType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientRecordHealth" parameterType="PatientRecordHealth">
+        update patient_record_health
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="followId != null">follow_id = #{followId},</if>
+            <if test="submitTime != null">submit_time = #{submitTime},</if>
+            <if test="healthManageType != null">health_manage_type = #{healthManageType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where health_id = #{healthId}
+    </update>
+
+    <delete id="deletePatientRecordHealthByHealthId" parameterType="Long">
+        delete from patient_record_health where health_id = #{healthId}
+    </delete>
+
+    <delete id="deletePatientRecordHealthByHealthIds" parameterType="String">
+        delete from patient_record_health where health_id in 
+        <foreach item="healthId" collection="array" open="(" separator="," close=")">
+            #{healthId}
+        </foreach>
+    </delete>
+</mapper>

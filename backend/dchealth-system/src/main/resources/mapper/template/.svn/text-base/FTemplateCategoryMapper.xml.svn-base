@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.template.mapper.FTemplateCategoryMapper">
+    
+    <resultMap type="FTemplateCategory" id="FTemplateCategoryResult">
+        <result property="templateCategoryId"    column="template_category_id"    />
+        <result property="templateCategoryName"    column="template_category_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptIds"    column="dept_ids"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createId"    column="create_id"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="templateNum"    column="template_num"    />
+    </resultMap>
+
+    <sql id="selectFTemplateCategoryVo">
+        select c.template_category_id, c.template_category_name, c.dept_id, c.dept_ids, c.create_time, c.update_time, c.create_by, c.create_id, c.update_by, c.del_flag from f_template_category c
+    </sql>
+
+    <sql id="selectFTemplateCategoryListSql">
+        select c.template_category_id, c.template_category_name, c.dept_id, c.dept_ids, c.create_time, c.update_time, c.create_by, c.create_id, c.update_by, c.del_flag,
+        (select count(1) from f_template t where t.template_category_id=c.template_category_id and t.is_deleted='0'
+            <if test="deptId != null and deptId!='100'.toString() "> and t.dept_id = #{deptId}</if>
+        ) as template_num
+        from f_template_category c where 1=1
+    </sql>
+
+    <select id="selectFTemplateCategoryList" parameterType="FTemplateCategory" resultMap="FTemplateCategoryResult">
+        <include refid="selectFTemplateCategoryListSql"/>
+        <if test="templateCategoryName != null  and templateCategoryName != ''"> and c.template_category_name like concat('%', #{templateCategoryName}, '%')</if>
+        <if test="deptId != null and deptId!='100'.toString() "> and c.dept_id = #{deptId}</if>
+        <if test="deptIds != null  and deptIds != ''"> and c.dept_ids = #{deptIds}</if>
+        <if test="commonFlag != null"> and c.common_flag = #{commonFlag}</if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+    
+    <select id="selectFTemplateCategoryByTemplateCategoryId" parameterType="Long" resultMap="FTemplateCategoryResult">
+        <include refid="selectFTemplateCategoryVo"/>
+        where c.template_category_id = #{templateCategoryId}
+    </select>
+        
+    <insert id="insertFTemplateCategory" parameterType="FTemplateCategory" useGeneratedKeys="true" keyProperty="templateCategoryId">
+        insert into f_template_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateCategoryName != null">template_category_name,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createId != null">create_id,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="deptIds != null">dept_ids,</if>
+            <if test="commonFlag != null">common_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateCategoryName != null">#{templateCategoryName},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createId != null">#{createId},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="deptIds != null">#{deptIds},</if>
+            <if test="commonFlag != null">#{commonFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFTemplateCategory" parameterType="FTemplateCategory">
+        update f_template_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateCategoryName != null">template_category_name = #{templateCategoryName},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createId != null">create_id = #{createId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="deptIds != null">dept_ids = #{deptIds},</if>
+        </trim>
+        where template_category_id = #{templateCategoryId}
+    </update>
+
+    <delete id="deleteFTemplateCategoryByTemplateCategoryId" parameterType="Long">
+        delete from f_template_category where template_category_id = #{templateCategoryId}
+    </delete>
+
+    <delete id="deleteFTemplateCategoryByTemplateCategoryIds" parameterType="String">
+        delete from f_template_category where template_category_id in 
+        <foreach item="templateCategoryId" collection="array" open="(" separator="," close=")">
+            #{templateCategoryId}
+        </foreach>
+    </delete>
+</mapper>

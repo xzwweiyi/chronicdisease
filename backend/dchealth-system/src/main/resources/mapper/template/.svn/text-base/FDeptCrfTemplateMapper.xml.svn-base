@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dchealth.template.mapper.FDeptCrfTemplateMapper">
+    
+    <resultMap type="FDeptCrfTemplate" id="FTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="deptTemplateId"    column="dept_template_id"    />
+        <result property="templateCategoryId"    column="template_category_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="templateCategoryName"    column="template_category_name"    />
+    </resultMap>
+
+    <sql id="selectDeptCrfTemplateVo">
+        select fdct.id, fdct.dept_id, fdct.template_id,fdct.dept_template_id, fdct.template_category_id, fdct.create_by, fdct.create_time, fdct.update_by, fdct.update_time, fdct.del_flag,ftc.template_category_name from f_dept_crf_template fdct
+        left join f_template_category ftc on fdct.template_category_id = ftc.template_category_id
+    </sql>
+
+
+    <select id="selectDeptCrfTemplateByTemplateList" parameterType="FDeptCrfTemplate" resultMap="FTemplateResult">
+        <include refid="selectDeptCrfTemplateVo"/>
+        <where>
+            and fdct.del_flag ='N'
+            <if test="templateId != null"> and  fdct.template_id = #{templateId}</if>
+            <if test="deptTemplateId != null"> and  fdct.dept_template_id = #{deptTemplateId}</if>
+            <if test="deptId != null"> and fdct.dept_id = #{deptId}</if>
+        </where>
+
+    </select>
+    
+
+        
+    <insert id="insertDeptCrfTemplate" parameterType="FDeptCrfTemplate">
+        insert into f_dept_crf_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">dept_id,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="deptTemplateId != null">dept_template_id,</if>
+            <if test="templateCategoryId != null">template_category_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">#{deptId},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="deptTemplateId != null">#{deptTemplateId},</if>
+            <if test="templateCategoryId != null">#{templateCategoryId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+
+         </trim>
+    </insert>
+
+    <update id="deleteDeptCrfTemplateByTemplateId">
+        update f_dept_crf_template set del_flag = 'Y'
+        where del_flag = 'N' and
+        <if test="deptTemplateIds != null">
+            dept_template_id in
+            <foreach item="deptTemplateId" collection="deptTemplateIds" open="(" separator="," close=")">
+                #{deptTemplateId}
+            </foreach>
+        </if>
+        <if test="templateIds != null">
+            template_id in
+            <foreach item="templateId" collection="templateIds" open="(" separator="," close=")">
+                #{templateId}
+            </foreach>
+        </if>
+
+
+    </update>
+</mapper>

@@ -1,0 +1,104 @@
+package com.dchealth.web.controller.template;
+
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.dchealth.common.annotation.Log;
+import com.dchealth.common.core.controller.BaseController;
+import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.enums.BusinessType;
+import com.dchealth.template.domain.FMedicalExamItem;
+import com.dchealth.template.service.IFMedicalExamItemService;
+import com.dchealth.common.utils.poi.ExcelUtil;
+import com.dchealth.common.core.page.TableDataInfo;
+
+/**
+ * 属性题目选项Controller
+ * 
+ * @author lchbu
+ * @date 2022-10-31
+ */
+@RestController
+@RequestMapping("/template/item")
+public class FMedicalExamItemController extends BaseController
+{
+    @Autowired
+    private IFMedicalExamItemService fMedicalExamItemService;
+
+    /**
+     * 查询属性题目选项列表
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(FMedicalExamItem fMedicalExamItem)
+    {
+        startPage();
+        List<FMedicalExamItem> list = fMedicalExamItemService.selectFMedicalExamItemList(fMedicalExamItem);
+        return getDataTable(list);
+    }
+
+    /**
+     * 导出属性题目选项列表
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:export')")
+    @Log(title = "属性题目选项", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, FMedicalExamItem fMedicalExamItem)
+    {
+        List<FMedicalExamItem> list = fMedicalExamItemService.selectFMedicalExamItemList(fMedicalExamItem);
+        ExcelUtil<FMedicalExamItem> util = new ExcelUtil<FMedicalExamItem>(FMedicalExamItem.class);
+        util.exportExcel(response, list, "属性题目选项数据");
+    }
+
+    /**
+     * 获取属性题目选项详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id)
+    {
+        return AjaxResult.success(fMedicalExamItemService.selectFMedicalExamItemById(id));
+    }
+
+    /**
+     * 新增属性题目选项
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:add')")
+    @Log(title = "属性题目选项", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody FMedicalExamItem fMedicalExamItem)
+    {
+        return toAjax(fMedicalExamItemService.insertFMedicalExamItem(fMedicalExamItem));
+    }
+
+    /**
+     * 修改属性题目选项
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:edit')")
+    @Log(title = "属性题目选项", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody FMedicalExamItem fMedicalExamItem)
+    {
+        return toAjax(fMedicalExamItemService.updateFMedicalExamItem(fMedicalExamItem));
+    }
+
+    /**
+     * 删除属性题目选项
+     */
+    @PreAuthorize("@ss.hasPermi('template:item:remove')")
+    @Log(title = "属性题目选项", businessType = BusinessType.DELETE)
+	@DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
+    {
+        return toAjax(fMedicalExamItemService.deleteFMedicalExamItemByIds(ids));
+    }
+}

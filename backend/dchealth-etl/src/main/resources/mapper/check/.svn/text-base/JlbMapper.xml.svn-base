@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.JlbMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.Jlb" id="JlbMap">
+        <result property="studyid" column="StudyID" jdbcType="VARCHAR"/>
+        <result property="jldm" column="JLDM" jdbcType="VARCHAR"/>
+        <result property="jcjg" column="JCJG" jdbcType="VARCHAR"/>
+        <result property="jcjgx" column="JCJGX" jdbcType="VARCHAR"/>
+        <result property="zjjl" column="ZJJL" jdbcType="VARCHAR"/>
+        <result property="jlrq" column="JLRQ" jdbcType="VARCHAR"/>
+        <result property="jlys" column="JLYS" jdbcType="VARCHAR"/>
+        <result property="ylbj" column="YLBJ" jdbcType="VARCHAR"/>
+        <result property="jcys" column="JCYS" jdbcType="VARCHAR"/>
+        <result property="tydl" column="TYDL" jdbcType="VARCHAR"/>
+        <result property="zljy" column="ZLJY" jdbcType="VARCHAR"/>
+        <result property="zjys" column="ZJYS" jdbcType="VARCHAR"/>
+        <result property="zjrq" column="ZJRQ" jdbcType="VARCHAR"/>
+        <result property="pgjg" column="PGJG" jdbcType="VARCHAR"/>
+        <result property="zyzjjl" column="ZYZJJL" jdbcType="VARCHAR"/>
+        <result property="zyylbj" column="ZYYLBJ" jdbcType="VARCHAR"/>
+        <result property="jkzjjl" column="JKZJJL" jdbcType="VARCHAR"/>
+        <result property="jkylbj" column="JKYLBJ" jdbcType="VARCHAR"/>
+        <result property="chylbj" column="CHYLBJ" jdbcType="VARCHAR"/>
+        <result property="compareks" column="CompareKS" jdbcType="VARCHAR"/>
+        <result property="compareid1" column="CompareID1" jdbcType="VARCHAR"/>
+        <result property="compareid2" column="CompareID2" jdbcType="VARCHAR"/>
+        <result property="compareid3" column="CompareID3" jdbcType="VARCHAR"/>
+        <result property="deptcode" column="DeptCode" jdbcType="VARCHAR"/>
+        <result property="jkxc" column="JKXC" jdbcType="VARCHAR"/>
+        <result property="smsReport" column="SMS_Report" jdbcType="INTEGER"/>
+        <result property="fhys" column="FHYS" jdbcType="VARCHAR"/>
+        <result property="fhrq" column="FHRQ" jdbcType="VARCHAR"/>
+        <result property="repGrade" column="Rep_Grade" jdbcType="VARCHAR"/>
+        <result property="checkys" column="CHECKYS" jdbcType="VARCHAR"/>
+        <result property="shys" column="SHYS" jdbcType="VARCHAR"/>
+        <result property="checkrq" column="CHECKRQ" jdbcType="VARCHAR"/>
+        <result property="shrq" column="SHRQ" jdbcType="VARCHAR"/>
+        <result property="bodypart" column="BodyPart" jdbcType="VARCHAR"/>
+        <result property="jlysdm" column="JLYSDM" jdbcType="VARCHAR"/>
+        <result property="zjysdm" column="ZJYSDM" jdbcType="VARCHAR"/>
+        <result property="shysdm" column="SHYSDM" jdbcType="VARCHAR"/>
+        <result property="checkysdm" column="CHECKYSDM" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="JlbMap">
+        select
+          StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM
+        from jlb
+        where  = #{studyid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="JlbMap">
+        select
+          StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM
+        from jlb
+        <where>
+            <if test="studyid != null and studyid != ''">
+                and StudyID = #{studyid}
+            </if>
+            <if test="jldm != null and jldm != ''">
+                and JLDM = #{jldm}
+            </if>
+            <if test="jcjg != null and jcjg != ''">
+                and JCJG = #{jcjg}
+            </if>
+            <if test="jcjgx != null and jcjgx != ''">
+                and JCJGX = #{jcjgx}
+            </if>
+            <if test="zjjl != null and zjjl != ''">
+                and ZJJL = #{zjjl}
+            </if>
+            <if test="jlrq != null and jlrq != ''">
+                and JLRQ = #{jlrq}
+            </if>
+            <if test="jlys != null and jlys != ''">
+                and JLYS = #{jlys}
+            </if>
+            <if test="ylbj != null and ylbj != ''">
+                and YLBJ = #{ylbj}
+            </if>
+            <if test="jcys != null and jcys != ''">
+                and JCYS = #{jcys}
+            </if>
+            <if test="tydl != null and tydl != ''">
+                and TYDL = #{tydl}
+            </if>
+            <if test="zljy != null and zljy != ''">
+                and ZLJY = #{zljy}
+            </if>
+            <if test="zjys != null and zjys != ''">
+                and ZJYS = #{zjys}
+            </if>
+            <if test="zjrq != null and zjrq != ''">
+                and ZJRQ = #{zjrq}
+            </if>
+            <if test="pgjg != null and pgjg != ''">
+                and PGJG = #{pgjg}
+            </if>
+            <if test="zyzjjl != null and zyzjjl != ''">
+                and ZYZJJL = #{zyzjjl}
+            </if>
+            <if test="zyylbj != null and zyylbj != ''">
+                and ZYYLBJ = #{zyylbj}
+            </if>
+            <if test="jkzjjl != null and jkzjjl != ''">
+                and JKZJJL = #{jkzjjl}
+            </if>
+            <if test="jkylbj != null and jkylbj != ''">
+                and JKYLBJ = #{jkylbj}
+            </if>
+            <if test="chylbj != null and chylbj != ''">
+                and CHYLBJ = #{chylbj}
+            </if>
+            <if test="compareks != null and compareks != ''">
+                and CompareKS = #{compareks}
+            </if>
+            <if test="compareid1 != null and compareid1 != ''">
+                and CompareID1 = #{compareid1}
+            </if>
+            <if test="compareid2 != null and compareid2 != ''">
+                and CompareID2 = #{compareid2}
+            </if>
+            <if test="compareid3 != null and compareid3 != ''">
+                and CompareID3 = #{compareid3}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and DeptCode = #{deptcode}
+            </if>
+            <if test="jkxc != null and jkxc != ''">
+                and JKXC = #{jkxc}
+            </if>
+            <if test="smsReport != null">
+                and SMS_Report = #{smsReport}
+            </if>
+            <if test="fhys != null and fhys != ''">
+                and FHYS = #{fhys}
+            </if>
+            <if test="fhrq != null and fhrq != ''">
+                and FHRQ = #{fhrq}
+            </if>
+            <if test="repGrade != null and repGrade != ''">
+                and Rep_Grade = #{repGrade}
+            </if>
+            <if test="checkys != null and checkys != ''">
+                and CHECKYS = #{checkys}
+            </if>
+            <if test="shys != null and shys != ''">
+                and SHYS = #{shys}
+            </if>
+            <if test="checkrq != null and checkrq != ''">
+                and CHECKRQ = #{checkrq}
+            </if>
+            <if test="shrq != null and shrq != ''">
+                and SHRQ = #{shrq}
+            </if>
+            <if test="bodypart != null and bodypart != ''">
+                and BodyPart = #{bodypart}
+            </if>
+            <if test="jlysdm != null and jlysdm != ''">
+                and JLYSDM = #{jlysdm}
+            </if>
+            <if test="zjysdm != null and zjysdm != ''">
+                and ZJYSDM = #{zjysdm}
+            </if>
+            <if test="shysdm != null and shysdm != ''">
+                and SHYSDM = #{shysdm}
+            </if>
+            <if test="checkysdm != null and checkysdm != ''">
+                and CHECKYSDM = #{checkysdm}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from jlb
+        <where>
+            <if test="studyid != null and studyid != ''">
+                and StudyID = #{studyid}
+            </if>
+            <if test="jldm != null and jldm != ''">
+                and JLDM = #{jldm}
+            </if>
+            <if test="jcjg != null and jcjg != ''">
+                and JCJG = #{jcjg}
+            </if>
+            <if test="jcjgx != null and jcjgx != ''">
+                and JCJGX = #{jcjgx}
+            </if>
+            <if test="zjjl != null and zjjl != ''">
+                and ZJJL = #{zjjl}
+            </if>
+            <if test="jlrq != null and jlrq != ''">
+                and JLRQ = #{jlrq}
+            </if>
+            <if test="jlys != null and jlys != ''">
+                and JLYS = #{jlys}
+            </if>
+            <if test="ylbj != null and ylbj != ''">
+                and YLBJ = #{ylbj}
+            </if>
+            <if test="jcys != null and jcys != ''">
+                and JCYS = #{jcys}
+            </if>
+            <if test="tydl != null and tydl != ''">
+                and TYDL = #{tydl}
+            </if>
+            <if test="zljy != null and zljy != ''">
+                and ZLJY = #{zljy}
+            </if>
+            <if test="zjys != null and zjys != ''">
+                and ZJYS = #{zjys}
+            </if>
+            <if test="zjrq != null and zjrq != ''">
+                and ZJRQ = #{zjrq}
+            </if>
+            <if test="pgjg != null and pgjg != ''">
+                and PGJG = #{pgjg}
+            </if>
+            <if test="zyzjjl != null and zyzjjl != ''">
+                and ZYZJJL = #{zyzjjl}
+            </if>
+            <if test="zyylbj != null and zyylbj != ''">
+                and ZYYLBJ = #{zyylbj}
+            </if>
+            <if test="jkzjjl != null and jkzjjl != ''">
+                and JKZJJL = #{jkzjjl}
+            </if>
+            <if test="jkylbj != null and jkylbj != ''">
+                and JKYLBJ = #{jkylbj}
+            </if>
+            <if test="chylbj != null and chylbj != ''">
+                and CHYLBJ = #{chylbj}
+            </if>
+            <if test="compareks != null and compareks != ''">
+                and CompareKS = #{compareks}
+            </if>
+            <if test="compareid1 != null and compareid1 != ''">
+                and CompareID1 = #{compareid1}
+            </if>
+            <if test="compareid2 != null and compareid2 != ''">
+                and CompareID2 = #{compareid2}
+            </if>
+            <if test="compareid3 != null and compareid3 != ''">
+                and CompareID3 = #{compareid3}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and DeptCode = #{deptcode}
+            </if>
+            <if test="jkxc != null and jkxc != ''">
+                and JKXC = #{jkxc}
+            </if>
+            <if test="smsReport != null">
+                and SMS_Report = #{smsReport}
+            </if>
+            <if test="fhys != null and fhys != ''">
+                and FHYS = #{fhys}
+            </if>
+            <if test="fhrq != null and fhrq != ''">
+                and FHRQ = #{fhrq}
+            </if>
+            <if test="repGrade != null and repGrade != ''">
+                and Rep_Grade = #{repGrade}
+            </if>
+            <if test="checkys != null and checkys != ''">
+                and CHECKYS = #{checkys}
+            </if>
+            <if test="shys != null and shys != ''">
+                and SHYS = #{shys}
+            </if>
+            <if test="checkrq != null and checkrq != ''">
+                and CHECKRQ = #{checkrq}
+            </if>
+            <if test="shrq != null and shrq != ''">
+                and SHRQ = #{shrq}
+            </if>
+            <if test="bodypart != null and bodypart != ''">
+                and BodyPart = #{bodypart}
+            </if>
+            <if test="jlysdm != null and jlysdm != ''">
+                and JLYSDM = #{jlysdm}
+            </if>
+            <if test="zjysdm != null and zjysdm != ''">
+                and ZJYSDM = #{zjysdm}
+            </if>
+            <if test="shysdm != null and shysdm != ''">
+                and SHYSDM = #{shysdm}
+            </if>
+            <if test="checkysdm != null and checkysdm != ''">
+                and CHECKYSDM = #{checkysdm}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Long">
+        select count(1)
+        from jlb
+        <where>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and date_format(JLRQ,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="JlbMap">
+        select
+        StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM
+        from jlb
+        <where>
+            <if test="jlb.params.recordingDate != null and jlb.params.recordingDate != ''">
+                and date_format(JLRQ,'%Y-%m-%d') = #{jlb.params.recordingDate}
+            </if>
+        </where>
+        order by jlrq
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+    <select id="querySyncInfosByPage" resultMap="JlbMap">
+        select
+        StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM
+        from jlb
+        <where>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and date_format(JLRQ,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+        </where>
+        order by jlrq
+        limit #{params.offset}, #{params.pageSize}
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into jlb(StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM)
+        values (#{studyid}, #{jldm}, #{jcjg}, #{jcjgx}, #{zjjl}, #{jlrq}, #{jlys}, #{ylbj}, #{jcys}, #{tydl}, #{zljy}, #{zjys}, #{zjrq}, #{pgjg}, #{zyzjjl}, #{zyylbj}, #{jkzjjl}, #{jkylbj}, #{chylbj}, #{compareks}, #{compareid1}, #{compareid2}, #{compareid3}, #{deptcode}, #{jkxc}, #{smsReport}, #{fhys}, #{fhrq}, #{repGrade}, #{checkys}, #{shys}, #{checkrq}, #{shrq}, #{bodypart}, #{jlysdm}, #{zjysdm}, #{shysdm}, #{checkysdm})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into jlb(StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.studyid}, #{entity.jldm}, #{entity.jcjg}, #{entity.jcjgx}, #{entity.zjjl}, #{entity.jlrq}, #{entity.jlys}, #{entity.ylbj}, #{entity.jcys}, #{entity.tydl}, #{entity.zljy}, #{entity.zjys}, #{entity.zjrq}, #{entity.pgjg}, #{entity.zyzjjl}, #{entity.zyylbj}, #{entity.jkzjjl}, #{entity.jkylbj}, #{entity.chylbj}, #{entity.compareks}, #{entity.compareid1}, #{entity.compareid2}, #{entity.compareid3}, #{entity.deptcode}, #{entity.jkxc}, #{entity.smsReport}, #{entity.fhys}, #{entity.fhrq}, #{entity.repGrade}, #{entity.checkys}, #{entity.shys}, #{entity.checkrq}, #{entity.shrq}, #{entity.bodypart}, #{entity.jlysdm}, #{entity.zjysdm}, #{entity.shysdm}, #{entity.checkysdm})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into jlb(StudyID, JLDM, JCJG, JCJGX, ZJJL, JLRQ, JLYS, YLBJ, JCYS, TYDL, ZLJY, ZJYS, ZJRQ, PGJG, ZYZJJL, ZYYLBJ, JKZJJL, JKYLBJ, CHYLBJ, CompareKS, CompareID1, CompareID2, CompareID3, DeptCode, JKXC, SMS_Report, FHYS, FHRQ, Rep_Grade, CHECKYS, SHYS, CHECKRQ, SHRQ, BodyPart, JLYSDM, ZJYSDM, SHYSDM, CHECKYSDM)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.studyid}, #{entity.jldm}, #{entity.jcjg}, #{entity.jcjgx}, #{entity.zjjl}, #{entity.jlrq}, #{entity.jlys}, #{entity.ylbj}, #{entity.jcys}, #{entity.tydl}, #{entity.zljy}, #{entity.zjys}, #{entity.zjrq}, #{entity.pgjg}, #{entity.zyzjjl}, #{entity.zyylbj}, #{entity.jkzjjl}, #{entity.jkylbj}, #{entity.chylbj}, #{entity.compareks}, #{entity.compareid1}, #{entity.compareid2}, #{entity.compareid3}, #{entity.deptcode}, #{entity.jkxc}, #{entity.smsReport}, #{entity.fhys}, #{entity.fhrq}, #{entity.repGrade}, #{entity.checkys}, #{entity.shys}, #{entity.checkrq}, #{entity.shrq}, #{entity.bodypart}, #{entity.jlysdm}, #{entity.zjysdm}, #{entity.shysdm}, #{entity.checkysdm})
+        </foreach>
+        on duplicate key update
+        StudyID = values(StudyID),
+        JLDM = values(JLDM),
+        JCJG = values(JCJG),
+        JCJGX = values(JCJGX),
+        ZJJL = values(ZJJL),
+        JLRQ = values(JLRQ),
+        JLYS = values(JLYS),
+        YLBJ = values(YLBJ),
+        JCYS = values(JCYS),
+        TYDL = values(TYDL),
+        ZLJY = values(ZLJY),
+        ZJYS = values(ZJYS),
+        ZJRQ = values(ZJRQ),
+        PGJG = values(PGJG),
+        ZYZJJL = values(ZYZJJL),
+        ZYYLBJ = values(ZYYLBJ),
+        JKZJJL = values(JKZJJL),
+        JKYLBJ = values(JKYLBJ),
+        CHYLBJ = values(CHYLBJ),
+        CompareKS = values(CompareKS),
+        CompareID1 = values(CompareID1),
+        CompareID2 = values(CompareID2),
+        CompareID3 = values(CompareID3),
+        DeptCode = values(DeptCode),
+        JKXC = values(JKXC),
+        SMS_Report = values(SMS_Report),
+        FHYS = values(FHYS),
+        FHRQ = values(FHRQ),
+        Rep_Grade = values(Rep_Grade),
+        CHECKYS = values(CHECKYS),
+        SHYS = values(SHYS),
+        CHECKRQ = values(CHECKRQ),
+        SHRQ = values(SHRQ),
+        BodyPart = values(BodyPart),
+        JLYSDM = values(JLYSDM),
+        ZJYSDM = values(ZJYSDM),
+        SHYSDM = values(SHYSDM),
+        CHECKYSDM = values(CHECKYSDM)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update jlb
+        <set>
+            <if test="studyid != null and studyid != ''">
+                StudyID = #{studyid},
+            </if>
+            <if test="jldm != null and jldm != ''">
+                JLDM = #{jldm},
+            </if>
+            <if test="jcjg != null and jcjg != ''">
+                JCJG = #{jcjg},
+            </if>
+            <if test="jcjgx != null and jcjgx != ''">
+                JCJGX = #{jcjgx},
+            </if>
+            <if test="zjjl != null and zjjl != ''">
+                ZJJL = #{zjjl},
+            </if>
+            <if test="jlrq != null and jlrq != ''">
+                JLRQ = #{jlrq},
+            </if>
+            <if test="jlys != null and jlys != ''">
+                JLYS = #{jlys},
+            </if>
+            <if test="ylbj != null and ylbj != ''">
+                YLBJ = #{ylbj},
+            </if>
+            <if test="jcys != null and jcys != ''">
+                JCYS = #{jcys},
+            </if>
+            <if test="tydl != null and tydl != ''">
+                TYDL = #{tydl},
+            </if>
+            <if test="zljy != null and zljy != ''">
+                ZLJY = #{zljy},
+            </if>
+            <if test="zjys != null and zjys != ''">
+                ZJYS = #{zjys},
+            </if>
+            <if test="zjrq != null and zjrq != ''">
+                ZJRQ = #{zjrq},
+            </if>
+            <if test="pgjg != null and pgjg != ''">
+                PGJG = #{pgjg},
+            </if>
+            <if test="zyzjjl != null and zyzjjl != ''">
+                ZYZJJL = #{zyzjjl},
+            </if>
+            <if test="zyylbj != null and zyylbj != ''">
+                ZYYLBJ = #{zyylbj},
+            </if>
+            <if test="jkzjjl != null and jkzjjl != ''">
+                JKZJJL = #{jkzjjl},
+            </if>
+            <if test="jkylbj != null and jkylbj != ''">
+                JKYLBJ = #{jkylbj},
+            </if>
+            <if test="chylbj != null and chylbj != ''">
+                CHYLBJ = #{chylbj},
+            </if>
+            <if test="compareks != null and compareks != ''">
+                CompareKS = #{compareks},
+            </if>
+            <if test="compareid1 != null and compareid1 != ''">
+                CompareID1 = #{compareid1},
+            </if>
+            <if test="compareid2 != null and compareid2 != ''">
+                CompareID2 = #{compareid2},
+            </if>
+            <if test="compareid3 != null and compareid3 != ''">
+                CompareID3 = #{compareid3},
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                DeptCode = #{deptcode},
+            </if>
+            <if test="jkxc != null and jkxc != ''">
+                JKXC = #{jkxc},
+            </if>
+            <if test="smsReport != null">
+                SMS_Report = #{smsReport},
+            </if>
+            <if test="fhys != null and fhys != ''">
+                FHYS = #{fhys},
+            </if>
+            <if test="fhrq != null and fhrq != ''">
+                FHRQ = #{fhrq},
+            </if>
+            <if test="repGrade != null and repGrade != ''">
+                Rep_Grade = #{repGrade},
+            </if>
+            <if test="checkys != null and checkys != ''">
+                CHECKYS = #{checkys},
+            </if>
+            <if test="shys != null and shys != ''">
+                SHYS = #{shys},
+            </if>
+            <if test="checkrq != null and checkrq != ''">
+                CHECKRQ = #{checkrq},
+            </if>
+            <if test="shrq != null and shrq != ''">
+                SHRQ = #{shrq},
+            </if>
+            <if test="bodypart != null and bodypart != ''">
+                BodyPart = #{bodypart},
+            </if>
+            <if test="jlysdm != null and jlysdm != ''">
+                JLYSDM = #{jlysdm},
+            </if>
+            <if test="zjysdm != null and zjysdm != ''">
+                ZJYSDM = #{zjysdm},
+            </if>
+            <if test="shysdm != null and shysdm != ''">
+                SHYSDM = #{shysdm},
+            </if>
+            <if test="checkysdm != null and checkysdm != ''">
+                CHECKYSDM = #{checkysdm},
+            </if>
+        </set>
+        where  = #{studyid}
+    </update>
+
+</mapper>
+

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.contract.mapper.ContractServiceItemMapper">
+
+    <resultMap type="com.dchealth.contract.domain.ContractServiceItem" id="ContractServiceItemResult">
+        <id property="id" column="id"/>
+        <result property="itemName" column="item_name"/>
+        <result property="itemType" column="item_type"/>
+        <result property="frequency" column="frequency"/>
+        <result property="description" column="description"/>
+        <result property="executionStandard" column="execution_standard"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectContractServiceItemVo">
+        select id, item_name, item_type, frequency, description, execution_standard, status, create_by, create_time, update_by, update_time, remark
+        from contract_service_item
+    </sql>
+
+    <select id="selectContractServiceItemList" parameterType="ContractServiceItem" resultMap="ContractServiceItemResult">
+        <include refid="selectContractServiceItemVo"/>
+        <where>
+            <if test="itemName != null and itemName != ''">and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="itemType != null and itemType != ''">and item_type like concat('%', #{itemType}, '%')</if>
+            <if test="frequency != null and frequency != ''">and frequency like concat('%', #{frequency}, '%')</if>
+            <if test="description != null and description != ''">and description like concat('%', #{description}, '%')</if>
+            <if test="executionStandard != null and executionStandard != ''">and execution_standard like concat('%', #{executionStandard}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectContractServiceItemById" parameterType="Long" resultMap="ContractServiceItemResult">
+        <include refid="selectContractServiceItemVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertContractServiceItem" parameterType="ContractServiceItem" useGeneratedKeys="true" keyProperty="id">
+        insert into contract_service_item (item_name, item_type, frequency, description, execution_standard, status, create_by, create_time, remark)
+        values (#{itemName}, #{itemType}, #{frequency}, #{description}, #{executionStandard}, #{status}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateContractServiceItem" parameterType="ContractServiceItem">
+        update contract_service_item
+        <set>
+            <if test="itemName != null">item_name = #{itemName},</if>
+            <if test="itemType != null">item_type = #{itemType},</if>
+            <if test="frequency != null">frequency = #{frequency},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="executionStandard != null">execution_standard = #{executionStandard},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteContractServiceItemById" parameterType="Long">
+        delete from contract_service_item where id = #{id}
+    </delete>
+
+    <delete id="deleteContractServiceItemByIds" parameterType="String">
+        delete from contract_service_item where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,74 @@
+package com.dchealth.template.service;
+
+import java.util.List;
+
+import com.dchealth.template.domain.FMedicalForm;
+import com.dchealth.template.domain.FMedicalProperty;
+import com.dchealth.template.domain.vo.FMedicalValueVo;
+import com.dchealth.template.domain.vo.FMedicalVo;
+
+/**
+ * 属性Service接口
+ * 
+ * @author ruoyi
+ * @date 2022-06-08
+ */
+public interface IFMedicalPropertyService 
+{
+    /**
+     * 查询属性
+     * 
+     * @param id 属性主键
+     * @return 属性
+     */
+    public FMedicalProperty selectFMedicalPropertyById(Long id);
+
+    /**
+     * 查询属性列表
+     * 
+     * @param fMedicalProperty 属性
+     * @return 属性集合
+     */
+    public List<FMedicalProperty> selectFMedicalPropertyList(FMedicalProperty fMedicalProperty);
+
+    /**
+     * 新增属性
+     * 
+     * @param fMedicalProperty 属性
+     * @return 结果
+     */
+    public int insertFMedicalProperty(FMedicalProperty fMedicalProperty);
+
+    /**
+     * 修改属性
+     * 
+     * @param fMedicalProperty 属性
+     * @return 结果
+     */
+    public int updateFMedicalProperty(FMedicalProperty fMedicalProperty);
+
+    /**
+     * 随访编辑属性
+     * @param fMedicalForm
+     * @return
+     */
+    public int save(FMedicalForm fMedicalForm);
+
+    /**
+     * 批量删除属性
+     * 
+     * @param ids 需要删除的属性主键集合
+     * @return 结果
+     */
+    public int deleteFMedicalPropertyByIds(Long[] ids);
+
+    /**
+     * 删除属性信息
+     * 
+     * @param id 属性主键
+     * @return 结果
+     */
+    public int deleteFMedicalPropertyById(Long id);
+
+    List<FMedicalValueVo> findValueChangeRecord(FMedicalVo fMedicalVo);
+}

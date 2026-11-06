@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.ExamMasterMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.ExamMaster" id="ExamMasterMap">
+        <result property="examNo" column="exam_no" jdbcType="VARCHAR"/>
+        <result property="localIdClass" column="local_id_class" jdbcType="VARCHAR"/>
+        <result property="patientLocalId" column="patient_local_id" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="visitId" column="visit_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="dateOfBirth" column="date_of_birth" jdbcType="VARCHAR"/>
+        <result property="examClass" column="exam_class" jdbcType="VARCHAR"/>
+        <result property="examSubClass" column="exam_sub_class" jdbcType="VARCHAR"/>
+        <result property="spmRecvedDate" column="spm_recved_date" jdbcType="TIMESTAMP"/>
+        <result property="clinSymp" column="clin_symp" jdbcType="VARCHAR"/>
+        <result property="physSign" column="phys_sign" jdbcType="VARCHAR"/>
+        <result property="relevantLabTest" column="relevant_lab_test" jdbcType="VARCHAR"/>
+        <result property="relevantDiag" column="relevant_diag" jdbcType="VARCHAR"/>
+        <result property="clinDiag" column="clin_diag" jdbcType="VARCHAR"/>
+        <result property="examMode" column="exam_mode" jdbcType="VARCHAR"/>
+        <result property="examGroup" column="exam_group" jdbcType="VARCHAR"/>
+        <result property="device" column="device" jdbcType="VARCHAR"/>
+        <result property="performedBy" column="performed_by" jdbcType="VARCHAR"/>
+        <result property="patientSource" column="patient_source" jdbcType="VARCHAR"/>
+        <result property="facility" column="facility" jdbcType="VARCHAR"/>
+        <result property="reqDateTime" column="req_date_time" jdbcType="TIMESTAMP"/>
+        <result property="reqDept" column="req_dept" jdbcType="VARCHAR"/>
+        <result property="reqPhysician" column="req_physician" jdbcType="VARCHAR"/>
+        <result property="reqMemo" column="req_memo" jdbcType="VARCHAR"/>
+        <result property="scheduledDateTime" column="scheduled_date_time" jdbcType="TIMESTAMP"/>
+        <result property="notice" column="notice" jdbcType="VARCHAR"/>
+        <result property="examDateTime" column="exam_date_time" jdbcType="TIMESTAMP"/>
+        <result property="technician" column="technician" jdbcType="VARCHAR"/>
+        <result property="reporter" column="reporter" jdbcType="VARCHAR"/>
+        <result property="resultStatus" column="result_status" jdbcType="VARCHAR"/>
+        <result property="costs" column="costs" jdbcType="VARCHAR"/>
+        <result property="charges" column="charges" jdbcType="VARCHAR"/>
+        <result property="chargeIndicator" column="charge_indicator" jdbcType="VARCHAR"/>
+        <result property="reportDateTime" column="report_date_time" jdbcType="TIMESTAMP"/>
+        <result property="identity" column="identity" jdbcType="VARCHAR"/>
+        <result property="chargeType" column="charge_type" jdbcType="VARCHAR"/>
+        <result property="verifier" column="verifier" jdbcType="VARCHAR"/>
+        <result property="studyUid" column="study_uid" jdbcType="VARCHAR"/>
+        <result property="rptstatus" column="rptstatus" jdbcType="VARCHAR"/>
+        <result property="errorComment" column="error_comment" jdbcType="VARCHAR"/>
+        <result property="examReason" column="exam_reason" jdbcType="VARCHAR"/>
+        <result property="priorityIndicator" column="priority_indicator" jdbcType="VARCHAR"/>
+        <result property="treatProcess" column="treat_process" jdbcType="VARCHAR"/>
+        <result property="visitDate" column="visit_date" jdbcType="TIMESTAMP"/>
+        <result property="visitNo" column="visit_no" jdbcType="VARCHAR"/>
+        <result property="bedNo" column="bed_no" jdbcType="VARCHAR"/>
+        <result property="medhistoryabstract" column="medhistoryabstract" jdbcType="VARCHAR"/>
+        <result property="operativefindings" column="operativefindings" jdbcType="VARCHAR"/>
+        <result property="pregnancyhistory" column="pregnancyhistory" jdbcType="VARCHAR"/>
+        <result property="menstrualhistory" column="menstrualhistory" jdbcType="VARCHAR"/>
+        <result property="lastmenstrualDate" column="lastmenstrual_date" jdbcType="TIMESTAMP"/>
+        <result property="curettageDate" column="curettage_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ExamMasterMap">
+        select
+          exam_no, local_id_class, patient_local_id, patient_id, visit_id, name, sex, date_of_birth, exam_class, exam_sub_class, spm_recved_date, clin_symp, phys_sign, relevant_lab_test, relevant_diag, clin_diag, exam_mode, exam_group, device, performed_by, patient_source, facility, req_date_time, req_dept, req_physician, req_memo, scheduled_date_time, notice, exam_date_time, technician, reporter, result_status, costs, charges, charge_indicator, report_date_time, identity, charge_type, verifier, study_uid, rptstatus, error_comment, exam_reason, priority_indicator, treat_process, visit_date, visit_no, bed_no, medhistoryabstract, operativefindings, pregnancyhistory, menstrualhistory, lastmenstrual_date, curettage_date
+        from exam_master
+        where exam_no = #{examNo}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ExamMasterMap">
+        select
+          exam_no, local_id_class, patient_local_id, patient_id, visit_id, name, sex, date_of_birth, exam_class, exam_sub_class, spm_recved_date, clin_symp, phys_sign, relevant_lab_test, relevant_diag, clin_diag, exam_mode, exam_group, device, performed_by, patient_source, facility, req_date_time, req_dept, req_physician, req_memo, scheduled_date_time, notice, exam_date_time, technician, reporter, result_status, costs, charges, charge_indicator, report_date_time, identity, charge_type, verifier, study_uid, rptstatus, error_comment, exam_reason, priority_indicator, treat_process, visit_date, visit_no, bed_no, medhistoryabstract, operativefindings, pregnancyhistory, menstrualhistory, lastmenstrual_date, curettage_date
+        from exam_master
+        <where>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="localIdClass != null and localIdClass != ''">
+                and local_id_class = #{localIdClass}
+            </if>
+            <if test="patientLocalId != null and patientLocalId != ''">
+                and patient_local_id = #{patientLocalId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and visit_id = #{visitId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="dateOfBirth != null and dateOfBirth != ''">
+                and date_of_birth = #{dateOfBirth}
+            </if>
+            <if test="examClass != null and examClass != ''">
+                and exam_class = #{examClass}
+            </if>
+            <if test="examSubClass != null and examSubClass != ''">
+                and exam_sub_class = #{examSubClass}
+            </if>
+            <if test="spmRecvedDate != null">
+                and spm_recved_date = #{spmRecvedDate}
+            </if>
+            <if test="clinSymp != null and clinSymp != ''">
+                and clin_symp = #{clinSymp}
+            </if>
+            <if test="physSign != null and physSign != ''">
+                and phys_sign = #{physSign}
+            </if>
+            <if test="relevantLabTest != null and relevantLabTest != ''">
+                and relevant_lab_test = #{relevantLabTest}
+            </if>
+            <if test="relevantDiag != null and relevantDiag != ''">
+                and relevant_diag = #{relevantDiag}
+            </if>
+            <if test="clinDiag != null and clinDiag != ''">
+                and clin_diag = #{clinDiag}
+            </if>
+            <if test="examMode != null and examMode != ''">
+                and exam_mode = #{examMode}
+            </if>
+            <if test="examGroup != null and examGroup != ''">
+                and exam_group = #{examGroup}
+            </if>
+            <if test="device != null and device != ''">
+                and device = #{device}
+            </if>
+            <if test="performedBy != null and performedBy != ''">
+                and performed_by = #{performedBy}
+            </if>
+            <if test="patientSource != null and patientSource != ''">
+                and patient_source = #{patientSource}
+            </if>
+            <if test="facility != null and facility != ''">
+                and facility = #{facility}
+            </if>
+            <if test="reqDateTime != null">
+                and req_date_time = #{reqDateTime}
+            </if>
+            <if test="reqDept != null and reqDept != ''">
+                and req_dept = #{reqDept}
+            </if>
+            <if test="reqPhysician != null and reqPhysician != ''">
+                and req_physician = #{reqPhysician}
+            </if>
+            <if test="reqMemo != null and reqMemo != ''">
+                and req_memo = #{reqMemo}
+            </if>
+            <if test="scheduledDateTime != null">
+                and scheduled_date_time = #{scheduledDateTime}
+            </if>
+            <if test="notice != null and notice != ''">
+                and notice = #{notice}
+            </if>
+            <if test="examDateTime != null">
+                and exam_date_time = #{examDateTime}
+            </if>
+            <if test="technician != null and technician != ''">
+                and technician = #{technician}
+            </if>
+            <if test="reporter != null and reporter != ''">
+                and reporter = #{reporter}
+            </if>
+            <if test="resultStatus != null and resultStatus != ''">
+                and result_status = #{resultStatus}
+            </if>
+            <if test="costs != null and costs != ''">
+                and costs = #{costs}
+            </if>
+            <if test="charges != null and charges != ''">
+                and charges = #{charges}
+            </if>
+            <if test="chargeIndicator != null and chargeIndicator != ''">
+                and charge_indicator = #{chargeIndicator}
+            </if>
+            <if test="reportDateTime != null">
+                and report_date_time = #{reportDateTime}
+            </if>
+            <if test="identity != null and identity != ''">
+                and identity = #{identity}
+            </if>
+            <if test="chargeType != null and chargeType != ''">
+                and charge_type = #{chargeType}
+            </if>
+            <if test="verifier != null and verifier != ''">
+                and verifier = #{verifier}
+            </if>
+            <if test="studyUid != null and studyUid != ''">
+                and study_uid = #{studyUid}
+            </if>
+            <if test="rptstatus != null and rptstatus != ''">
+                and rptstatus = #{rptstatus}
+            </if>
+            <if test="errorComment != null and errorComment != ''">
+                and error_comment = #{errorComment}
+            </if>
+            <if test="examReason != null and examReason != ''">
+                and exam_reason = #{examReason}
+            </if>
+            <if test="priorityIndicator != null and priorityIndicator != ''">
+                and priority_indicator = #{priorityIndicator}
+            </if>
+            <if test="treatProcess != null and treatProcess != ''">
+                and treat_process = #{treatProcess}
+            </if>
+            <if test="visitDate != null">
+                and visit_date = #{visitDate}
+            </if>
+            <if test="visitNo != null and visitNo != ''">
+                and visit_no = #{visitNo}
+            </if>
+            <if test="bedNo != null and bedNo != ''">
+                and bed_no = #{bedNo}
+            </if>
+            <if test="medhistoryabstract != null and medhistoryabstract != ''">
+                and medhistoryabstract = #{medhistoryabstract}
+            </if>
+            <if test="operativefindings != null and operativefindings != ''">
+                and operativefindings = #{operativefindings}
+            </if>
+            <if test="pregnancyhistory != null and pregnancyhistory != ''">
+                and pregnancyhistory = #{pregnancyhistory}
+            </if>
+            <if test="menstrualhistory != null and menstrualhistory != ''">
+                and menstrualhistory = #{menstrualhistory}
+            </if>
+            <if test="lastmenstrualDate != null">
+                and lastmenstrual_date = #{lastmenstrualDate}
+            </if>
+            <if test="curettageDate != null">
+                and curettage_date = #{curettageDate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from exam_master
+        <where>
+            <if test="examNo != null and examNo != ''">
+                and exam_no = #{examNo}
+            </if>
+            <if test="localIdClass != null and localIdClass != ''">
+                and local_id_class = #{localIdClass}
+            </if>
+            <if test="patientLocalId != null and patientLocalId != ''">
+                and patient_local_id = #{patientLocalId}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and visit_id = #{visitId}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="dateOfBirth != null and dateOfBirth != ''">
+                and date_of_birth = #{dateOfBirth}
+            </if>
+            <if test="examClass != null and examClass != ''">
+                and exam_class = #{examClass}
+            </if>
+            <if test="examSubClass != null and examSubClass != ''">
+                and exam_sub_class = #{examSubClass}
+            </if>
+            <if test="spmRecvedDate != null">
+                and spm_recved_date = #{spmRecvedDate}
+            </if>
+            <if test="clinSymp != null and clinSymp != ''">
+                and clin_symp = #{clinSymp}
+            </if>
+            <if test="physSign != null and physSign != ''">
+                and phys_sign = #{physSign}
+            </if>
+            <if test="relevantLabTest != null and relevantLabTest != ''">
+                and relevant_lab_test = #{relevantLabTest}
+            </if>
+            <if test="relevantDiag != null and relevantDiag != ''">
+                and relevant_diag = #{relevantDiag}
+            </if>
+            <if test="clinDiag != null and clinDiag != ''">
+                and clin_diag = #{clinDiag}
+            </if>
+            <if test="examMode != null and examMode != ''">
+                and exam_mode = #{examMode}
+            </if>
+            <if test="examGroup != null and examGroup != ''">
+                and exam_group = #{examGroup}
+            </if>
+            <if test="device != null and device != ''">
+                and device = #{device}
+            </if>
+            <if test="performedBy != null and performedBy != ''">
+                and performed_by = #{performedBy}
+            </if>
+            <if test="patientSource != null and patientSource != ''">
+                and patient_source = #{patientSource}
+            </if>
+            <if test="facility != null and facility != ''">
+                and facility = #{facility}
+            </if>
+            <if test="reqDateTime != null">
+                and req_date_time = #{reqDateTime}
+            </if>
+            <if test="reqDept != null and reqDept != ''">
+                and req_dept = #{reqDept}
+            </if>
+            <if test="reqPhysician != null and reqPhysician != ''">
+                and req_physician = #{reqPhysician}
+            </if>
+            <if test="reqMemo != null and reqMemo != ''">
+                and req_memo = #{reqMemo}
+            </if>
+            <if test="scheduledDateTime != null">
+                and scheduled_date_time = #{scheduledDateTime}
+            </if>
+            <if test="notice != null and notice != ''">
+                and notice = #{notice}
+            </if>
+            <if test="examDateTime != null">
+                and exam_date_time = #{examDateTime}
+            </if>
+            <if test="technician != null and technician != ''">
+                and technician = #{technician}
+            </if>
+            <if test="reporter != null and reporter != ''">
+                and reporter = #{reporter}
+            </if>
+            <if test="resultStatus != null and resultStatus != ''">
+                and result_status = #{resultStatus}
+            </if>
+            <if test="costs != null and costs != ''">
+                and costs = #{costs}
+            </if>
+            <if test="charges != null and charges != ''">
+                and charges = #{charges}
+            </if>
+            <if test="chargeIndicator != null and chargeIndicator != ''">
+                and charge_indicator = #{chargeIndicator}
+            </if>
+            <if test="reportDateTime != null">
+                and report_date_time = #{reportDateTime}
+            </if>
+            <if test="identity != null and identity != ''">
+                and identity = #{identity}
+            </if>
+            <if test="chargeType != null and chargeType != ''">
+                and charge_type = #{chargeType}
+            </if>
+            <if test="verifier != null and verifier != ''">
+                and verifier = #{verifier}
+            </if>
+            <if test="studyUid != null and studyUid != ''">
+                and study_uid = #{studyUid}
+            </if>
+            <if test="rptstatus != null and rptstatus != ''">
+                and rptstatus = #{rptstatus}
+            </if>
+            <if test="errorComment != null and errorComment != ''">
+                and error_comment = #{errorComment}
+            </if>
+            <if test="examReason != null and examReason != ''">
+                and exam_reason = #{examReason}
+            </if>
+            <if test="priorityIndicator != null and priorityIndicator != ''">
+                and priority_indicator = #{priorityIndicator}
+            </if>
+            <if test="treatProcess != null and treatProcess != ''">
+                and treat_process = #{treatProcess}
+            </if>
+            <if test="visitDate != null">
+                and visit_date = #{visitDate}
+            </if>
+            <if test="visitNo != null and visitNo != ''">
+                and visit_no = #{visitNo}
+            </if>
+            <if test="bedNo != null and bedNo != ''">
+                and bed_no = #{bedNo}
+            </if>
+            <if test="medhistoryabstract != null and medhistoryabstract != ''">
+                and medhistoryabstract = #{medhistoryabstract}
+            </if>
+            <if test="operativefindings != null and operativefindings != ''">
+                and operativefindings = #{operativefindings}
+            </if>
+            <if test="pregnancyhistory != null and pregnancyhistory != ''">
+                and pregnancyhistory = #{pregnancyhistory}
+            </if>
+            <if test="menstrualhistory != null and menstrualhistory != ''">
+                and menstrualhistory = #{menstrualhistory}
+            </if>
+            <if test="lastmenstrualDate != null">
+                and lastmenstrual_date = #{lastmenstrualDate}
+            </if>
+            <if test="curettageDate != null">
+                and curettage_date = #{curettageDate}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+        select count(1)
+        from exam_master
+       <where>
+           <if test="examNo != null and examNo != ''">
+               and exam_no = #{examNo}
+           </if>
+           <if test="params.recordingDate != null">
+               and date_format(req_date_time,'%Y-%m-%d') =#{params.recordingDate}
+           </if>
+       </where>
+
+    </select>
+    <select id="querySyncInfoByPage" resultMap="ExamMasterMap">
+        select
+        exam_no, local_id_class, patient_local_id, patient_id, visit_id, name, sex, date_of_birth, exam_class, exam_sub_class, spm_recved_date, clin_symp, phys_sign, relevant_lab_test, relevant_diag, clin_diag, exam_mode, exam_group, device, performed_by, patient_source, facility, req_date_time, req_dept, req_physician, req_memo, scheduled_date_time, notice, exam_date_time, technician, reporter, result_status, costs, charges, charge_indicator, report_date_time, identity, charge_type, verifier, study_uid, rptstatus, error_comment, exam_reason, priority_indicator, treat_process, visit_date, visit_no, bed_no, medhistoryabstract, operativefindings, pregnancyhistory, menstrualhistory, lastmenstrual_date, curettage_date
+        from exam_master
+        <where>
+
+            <if test="examMaster.params.recordingDate != null">
+                and date_format(req_date_time,'%Y-%m-%d') =#{examMaster.params.recordingDate}
+            </if>
+        </where>
+        order by req_date_time asc
+        limit #{pageable.offset}, #{pageable.pageSize}
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="examNo" useGeneratedKeys="true">
+        insert into exam_master(local_id_class, patient_local_id, patient_id, visit_id, name, sex, date_of_birth, exam_class, exam_sub_class, spm_recved_date, clin_symp, phys_sign, relevant_lab_test, relevant_diag, clin_diag, exam_mode, exam_group, device, performed_by, patient_source, facility, req_date_time, req_dept, req_physician, req_memo, scheduled_date_time, notice, exam_date_time, technician, reporter, result_status, costs, charges, charge_indicator, report_date_time, identity, charge_type, verifier, study_uid, rptstatus, error_comment, exam_reason, priority_indicator, treat_process, visit_date, visit_no, bed_no, medhistoryabstract, operativefindings, pregnancyhistory, menstrualhistory, lastmenstrual_date, curettage_date)
+        values (#{localIdClass}, #{patientLocalId}, #{patientId}, #{visitId}, #{name}, #{sex}, #{dateOfBirth}, #{examClass}, #{examSubClass}, #{spmRecvedDate}, #{clinSymp}, #{physSign}, #{relevantLabTest}, #{relevantDiag}, #{clinDiag}, #{examMode}, #{examGroup}, #{device}, #{performedBy}, #{patientSource}, #{facility}, #{reqDateTime}, #{reqDept}, #{reqPhysician}, #{reqMemo}, #{scheduledDateTime}, #{notice}, #{examDateTime}, #{technician}, #{reporter}, #{resultStatus}, #{costs}, #{charges}, #{chargeIndicator}, #{reportDateTime}, #{identity}, #{chargeType}, #{verifier}, #{studyUid}, #{rptstatus}, #{errorComment}, #{examReason}, #{priorityIndicator}, #{treatProcess}, #{visitDate}, #{visitNo}, #{bedNo}, #{medhistoryabstract}, #{operativefindings}, #{pregnancyhistory}, #{menstrualhistory}, #{lastmenstrualDate}, #{curettageDate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="examNo" useGeneratedKeys="true">
+        insert into exam_master(local_id_class, patient_local_id, patient_id, visit_id, name, sex, date_of_birth, exam_class, exam_sub_class, spm_recved_date, clin_symp, phys_sign, relevant_lab_test, relevant_diag, clin_diag, exam_mode, exam_group, device, performed_by, patient_source, facility, req_date_time, req_dept, req_physician, req_memo, scheduled_date_time, notice, exam_date_time, technician, reporter, result_status, costs, charges, charge_indicator, report_date_time, identity, charge_type, verifier, study_uid, rptstatus, error_comment, exam_reason, priority_indicator, treat_process, visit_date, visit_no, bed_no, medhistoryabstract, operativefindings, pregnancyhistory, menstrualhistory, lastmenstrual_date, curettage_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.localIdClass}, #{entity.patientLocalId}, #{entity.patientId}, #{entity.visitId}, #{entity.name}, #{entity.sex}, #{entity.dateOfBirth}, #{entity.examClass}, #{entity.examSubClass}, #{entity.spmRecvedDate}, #{entity.clinSymp}, #{entity.physSign}, #{entity.relevantLabTest}, #{entity.relevantDiag}, #{entity.clinDiag}, #{entity.examMode}, #{entity.examGroup}, #{entity.device}, #{entity.performedBy}, #{entity.patientSource}, #{entity.facility}, #{entity.reqDateTime}, #{entity.reqDept}, #{entity.reqPhysician}, #{entity.reqMemo}, #{entity.scheduledDateTime}, #{entity.notice}, #{entity.examDateTime}, #{entity.technician}, #{entity.reporter}, #{entity.resultStatus}, #{entity.costs}, #{entity.charges}, #{entity.chargeIndicator}, #{entity.reportDateTime}, #{entity.identity}, #{entity.chargeType}, #{entity.verifier}, #{entity.studyUid}, #{entity.rptstatus}, #{entity.errorComment}, #{entity.examReason}, #{entity.priorityIndicator}, #{entity.treatProcess}, #{entity.visitDate}, #{entity.visitNo}, #{entity.bedNo}, #{entity.medhistoryabstract}, #{entity.operativefindings}, #{entity.pregnancyhistory}, #{entity.menstrualhistory}, #{entity.lastmenstrualDate}, #{entity.curettageDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="examNo" useGeneratedKeys="true">
+        insert into exam_master(local_id_class, patient_local_id, patient_id, visit_id, name, sex, date_of_birth, exam_class, exam_sub_class, spm_recved_date, clin_symp, phys_sign, relevant_lab_test, relevant_diag, clin_diag, exam_mode, exam_group, device, performed_by, patient_source, facility, req_date_time, req_dept, req_physician, req_memo, scheduled_date_time, notice, exam_date_time, technician, reporter, result_status, costs, charges, charge_indicator, report_date_time, identity, charge_type, verifier, study_uid, rptstatus, error_comment, exam_reason, priority_indicator, treat_process, visit_date, visit_no, bed_no, medhistoryabstract, operativefindings, pregnancyhistory, menstrualhistory, lastmenstrual_date, curettage_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.localIdClass}, #{entity.patientLocalId}, #{entity.patientId}, #{entity.visitId}, #{entity.name}, #{entity.sex}, #{entity.dateOfBirth}, #{entity.examClass}, #{entity.examSubClass}, #{entity.spmRecvedDate}, #{entity.clinSymp}, #{entity.physSign}, #{entity.relevantLabTest}, #{entity.relevantDiag}, #{entity.clinDiag}, #{entity.examMode}, #{entity.examGroup}, #{entity.device}, #{entity.performedBy}, #{entity.patientSource}, #{entity.facility}, #{entity.reqDateTime}, #{entity.reqDept}, #{entity.reqPhysician}, #{entity.reqMemo}, #{entity.scheduledDateTime}, #{entity.notice}, #{entity.examDateTime}, #{entity.technician}, #{entity.reporter}, #{entity.resultStatus}, #{entity.costs}, #{entity.charges}, #{entity.chargeIndicator}, #{entity.reportDateTime}, #{entity.identity}, #{entity.chargeType}, #{entity.verifier}, #{entity.studyUid}, #{entity.rptstatus}, #{entity.errorComment}, #{entity.examReason}, #{entity.priorityIndicator}, #{entity.treatProcess}, #{entity.visitDate}, #{entity.visitNo}, #{entity.bedNo}, #{entity.medhistoryabstract}, #{entity.operativefindings}, #{entity.pregnancyhistory}, #{entity.menstrualhistory}, #{entity.lastmenstrualDate}, #{entity.curettageDate})
+        </foreach>
+        on duplicate key update
+        local_id_class = values(local_id_class),
+        patient_local_id = values(patient_local_id),
+        patient_id = values(patient_id),
+        visit_id = values(visit_id),
+        name = values(name),
+        sex = values(sex),
+        date_of_birth = values(date_of_birth),
+        exam_class = values(exam_class),
+        exam_sub_class = values(exam_sub_class),
+        spm_recved_date = values(spm_recved_date),
+        clin_symp = values(clin_symp),
+        phys_sign = values(phys_sign),
+        relevant_lab_test = values(relevant_lab_test),
+        relevant_diag = values(relevant_diag),
+        clin_diag = values(clin_diag),
+        exam_mode = values(exam_mode),
+        exam_group = values(exam_group),
+        device = values(device),
+        performed_by = values(performed_by),
+        patient_source = values(patient_source),
+        facility = values(facility),
+        req_date_time = values(req_date_time),
+        req_dept = values(req_dept),
+        req_physician = values(req_physician),
+        req_memo = values(req_memo),
+        scheduled_date_time = values(scheduled_date_time),
+        notice = values(notice),
+        exam_date_time = values(exam_date_time),
+        technician = values(technician),
+        reporter = values(reporter),
+        result_status = values(result_status),
+        costs = values(costs),
+        charges = values(charges),
+        charge_indicator = values(charge_indicator),
+        report_date_time = values(report_date_time),
+        identity = values(identity),
+        charge_type = values(charge_type),
+        verifier = values(verifier),
+        study_uid = values(study_uid),
+        rptstatus = values(rptstatus),
+        error_comment = values(error_comment),
+        exam_reason = values(exam_reason),
+        priority_indicator = values(priority_indicator),
+        treat_process = values(treat_process),
+        visit_date = values(visit_date),
+        visit_no = values(visit_no),
+        bed_no = values(bed_no),
+        medhistoryabstract = values(medhistoryabstract),
+        operativefindings = values(operativefindings),
+        pregnancyhistory = values(pregnancyhistory),
+        menstrualhistory = values(menstrualhistory),
+        lastmenstrual_date = values(lastmenstrual_date),
+        curettage_date = values(curettage_date)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update exam_master
+        <set>
+            <if test="localIdClass != null and localIdClass != ''">
+                local_id_class = #{localIdClass},
+            </if>
+            <if test="patientLocalId != null and patientLocalId != ''">
+                patient_local_id = #{patientLocalId},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="visitId != null and visitId != ''">
+                visit_id = #{visitId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="dateOfBirth != null and dateOfBirth != ''">
+                date_of_birth = #{dateOfBirth},
+            </if>
+            <if test="examClass != null and examClass != ''">
+                exam_class = #{examClass},
+            </if>
+            <if test="examSubClass != null and examSubClass != ''">
+                exam_sub_class = #{examSubClass},
+            </if>
+            <if test="spmRecvedDate != null">
+                spm_recved_date = #{spmRecvedDate},
+            </if>
+            <if test="clinSymp != null and clinSymp != ''">
+                clin_symp = #{clinSymp},
+            </if>
+            <if test="physSign != null and physSign != ''">
+                phys_sign = #{physSign},
+            </if>
+            <if test="relevantLabTest != null and relevantLabTest != ''">
+                relevant_lab_test = #{relevantLabTest},
+            </if>
+            <if test="relevantDiag != null and relevantDiag != ''">
+                relevant_diag = #{relevantDiag},
+            </if>
+            <if test="clinDiag != null and clinDiag != ''">
+                clin_diag = #{clinDiag},
+            </if>
+            <if test="examMode != null and examMode != ''">
+                exam_mode = #{examMode},
+            </if>
+            <if test="examGroup != null and examGroup != ''">
+                exam_group = #{examGroup},
+            </if>
+            <if test="device != null and device != ''">
+                device = #{device},
+            </if>
+            <if test="performedBy != null and performedBy != ''">
+                performed_by = #{performedBy},
+            </if>
+            <if test="patientSource != null and patientSource != ''">
+                patient_source = #{patientSource},
+            </if>
+            <if test="facility != null and facility != ''">
+                facility = #{facility},
+            </if>
+            <if test="reqDateTime != null">
+                req_date_time = #{reqDateTime},
+            </if>
+            <if test="reqDept != null and reqDept != ''">
+                req_dept = #{reqDept},
+            </if>
+            <if test="reqPhysician != null and reqPhysician != ''">
+                req_physician = #{reqPhysician},
+            </if>
+            <if test="reqMemo != null and reqMemo != ''">
+                req_memo = #{reqMemo},
+            </if>
+            <if test="scheduledDateTime != null">
+                scheduled_date_time = #{scheduledDateTime},
+            </if>
+            <if test="notice != null and notice != ''">
+                notice = #{notice},
+            </if>
+            <if test="examDateTime != null">
+                exam_date_time = #{examDateTime},
+            </if>
+            <if test="technician != null and technician != ''">
+                technician = #{technician},
+            </if>
+            <if test="reporter != null and reporter != ''">
+                reporter = #{reporter},
+            </if>
+            <if test="resultStatus != null and resultStatus != ''">
+                result_status = #{resultStatus},
+            </if>
+            <if test="costs != null and costs != ''">
+                costs = #{costs},
+            </if>
+            <if test="charges != null and charges != ''">
+                charges = #{charges},
+            </if>
+            <if test="chargeIndicator != null and chargeIndicator != ''">
+                charge_indicator = #{chargeIndicator},
+            </if>
+            <if test="reportDateTime != null">
+                report_date_time = #{reportDateTime},
+            </if>
+            <if test="identity != null and identity != ''">
+                identity = #{identity},
+            </if>
+            <if test="chargeType != null and chargeType != ''">
+                charge_type = #{chargeType},
+            </if>
+            <if test="verifier != null and verifier != ''">
+                verifier = #{verifier},
+            </if>
+            <if test="studyUid != null and studyUid != ''">
+                study_uid = #{studyUid},
+            </if>
+            <if test="rptstatus != null and rptstatus != ''">
+                rptstatus = #{rptstatus},
+            </if>
+            <if test="errorComment != null and errorComment != ''">
+                error_comment = #{errorComment},
+            </if>
+            <if test="examReason != null and examReason != ''">
+                exam_reason = #{examReason},
+            </if>
+            <if test="priorityIndicator != null and priorityIndicator != ''">
+                priority_indicator = #{priorityIndicator},
+            </if>
+            <if test="treatProcess != null and treatProcess != ''">
+                treat_process = #{treatProcess},
+            </if>
+            <if test="visitDate != null">
+                visit_date = #{visitDate},
+            </if>
+            <if test="visitNo != null and visitNo != ''">
+                visit_no = #{visitNo},
+            </if>
+            <if test="bedNo != null and bedNo != ''">
+                bed_no = #{bedNo},
+            </if>
+            <if test="medhistoryabstract != null and medhistoryabstract != ''">
+                medhistoryabstract = #{medhistoryabstract},
+            </if>
+            <if test="operativefindings != null and operativefindings != ''">
+                operativefindings = #{operativefindings},
+            </if>
+            <if test="pregnancyhistory != null and pregnancyhistory != ''">
+                pregnancyhistory = #{pregnancyhistory},
+            </if>
+            <if test="menstrualhistory != null and menstrualhistory != ''">
+                menstrualhistory = #{menstrualhistory},
+            </if>
+            <if test="lastmenstrualDate != null">
+                lastmenstrual_date = #{lastmenstrualDate},
+            </if>
+            <if test="curettageDate != null">
+                curettage_date = #{curettageDate},
+            </if>
+        </set>
+        where exam_no = #{examNo}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from exam_master where exam_no = #{examNo}
+    </delete>
+
+</mapper>
+

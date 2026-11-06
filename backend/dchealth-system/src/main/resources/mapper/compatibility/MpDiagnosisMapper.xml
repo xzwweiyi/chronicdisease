@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpDiagnosisMapper">
+    
+    <resultMap type="MpDiagnosis" id="MpDiagnosisResult">
+        <result property="id"    column="id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="diagnosisType"    column="diagnosis_type"    />
+        <result property="diagnosisNo"    column="diagnosis_no"    />
+        <result property="diagnosisDesc"    column="diagnosis_desc"    />
+        <result property="diagnosisDate"    column="diagnosis_date"    />
+        <result property="finalCheckDoctor"    column="final_check_doctor"    />
+        <result property="checkDesc"    column="check_desc"    />
+        <result property="checkDoctor"    column="check_doctor"    />
+        <result property="checkDate"    column="check_date"    />
+        <result property="resultDate"    column="result_date"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="conditionCode"    column="condition_code"    />
+        <result property="conditionName"    column="condition_name"    />
+        <result property="conditionClass"    column="condition_class"    />
+        <result property="departmentName"    column="department_name"    />
+        <result property="isNewTumor"    column="is_new_tumor"    />
+        <result property="isClinicalPath"    column="is_clinical_path"    />
+        <result property="tumourStageLevel"    column="tumour_stage_level"    />
+        <result property="tumourStageType"    column="tumour_stage_type"    />
+        <result property="tStages"    column="t_stages"    />
+        <result property="nStages"    column="n_stages"    />
+        <result property="mStages"    column="m_stages"    />
+        <result property="tnmStages"    column="tnm_stages"    />
+        <result property="isOperationPerson"    column="is_operation_person"    />
+        <result property="isOperationMini"    column="is_operation_mini"    />
+        <result property="visitType"    column="visit_type"    />
+    </resultMap>
+
+    <sql id="selectMpDiagnosisVo">
+        select id, person_id, visit_occurrence_id, create_time, update_time, diagnosis_type, diagnosis_no, diagnosis_desc, diagnosis_date, final_check_doctor, check_desc, check_doctor, check_date,  result_date, care_site_id, condition_code, condition_name, condition_class, department_name, is_new_tumor, is_clinical_path, tumour_stage_level, tumour_stage_type, t_stages, n_stages, m_stages, tnm_stages, is_operation_person, is_operation_mini from mp_diagnosis
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId" resultMap="MpDiagnosisResult">
+        <include refid="selectMpDiagnosisVo"/>
+        <where>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="visitType != null  and visitType != ''"> and visit_type = #{visitType}</if>
+        </where>
+        order by diagnosis_date desc
+    </select>
+
+    <select id="selectPersonIdsByConditionName" resultType="string">
+        select distinct person_id from mp_diagnosis
+        where condition_name like concat('%', #{conditionName}, '%')
+    </select>
+
+    <select id="selectPersonIdsWithComorbidity" resultType="string">
+        select person_id from mp_diagnosis
+        where (condition_name like '%高血压%'
+            or condition_name like '%糖尿病%'
+            or condition_name like '%脑卒中%'
+            or condition_name like '%冠心病%'
+            or condition_name like '%慢阻肺%')
+        group by person_id
+        having count(distinct case
+            when condition_name like '%高血压%' then '1'
+            when condition_name like '%糖尿病%' then '2'
+            when condition_name like '%脑卒中%' then '3'
+            when condition_name like '%冠心病%' then '4'
+            when condition_name like '%慢阻肺%' then '5'
+        end) >= 2
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpDiagnosisResult">
+        <include refid="selectMpDiagnosisVo"/>
+        where person_id = #{personId}
+        order by diagnosis_date desc
+    </select>
+
+</mapper>

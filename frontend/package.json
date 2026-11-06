@@ -1,0 +1,121 @@
+{
+  "name": "dchealth-ui",
+  "version": "1.0.0",
+  "description": "慢病管理平台",
+  "author": "开发者",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "test": "vue-cli-service serve --mode test",
+    "build": "vue-cli-service build",
+    "build:test": "vue-cli-service build --mode test",
+    "build:stage": "vue-cli-service build --mode staging",
+    "preview": "node build/index.js --preview"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "keywords": [
+    "vue",
+    "admin",
+    "dashboard",
+    "element-ui",
+    "boilerplate",
+    "admin-template",
+    "management-system"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/y_project/RuoYi-Vue.git"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.17.12",
+    "@riophae/vue-treeselect": "0.4.0",
+    "@vue/composition-api": "^1.7.1",
+    "@wangeditor/editor": "^5.1.23",
+    "axios": "0.24.0",
+    "clipboard": "2.0.8",
+    "core-js": "^3.33.0",
+    "echarts": "^5.4.0",
+    "echarts-gl": "^2.0.9",
+    "element-ui": "^2.15.13",
+    "file-saver": "2.0.5",
+    "fuse.js": "6.4.3",
+    "gm-crypto": "^0.1.8",
+    "highlight.js": "9.18.5",
+    "html2canvas": "^1.4.1",
+    "js-beautify": "1.13.0",
+    "js-cookie": "3.0.1",
+    "mathjs": "^15.1.1",
+    "moment": "^2.29.1",
+    "nprogress": "0.2.0",
+    "print-js": "^1.6.0",
+    "qrcodejs2": "^0.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "screenfull": "5.0.2",
+    "sortablejs": "1.10.2",
+    "tesseract.js": "^5.1.0",
+    "tui-image-editor": "^3.15.2",
+    "v-viewer": "^1.6.4",
+    "vue": "2.6.12",
+    "vue-codemirror": "^4.0.6",
+    "vue-count-to": "1.0.13",
+    "vue-cropper": "0.5.5",
+    "vue-echarts": "^6.2.3",
+    "vue-meta": "2.4.0",
+    "vue-print-nb": "^1.7.5",
+    "vue-router": "3.4.9",
+    "vuedraggable": "2.24.3",
+    "vuex": "3.6.0"
+  },
+  "devDependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@vue/cli-plugin-babel": "4.4.6",
+    "@vue/cli-plugin-eslint": "4.4.6",
+    "@vue/cli-service": "4.4.6",
+    "ant-design-vue": "^1.5.1",
+    "babel-eslint": "10.1.0",
+    "babel-plugin-dynamic-import-node": "2.3.3",
+    "babel-polyfill": "^6.26.0",
+    "chalk": "4.1.0",
+    "compression-webpack-plugin": "5.0.2",
+    "connect": "3.6.6",
+    "es6-promise": "^4.2.8",
+    "eslint": "7.15.0",
+    "eslint-plugin-vue": "7.2.0",
+    "html-webpack-plugin": "^4.5.2",
+    "jsencrypt": "^3.5.4",
+    "lint-staged": "10.5.3",
+    "quill": "^2.0.2",
+    "regenerator-runtime": "^0.14.0",
+    "runjs": "4.4.2",
+    "sass": "1.32.13",
+    "sass-loader": "10.1.1",
+    "script-ext-html-webpack-plugin": "2.1.5",
+    "sm4js": "^0.0.6",
+    "sockjs-client": "^1.5.1",
+    "svg-sprite-loader": "5.1.1",
+    "vcolorpicker": "^1.1.0",
+    "vue-codemirror-lite": "^1.0.4",
+    "vue-quill-editor": "^3.0.6",
+    "vue-template-compiler": "2.6.12"
+  },
+  "engines": {
+    "node": ">=8.9",
+    "npm": ">= 3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}

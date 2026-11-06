@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.msgTip.mapper.SysMessageMapper">
+
+    <resultMap type="com.dchealth.msgTip.domain.SysMessage" id="SysMessageMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userType" column="user_type" jdbcType="INTEGER"/>
+        <result property="recordId" column="record_id" jdbcType="INTEGER"/>
+        <result property="researchId" column="research_id" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="msgType" column="msg_type" jdbcType="INTEGER"/>
+        <result property="msgContent" column="msg_content" jdbcType="VARCHAR"/>
+        <result property="toAddress" column="to_address" jdbcType="VARCHAR"/>
+        <result property="toUserName" column="to_user_name" jdbcType="VARCHAR"/>
+        <result property="sendTime" column="send_time" jdbcType="TIMESTAMP"/>
+        <result property="sendState" column="send_state" jdbcType="INTEGER"/>
+        <result property="tipType" column="tip_type" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="template" column="template" />
+        <result property="redialNum" column="redial_num" />
+        <result property="redialInterval" column="redial_interval" />
+        <result property="redialIntervalUnit" column="redial_interval_unit" />
+        <result property="reminderStartTime" column="reminder_start_time" />
+        <result property="reminderEndTime" column="reminder_end_time" />
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysMessageMap">
+        select
+          id, user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, create_time
+        from sys_message
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysMessageMap">
+        select
+          id, user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, create_time
+        from sys_message
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="userType != null">
+                and user_type = #{userType}
+            </if>
+            <if test="recordId != null">
+                and record_id = #{recordId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="msgType != null">
+                and msg_type = #{msgType}
+            </if>
+            <if test="msgContent != null and msgContent != ''">
+                and msg_content = #{msgContent}
+            </if>
+            <if test="toAddress != null and toAddress != ''">
+                and to_address = #{toAddress}
+            </if>
+            <if test="toUserName != null and toUserName != ''">
+                and to_user_name = #{toUserName}
+            </if>
+            <if test="sendTime != null">
+                and send_time = #{sendTime}
+            </if>
+            <if test="sendState != null">
+                and send_state = #{sendState}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from sys_message
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="userType != null">
+                and user_type = #{userType}
+            </if>
+            <if test="recordId != null">
+                and record_id = #{recordId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="msgType != null">
+                and msg_type = #{msgType}
+            </if>
+            <if test="msgContent != null and msgContent != ''">
+                and msg_content = #{msgContent}
+            </if>
+            <if test="toAddress != null and toAddress != ''">
+                and to_address = #{toAddress}
+            </if>
+            <if test="toUserName != null and toUserName != ''">
+                and to_user_name = #{toUserName}
+            </if>
+            <if test="sendTime != null">
+                and send_time = #{sendTime}
+            </if>
+            <if test="sendState != null">
+                and send_state = #{sendState}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="tipType != null">
+                and tip_type = #{tipType}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, tip_type,template,redial_num,redial_interval,redial_interval_unit,reminder_start_time,reminder_end_time,research_id)
+        values (#{userId}, #{userType}, #{recordId}, #{status}, #{msgType}, #{msgContent}, #{toAddress}, #{toUserName}, #{sendTime}, #{sendState}, #{tipType},#{template},#{redialNum},#{redialInterval},#{redialIntervalUnit},#{reminderStartTime},#{reminderEndTime},#{researchId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, tip_type,template,redial_num,redial_interval,redial_interval_unit,reminder_start_time,reminder_end_time,research_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.userId}, #{entity.userType}, #{entity.recordId}, #{entity.status}, #{entity.msgType}, #{entity.msgContent}, #{entity.toAddress}, #{entity.toUserName}, #{entity.sendTime}, #{entity.sendState}, #{entity.tipType},#{entity.template},#{entity.redialNum},#{entity.redialInterval},#{entity.redialIntervalUnit},#{entity.reminderStartTime},#{entity.reminderEndTime},#{entity.researchId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.userType}, #{entity.recordId}, #{entity.status}, #{entity.msgType}, #{entity.msgContent}, #{entity.toAddress}, #{entity.toUserName}, #{entity.sendTime}, #{entity.sendState}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        user_type = values(user_type),
+        record_id = values(record_id),
+        status = values(status),
+        msg_type = values(msg_type),
+        msg_content = values(msg_content),
+        to_address = values(to_address),
+        to_user_name = values(to_user_name),
+        send_time = values(send_time),
+        send_state = values(send_state),
+        create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update sys_message
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="userType != null">
+                user_type = #{userType},
+            </if>
+            <if test="recordId != null">
+                record_id = #{recordId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="msgType != null">
+                msg_type = #{msgType},
+            </if>
+            <if test="msgContent != null and msgContent != ''">
+                msg_content = #{msgContent},
+            </if>
+            <if test="toAddress != null and toAddress != ''">
+                to_address = #{toAddress},
+            </if>
+            <if test="toUserName != null and toUserName != ''">
+                to_user_name = #{toUserName},
+            </if>
+            <if test="sendTime != null">
+                send_time = #{sendTime},
+            </if>
+            <if test="sendState != null">
+                send_state = #{sendState},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from sys_message where id = #{id}
+    </delete>
+
+    <update id="saveQuestionMsg" >
+        insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, tip_type,template,redial_num,redial_interval,redial_interval_unit,reminder_start_time,reminder_end_time)
+        select pr.patient_id ,'2',qr.record_id ,0,${sysMessage.msgType},'${sysMessage.msgContent}',null,null,null,null,3,null,null,null,null,null,null
+        from question_record qr
+        inner join patient_record pr on qr.record_id = pr.record_id
+        where  `type` =1
+        and from_time &lt; DATE_SUB(NOW(), INTERVAL ${offSet} DAY)
+        and reply_time is null
+        and not exists (select id from sys_message sm where sm.record_id = qr.record_id and sm.msg_type = ${sysMessage.msgType})
+    </update>
+    <update id="saveWarnMsg" >
+        insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, tip_type,template,redial_num,redial_interval,redial_interval_unit,reminder_start_time,reminder_end_time)
+        select pr.patient_id ,'2',pr.record_id ,0,${sysMessage.msgType},'${sysMessage.msgContent}',null,null,null,null,3,null,null,null,null,null,null
+        from patient_record pr
+        where pr.warn_status = '1'
+        and exists (
+        select wer.record_id from warn_early_record wer where pr.record_id = wer.record_id and wer.create_time &lt; DATE_SUB(NOW(), INTERVAL ${offSet} DAY)
+        )
+        and not exists (select id from sys_message sm where sm.record_id = pr.record_id and sm.msg_type =${sysMessage.msgType})
+    </update>
+    <update id="saveFollowMsg" >
+        insert into sys_message(user_id, user_type, record_id, status, msg_type, msg_content, to_address, to_user_name, send_time, send_state, tip_type,template,redial_num,redial_interval,redial_interval_unit,reminder_start_time,reminder_end_time)
+        select pr.patient_id ,'2',pr.record_id ,0,${sysMessage.msgType},'${sysMessage.msgContent}',null,null,null,null,3,null,null,null,null,null,null
+        from patient_record pr
+        where pr.is_submit = 1 and pr.update_time &lt; DATE_SUB(NOW(), INTERVAL ${offSet} DAY)
+        and not exists (select id from sys_message sm where sm.record_id = pr.record_id and sm.msg_type =${sysMessage.msgType})
+    </update>
+
+</mapper>
+

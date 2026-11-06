@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.msgTip.mapper.MsgReminderTaskTemplateMapper">
+
+    <resultMap type="com.dchealth.msgTip.domain.MsgReminderTaskTemplate" id="MsgReminderTaskTemplateMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="reminderTaskId" column="reminder_task_id" jdbcType="INTEGER"/>
+        <result property="tipType" column="tip_type" jdbcType="INTEGER"/>
+        <result property="msgTipTemplate" column="msg_tip_template" jdbcType="VARCHAR"/>
+        <result property="phoneTipTemplate" column="phone_tip_template" jdbcType="VARCHAR"/>
+        <result property="replayTime" column="replay_time" jdbcType="INTEGER"/>
+        <result property="intervalTime" column="interval_time" jdbcType="INTEGER"/>
+        <result property="intervalUnit" column="interval_unit" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MsgReminderTaskTemplateMap">
+        select
+          id, reminder_task_id, tip_type, msg_tip_template, phone_tip_template, replay_time, interval_time, interval_unit, create_time, update_time
+        from msg_reminder_task_template
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MsgReminderTaskTemplateMap">
+        select
+          id, reminder_task_id, tip_type, msg_tip_template, phone_tip_template, replay_time, interval_time, interval_unit, create_time, update_time
+        from msg_reminder_task_template
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="reminderTaskId != null">
+                and reminder_task_id = #{reminderTaskId}
+            </if>
+            <if test="tipType != null">
+                and tip_type = #{tipType}
+            </if>
+            <if test="msgTipTemplate != null and msgTipTemplate != ''">
+                and msg_tip_template = #{msgTipTemplate}
+            </if>
+            <if test="phoneTipTemplate != null and phoneTipTemplate != ''">
+                and phone_tip_template = #{phoneTipTemplate}
+            </if>
+            <if test="replayTime != null">
+                and replay_time = #{replayTime}
+            </if>
+            <if test="intervalTime != null">
+                and interval_time = #{intervalTime}
+            </if>
+            <if test="intervalUnit != null">
+                and interval_unit = #{intervalUnit}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from msg_reminder_task_template
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="reminderTaskId != null">
+                and reminder_task_id = #{reminderTaskId}
+            </if>
+            <if test="tipType != null">
+                and tip_type = #{tipType}
+            </if>
+            <if test="msgTipTemplate != null and msgTipTemplate != ''">
+                and msg_tip_template = #{msgTipTemplate}
+            </if>
+            <if test="phoneTipTemplate != null and phoneTipTemplate != ''">
+                and phone_tip_template = #{phoneTipTemplate}
+            </if>
+            <if test="replayTime != null">
+                and replay_time = #{replayTime}
+            </if>
+            <if test="intervalTime != null">
+                and interval_time = #{intervalTime}
+            </if>
+            <if test="intervalUnit != null">
+                and interval_unit = #{intervalUnit}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into msg_reminder_task_template(reminder_task_id, tip_type, msg_tip_template, phone_tip_template, replay_time, interval_time, interval_unit, create_time, update_time)
+        values (#{reminderTaskId}, #{tipType}, #{msgTipTemplate}, #{phoneTipTemplate}, #{replayTime}, #{intervalTime}, #{intervalUnit}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into msg_reminder_task_template(reminder_task_id, tip_type, msg_tip_template, phone_tip_template, replay_time, interval_time, interval_unit, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.reminderTaskId}, #{entity.tipType}, #{entity.msgTipTemplate}, #{entity.phoneTipTemplate}, #{entity.replayTime}, #{entity.intervalTime}, #{entity.intervalUnit}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into msg_reminder_task_template(reminder_task_id, tip_type, msg_tip_template, phone_tip_template, replay_time, interval_time, interval_unit, create_time, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.reminderTaskId}, #{entity.tipType}, #{entity.msgTipTemplate}, #{entity.phoneTipTemplate}, #{entity.replayTime}, #{entity.intervalTime}, #{entity.intervalUnit}, #{entity.createTime}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+        reminder_task_id = values(reminder_task_id),
+        tip_type = values(tip_type),
+        msg_tip_template = values(msg_tip_template),
+        phone_tip_template = values(phone_tip_template),
+        replay_time = values(replay_time),
+        interval_time = values(interval_time),
+        interval_unit = values(interval_unit),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update msg_reminder_task_template
+        <set>
+            <if test="reminderTaskId != null">
+                reminder_task_id = #{reminderTaskId},
+            </if>
+            <if test="tipType != null">
+                tip_type = #{tipType},
+            </if>
+            <if test="msgTipTemplate != null and msgTipTemplate != ''">
+                msg_tip_template = #{msgTipTemplate},
+            </if>
+            <if test="phoneTipTemplate != null and phoneTipTemplate != ''">
+                phone_tip_template = #{phoneTipTemplate},
+            </if>
+            <if test="replayTime != null">
+                replay_time = #{replayTime},
+            </if>
+            <if test="intervalTime != null">
+                interval_time = #{intervalTime},
+            </if>
+            <if test="intervalUnit != null">
+                interval_unit = #{intervalUnit},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from msg_reminder_task_template where id = #{id}
+    </delete>
+
+</mapper>
+

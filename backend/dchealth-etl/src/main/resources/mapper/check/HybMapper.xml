@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.check.HybMapper">
+
+    <resultMap type="com.dchealth.etl.domain.check.Hyb" id="HybMap">
+        <result property="rowid" column="RowID" jdbcType="INTEGER"/>
+        <result property="studyid" column="StudyID" jdbcType="VARCHAR"/>
+        <result property="sfxmdm" column="SFXMDM" jdbcType="VARCHAR"/>
+        <result property="xxdm" column="XXDM" jdbcType="VARCHAR"/>
+        <result property="checkdate" column="CheckDate" jdbcType="VARCHAR"/>
+        <result property="checktime" column="CheckTime" jdbcType="VARCHAR"/>
+        <result property="itemresult" column="ItemResult" jdbcType="VARCHAR"/>
+        <result property="itemunit" column="ItemUnit" jdbcType="VARCHAR"/>
+        <result property="sampleno" column="SampleNO" jdbcType="INTEGER"/>
+        <result property="flag" column="Flag" jdbcType="INTEGER"/>
+        <result property="defvalue" column="DefValue" jdbcType="VARCHAR"/>
+        <result property="doctor" column="Doctor" jdbcType="VARCHAR"/>
+        <result property="ordercode" column="OrderCode" jdbcType="VARCHAR"/>
+        <result property="sendflag" column="SendFlag" jdbcType="VARCHAR"/>
+        <result property="shdoctor" column="SHDoctor" jdbcType="VARCHAR"/>
+        <result property="checkmethod" column="CheckMethod" jdbcType="VARCHAR"/>
+        <result property="checkstuff" column="CheckStuff" jdbcType="VARCHAR"/>
+        <result property="bz" column="BZ" jdbcType="VARCHAR"/>
+        <result property="deptcode" column="DeptCode" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="HybMap">
+        select
+          RowID, StudyID, SFXMDM, XXDM, CheckDate, CheckTime, ItemResult, ItemUnit, SampleNO, Flag, DefValue, Doctor, OrderCode, SendFlag, SHDoctor, CheckMethod, CheckStuff, BZ, DeptCode
+        from hyb
+        where  = #{RowID}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="HybMap">
+        select
+          RowID, StudyID, SFXMDM, XXDM, CheckDate, CheckTime, ItemResult, ItemUnit, SampleNO, Flag, DefValue, Doctor, OrderCode, SendFlag, SHDoctor, CheckMethod, CheckStuff, BZ, DeptCode
+        from hyb
+        <where>
+            <if test="rowid != null">
+                and RowID = #{rowid}
+            </if>
+            <if test="studyid != null and studyid != ''">
+                and StudyID = #{studyid}
+            </if>
+            <if test="sfxmdm != null and sfxmdm != ''">
+                and SFXMDM = #{sfxmdm}
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                and XXDM = #{xxdm}
+            </if>
+            <if test="checkdate != null and checkdate != ''">
+                and CheckDate = #{checkdate}
+            </if>
+            <if test="checktime != null and checktime != ''">
+                and CheckTime = #{checktime}
+            </if>
+            <if test="itemresult != null and itemresult != ''">
+                and ItemResult = #{itemresult}
+            </if>
+            <if test="itemunit != null and itemunit != ''">
+                and ItemUnit = #{itemunit}
+            </if>
+            <if test="sampleno != null">
+                and SampleNO = #{sampleno}
+            </if>
+            <if test="flag != null">
+                and Flag = #{flag}
+            </if>
+            <if test="defvalue != null and defvalue != ''">
+                and DefValue = #{defvalue}
+            </if>
+            <if test="doctor != null and doctor != ''">
+                and Doctor = #{doctor}
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                and OrderCode = #{ordercode}
+            </if>
+            <if test="sendflag != null and sendflag != ''">
+                and SendFlag = #{sendflag}
+            </if>
+            <if test="shdoctor != null and shdoctor != ''">
+                and SHDoctor = #{shdoctor}
+            </if>
+            <if test="checkmethod != null and checkmethod != ''">
+                and CheckMethod = #{checkmethod}
+            </if>
+            <if test="checkstuff != null and checkstuff != ''">
+                and CheckStuff = #{checkstuff}
+            </if>
+            <if test="bz != null and bz != ''">
+                and BZ = #{bz}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and DeptCode = #{deptcode}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from hyb
+        <where>
+            <if test="rowid != null">
+                and RowID = #{rowid}
+            </if>
+            <if test="studyid != null and studyid != ''">
+                and StudyID = #{studyid}
+            </if>
+            <if test="sfxmdm != null and sfxmdm != ''">
+                and SFXMDM = #{sfxmdm}
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                and XXDM = #{xxdm}
+            </if>
+            <if test="checkdate != null and checkdate != ''">
+                and CheckDate = #{checkdate}
+            </if>
+            <if test="checktime != null and checktime != ''">
+                and CheckTime = #{checktime}
+            </if>
+            <if test="itemresult != null and itemresult != ''">
+                and ItemResult = #{itemresult}
+            </if>
+            <if test="itemunit != null and itemunit != ''">
+                and ItemUnit = #{itemunit}
+            </if>
+            <if test="sampleno != null">
+                and SampleNO = #{sampleno}
+            </if>
+            <if test="flag != null">
+                and Flag = #{flag}
+            </if>
+            <if test="defvalue != null and defvalue != ''">
+                and DefValue = #{defvalue}
+            </if>
+            <if test="doctor != null and doctor != ''">
+                and Doctor = #{doctor}
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                and OrderCode = #{ordercode}
+            </if>
+            <if test="sendflag != null and sendflag != ''">
+                and SendFlag = #{sendflag}
+            </if>
+            <if test="shdoctor != null and shdoctor != ''">
+                and SHDoctor = #{shdoctor}
+            </if>
+            <if test="checkmethod != null and checkmethod != ''">
+                and CheckMethod = #{checkmethod}
+            </if>
+            <if test="checkstuff != null and checkstuff != ''">
+                and CheckStuff = #{checkstuff}
+            </if>
+            <if test="bz != null and bz != ''">
+                and BZ = #{bz}
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                and DeptCode = #{deptcode}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Long">
+        select count(1)
+        from hyb
+        <where>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and CheckDate = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySyncInfoByPage" resultMap="HybMap">
+        select
+        RowID, StudyID, SFXMDM, XXDM, CheckDate, CheckTime, ItemResult, ItemUnit, SampleNO, Flag, DefValue, Doctor, OrderCode, SendFlag, SHDoctor, CheckMethod, CheckStuff, BZ, DeptCode
+        from hyb
+        <where>
+            <if test="hyb.params.recordingDate != null and hyb.params.recordingDate != ''">
+                and CheckDate = #{hyb.params.recordingDate}
+            </if>
+        </where>
+        order by StudyID
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into hyb(RowID, StudyID, SFXMDM, XXDM, CheckDate, CheckTime, ItemResult, ItemUnit, SampleNO, Flag, DefValue, Doctor, OrderCode, SendFlag, SHDoctor, CheckMethod, CheckStuff, BZ, DeptCode)
+        values (#{rowid}, #{studyid}, #{sfxmdm}, #{xxdm}, #{checkdate}, #{checktime}, #{itemresult}, #{itemunit}, #{sampleno}, #{flag}, #{defvalue}, #{doctor}, #{ordercode}, #{sendflag}, #{shdoctor}, #{checkmethod}, #{checkstuff}, #{bz}, #{deptcode})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into hyb(RowID, StudyID, SFXMDM, XXDM, CheckDate, CheckTime, ItemResult, ItemUnit, SampleNO, Flag, DefValue, Doctor, OrderCode, SendFlag, SHDoctor, CheckMethod, CheckStuff, BZ, DeptCode)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.rowid}, #{entity.studyid}, #{entity.sfxmdm}, #{entity.xxdm}, #{entity.checkdate}, #{entity.checktime}, #{entity.itemresult}, #{entity.itemunit}, #{entity.sampleno}, #{entity.flag}, #{entity.defvalue}, #{entity.doctor}, #{entity.ordercode}, #{entity.sendflag}, #{entity.shdoctor}, #{entity.checkmethod}, #{entity.checkstuff}, #{entity.bz}, #{entity.deptcode})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into hyb(RowID, StudyID, SFXMDM, XXDM, CheckDate, CheckTime, ItemResult, ItemUnit, SampleNO, Flag, DefValue, Doctor, OrderCode, SendFlag, SHDoctor, CheckMethod, CheckStuff, BZ, DeptCode)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.rowid}, #{entity.studyid}, #{entity.sfxmdm}, #{entity.xxdm}, #{entity.checkdate}, #{entity.checktime}, #{entity.itemresult}, #{entity.itemunit}, #{entity.sampleno}, #{entity.flag}, #{entity.defvalue}, #{entity.doctor}, #{entity.ordercode}, #{entity.sendflag}, #{entity.shdoctor}, #{entity.checkmethod}, #{entity.checkstuff}, #{entity.bz}, #{entity.deptcode})
+        </foreach>
+        on duplicate key update
+        RowID = values(RowID),
+        StudyID = values(StudyID),
+        SFXMDM = values(SFXMDM),
+        XXDM = values(XXDM),
+        CheckDate = values(CheckDate),
+        CheckTime = values(CheckTime),
+        ItemResult = values(ItemResult),
+        ItemUnit = values(ItemUnit),
+        SampleNO = values(SampleNO),
+        Flag = values(Flag),
+        DefValue = values(DefValue),
+        Doctor = values(Doctor),
+        OrderCode = values(OrderCode),
+        SendFlag = values(SendFlag),
+        SHDoctor = values(SHDoctor),
+        CheckMethod = values(CheckMethod),
+        CheckStuff = values(CheckStuff),
+        BZ = values(BZ),
+        DeptCode = values(DeptCode)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update hyb
+        <set>
+            <if test="rowid != null">
+                RowID = #{rowid},
+            </if>
+            <if test="studyid != null and studyid != ''">
+                StudyID = #{studyid},
+            </if>
+            <if test="sfxmdm != null and sfxmdm != ''">
+                SFXMDM = #{sfxmdm},
+            </if>
+            <if test="xxdm != null and xxdm != ''">
+                XXDM = #{xxdm},
+            </if>
+            <if test="checkdate != null and checkdate != ''">
+                CheckDate = #{checkdate},
+            </if>
+            <if test="checktime != null and checktime != ''">
+                CheckTime = #{checktime},
+            </if>
+            <if test="itemresult != null and itemresult != ''">
+                ItemResult = #{itemresult},
+            </if>
+            <if test="itemunit != null and itemunit != ''">
+                ItemUnit = #{itemunit},
+            </if>
+            <if test="sampleno != null">
+                SampleNO = #{sampleno},
+            </if>
+            <if test="flag != null">
+                Flag = #{flag},
+            </if>
+            <if test="defvalue != null and defvalue != ''">
+                DefValue = #{defvalue},
+            </if>
+            <if test="doctor != null and doctor != ''">
+                Doctor = #{doctor},
+            </if>
+            <if test="ordercode != null and ordercode != ''">
+                OrderCode = #{ordercode},
+            </if>
+            <if test="sendflag != null and sendflag != ''">
+                SendFlag = #{sendflag},
+            </if>
+            <if test="shdoctor != null and shdoctor != ''">
+                SHDoctor = #{shdoctor},
+            </if>
+            <if test="checkmethod != null and checkmethod != ''">
+                CheckMethod = #{checkmethod},
+            </if>
+            <if test="checkstuff != null and checkstuff != ''">
+                CheckStuff = #{checkstuff},
+            </if>
+            <if test="bz != null and bz != ''">
+                BZ = #{bz},
+            </if>
+            <if test="deptcode != null and deptcode != ''">
+                DeptCode = #{deptcode},
+            </if>
+        </set>
+        where  = #{RowID}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from hyb where  = #{RowID}
+    </delete>
+
+</mapper>
+

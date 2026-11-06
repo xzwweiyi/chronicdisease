@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.warn.mapper.WarnMedicalEarlyConditionMapper">
+    
+    <resultMap type="WarnMedicalEarlyCondition" id="WarnMedicalEarlyConditionResult">
+        <result property="id"    column="id"    />
+        <result property="medicalEarlyWarnId"    column="medical_early_warn_id"    />
+        <result property="earlyWarnLevel"    column="early_warn_level"    />
+        <result property="sexCondition"    column="sex_condition"    />
+        <result property="ageConditionType"    column="age_condition_type"    />
+        <result property="ageEarlyWarnValue"    column="age_early_warn_value"    />
+        <result property="ageEarlyWarnStart"    column="age_early_warn_start"    />
+        <result property="ageEarlyWarnEnd"    column="age_early_warn_end"    />
+        <result property="conditionType"    column="condition_type"    />
+        <result property="earlyWarnValue"    column="early_warn_value"    />
+        <result property="earlyWarnStart"    column="early_warn_start"    />
+        <result property="earlyWarnEnd"    column="early_warn_end"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="followId"    column="follow_id"    />
+    </resultMap>
+
+    <sql id="selectWarnMedicalEarlyConditionVo">
+        select id, medical_early_warn_id, early_warn_level, sex_condition, age_condition_type, age_early_warn_value, age_early_warn_start, age_early_warn_end,
+        condition_type, early_warn_value, early_warn_start, early_warn_end, create_time, property_id, follow_id
+        from warn_medical_early_condition
+    </sql>
+
+    <select id="selectWarnMedicalEarlyConditionList" parameterType="WarnMedicalEarlyCondition" resultMap="WarnMedicalEarlyConditionResult">
+        <include refid="selectWarnMedicalEarlyConditionVo"/>
+        <where>  
+            <if test="medicalEarlyWarnId != null "> and medical_early_warn_id = #{medicalEarlyWarnId}</if>
+            <if test="earlyWarnLevel != null  and earlyWarnLevel != ''"> and early_warn_level = #{earlyWarnLevel}</if>
+            <if test="sexCondition != null  and sexCondition != ''"> and sex_condition = #{sexCondition}</if>
+            <if test="ageConditionType != null  and ageConditionType != ''"> and age_condition_type = #{ageConditionType}</if>
+            <if test="ageEarlyWarnValue != null  and ageEarlyWarnValue != ''"> and age_early_warn_value = #{ageEarlyWarnValue}</if>
+            <if test="ageEarlyWarnStart != null  and ageEarlyWarnStart != ''"> and age_early_warn_start = #{ageEarlyWarnStart}</if>
+            <if test="ageEarlyWarnEnd != null  and ageEarlyWarnEnd != ''"> and age_early_warn_end = #{ageEarlyWarnEnd}</if>
+            <if test="conditionType != null  and conditionType != ''"> and condition_type = #{conditionType}</if>
+            <if test="earlyWarnValue != null  and earlyWarnValue != ''"> and early_warn_value = #{earlyWarnValue}</if>
+            <if test="earlyWarnStart != null  and earlyWarnStart != ''"> and early_warn_start = #{earlyWarnStart}</if>
+            <if test="earlyWarnEnd != null  and earlyWarnEnd != ''"> and early_warn_end = #{earlyWarnEnd}</if>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+            <if test="followId != null "> and follow_id = #{followId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarnMedicalEarlyConditionById" parameterType="Long" resultMap="WarnMedicalEarlyConditionResult">
+        <include refid="selectWarnMedicalEarlyConditionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWarnMedicalEarlyCondition" parameterType="WarnMedicalEarlyCondition" useGeneratedKeys="true" keyProperty="id">
+        insert into warn_medical_early_condition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="medicalEarlyWarnId != null">medical_early_warn_id,</if>
+            <if test="earlyWarnLevel != null">early_warn_level,</if>
+            <if test="sexCondition != null">sex_condition,</if>
+            <if test="ageConditionType != null">age_condition_type,</if>
+            <if test="ageEarlyWarnValue != null">age_early_warn_value,</if>
+            <if test="ageEarlyWarnStart != null">age_early_warn_start,</if>
+            <if test="ageEarlyWarnEnd != null">age_early_warn_end,</if>
+            <if test="conditionType != null">condition_type,</if>
+            <if test="earlyWarnValue != null">early_warn_value,</if>
+            <if test="earlyWarnStart != null">early_warn_start,</if>
+            <if test="earlyWarnEnd != null">early_warn_end,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="propertyId != null">property_id,</if>
+            <if test="followId != null">follow_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="medicalEarlyWarnId != null">#{medicalEarlyWarnId},</if>
+            <if test="earlyWarnLevel != null">#{earlyWarnLevel},</if>
+            <if test="sexCondition != null">#{sexCondition},</if>
+            <if test="ageConditionType != null">#{ageConditionType},</if>
+            <if test="ageEarlyWarnValue != null">#{ageEarlyWarnValue},</if>
+            <if test="ageEarlyWarnStart != null">#{ageEarlyWarnStart},</if>
+            <if test="ageEarlyWarnEnd != null">#{ageEarlyWarnEnd},</if>
+            <if test="conditionType != null">#{conditionType},</if>
+            <if test="earlyWarnValue != null">#{earlyWarnValue},</if>
+            <if test="earlyWarnStart != null">#{earlyWarnStart},</if>
+            <if test="earlyWarnEnd != null">#{earlyWarnEnd},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="followId != null">#{followId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarnMedicalEarlyCondition" parameterType="WarnMedicalEarlyCondition">
+        update warn_medical_early_condition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="medicalEarlyWarnId != null">medical_early_warn_id = #{medicalEarlyWarnId},</if>
+            <if test="earlyWarnLevel != null">early_warn_level = #{earlyWarnLevel},</if>
+            <if test="sexCondition != null">sex_condition = #{sexCondition},</if>
+            <if test="ageConditionType != null">age_condition_type = #{ageConditionType},</if>
+            <if test="ageEarlyWarnValue != null">age_early_warn_value = #{ageEarlyWarnValue},</if>
+            <if test="ageEarlyWarnStart != null">age_early_warn_start = #{ageEarlyWarnStart},</if>
+            <if test="ageEarlyWarnEnd != null">age_early_warn_end = #{ageEarlyWarnEnd},</if>
+            <if test="conditionType != null">condition_type = #{conditionType},</if>
+            <if test="earlyWarnValue != null">early_warn_value = #{earlyWarnValue},</if>
+            <if test="earlyWarnStart != null">early_warn_start = #{earlyWarnStart},</if>
+            <if test="earlyWarnEnd != null">early_warn_end = #{earlyWarnEnd},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="followId != null">follow_id = #{followId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWarnMedicalEarlyConditionById" parameterType="Long">
+        delete from warn_medical_early_condition where id = #{id}
+    </delete>
+
+    <delete id="deleteWarnMedicalEarlyConditionByWarnMedicalId" parameterType="Long">
+        delete from warn_medical_early_condition where medical_early_warn_id = #{id}
+    </delete>
+
+    <delete id="deleteWarnMedicalEarlyConditionByFollowId" parameterType="Long">
+        delete from warn_medical_early_condition where follow_id = #{id}
+    </delete>
+
+    <delete id="deleteWarnMedicalEarlyConditionByIds" parameterType="String">
+        delete from warn_medical_early_condition where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

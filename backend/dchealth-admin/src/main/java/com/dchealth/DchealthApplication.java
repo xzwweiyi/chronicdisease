@@ -1,0 +1,27 @@
+package com.dchealth;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+/**
+ * 启动程序
+ * 
+ */
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+@EnableScheduling
+@EnableAsync
+public class DchealthApplication
+{
+    private static final Logger log = LoggerFactory.getLogger(DchealthApplication.class);
+    public static void main(String[] args)
+    {
+    	
+        SpringApplication.run(DchealthApplication.class, args);
+        log.info("启动成功");
+    }
+}

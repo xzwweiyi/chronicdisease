@@ -1,0 +1,209 @@
+package com.dchealth.template.service.impl;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.dchealth.cms.domain.CmsArticle;
+import com.dchealth.cms.mapper.CmsArticleMapper;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.StringUtils;
+import com.dchealth.template.domain.FMedicalExamForm;
+import com.dchealth.template.domain.FMedicalExamItem;
+import com.dchealth.template.domain.vo.FMedicalExamVo;
+import com.dchealth.template.mapper.FMedicalExamFormMapper;
+import com.dchealth.template.mapper.FMedicalExamItemMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.dchealth.template.mapper.FMedicalExamSubjectMapper;
+import com.dchealth.template.domain.FMedicalExamSubject;
+import com.dchealth.template.service.IFMedicalExamSubjectService;
+
+/**
+ * 属性题目Service业务层处理
+ * 
+ * @author lchbu
+ * @date 2022-10-31
+ */
+@Service
+public class FMedicalExamSubjectServiceImpl implements IFMedicalExamSubjectService 
+{
+    @Autowired
+    private FMedicalExamSubjectMapper fMedicalExamSubjectMapper;
+    @Autowired
+    private FMedicalExamItemMapper fMedicalExamItemMapper;
+    @Autowired
+    private FMedicalExamFormMapper fMedicalExamFormMapper;
+    @Autowired
+    private CmsArticleMapper cmsArticleMapper;
+
+    /**
+     * 查询属性题目
+     * 
+     * @param id 属性题目主键
+     * @return 属性题目
+     */
+    @Override
+    public FMedicalExamSubject selectFMedicalExamSubjectById(Long id)
+    {
+        return fMedicalExamSubjectMapper.selectFMedicalExamSubjectById(id);
+    }
+
+    /**
+     * 查询属性题目列表
+     * 
+     * @param fMedicalExamSubject 属性题目
+     * @return 属性题目
+     */
+    @Override
+    public List<FMedicalExamSubject> selectFMedicalExamSubjectList(FMedicalExamSubject fMedicalExamSubject)
+    {
+        return fMedicalExamSubjectMapper.selectFMedicalExamSubjectList(fMedicalExamSubject);
+    }
+
+    /**
+     * 新增属性题目
+     * 
+     * @param vo 属性题目
+     * @return 结果
+     */
+    @Override
+    public int insertFMedicalExamSubject(FMedicalExamVo vo)
+    {
+        if(vo != null){
+            List<FMedicalExamSubject> fMedicalExamSubjects = vo.getExamSubjectList();
+            Long articleId = vo.getArticleId();
+            //更新问卷时间
+            CmsArticle cmsArticle = new CmsArticle();
+            cmsArticle.setUpdateTime(DateUtils.getNowDate());
+            cmsArticle.setId(articleId);
+            if(vo.getScoresTotalVal()!=null){
+                cmsArticle.setScoresTotalVal(vo.getScoresTotalVal());
+            }
+            cmsArticleMapper.updateCmsArticle(cmsArticle);
+            //问卷id
+            FMedicalExamForm fMedicalExamForm = fMedicalExamFormMapper.selectFMedicalExamFormByArticleId(articleId);
+            Long medicalFormId = fMedicalExamForm.getMedicalFormId();
+            //先删除该模板下的数据
+            //删除题干
+            fMedicalExamSubjectMapper.deleteFMedicalExamSubjectByMedicalFormId(medicalFormId);
+            //删除选项
+            fMedicalExamItemMapper.deleteFMedicalExamItemByMedicalFormId(medicalFormId);
+            //题干、选项保存
+            if(fMedicalExamSubjects != null && !fMedicalExamSubjects.isEmpty()){
+                fMedicalExamSubjects.forEach(fMedicalExamSubject -> {
+                    //保存题目
+                    fMedicalExamSubject.setCreateTime(DateUtils.getNowDate());
+                    //查询题目排序最大值
+                    Integer maxSortNum = fMedicalExamSubjectMapper.selectExamSubjectMaxSortNumByFromId(medicalFormId);
+                    fMedicalExamSubject.setSortNum(maxSortNum != null ? (maxSortNum + 1) : 0);
+                    fMedicalExamSubject.setMedicalFormId(medicalFormId);
+                    if (StringUtils.isEmpty(fMedicalExamSubject.getPropertyName())) {
+                        //新加层级组件
+                        fMedicalExamSubject.setPropertyName("问题组");
+                    }
+                    fMedicalExamSubjectMapper.insertFMedicalExamSubject(fMedicalExamSubject);
+                    //保存选项
+                    Optional<List<FMedicalExamItem>> itemList = Optional.ofNullable(fMedicalExamSubject.getItemList());
+                    if(itemList.isPresent()){
+                        itemList.get().forEach(item ->{
+                            item.setPropertyId(fMedicalExamSubject.getId());
+                            item.setMedicalFormId(medicalFormId);
+                            //选项排序最大值
+                            Integer maxOrderNum = fMedicalExamItemMapper.selectExamItemMaxOrderNum(fMedicalExamSubject.getId());
+                            item.setOrderNum(maxOrderNum != null ? (maxOrderNum + 1) : 0);
+                            item.setCreateTime(DateUtils.getNowDate());
+                            fMedicalExamItemMapper.insertFMedicalExamItem(item);
+                        });
+                    }
+                });
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * 修改属性题目（暂时不用）
+     * 
+     * @param fMedicalExamSubject 属性题目
+     * @return 结果
+     */
+    @Override
+    public int updateFMedicalExamSubject(FMedicalExamSubject fMedicalExamSubject)
+    {
+        //更新问卷名称
+        fMedicalExamSubject.setUpdateTime(DateUtils.getNowDate());
+        fMedicalExamSubjectMapper.updateFMedicalExamSubject(fMedicalExamSubject);
+        //获取选项值并更新
+        Optional<List<FMedicalExamItem>> itemList = Optional.ofNullable(fMedicalExamSubject.getItemList());
+        if(itemList.isPresent()){
+            itemList.get().forEach(item ->{
+                item.setUpdateTime(DateUtils.getNowDate());
+                fMedicalExamItemMapper.updateFMedicalExamItem(item);
+            });
+        }
+        return 1;
+    }
+
+    /**
+     * 批量删除属性题目
+     * 
+     * @param ids 需要删除的属性题目主键
+     * @return 结果
+     */
+    @Override
+    public int deleteFMedicalExamSubjectByIds(Long[] ids)
+    {
+        return fMedicalExamSubjectMapper.deleteFMedicalExamSubjectByIds(ids);
+    }
+
+    /**
+     * 删除属性题目信息
+     * 
+     * @param id 属性题目主键
+     * @return 结果
+     */
+    @Override
+    public int deleteFMedicalExamSubjectById(Long id)
+    {
+        return fMedicalExamSubjectMapper.deleteFMedicalExamSubjectById(id);
+    }
+
+    @Override
+    public int insertFMedicalExamSubjectScale(FMedicalExamVo fMedicalExamVo) {
+        if(fMedicalExamVo != null){
+            List<FMedicalExamSubject> fMedicalExamSubjects = fMedicalExamVo.getExamSubjectList();
+            Long medicalFormId = fMedicalExamVo.getMedicalFormId();
+            //先删除该模板下的数据
+            //删除题干
+            fMedicalExamSubjectMapper.deleteFMedicalExamSubjectByMedicalFormId(medicalFormId);
+            //删除选项
+            fMedicalExamItemMapper.deleteFMedicalExamItemByMedicalFormId(medicalFormId);
+            //题干、选项保存
+            if(fMedicalExamSubjects != null && !fMedicalExamSubjects.isEmpty()){
+                fMedicalExamSubjects.forEach(fMedicalExamSubject -> {
+                    //保存题目
+                    fMedicalExamSubject.setCreateTime(DateUtils.getNowDate());
+                    //查询题目排序最大值
+                    Integer maxSortNum = fMedicalExamSubjectMapper.selectExamSubjectMaxSortNumByFromId(medicalFormId);
+                    fMedicalExamSubject.setSortNum(maxSortNum != null ? (maxSortNum + 1) : 0);
+                    fMedicalExamSubject.setMedicalFormId(medicalFormId);
+                    fMedicalExamSubjectMapper.insertFMedicalExamSubject(fMedicalExamSubject);
+                    //保存选项
+                    Optional<List<FMedicalExamItem>> itemList = Optional.ofNullable(fMedicalExamSubject.getItemList());
+                    if(itemList.isPresent()){
+                        itemList.get().forEach(item ->{
+                            item.setPropertyId(fMedicalExamSubject.getId());
+                            item.setMedicalFormId(medicalFormId);
+                            //选项排序最大值
+                            Integer maxOrderNum = fMedicalExamItemMapper.selectExamItemMaxOrderNum(fMedicalExamSubject.getId());
+                            item.setOrderNum(maxOrderNum != null ? (maxOrderNum + 1) : 0);
+                            item.setCreateTime(DateUtils.getNowDate());
+                            fMedicalExamItemMapper.insertFMedicalExamItem(item);
+                        });
+                    }
+                });
+            }
+        }
+        return 1;
+    }
+}

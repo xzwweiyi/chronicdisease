@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.ClinicMasterMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.ClinicMaster" id="ClinicMasterMap">
+        <result property="visitDate" column="VISIT_DATE" jdbcType="TIMESTAMP"/>
+        <result property="visitNo" column="VISIT_NO" jdbcType="INTEGER"/>
+        <result property="patientId" column="PATIENT_ID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ClinicMasterMap">
+        select
+          VISIT_DATE, VISIT_NO, PATIENT_ID
+        from clinic_master
+        <where>
+            <if test="visitDate != null">
+                and VISIT_DATE = #{visitDate}
+            </if>
+            <if test="visitNo != null">
+                and VISIT_NO = #{visitNo}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from clinic_master
+        <where>
+            <if test="visitDate != null">
+                and VISIT_DATE = #{visitDate}
+            </if>
+            <if test="visitNo != null">
+                and VISIT_NO = #{visitNo}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+
+    </select>
+    <select id="querySyncInfoByPage" resultMap="ClinicMasterMap">
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into clinic_master(VISIT_DATE, VISIT_NO, PATIENT_ID)
+        values (#{visitDate}, #{visitNo}, #{patientId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into clinic_master(VISIT_DATE, VISIT_NO, PATIENT_ID)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.visitDate}, #{entity.visitNo}, #{entity.patientId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into clinic_master(VISIT_DATE, VISIT_NO, PATIENT_ID)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.visitDate}, #{entity.visitNo}, #{entity.patientId})
+        </foreach>
+        on duplicate key update
+        VISIT_DATE = values(VISIT_DATE),
+        VISIT_NO = values(VISIT_NO),
+        PATIENT_ID = values(PATIENT_ID)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update clinic_master
+        <set>
+            <if test="visitDate != null">
+                VISIT_DATE = #{visitDate},
+            </if>
+            <if test="visitNo != null">
+                VISIT_NO = #{visitNo},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                PATIENT_ID = #{patientId},
+            </if>
+        </set>
+        where  PATIENT_ID = #{patientId}
+    </update>
+
+
+</mapper>
+

@@ -1,0 +1,110 @@
+package com.dchealth.template.service.impl;
+
+import com.dchealth.common.annotation.DataScope;
+import com.dchealth.common.core.domain.AjaxResult;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.template.domain.FTemplate;
+import com.dchealth.template.domain.FTemplateCategory;
+import com.dchealth.template.domain.FTemplateForm;
+import com.dchealth.template.mapper.FTemplateCategoryMapper;
+import com.dchealth.template.mapper.FTemplateMapper;
+import com.dchealth.template.service.IFTemplateCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * CRF库模板分类Service业务层处理
+ * 
+ * @author lchbu
+ * @date 2022-08-30
+ */
+@Service
+public class FTemplateCategoryServiceImpl implements IFTemplateCategoryService 
+{
+    @Autowired
+    private FTemplateCategoryMapper fTemplateCategoryMapper;
+    @Autowired
+    private FTemplateMapper fTemplateMapper;
+
+    /**
+     * 查询CRF库模板分类
+     * 
+     * @param templateCategoryId CRF库模板分类主键
+     * @return CRF库模板分类
+     */
+    @Override
+    public FTemplateCategory selectFTemplateCategoryByTemplateCategoryId(Long templateCategoryId)
+    {
+        return fTemplateCategoryMapper.selectFTemplateCategoryByTemplateCategoryId(templateCategoryId);
+    }
+
+    /**
+     * 查询CRF库模板分类列表
+     * 
+     * @param fTemplateCategory CRF库模板分类
+     * @return CRF库模板分类
+     */
+    @Override
+//    @DataScope(deptAlias = "c")
+    public List<FTemplateCategory> selectFTemplateCategoryList(FTemplateCategory fTemplateCategory)
+    {
+        return fTemplateCategoryMapper.selectFTemplateCategoryList(fTemplateCategory);
+    }
+
+    /**
+     * 新增CRF库模板分类
+     * 
+     * @param fTemplateCategory CRF库模板分类
+     * @return 结果
+     */
+    @Override
+    public int insertFTemplateCategory(FTemplateCategory fTemplateCategory)
+    {
+        fTemplateCategory.setCreateTime(DateUtils.getNowDate());
+        return fTemplateCategoryMapper.insertFTemplateCategory(fTemplateCategory);
+    }
+
+    /**
+     * 修改CRF库模板分类
+     * 
+     * @param fTemplateCategory CRF库模板分类
+     * @return 结果
+     */
+    @Override
+    public int updateFTemplateCategory(FTemplateCategory fTemplateCategory)
+    {
+        fTemplateCategory.setUpdateTime(DateUtils.getNowDate());
+        return fTemplateCategoryMapper.updateFTemplateCategory(fTemplateCategory);
+    }
+
+    /**
+     * 批量删除CRF库模板分类
+     * 
+     * @param templateCategoryIds 需要删除的CRF库模板分类主键
+     * @return 结果
+     */
+    @Override
+    public int deleteFTemplateCategoryByTemplateCategoryIds(Long[] templateCategoryIds)
+    {
+        return fTemplateCategoryMapper.deleteFTemplateCategoryByTemplateCategoryIds(templateCategoryIds);
+    }
+
+    /**
+     * 删除CRF库模板分类信息
+     * 
+     * @param templateCategoryId CRF库模板分类主键
+     * @return 结果
+     */
+    @Override
+    public AjaxResult deleteFTemplateCategoryByTemplateCategoryId(Long templateCategoryId)
+    {
+        /*int count = fTemplateMapper.statisticsTemplateByTemplateCategoryId(templateCategoryId);
+        if (count > 0){
+            return AjaxResult.error("操作失败！该文件夹存在内容，请先确认！");
+        }*/
+        int rows = fTemplateCategoryMapper.deleteFTemplateCategoryByTemplateCategoryId(templateCategoryId);
+        return rows > 0 ? AjaxResult.success() : AjaxResult.error();
+    }
+}

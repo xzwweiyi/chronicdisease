@@ -1,0 +1,110 @@
+package com.dchealth.research.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.dchealth.common.annotation.Excel;
+import com.dchealth.common.core.domain.BaseEntity;
+
+/**
+ * 病种对象 research_diseases
+ * 
+ * @author lchbu
+ * @date 2022-08-24
+ */
+public class ResearchDiseases extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** 病种id */
+    private Long diseaseId;
+
+    /** 病种名称 */
+    @Excel(name = "病种名称")
+    private String diseaseName;
+
+    /** 部门ID */
+    @Excel(name = "部门ID")
+    private Long deptId;
+
+    /** 是否删除 0未删除 1 删除 */
+    @Excel(name = "是否删除 0未删除 1 删除")
+    private String isDeleted;
+
+    /** 排序 */
+    @Excel(name = "排序")
+    private Long sortNum;
+
+    /**
+     * 基础病重ID
+     */
+    private String diseasesGroupsId;
+
+    public String getDiseasesGroupsId() {
+        return diseasesGroupsId;
+    }
+
+    public void setDiseasesGroupsId(String diseasesGroupsId) {
+        this.diseasesGroupsId = diseasesGroupsId;
+    }
+
+    public void setDiseaseId(Long diseaseId)
+    {
+        this.diseaseId = diseaseId;
+    }
+
+    public Long getDiseaseId() 
+    {
+        return diseaseId;
+    }
+    public void setDiseaseName(String diseaseName) 
+    {
+        this.diseaseName = diseaseName;
+    }
+
+    public String getDiseaseName() 
+    {
+        return diseaseName;
+    }
+    public void setDeptId(Long deptId) 
+    {
+        this.deptId = deptId;
+    }
+
+    public Long getDeptId() 
+    {
+        return deptId;
+    }
+    public void setIsDeleted(String isDeleted) 
+    {
+        this.isDeleted = isDeleted;
+    }
+
+    public String getIsDeleted() 
+    {
+        return isDeleted;
+    }
+    public void setSortNum(Long sortNum) 
+    {
+        this.sortNum = sortNum;
+    }
+
+    public Long getSortNum() 
+    {
+        return sortNum;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("diseaseId", getDiseaseId())
+            .append("diseaseName", getDiseaseName())
+            .append("deptId", getDeptId())
+            .append("isDeleted", getIsDeleted())
+            .append("createTime", getCreateTime())
+            .append("createBy", getCreateBy())
+            .append("updateTime", getUpdateTime())
+            .append("updateBy", getUpdateBy())
+            .append("sortNum", getSortNum())
+            .toString();
+    }
+}

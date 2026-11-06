@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.question.mapper.QuestionRecordMapper">
+    
+    <resultMap type="QuestionRecord" id="QuestionRecordResult">
+        <result property="questionId"    column="question_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="fromUserId"    column="from_user_id"    />
+        <result property="fromContent"    column="from_content"    />
+        <result property="replyUserId"    column="reply_user_id"    />
+        <result property="replyContent"    column="reply_content"    />
+        <result property="questionStatus"    column="question_status"    />
+        <result property="type"    column="type"    />
+        <result property="fromTime"    column="from_time"    />
+        <result property="replyTime"    column="reply_time"    />
+        <result property="fromUserName"    column="from_user_name"    />
+        <result property="replyUserName"    column="reply_user_name"    />
+    </resultMap>
+
+    <sql id="selectQuestionRecordVo">
+        select question_id, record_id, from_user_id, from_content, reply_user_id, reply_content, question_status,type, from_time, reply_time from question_record
+    </sql>
+
+    <select id="selectQuestionRecordList" parameterType="QuestionRecord" resultMap="QuestionRecordResult">
+        <include refid="selectQuestionRecordVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="fromUserId != null "> and from_user_id = #{fromUserId}</if>
+            <if test="fromContent != null  and fromContent != ''"> and from_content = #{fromContent}</if>
+            <if test="replyUserId != null "> and reply_user_id = #{replyUserId}</if>
+            <if test="replyContent != null  and replyContent != ''"> and reply_content = #{replyContent}</if>
+            <if test="questionStatus != null  and questionStatus != ''"> and question_status = #{questionStatus}</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+            <if test="fromTime != null "> and from_time = #{fromTime}</if>
+            <if test="replyTime != null "> and reply_time = #{replyTime}</if>
+        </where>
+    </select>
+
+    <select id="selectEdcStatisList" parameterType="QuestionRecord" resultMap="QuestionRecordResult">
+        select g.question_id, g.record_id, g.from_user_id, g.from_content, g.reply_user_id, g.reply_content, g.question_status,g.type, g.from_time, g.reply_time
+        from question_record g
+        INNER JOIN question_record_form qrf on g.question_id=qrf.question_id
+        INNER JOIN patient_record_edc_status prds on prds.record_id=g.record_id and prds.medical_form_id=qrf.medical_form_id
+        <where>
+            <if test="recordId != null "> and g.record_id = #{recordId}</if>
+            <if test="medicalFormId != null "> and prds.medical_form_id = #{medicalFormId}</if>
+            <if test="edcStatus != null "> and prds.edc_status = #{edcStatus}</if>
+            <if test="questionStatus != null  and questionStatus != ''"> and question_status = #{questionStatus}</if>
+            <if test="type != null  and type != ''"> and `type` = #{type}</if>
+        </where>
+        ORDER BY g.from_time desc LIMIT 0,1
+    </select>
+    
+    <select id="selectQuestionRecordByQuestionId" parameterType="Long" resultMap="QuestionRecordResult">
+        <include refid="selectQuestionRecordVo"/>
+        where question_id = #{questionId}
+    </select>
+
+    <select id="selectQuestionRecordByRecordId" parameterType="Long" resultMap="QuestionRecordResult">
+        select g.question_id, g.record_id, g.from_user_id, g.from_content, g.reply_user_id, g.reply_content, g.question_status,g.type, g.from_time, g.reply_time
+        ,su.user_name from_user_name,mp.person_name reply_user_name
+        from question_record g
+        left join sys_user su on g.from_user_id=su.user_id
+        left join mp_person mp on g.reply_user_id=mp.id
+        where g.record_id = #{recordId} and g.type='1' order by from_time
+    </select>
+        
+    <insert id="insertQuestionRecord" parameterType="QuestionRecord" useGeneratedKeys="true" keyProperty="questionId">
+        insert into question_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="fromUserId != null">from_user_id,</if>
+            <if test="fromContent != null">from_content,</if>
+            <if test="replyUserId != null">reply_user_id,</if>
+            <if test="replyContent != null">reply_content,</if>
+            <if test="questionStatus != null and questionStatus != ''">question_status,</if>
+            <if test="type != null and type != ''">`type`,</if>
+            <if test="fromTime != null">from_time,</if>
+            <if test="replyTime != null">reply_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="fromUserId != null">#{fromUserId},</if>
+            <if test="fromContent != null">#{fromContent},</if>
+            <if test="replyUserId != null">#{replyUserId},</if>
+            <if test="replyContent != null">#{replyContent},</if>
+            <if test="questionStatus != null and questionStatus != ''">#{questionStatus},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="fromTime != null">#{fromTime},</if>
+            <if test="replyTime != null">#{replyTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuestionRecord" parameterType="QuestionRecord">
+        update question_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="fromUserId != null">from_user_id = #{fromUserId},</if>
+            <if test="fromContent != null">from_content = #{fromContent},</if>
+            <if test="replyUserId != null">reply_user_id = #{replyUserId},</if>
+            <if test="replyContent != null">reply_content = #{replyContent},</if>
+            <if test="questionStatus != null and questionStatus != ''">question_status = #{questionStatus},</if>
+            <if test="type != null and type != ''">`type` = #{type},</if>
+            <if test="fromTime != null">from_time = #{fromTime},</if>
+            <if test="replyTime != null">reply_time = #{replyTime},</if>
+        </trim>
+        where question_id = #{questionId}
+    </update>
+
+    <delete id="deleteQuestionRecordByQuestionId" parameterType="Long">
+        delete from question_record where question_id = #{questionId}
+    </delete>
+
+    <delete id="deleteQuestionRecordByQuestionIds" parameterType="String">
+        delete from question_record where question_id in 
+        <foreach item="questionId" collection="array" open="(" separator="," close=")">
+            #{questionId}
+        </foreach>
+    </delete>
+
+    <select id="selectQuestionRecords" parameterType="Long" resultMap="QuestionRecordResult">
+        select q.question_id, q.record_id, q.from_user_id, q.from_content, q.reply_user_id, q.reply_content, q.question_status, q.from_time, q.reply_time
+        from question_record_form f, question_record q
+        where f.question_id = q.question_id and f.record_id = #{recordId} and f.medical_form_id = #{medicalFormId} and  q.type = '2'  order by q.from_time desc
+    </select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpOphthalmologicalExamMapper">
+    
+    <resultMap type="MpOphthalmologicalExam" id="MpOphthalmologicalExamResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visionLeft"    column="vision_left"    />
+        <result property="visionRight"    column="vision_right"    />
+        <result property="visionLeftRevise"    column="vision_left_revise"    />
+        <result property="visionRightRevise"    column="vision_right_revise"    />
+        <result property="eyePosition"    column="eye_position"    />
+        <result property="eyeMovement"    column="eye_movement"    />
+        <result property="eyelid"    column="eyelid"    />
+        <result property="eyeConjunctiva"    column="eye_conjunctiva"    />
+        <result property="eyeballConjunctiva"    column="eyeball_conjunctiva"    />
+        <result property="eyePressure"    column="eye_pressure"    />
+        <result property="eyePhoto"    column="eye_photo"    />
+        <result property="visionColour"    column="vision_colour"    />
+        <result property="lacrimal"    column="lacrimal"    />
+        <result property="healthExamDate"    column="health_exam_date"    />
+        <result property="resultDate"    column="result_date"    />
+    </resultMap>
+
+    <sql id="selectMpOphthalmologicalExamVo">
+        select id, care_site_id, person_id, visit_occurrence_id, vision_left, vision_right, vision_left_revise, vision_right_revise, eye_position, eye_movement, eyelid, eye_conjunctiva, eyeball_conjunctiva, eye_pressure, eye_photo, vision_colour, lacrimal, health_exam_date, result_date from mp_ophthalmological_exam
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpOphthalmologicalExamResult">
+        <include refid="selectMpOphthalmologicalExamVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+        
+
+</mapper>

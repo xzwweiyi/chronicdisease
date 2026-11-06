@@ -1,0 +1,104 @@
+package com.dchealth.research.mapper;
+
+import com.dchealth.research.domain.ResearchDiseases;
+import com.dchealth.research.domain.vo.ResearchDiseasesVO;
+import com.dchealth.research.domain.vo.ResearchInfoVo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 病种Mapper接口
+ * 
+ * @author lchbu
+ * @date 2022-08-24
+ */
+public interface ResearchDiseasesMapper 
+{
+    /**
+     * 查询病种
+     * 
+     * @param diseaseId 病种主键
+     * @return 病种
+     */
+    public ResearchDiseases selectResearchDiseasesByDiseaseId(Long diseaseId);
+
+    /**
+     * 查询病种列表
+     * 
+     * @param researchDiseases 病种
+     * @return 病种集合
+     */
+    public List<ResearchDiseases> selectResearchDiseasesList(ResearchDiseases researchDiseases);
+
+
+    /**
+     * 查询科室、病种、队列关系列表
+     * @param vo
+     * @return
+     */
+    public List<ResearchDiseasesVO> selectResearchDiseasesListTree(ResearchInfoVo vo);
+    public List<ResearchDiseasesVO> selectResearchDiseases(ResearchInfoVo vo);
+
+    /**
+     * 随访工作站使用需完善
+     * @return
+     */
+    public List<ResearchDiseases> selectResearchDiseasesByAuth();
+
+    public List<ResearchDiseases> selectResearchDiseasesByAuthLess();
+
+    public List<ResearchDiseases> selectResearchDiseasesByAuth2(@Param("deptId") Long deptId,@Param("diseaseName") String diseaseName);
+
+    public List<ResearchDiseases> selectResearchDiseasesByUserId(@Param("userId")Long userId,@Param("diseaseName") String diseaseNam);
+
+    /**
+     * 选择病种下拉包含：科室、病种
+     * @return
+     */
+    public List<ResearchDiseasesVO> selectList(ResearchInfoVo vo);
+
+    /**
+     * 新增病种
+     * 
+     * @param researchDiseases 病种
+     * @return 结果
+     */
+    public int insertResearchDiseases(ResearchDiseases researchDiseases);
+
+    /**
+     * 修改病种
+     * 
+     * @param researchDiseases 病种
+     * @return 结果
+     */
+    public int updateResearchDiseases(ResearchDiseases researchDiseases);
+
+    /**
+     * 删除病种
+     * 
+     * @param diseaseId 病种主键
+     * @return 结果
+     */
+    public int deleteResearchDiseasesByDiseaseId(Long diseaseId);
+
+    /**
+     * 批量删除病种
+     * 
+     * @param diseaseIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteResearchDiseasesByDiseaseIds(Long[] diseaseIds);
+
+    /**
+     * 根据队列查询
+     * @param vo
+     * @return
+     */
+    List<ResearchDiseasesVO> selectResearchDiseasesListTreeByIds(ResearchInfoVo vo);
+
+    List<ResearchDiseasesVO> selectStatusNumOfDept(Long userId);
+
+    List<ResearchDiseasesVO> selectStatusNumOfDiseaseName(@Param("deptId") Long deptId,@Param("userId") Long userId);
+
+}

@@ -1,0 +1,735 @@
+package com.dchealth.web.job;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.dchealth.common.config.DchealthConfig;
+import com.dchealth.common.constant.Constants;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.SplitListUtils;
+import com.dchealth.common.utils.http.HttpClientUtil;
+import com.dchealth.common.utils.http.XfServiceHttpClientUtil;
+import com.dchealth.common.utils.http.XunfeiHttpClientUtil;
+import com.dchealth.medical.contants.MedicalContants;
+import com.dchealth.medical.domain.PatientRecordOutbound;
+import com.dchealth.medical.mapper.PatientRecordOutboundMapper;
+import com.dchealth.medical.vo.xunfei.*;
+import com.dchealth.research.domain.ResearchInfo;
+import com.dchealth.research.domain.ResearchOutbound;
+import com.dchealth.research.mapper.ResearchInfoMapper;
+import com.dchealth.research.mapper.ResearchOutboundMapper;
+import com.google.common.collect.Lists;
+import com.xxl.job.core.context.XxlJobHelper;
+import com.xxl.job.core.handler.annotation.XxlJob;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+/**
+ * @Auther: zdd
+ * @Date: 2023/9/20
+ */
+@Component
+public class XunfeiCallJob {
+
+    private static Logger log = LoggerFactory.getLogger(XunfeiCallJob.class);
+
+    @Autowired
+    private ResearchInfoMapper researchInfoMapper;
+    @Autowired
+    private ResearchOutboundMapper researchOutboundMapper;
+    @Autowired
+    private PatientRecordOutboundMapper patientRecordOutboundMapper;
+
+    @Value("${xunfei.requestUrl}")
+    private String baseUrl ;
+
+    /**
+     * 讯飞呼叫随访或超窗开始
+     *
+     */
+    @XxlJob("xunfeiCallJobHandler")
+//    @Scheduled(cron = "0 0/2 * * * ?")
+    public void xunfeiCallJobHandler() throws Exception {
+        XxlJobHelper.log("讯飞呼叫随访或超窗开始任务日期{}开始",DateUtils.getTime());
+        //进行中的队列
+        PatientRecordOutbound bound = new PatientRecordOutbound();
+        bound.setStatus("1");
+        bound.setOutboundCreateTime(DateUtils.dateNowTime());
+        List<PatientRecordOutbound> boundList = patientRecordOutboundMapper.selectGroupResearchIdList(bound);
+        if (boundList == null || boundList.isEmpty()){
+            XxlJobHelper.log("讯飞呼叫随访或超窗结束,没有查询到进行中的队列!");
+        }
+        //所有进行中队列的规则
+        String resultStr = "";
+
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(20, 50, 4, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(10), new ThreadPoolExecutor.CallerRunsPolicy());
+        List<List<PatientRecordOutbound>> splitList = SplitListUtils.splitList(boundList, 10);
+        //记录单个任务的执行次数
+        CountDownLatch countDownLatch = new CountDownLatch(splitList.size());
+        for (List<PatientRecordOutbound> splist : splitList) {
+            threadPoolExecutor.execute(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for(int i=0;i<splist.size();i++) {
+                        PatientRecordOutbound r = splist.get(i);
+                        callbackByRecordJob(r.getResearchId());
+                    }
+                }
+            }));
+            // 任务个数 - 1, 直至为0时唤醒await()
+            countDownLatch.countDown();
+        }
+        try {
+            // 让当前线程处于阻塞状态，直到锁存器计数为零
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            throw new NullPointerException(e.getMessage());
+        }finally {
+            threadPoolExecutor.shutdown(); //线程使用完毕后需要关团
+            XxlJobHelper.log("讯飞呼叫随访或超窗开始执行结束");
+        }
+        XxlJobHelper.handleSuccess(resultStr);
+    }
+
+    public void callbackByRecordJob(Long researchId){
+        ResearchOutbound researchOutbound = researchOutboundMapper.selectByResearchIdAndType(researchId,"1");
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(researchOutbound!=null && getTimeAccess(researchOutbound.getFollowAdvanceTime(),hour)){
+            PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+            patientRecordOutbound.setResearchId(researchId);
+            patientRecordOutbound.setStatus("1");
+            patientRecordOutbound.setOutboundType("1");//外呼类型0无状态1智能外呼2短信提醒3app站内信
+            patientRecordOutbound.setRemindType("1");//提醒类型0无1随访2超窗3预警
+            patientRecordOutbound.setOutboundCreateTime(DateUtils.dateNowTime());
+            List<PatientRecordOutbound> outboundList = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+            if(outboundList.size()>0){
+                List<List<PatientRecordOutbound>> partition = Lists.partition(outboundList,500);
+                for(List<PatientRecordOutbound> pros:partition){
+                    sendXunfeiCallFollow(pros,researchOutbound);
+                }
+            }
+        }
+        if(researchOutbound!=null && getTimeAccess(researchOutbound.getOverAdvanceTime(),hour)){
+            //超窗
+            PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+            patientRecordOutbound.setResearchId(researchId);
+            patientRecordOutbound.setStatus("1");
+            patientRecordOutbound.setOutboundType("1");//外呼类型0无状态1智能外呼2短信提醒3app站内信
+            patientRecordOutbound.setRemindType("2");//提醒类型0无1随访2超窗3预警
+            patientRecordOutbound.setOutboundCreateTime(DateUtils.dateNowTime());
+            List<PatientRecordOutbound> outboundOverList = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+            if(outboundOverList.size()>0){
+                List<List<PatientRecordOutbound>> partitionOver = Lists.partition(outboundOverList,500);
+                for(List<PatientRecordOutbound> pros:partitionOver){
+                    sendXunfeiCallOver(pros,researchOutbound);
+                }
+            }
+        }
+
+        //随访短信提醒
+        ResearchOutbound researchOutboundSms = researchOutboundMapper.selectByResearchIdAndType(researchId,"2");
+        if(researchOutboundSms!=null && getTimeAccess(researchOutboundSms.getFollowAdvanceTime(),hour)){
+            PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+            patientRecordOutbound.setResearchId(researchId);
+            patientRecordOutbound.setStatus("1");
+            patientRecordOutbound.setOutboundType("2");//外呼类型0无状态1智能外呼2短信提醒3app站内信
+            patientRecordOutbound.setRemindType("1");//提醒类型0无1随访2超窗3预警
+            patientRecordOutbound.setOutboundCreateTime(DateUtils.dateNowTime());
+            List<PatientRecordOutbound> outboundList = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+            if(outboundList.size()>0){
+                List<List<PatientRecordOutbound>> partition = Lists.partition(outboundList,500);
+                for(List<PatientRecordOutbound> pros:partition){
+                    for(PatientRecordOutbound pb:pros){
+                        //随访短信提醒3,超窗2
+                        sendXunfeiSms(pb,"3");
+                    }
+                }
+            }
+        }
+        //超窗短信提醒
+        if(researchOutboundSms!=null && getTimeAccess(researchOutboundSms.getOverAdvanceTime(),hour)){
+            PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+            patientRecordOutbound.setResearchId(researchId);
+            patientRecordOutbound.setStatus("1");
+            patientRecordOutbound.setOutboundType("2");//外呼类型0无状态1智能外呼2短信提醒3app站内信
+            patientRecordOutbound.setRemindType("2");//提醒类型0无1随访2超窗3预警
+            patientRecordOutbound.setOutboundCreateTime(DateUtils.dateNowTime());
+            List<PatientRecordOutbound> outboundList = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+            if(outboundList.size()>0){
+                List<List<PatientRecordOutbound>> partition = Lists.partition(outboundList,500);
+                for(List<PatientRecordOutbound> pros:partition){
+                    for(PatientRecordOutbound pb:pros){
+                        //随访短信提醒3,超窗2
+                        sendXunfeiSms(pb,"2");
+                    }
+                }
+            }
+        }
+
+    }
+
+    //随访外呼提前提醒
+    public void sendXunfeiCallFollow(List<PatientRecordOutbound> outboundList,ResearchOutbound researchOutbound){
+        XunfeiReq xunfeiReq = new XunfeiReq();
+        List<Dweller> dwellerList = new ArrayList<>();
+        for(PatientRecordOutbound pro:outboundList){
+            //居民信息
+            Dweller dweller = new Dweller();
+            dweller.setDwellerName(pro.getPatientName());
+            dweller.setTelephone(pro.getMobile());
+            dweller.setIdCard(pro.getIdCard());
+            dweller.setRelationId(pro.getRecordId()+"");
+            dwellerList.add(dweller);
+        }
+        xunfeiReq.setDwellers(dwellerList);
+        xunfeiReq.setSpeechId(Long.parseLong(researchOutbound.getFollowSpeechId()));
+//                xunfeiReq.setPlanName("");//任务名称，非必填
+        xunfeiReq.setType(1);//1即呼
+        if(!"0".equals(researchOutbound.getFollowReplay()) && researchOutbound.getFollowReplay()!=null){
+            Recall recall = new Recall(Integer.parseInt(researchOutbound.getFollowReplay()),researchOutbound.getFollowReplaySpaceMinute());
+            xunfeiReq.setRecall(recall);
+        }
+        List<Var> vars = getVarList(researchOutbound.getFollowSpeechId(),outboundList.get(0));
+        xunfeiReq.setVars(vars);
+        XxlJobHelper.log("讯飞呼叫随访请求参数{}", com.alibaba.fastjson.JSONObject.toJSONString(xunfeiReq));
+        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"xunfei/callTask",xunfeiReq);
+        XxlJobHelper.log("讯飞呼叫随访返回结果{}",result);
+        JSONObject jsonObject = JSON.parseObject(result);
+        String code = jsonObject.getString("code");
+        if(result!=null && ("1000".equals(code) || "0".equals(code))){
+            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"),XunfeiRes.class);
+            String batch = xunfeiRes.getBatch()[0];
+            List<TaskRelationVo> taskRelationVoList = xunfeiRes.getTaskRelation();
+            Map<String,TaskRelationVo> taskRelationVoMap = new HashMap<>();
+            if(taskRelationVoList.size()>0){
+                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId,Function.identity(), (key1, key2) -> key2));
+            }
+            for(PatientRecordOutbound p:outboundList){
+                p.setStatus("2");//执行中
+                p.setBatch(batch);
+                if(taskRelationVoMap.containsKey(String.valueOf(p.getRecordId()))){
+                    TaskRelationVo relationVo = taskRelationVoMap.get(String.valueOf(p.getRecordId()));
+                    p.setTaskId(relationVo.getTaskId());
+                }
+                p.setUpdateTime(DateUtils.getNowDate());
+                patientRecordOutboundMapper.updatePatientRecordOutbound(p);
+            }
+        }
+    }
+
+    //超窗外呼提醒
+    public void sendXunfeiCallOver(List<PatientRecordOutbound> outboundList,ResearchOutbound researchOutbound){
+        XunfeiReq xunfeiReq = new XunfeiReq();
+        List<Dweller> dwellerList = new ArrayList<>();
+        for(PatientRecordOutbound pro:outboundList){
+            //居民信息
+            Dweller dweller = new Dweller();
+            dweller.setDwellerName(pro.getPatientName());
+            dweller.setTelephone(pro.getMobile());
+            dweller.setIdCard(pro.getIdCard());
+            dweller.setRelationId(pro.getRecordId()+"");
+            dwellerList.add(dweller);
+        }
+        xunfeiReq.setDwellers(dwellerList);
+        xunfeiReq.setSpeechId(Long.parseLong(researchOutbound.getOverSpeechId()));
+//                xunfeiReq.setPlanName("");//任务名称，非必填
+        xunfeiReq.setType(1);//1即呼
+        if(!"0".equals(researchOutbound.getOverReplay()) && researchOutbound.getOverReplay()!=null){
+            Recall recall = new Recall(Integer.parseInt(researchOutbound.getOverReplay()),researchOutbound.getOverReplaySpaceMinute());
+            xunfeiReq.setRecall(recall);
+        }
+        List<Var> vars = getVarList(researchOutbound.getOverSpeechId(),outboundList.get(0));
+        xunfeiReq.setVars(vars);
+        XxlJobHelper.log("讯飞呼叫超窗请求参数{}", com.alibaba.fastjson.JSONObject.toJSONString(xunfeiReq));
+        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"xunfei/callTask",xunfeiReq);
+        XxlJobHelper.log("讯飞呼叫超窗返回结果{}",result);
+        JSONObject jsonObject = JSON.parseObject(result);
+        String code = jsonObject.getString("code");
+        if(result!=null && ("1000".equals(code) || "0".equals(code))){
+            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"),XunfeiRes.class);
+            String batch = xunfeiRes.getBatch()[0];
+            List<TaskRelationVo> taskRelationVoList = xunfeiRes.getTaskRelation();
+            Map<String,TaskRelationVo> taskRelationVoMap = new HashMap<>();
+            if(taskRelationVoList.size()>0){
+                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId,Function.identity(), (key1, key2) -> key2));
+            }
+            for(PatientRecordOutbound p:outboundList){
+                p.setStatus("2");//执行中
+                p.setBatch(batch);
+                if(taskRelationVoMap.containsKey(String.valueOf(p.getRecordId()))){
+                    TaskRelationVo relationVo = taskRelationVoMap.get(String.valueOf(p.getRecordId()));
+                    p.setTaskId(relationVo.getTaskId());
+                }
+                p.setUpdateTime(DateUtils.getNowDate());
+                patientRecordOutboundMapper.updatePatientRecordOutbound(p);
+            }
+        }
+    }
+
+    //随访短信提醒
+    public void sendXunfeiSms(PatientRecordOutbound pb,String smsType){
+        XunfeiReq xunfeiReq = new XunfeiReq();
+        List<Dweller> dwellerList = new ArrayList<>();
+        //居民信息
+        Dweller dweller = new Dweller();
+        dweller.setDwellerName(pb.getPatientName());
+        dweller.setTelephone(pb.getMobile());
+        dweller.setIdCard(pb.getIdCard());
+        dweller.setRelationId(pb.getRecordId()+"");
+        dwellerList.add(dweller);
+        xunfeiReq.setDwellers(dwellerList);
+        xunfeiReq.setSmsId(MedicalContants.XUNFEI_MESSAGE_TEMPLATE.get(smsType));
+        xunfeiReq.setType(1);//1即呼
+        List<Var> vars = getSmsVarList(MedicalContants.XUNFEI_MESSAGE_TEMPLATE.get(smsType),pb);
+        xunfeiReq.setVars(vars);
+        log.info("讯飞短信提醒随访请求参数{}", com.alibaba.fastjson.JSONObject.toJSONString(xunfeiReq));
+//        String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(Constants.XUNFEI_SMS_TASK,xunfeiReq);
+        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"xunfei/smsTask",xunfeiReq);
+        log.info("讯飞短信提醒随访返回结果{}",result);
+        JSONObject jsonObject = JSON.parseObject(result);
+        String code = jsonObject.getString("code");
+        if(result!=null && ("1000".equals(code) || "0".equals(code))){
+            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"),XunfeiRes.class);
+            String batch = xunfeiRes.getBatch()[0];
+            List<TaskRelationVo> taskRelationVoList = xunfeiRes.getTaskRelation();
+            Map<String,TaskRelationVo> taskRelationVoMap = new HashMap<>();
+            if(taskRelationVoList.size()>0){
+                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId,Function.identity(), (key1, key2) -> key2));
+            }
+            pb.setStatus("2");//执行中
+            pb.setBatch(batch);
+            if(taskRelationVoMap.containsKey(String.valueOf(pb.getRecordId()))){
+                TaskRelationVo relationVo = taskRelationVoMap.get(String.valueOf(pb.getRecordId()));
+                pb.setTaskId(relationVo.getTaskId());
+            }
+            pb.setUpdateTime(DateUtils.getNowDate());
+            patientRecordOutboundMapper.updatePatientRecordOutbound(pb);
+        }else{
+//            XunfeiReesult xunfeiReesult = JSONObject.parseObject(result,XunfeiReesult.class);
+
+        }
+    }
+
+    //随访超窗提醒
+//    public void sendXunfeiSmsOver(List<PatientRecordOutbound> outboundList,ResearchOutbound researchOutbound){
+//        XunfeiReq xunfeiReq = new XunfeiReq();
+//        List<Dweller> dwellerList = new ArrayList<>();
+//        for(PatientRecordOutbound pro:outboundList){
+//            //居民信息
+//            Dweller dweller = new Dweller();
+//            dweller.setDwellerName(pro.getPatientName());
+//            dweller.setTelephone(pro.getMobile());
+//            dweller.setIdCard(pro.getIdCard());
+//            dweller.setRelationId(pro.getRecordId()+"");
+//            dwellerList.add(dweller);
+//        }
+//        xunfeiReq.setDwellers(dwellerList);
+//        xunfeiReq.setSmsId(researchOutbound.getOverSpeechId());
+//        xunfeiReq.setType(1);//1即呼
+//        List<Var> vars = getSmsVarList(researchOutbound.getOverSpeechId());
+//        xunfeiReq.setVars(vars);
+//        log.info("讯飞短信提醒随访请求参数{}", com.alibaba.fastjson.JSONObject.toJSONString(xunfeiReq));
+////        String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(Constants.XUNFEI_SMS_TASK,xunfeiReq);
+//        String result = XfServiceHttpClientUtil.getInstance().sendSzDefaultHttpPostJson(baseUrl+"xunfei/smsTask",xunfeiReq);
+//        log.info("讯飞短信提醒随访返回结果{}",result);
+//        JSONObject jsonObject = JSON.parseObject(result);
+//        String code = jsonObject.getString("code");
+//        if(result!=null && ("1000".equals(code) || "0".equals(code))){
+//            XunfeiRes xunfeiRes = JSONObject.parseObject(jsonObject.getString("data"),XunfeiRes.class);
+//            String batch = xunfeiRes.getBatch()[0];
+//            List<TaskRelationVo> taskRelationVoList = xunfeiRes.getTaskRelation();
+//            Map<String,TaskRelationVo> taskRelationVoMap = new HashMap<>();
+//            if(taskRelationVoList.size()>0){
+//                taskRelationVoMap = taskRelationVoList.stream().collect(Collectors.toMap(TaskRelationVo::getRelationId,Function.identity(), (key1, key2) -> key2));
+//            }
+//            for(PatientRecordOutbound p:outboundList){
+//                p.setStatus("2");//执行中
+//                p.setBatch(batch);
+//                if(taskRelationVoMap.containsKey(String.valueOf(p.getRecordId()))){
+//                    TaskRelationVo relationVo = taskRelationVoMap.get(String.valueOf(p.getRecordId()));
+//                    p.setTaskId(relationVo.getTaskId());
+//                }
+//                p.setUpdateTime(DateUtils.getNowDate());
+//                patientRecordOutboundMapper.updatePatientRecordOutbound(p);
+//            }
+//        }else{
+////            XunfeiReesult xunfeiReesult = JSONObject.parseObject(result,XunfeiReesult.class);
+//
+//        }
+//    }
+
+    //根据App站内信提醒时间和当前小时判断是否在符合时间内
+    public boolean getTimeAccess(String type,int hour){
+        if(hour<7 && hour>20){
+            return false;
+        }
+        if("1".equals(type)){
+            if(hour>=7 && hour <8){
+                return true;
+            }
+        }else if("2".equals(type)){
+            if(hour>=8 && hour <9){
+                return true;
+            }
+        }else if("3".equals(type)){
+            if(hour>=9 && hour <10){
+                return true;
+            }
+        }else if("4".equals(type)){
+            if(hour>=10 && hour <11){
+                return true;
+            }
+        }else if("5".equals(type)){
+            if(hour>=11 && hour <12){
+                return true;
+            }
+        }else if("6".equals(type)){
+            if(hour>=12 && hour <13){
+                return true;
+            }
+        }else if("7".equals(type)){
+            if(hour>=13 && hour <14){
+                return true;
+            }
+        }else if("8".equals(type)){
+            if(hour>=14 && hour <15){
+                return true;
+            }
+        }else if("9".equals(type)){
+            if(hour>=15 && hour <16){
+                return true;
+            }
+        }else if("10".equals(type)){
+            if(hour>=16 && hour <17){
+                return true;
+            }
+        }else if("11".equals(type)){
+            if(hour>=17 && hour <18){
+                return true;
+            }
+        }else if("12".equals(type)){
+            if(hour>=18 && hour <19){
+                return true;
+            }
+        }else if("13".equals(type)){
+            if(hour>=19 && hour <=20){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Var> getVarList(String followSpeechId,PatientRecordOutbound pro){
+        List<Var> varList = new ArrayList<>();
+        if("772939646279680".equals(followSpeechId)){
+            Var var1 = new Var("主治医生","唐都医院");
+            Var var2 = new Var("单位名称","唐都医院");
+            Var var3 = new Var("医院名称","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+        }else if("216442646339584".equals(followSpeechId)){
+            Var var1 = new Var("期间","住院");
+            Var var2 = new Var("单位名称","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+        }else if("214084533133312".equals(followSpeechId)){
+            Var var1 = new Var("自我介绍","唐都医院");
+            varList.add(var1);
+        }else if("74459".equals(followSpeechId)){
+            Var var1 = new Var("体检单位","唐都医院");
+            Var var2 = new Var("体检项目","身高、体重、视力和血常规等检查");
+            Var var3 = new Var("携带物品","背包");
+            Var var4 = new Var("体检时间","每周一至周五全天");
+            Var var5 = new Var("自我介绍","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+            varList.add(var4);
+            varList.add(var5);
+        }else if("213577374679040".equals(followSpeechId)){
+            Var var1 = new Var("自我介绍","唐都医院");
+            Var var2 = new Var("未体检宣教","未体检宣教");
+            Var var3 = new Var("体检类型","体检");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+        }else if("1530318155456512".equals(followSpeechId)){
+            //医院-随访提醒
+            Var var1 = new Var("队列名称",pro.getProjectName());
+            Var var2 = new Var("具体日期",DateUtils.dateTimeDays(pro.getPlanVisitTime()));
+            Var var3 = new Var("外呼机构","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+        }else if("1530319925452800".equals(followSpeechId)){
+            //医院-超窗提醒
+            Var var1 = new Var("外呼机构","唐都医院");
+            Var var2 = new Var("队列名称",pro.getProjectName());
+            varList.add(var1);
+            varList.add(var2);
+        }else if("1530309037039616".equals(followSpeechId)){
+            //预警提醒
+            Var var1 = new Var("外呼机构","唐都医院");
+            Var var2 = new Var("具体日期",DateUtils.dateTimeDays(DateUtils.getNowDate()));
+            varList.add(var1);
+            varList.add(var2);
+        }
+        return varList;
+    }
+
+    public List<Var> getSmsVarList(String followSpeechId,PatientRecordOutbound patientRecordOutbound){
+        List<Var> varList = new ArrayList<>();
+        if("12107".equals(followSpeechId)){
+            //测试时候用的模板
+            Var var1 = new Var("dwellerName",patientRecordOutbound.getPatientName());
+            Var var2 = new Var("content","国庆快乐");
+            Var var3 = new Var("center","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+        }else if("12383".equals(followSpeechId)){
+            //
+            Var var1 = new Var("dwellerName","尊敬的"+patientRecordOutbound.getPatientName());
+            Var var2 = new Var("content","您在唐都慢病管理APP加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都慢病管理APP并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
+            Var var3 = new Var("center","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+        }else if("10427".equals(followSpeechId)){
+            //
+            Var var1 = new Var("name","尊敬的"+patientRecordOutbound.getPatientName()+"，");
+            Var var2 = new Var("content","您在唐都慢病管理APP加入的"+patientRecordOutbound.getProjectName()+"队列未按期进行随访，请您及时登录唐都慢病管理APP并尽快填报随访信息，便于医生团队及时掌握您的健康状况");
+            varList.add(var1);
+            varList.add(var2);
+        }else if("16607".equals(followSpeechId)){
+            //唐都医院随访短信提醒
+            Var var1 = new Var("dwellerName",patientRecordOutbound.getPatientName());
+            Var var2 = new Var("content1",patientRecordOutbound.getProjectName()+"队列");
+            Var var3 = new Var("content2","将于"+DateUtils.dateTimeDays(patientRecordOutbound.getPlanVisitTime()));
+            Var var4 = new Var("center","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+            varList.add(var4);
+        }else if("16606".equals(followSpeechId)){
+            //唐都医院预警提醒
+            Var var1 = new Var("dwellerName",patientRecordOutbound.getPatientName());
+            Var var2 = new Var("content",DateUtils.dateTimeDays(DateUtils.getNowDate()));
+            Var var3 = new Var("center","唐都医院");
+            varList.add(var1);
+            varList.add(var2);
+            varList.add(var3);
+        }
+        return varList;
+    }
+
+    @XxlJob("getCallResultJobHandler")
+//    @Scheduled(cron = "* 0/10 7-21 * * ?")
+    public void getCallResultJobHandler() throws Exception {
+        XxlJobHelper.log("讯飞呼叫结果查询任务日期{}开始",DateUtils.getTime());
+        //进行中的队列
+        ResearchInfo ri = new ResearchInfo();
+        ri.setResearchStatus("1");
+        List<ResearchInfo> researchInfoList = researchInfoMapper.selectResearchInfoList(ri);
+        if (researchInfoList == null || researchInfoList.isEmpty()){
+            XxlJobHelper.log("讯飞呼叫结果查询任务,没有查询到进行中的队列!");
+        }
+        //所有进行中队列的规则
+        String resultStr = "";
+        for(ResearchInfo r:researchInfoList){
+            getResult(r.getId());
+        }
+        XxlJobHelper.log("讯飞呼叫结果查询任务执行结束");
+        XxlJobHelper.handleSuccess(resultStr);
+    }
+
+    public String getResult(Long researchId) {
+        PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+        patientRecordOutbound.setStatus("2");
+        patientRecordOutbound.setOutboundType("1");//外呼类型0无状态1智能外呼2短信提醒3app站内信
+        patientRecordOutbound.setResearchId(researchId);
+        patientRecordOutbound.setOutboundCreateTime(DateUtils.dateNowTime());
+        List<PatientRecordOutbound> list = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+        if(list.size()>0){
+            Map<String,List<PatientRecordOutbound>> listMap = list.stream().filter(x -> x.getBatch()!=null).collect(Collectors.groupingBy(PatientRecordOutbound::getBatch));
+            for(String entry:listMap.keySet()){
+                List<PatientRecordOutbound> outboundList = listMap.get(entry);
+                Map<Long,PatientRecordOutbound> outboundMap = outboundList.stream().collect(Collectors.toMap(PatientRecordOutbound::getRecordId, Function.identity(), (key1, key2) -> key2));
+
+                //查询批次汇总数据接口返回讯飞recordId
+                //在通过查询电话记录详情获取外呼结果
+                BatchListReq batchListReq = new BatchListReq();
+                batchListReq.setBatch(entry);
+                XxlJobHelper.log("讯飞呼叫结果查询任务请求参数{}", com.alibaba.fastjson.JSONObject.toJSONString(batchListReq));
+//                String result = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(Constants.XUNFEI_BATCH_LIST,batchListReq);
+                String result = XfServiceHttpClientUtil.getInstance().sendDefaultHttpPost(baseUrl+"xunfei/batchList",batchListReq);
+                XxlJobHelper.log("讯飞呼叫结果查询任务返回结果{}", result);
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(result);
+                String code = jsonObject.getString("code");
+                if(result!=null && ("1000".equals(code) || "0".equals(code))){
+                    List<BatchListRes> batchListResList = JSONArray.parseArray(jsonObject.getString("data"),BatchListRes.class);
+                    if(batchListResList.size()>0){
+                        for(BatchListRes br:batchListResList){
+                            //讯飞返回结果relationId为周期唐都周期id
+                            if(outboundMap.containsKey(Long.parseLong(br.getRelationId()))){
+                                PatientRecordOutbound pro = outboundMap.get(Long.parseLong(br.getRelationId()));
+                                //开始调用查询电话记录详情，用上个接口返回的recordId(讯飞recordId)
+                                RecordDetailReq recordDetailReq = new RecordDetailReq();
+                                recordDetailReq.setRecordId(br.getRecordId());
+                                XxlJobHelper.log("讯飞查询电话记录详情请求参数{}", com.alibaba.fastjson.JSONObject.toJSONString(recordDetailReq));
+//                                String detailResult = XunfeiHttpClientUtil.getInstance().sendDefaultHttpPost(Constants.XUNFEI_RECORD_DETAIL, recordDetailReq);
+                                String detailResult = XfServiceHttpClientUtil.getInstance().sendDefaultHttpPost(baseUrl+"xunfei/recordDetail",recordDetailReq);
+                                XxlJobHelper.log("讯飞查询电话记录详情返回结果{}", detailResult);
+                                com.alibaba.fastjson.JSONObject detailJsonObject = com.alibaba.fastjson.JSON.parseObject(detailResult);
+
+                                RecordDetailRes recordDetailRes = com.alibaba.fastjson.JSONObject.parseObject(detailJsonObject.getString("data"),RecordDetailRes.class);
+                                pro.setStatus("3");
+                                pro.setXunfeiRecordId(br.getRecordId());
+                                pro.setXunfeiSpeechId(recordDetailRes.getSpeechId());
+                                Date callDate = new Date();
+                                callDate.setTime(recordDetailRes.getCallTime());
+                                pro.setXunfeiCallTime(callDate);
+                                pro.setXunfeiTaskTime(DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,recordDetailRes.getTaskTime()));
+                                pro.setXunfeiPlanName(recordDetailRes.getPlanName());
+                                pro.setXunfeiSpeechName(recordDetailRes.getSpeechName());
+                                pro.setXunfeiCalltimeLength(recordDetailRes.getCallTimeLength());
+                                pro.setXunfeiCallResult(recordDetailRes.getCallResult());
+                                pro.setXunfeiResultCode(recordDetailRes.getResultCode());
+                                pro.setXunfeiEndNode(recordDetailRes.getEndNode());
+                                //讯飞音频文件地址
+                                if(recordDetailRes.getResultCode()!=null && ( "0".equals(recordDetailRes.getResultCode()) || "15".equals(recordDetailRes.getResultCode()) )){
+                                    String soundUrl = recordDetailRes.getRecordUrl();
+                                    if(StringUtils.isNotEmpty(soundUrl) && soundUrl.indexOf(".wav")!=-1){
+                                        Integer position = soundUrl.indexOf(".wav");
+                                        String newSounUrl = soundUrl.substring(0,position+4);
+                                        pro.setXunfeiRecordUrl(newSounUrl);
+                                        pro.setXunfeiSmsName(recordDetailRes.getSmsName());
+                                        pro.setXunfeiSmsContent(recordDetailRes.getSmsContent());
+                                        pro.setXunfeiDialog(recordDetailRes.getDialog());
+                                    }else{
+                                        pro.setStatus("2");
+                                    }
+                                }
+                                patientRecordOutboundMapper.updatePatientRecordOutbound(pro);
+                            }
+                        }
+                    }
+                }else{
+                    String msg = jsonObject.getString("msg");
+                    for(PatientRecordOutbound p:outboundList){
+                        p.setXunfeiResultCode(code);
+                        p.setXunfeiCallResult(msg);
+                        p.setStatus("3");
+                        patientRecordOutboundMapper.updatePatientRecordOutbound(p);
+                    }
+
+                }
+            }
+        }
+        return "操作成功";
+    }
+
+
+
+    // * * 23 * * ?
+    @XxlJob("downloadLocalSoundJobHandler")
+//     @Scheduled(cron = "0 0/2 * * * ?")
+    public void downloadLocalSoundJobHandler() throws Exception {
+        XxlJobHelper.log("批量查询语音文件下载本地任务日期{}开始",DateUtils.getTime());
+        PatientRecordOutbound patientRecordOutbound = new PatientRecordOutbound();
+        patientRecordOutbound.setIsDownloadSound("0");
+        Date yesterday = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(yesterday);
+        cal.add(Calendar.DATE,-1);
+        patientRecordOutbound.setOutboundCreateTime(DateUtils.parseDateToStrShort(cal.getTime()));
+        List<PatientRecordOutbound> list = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+        if(list.size()>0){
+            for(PatientRecordOutbound p:list){
+                downloadWav(p);
+            }
+        }
+        patientRecordOutbound.setOutboundCreateTime(DateUtils.dateNowTime());
+        List<PatientRecordOutbound> list2 = patientRecordOutboundMapper.selectPatientRecordOutboundList(patientRecordOutbound);
+        if(list2.size()>0){
+            for(PatientRecordOutbound p:list2){
+                downloadWav(p);
+            }
+        }
+        XxlJobHelper.log("批量查询语音文件下载本地任务执行结束");
+        XxlJobHelper.handleSuccess("操作成功");
+    }
+
+    public void downloadWav(PatientRecordOutbound patientRecordOutbound) {
+        String fileName = getUuidFileName("wav");
+        try {
+            String localUrl = uploadImFile(patientRecordOutbound.getXunfeiRecordUrl(),fileName);
+            patientRecordOutbound.setIsDownloadSound("1");
+            patientRecordOutbound.setLocalRecordUrl(localUrl);
+            patientRecordOutboundMapper.updatePatientRecordOutbound(patientRecordOutbound);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getUuidFileName(String imageFormat){
+        String fileName = "";
+        if (!StringUtils.isNotEmpty(fileName)){
+            String uuid = UUID.randomUUID().toString();
+            fileName = uuid.replace("-", "");
+        }
+        fileName += "."+ imageFormat;
+        return fileName;
+    }
+
+    private String uploadImFile(String fileUrl,String fileName) throws IOException {
+        InputStream is = null;
+        try{
+            URL url = new URL(fileUrl);
+            URLConnection con = url.openConnection();
+            is = con.getInputStream();
+            if (is == null){
+                return "";
+            }
+            log.info("uploadSoundFile------------------"+fileName);
+            String httpUrl = DchealthConfig.getFastPath() + "ngupload/single";
+            String filesResult = HttpClientUtil.getInstance().sendHttpPostWav(httpUrl, is,fileName);
+            if (StringUtils.isNotEmpty(filesResult)) {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSON.parseObject(filesResult);
+                if (jsonObject != null) {
+                    int  code = jsonObject.getInteger("code");
+                    if(code ==1000) {
+                        return jsonObject.getString("data");
+                    }
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            if (is != null){
+                is.close();
+            }
+        }
+        return "";
+    }
+}

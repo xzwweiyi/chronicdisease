@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.VitalSignsRecMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.VitalSignsRec" id="VitalSignsRecMap">
+        <result property="patientId" column="PATIENT_ID" jdbcType="VARCHAR"/>
+        <result property="visitId" column="VISIT_ID" jdbcType="VARCHAR"/>
+        <result property="recordingDate" column="RECORDING_DATE" jdbcType="TIMESTAMP"/>
+        <result property="timePoint" column="TIME_POINT" jdbcType="TIMESTAMP"/>
+        <result property="vitalSigns" column="VITAL_SIGNS" jdbcType="VARCHAR"/>
+        <result property="vitalSignsValues" column="VITAL_SIGNS_VALUES" jdbcType="NUMERIC"/>
+        <result property="units" column="UNITS" jdbcType="VARCHAR"/>
+        <result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="VitalSignsRecMap">
+        select
+          PATIENT_ID, VISIT_ID, RECORDING_DATE, TIME_POINT, VITAL_SIGNS, VITAL_SIGNS_VALUES, UNITS, MEMO
+        from vital_signs_rec
+        where PATIENT_ID = #{patientId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="VitalSignsRecMap">
+        select
+          PATIENT_ID, VISIT_ID, RECORDING_DATE, TIME_POINT, VITAL_SIGNS, VITAL_SIGNS_VALUES, UNITS, MEMO
+        from vital_signs_rec
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and VISIT_ID = #{visitId}
+            </if>
+            <if test="recordingDate != null and recordingDate != ''">
+                and RECORDING_DATE = #{recordingDate}
+            </if>
+            <if test="timePoint != null and timePoint != ''">
+                and TIME_POINT = #{timePoint}
+            </if>
+            <if test="vitalSigns != null and vitalSigns != ''">
+                and VITAL_SIGNS = #{vitalSigns}
+            </if>
+            <if test="vitalSignsValues != null">
+                and VITAL_SIGNS_VALUES = #{vitalSignsValues}
+            </if>
+            <if test="units != null and units != ''">
+                and UNITS = #{units}
+            </if>
+            <if test="memo != null and memo != ''">
+                and MEMO = #{memo}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from vital_signs_rec
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID = #{patientId}
+            </if>
+            <if test="visitId != null and visitId != ''">
+                and VISIT_ID = #{visitId}
+            </if>
+            <if test="recordingDate != null and recordingDate != ''">
+                and RECORDING_DATE = #{recordingDate}
+            </if>
+            <if test="timePoint != null and timePoint != ''">
+                and TIME_POINT = #{timePoint}
+            </if>
+            <if test="vitalSigns != null and vitalSigns != ''">
+                and VITAL_SIGNS = #{vitalSigns}
+            </if>
+            <if test="vitalSignsValues != null">
+                and VITAL_SIGNS_VALUES = #{vitalSignsValues}
+            </if>
+            <if test="units != null and units != ''">
+                and UNITS = #{units}
+            </if>
+            <if test="memo != null and memo != ''">
+                and MEMO = #{memo}
+            </if>
+        </where>
+    </select>
+    <!--统计总行数-->
+    <select id="querySyncInfoCount" resultType="java.lang.Long">
+        select count(1)
+        from vital_signs_rec
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and PATIENT_ID > #{patientId}
+            </if>
+            <if test="params.recordingDate != null and params.recordingDate != ''">
+                and date_format(RECORDING_DATE,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+            <if test="timePoint != null and timePoint != ''">
+                and TIME_POINT = #{timePoint}
+            </if>
+        </where>
+    </select>
+    <!--查询指定行数据-->
+    <select id="querySyncInfoByPage" resultMap="VitalSignsRecMap">
+        select
+        PATIENT_ID, VISIT_ID, RECORDING_DATE, TIME_POINT, VITAL_SIGNS, VITAL_SIGNS_VALUES, UNITS, MEMO
+        from vital_signs_rec
+        <where>
+            <if test="vitalSignsRec.patientId != null and vitalSignsRec.patientId != ''">
+                and PATIENT_ID > #{vitalSignsRec.patientId}
+            </if>
+            <if test="vitalSignsRec.params.recordingDate != null and vitalSignsRec.params.recordingDate != ''">
+                and date_format(RECORDING_DATE,'%Y-%m-%d') = #{vitalSignsRec.params.recordingDate}
+            </if>
+            <if test="vitalSignsRec.timePoint != null and vitalSignsRec.timePoint != ''">
+                and TIME_POINT = #{vitalSignsRec.timePoint}
+            </if>
+            order by RECORDING_DATE
+            limit #{pageable.offset}, #{pageable.pageSize}
+        </where>
+
+    </select>
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into vital_signs_rec(PATIENT_ID, VISIT_ID, RECORDING_DATE, TIME_POINT, VITAL_SIGNS, VITAL_SIGNS_VALUES, UNITS, MEMO)
+        values (#{patientId}, #{visitId}, #{recordingDate}, #{timePoint}, #{vitalSigns}, #{vitalSignsValues}, #{units}, #{memo})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into vital_signs_rec(PATIENT_ID, VISIT_ID, RECORDING_DATE, TIME_POINT, VITAL_SIGNS, VITAL_SIGNS_VALUES, UNITS, MEMO)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.visitId}, #{entity.recordingDate}, #{entity.timePoint}, #{entity.vitalSigns}, #{entity.vitalSignsValues}, #{entity.units}, #{entity.memo})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into vital_signs_rec(PATIENT_ID, VISIT_ID, RECORDING_DATE, TIME_POINT, VITAL_SIGNS, VITAL_SIGNS_VALUES, UNITS, MEMO)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.visitId}, #{entity.recordingDate}, #{entity.timePoint}, #{entity.vitalSigns}, #{entity.vitalSignsValues}, #{entity.units}, #{entity.memo})
+        </foreach>
+        on duplicate key update
+        PATIENT_ID = values(PATIENT_ID),
+        VISIT_ID = values(VISIT_ID),
+        RECORDING_DATE = values(RECORDING_DATE),
+        TIME_POINT = values(TIME_POINT),
+        VITAL_SIGNS = values(VITAL_SIGNS),
+        VITAL_SIGNS_VALUES = values(VITAL_SIGNS_VALUES),
+        UNITS = values(UNITS),
+        MEMO = values(MEMO)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update vital_signs_rec
+        <set>
+            <if test="patientId != null and patientId != ''">
+                PATIENT_ID = #{patientId},
+            </if>
+            <if test="visitId != null and visitId != ''">
+                VISIT_ID = #{visitId},
+            </if>
+            <if test="recordingDate != null and recordingDate != ''">
+                RECORDING_DATE = #{recordingDate},
+            </if>
+            <if test="timePoint != null and timePoint != ''">
+                TIME_POINT = #{timePoint},
+            </if>
+            <if test="vitalSigns != null and vitalSigns != ''">
+                VITAL_SIGNS = #{vitalSigns},
+            </if>
+            <if test="vitalSignsValues != null">
+                VITAL_SIGNS_VALUES = #{vitalSignsValues},
+            </if>
+            <if test="units != null and units != ''">
+                UNITS = #{units},
+            </if>
+            <if test="memo != null and memo != ''">
+                MEMO = #{memo},
+            </if>
+        </set>
+        where PATIENT_ID = #{patientId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from vital_signs_rec where PATIENT_ID = #{patientId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.DiseasesGroupsMapper">
+
+    <resultMap type="DiseasesGroups" id="DiseasesGroupsResult">
+        <result property="diseasesGroupsId"    column="diseases_groups_id"    />
+        <result property="diseasesGroupsName"    column="diseases_groups_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createUserId"    column="create_user_id"    />
+    </resultMap>
+
+
+    <sql id="selectDiseasesGroupsVo">
+        select diseases_groups_id, diseases_groups_name, del_flag, create_time, create_by, update_time, update_by, create_user_id from diseases_groups
+    </sql>
+
+    <select id="selectDiseasesGroupsList" parameterType="DiseasesGroups" resultMap="DiseasesGroupsResult">
+        <include refid="selectDiseasesGroupsVo"/>
+        <where>
+            <if test="diseasesGroupsName != null  and diseasesGroupsName != ''"> and diseases_groups_name like concat('%', #{diseasesGroupsName}, '%')</if>
+            <if test="createUserId != null  and createUserId != ''"> and create_user_id = #{createUserId} </if>
+            and del_flag = '0'
+        </where>
+    </select>
+
+    <insert id="insertDiseasesGroups" parameterType="DiseasesGroups" useGeneratedKeys="true" keyProperty="diseasesGroupsId">
+        insert into diseases_groups
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="diseasesGroupsName != null">diseases_groups_name,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createUserId != null">create_user_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="diseasesGroupsName != null">#{diseasesGroupsName},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDiseasesGroups" parameterType="DiseasesGroups">
+        update diseases_groups
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="diseasesGroupsName != null">diseases_groups_name = #{diseasesGroupsName},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where diseases_groups_id = #{diseasesGroupsId}
+    </update>
+
+    <delete id="deleteDiseasesGroupsByDiseasesGroupsId" parameterType="Long">
+        delete from diseases_groups where diseases_groups_id = #{diseasesGroupsId}
+    </delete>
+
+    <delete id="deleteResearchDiseasesByDiseasesGroupsIds" parameterType="Long">
+        delete from diseases_groups where diseases_groups_id in
+        <foreach item="diseasesGroupsId" collection="array" open="(" separator="," close=")">
+            #{diseasesGroupsId}
+        </foreach>
+    </delete>
+
+    <select id="selectDiseasesGroupsListPage" parameterType="DiseasesGroups" resultMap="DiseasesGroupsResult">
+        <include refid="selectDiseasesGroupsVo"/>
+        <where>
+            <if test="diseasesGroupsName != null  and diseasesGroupsName != ''"> and diseases_groups_name like concat('%', #{diseasesGroupsName}, '%')</if>
+            <if test="createUserId != null  and createUserId != ''"> and create_user_id = #{createUserId} </if>
+            and del_flag = '0'
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+
+    <select id="selectBydiseasesGroupsName" resultMap="DiseasesGroupsResult" parameterType="String">
+        <include refid="selectDiseasesGroupsVo"/>
+        where diseases_groups_name = #{diseasesGroupsName} and del_flag = '0' order by create_time asc limit 0,1
+    </select>
+
+</mapper>

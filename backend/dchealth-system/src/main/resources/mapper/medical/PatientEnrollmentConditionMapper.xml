@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientEnrollmentConditionMapper">
+    <resultMap type="PatientEnrollmentCondition" id="PatientEnrollmentConditionResult">
+        <result property="id" column="id"/>
+        <result property="researchId" column="research_id"/>
+        <result property="enrollmentTimeType" column="enrollment_time_type"/>
+        <result property="enrollmentTimeStart" column="enrollment_time_start"/>
+        <result property="enrollmentTimeEnd" column="enrollment_time_end"/>
+        <result property="deptIdArr" column="dept_id_arr"/>
+        <result property="deptType" column="dept_type"/>
+        <result property="sex" column="sex"/>
+        <result property="sexType" column="sex_type"/>
+        <result property="ageType" column="age_type"/>
+        <result property="ageStart" column="age_start"/>
+        <result property="ageEnd" column="age_end"/>
+        <result property="clinicDateType" column="clinic_date_type"/>
+        <result property="clinicDateStart" column="clinic_date_start"/>
+        <result property="clinicDateEnd" column="clinic_date_end"/>
+        <result property="diagnosisType" column="diagnosis_type"/>
+        <result property="diagnosis" column="diagnosis"/>
+        <result property="importTime" column="import_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="conditions" column="conditions"/>
+    </resultMap>
+
+    <sql id="PatientEnrollmentConditionVo">
+        select id,research_id,enrollment_time_type,enrollment_time_start,enrollment_time_end,dept_id_arr,dept_type,sex,sex_type,age_type,age_start,age_end,clinic_date_type,clinic_date_start,clinic_date_end,diagnosis_type,diagnosis,import_time,create_time,conditions from patient_enrollment_condition
+    </sql>
+    <select id="selectPatientEnrollmentConditionById" parameterType="long" resultMap="PatientEnrollmentConditionResult">
+        <include refid="PatientEnrollmentConditionVo"></include>
+        where id = #{id}
+    </select>
+
+    <select id="selectPatientEnrollmentConditionByResearchId" parameterType="long" resultMap="PatientEnrollmentConditionResult">
+        <include refid="PatientEnrollmentConditionVo"></include>
+        where research_id = #{id}
+    </select>
+
+    <select id="selectPatientEnrollmentConditionList" parameterType="PatientEnrollmentCondition"
+            resultMap="PatientEnrollmentConditionResult">
+        select
+        id,research_id,enrollment_time_type,enrollment_time_start,enrollment_time_end,dept_id_arr,dept_type,sex,sex_type,age_type,age_start,age_end,clinic_date_type,clinic_date_start,clinic_date_end,diagnosis_type,diagnosis,import_time,create_time,conditions
+        from patient_enrollment_condition
+        <where>
+            <if test="id != null ">and id= #{id}</if>
+            <if test="enrollmentTimeType != null ">and enrollment_time_type= #{enrollmentTimeType}</if>
+            <if test="enrollmentTimeStart != null ">and enrollment_time_start= #{enrollmentTimeStart}</if>
+            <if test="enrollmentTimeEnd != null ">and enrollment_time_end= #{enrollmentTimeEnd}</if>
+            <if test="deptIdArr != null ">and dept_id_arr= #{deptIdArr}</if>
+            <if test="deptType != null ">and dept_type= #{deptType}</if>
+            <if test="sex != null ">and sex= #{sex}</if>
+            <if test="sexType != null ">and sex_type= #{sexType}</if>
+            <if test="ageType != null ">and age_type= #{ageType}</if>
+            <if test="ageStart != null ">and age_start= #{ageStart}</if>
+            <if test="ageEnd != null ">and age_end= #{ageEnd}</if>
+            <if test="clinicDateType != null ">and clinic_date_type= #{clinicDateType}</if>
+            <if test="clinicDateStart != null ">and clinic_date_start= #{clinicDateStart}</if>
+            <if test="clinicDateEnd != null ">and clinic_date_end= #{clinicDateEnd}</if>
+            <if test="diagnosisType != null ">and diagnosis_type= #{diagnosisType}</if>
+            <if test="diagnosis != null ">and diagnosis= #{diagnosis}</if>
+        </where>
+    </select>
+
+    <insert id="insertPatientEnrollmentCondition" parameterType="PatientEnrollmentCondition" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into patient_enrollment_condition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="researchId  != null">research_id,</if>
+            <if test="enrollmentTimeType  != null and enrollmentTimeType!= ''">enrollment_time_type,</if>
+            <if test="enrollmentTimeStart  != null">enrollment_time_start,</if>
+            <if test="enrollmentTimeEnd  != null">enrollment_time_end,</if>
+            <if test="deptIdArr  != null and deptIdArr!= ''">dept_id_arr,</if>
+            <if test="deptType  != null and deptType!= ''">dept_type,</if>
+            <if test="sex  != null and sex!= ''">sex,</if>
+            <if test="sexType  != null and sexType!= ''">sex_type,</if>
+            <if test="ageType  != null and ageType!= ''">age_type,</if>
+            <if test="ageStart  != null and ageStart!= ''">age_start,</if>
+            <if test="ageEnd  != null and ageEnd!= ''">age_end,</if>
+            <if test="clinicDateType  != null and clinicDateType!= ''">clinic_date_type,</if>
+            <if test="clinicDateStart  != null">clinic_date_start,</if>
+            <if test="clinicDateEnd  != null">clinic_date_end,</if>
+            <if test="diagnosisType  != null and diagnosisType!= ''">diagnosis_type,</if>
+            <if test="diagnosis  != null and diagnosis!= ''">diagnosis,</if>
+            <if test="importTime  != null">import_time,</if>
+            <if test="createTime  != null">create_time,</if>
+            <if test="updateTime  != null">update_time,</if>
+            <if test="conditions  != null">conditions,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            null,
+            <if test="researchId  != null">#{researchId},</if>
+            <if test="enrollmentTimeType  != null and enrollmentTimeType != '' ">#{enrollmentTimeType},</if>
+            <if test="enrollmentTimeStart  != null ">#{enrollmentTimeStart},</if>
+            <if test="enrollmentTimeEnd  != null">#{enrollmentTimeEnd},</if>
+            <if test="deptIdArr  != null and deptIdArr != '' ">#{deptIdArr},</if>
+            <if test="deptType  != null and deptType != '' ">#{deptType},</if>
+            <if test="sex  != null and sex != '' ">#{sex},</if>
+            <if test="sexType  != null and sexType != '' ">#{sexType},</if>
+            <if test="ageType  != null and ageType != '' ">#{ageType},</if>
+            <if test="ageStart  != null and ageStart != '' ">#{ageStart},</if>
+            <if test="ageEnd  != null and ageEnd != '' ">#{ageEnd},</if>
+            <if test="clinicDateType  != null and clinicDateType != '' ">#{clinicDateType},</if>
+            <if test="clinicDateStart  != null">#{clinicDateStart},</if>
+            <if test="clinicDateEnd  != null">#{clinicDateEnd},</if>
+            <if test="diagnosisType  != null and diagnosisType != '' ">#{diagnosisType},</if>
+            <if test="diagnosis  != null and diagnosis != '' ">#{diagnosis},</if>
+            <if test="importTime  != null ">#{importTime},</if>
+            <if test="createTime  != null ">#{createTime},</if>
+            <if test="updateTime  != null ">#{updateTime},</if>
+            <if test="conditions  != null ">#{conditions},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientEnrollmentCondition" parameterType="PatientEnrollmentCondition">
+        update patient_enrollment_condition
+        <set>
+            <if test="enrollmentTimeType != null and enrollmentTimeType != ''">enrollment_time_type=
+                #{enrollmentTimeType},
+            </if>
+            <if test="enrollmentTimeStart != null">enrollment_time_start=
+                #{enrollmentTimeStart},
+            </if>
+            <if test="enrollmentTimeEnd != null">enrollment_time_end=
+                #{enrollmentTimeEnd},
+            </if>
+            <if test="deptIdArr != null and deptIdArr != ''">dept_id_arr= #{deptIdArr},</if>
+            <if test="deptType != null and deptType != ''">dept_type= #{deptType},</if>
+            <if test="sex != null and sex != ''">sex= #{sex},</if>
+            <if test="sexType != null and sexType != ''">sex_type= #{sexType},</if>
+            <if test="ageType != null and ageType != ''">age_type= #{ageType},</if>
+            <if test="ageStart != null ">age_start= #{ageStart},</if>
+            <if test="ageEnd != null">age_end= #{ageEnd},</if>
+            <if test="clinicDateType != null and clinicDateType != ''">clinic_date_type= #{clinicDateType},</if>
+            <if test="clinicDateStart != null">clinic_date_start= #{clinicDateStart},</if>
+            <if test="clinicDateEnd != null">clinic_date_end= #{clinicDateEnd},</if>
+            <if test="diagnosisType != null and diagnosisType != ''">diagnosis_type= #{diagnosisType},</if>
+            <if test="diagnosis != null and diagnosis != ''">diagnosis= #{diagnosis},</if>
+            <if test="importTime != null">import_time= #{importTime},</if>
+            <if test="updateTime != null">update_time= #{updateTime},</if>
+            <if test="conditions != null">conditions= #{conditions},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updatePatientEnrollmentConditionByResearchId" parameterType="PatientEnrollmentCondition">
+        update patient_enrollment_condition
+        <set>
+            enrollment_time_type= #{enrollmentTimeType},
+            enrollment_time_start= #{enrollmentTimeStart},
+            enrollment_time_end= #{enrollmentTimeEnd},
+            dept_id_arr= #{deptIdArr},
+            dept_type= #{deptType},
+            sex= #{sex},
+            sex_type= #{sexType},
+            age_type= #{ageType},
+            age_start= #{ageStart},
+            age_end= #{ageEnd},
+            clinic_date_type= #{clinicDateType},
+            clinic_date_start= #{clinicDateStart},
+            clinic_date_end= #{clinicDateEnd},
+            diagnosis_type= #{diagnosisType},
+            diagnosis= #{diagnosis},
+            import_time= #{importTime},
+            update_time= #{updateTime},
+            conditions= #{conditions},
+        </set>
+        where research_id=#{researchId}
+    </update>
+
+    <select id="selectDiagnosisDesc" parameterType="string" resultType="com.dchealth.medical.domain.vo.PatientEnrollmentSearchVo">
+        select patient_id as patientId,diagnosis_desc as diagnosisDesc from td_diagnosis
+        <if test="diagnosisDesc != null and diagnosisDesc !=''">
+            ${diagnosisDesc}
+        </if>
+
+    </select>
+
+    <select id="selectPatientBaseInfo" parameterType="string" resultType="com.dchealth.medical.domain.vo.PatientEnrollmentSearchVo">
+        select id, patient_id as patientId,`name`,sex,birthday,discharge_hospital_date as dischargeHospitalDate,patient_clinic_time as patientClinicTime,admission_hospital_date as admissionHospitalDate from patient_base_info
+        <if test="patientParam != null and patientParam !=''">
+            ${patientParam}
+        </if>
+    </select>
+    <select id="queryPatientEnrollmentConditionList" resultMap="PatientEnrollmentConditionResult">
+        select
+            pec.id,
+            pec.research_id,
+            pec.enrollment_time_type,
+            pec.enrollment_time_start,
+            pec.enrollment_time_end,
+            pec.import_time,
+            pec.create_time,
+            pec.conditions,
+            ri.dept_id dept_id_arr
+        from
+            patient_enrollment_condition pec
+        inner join research_info ri on
+            pec.research_id = ri.id
+        where
+            ri.research_status = ${researchStatus}
+    </select>
+</mapper>

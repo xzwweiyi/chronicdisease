@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.system.mapper.MpStoolRoutineColMapper">
+    
+    <resultMap type="MpStoolRoutineCol" id="MpStoolRoutineColResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="insertDate"    column="insert_date"    />
+        <result property="tip"    column="tip"    />
+        <result property="unit"    column="unit"    />
+        <result property="minValue"    column="min_value"    />
+        <result property="maxValue"    column="max_value"    />
+        <result property="resultValue"    column="result_value"    />
+        <result property="measurementSourceValue"    column="MEASUREMENT_SOURCE_VALUE"    />
+        <result property="measurementType"    column="MEASUREMENT_TYPE"    />
+        <result property="rangeValue"    column="range_value"    />
+    </resultMap>
+
+    <sql id="selectMpStoolRoutineColVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, insert_date, tip, unit, min_value,
+               max_value, result_value, MEASUREMENT_SOURCE_VALUE, MEASUREMENT_TYPE,range_value from mp_stool_routine_col
+    </sql>
+
+    <select id="selectMpStoolRoutineColList" parameterType="MpStoolRoutineCol" resultMap="MpStoolRoutineColResult">
+        <include refid="selectMpStoolRoutineColVo"/>
+        <where>  
+            <if test="careSiteId != null  and careSiteId != ''"> and care_site_id = #{careSiteId}</if>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="visitType != null  and visitType != ''"> and visit_type = #{visitType}</if>
+            <if test="resultTime != null "> and result_time = #{resultTime}</if>
+            <if test="insertDate != null  and insertDate != ''"> and insert_date = #{insertDate}</if>
+            <if test="tip != null  and tip != ''"> and tip = #{tip}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="minValue != null  and minValue != ''"> and min_value = #{minValue}</if>
+            <if test="maxValue != null  and maxValue != ''"> and max_value = #{maxValue}</if>
+            <if test="resultValue != null  and resultValue != ''"> and result_value = #{resultValue}</if>
+            <if test="measurementSourceValue != null  and measurementSourceValue != ''"> and MEASUREMENT_SOURCE_VALUE = #{measurementSourceValue}</if>
+            <if test="measurementType != null  and measurementType != ''"> and MEASUREMENT_TYPE = #{measurementType}</if>
+        </where>
+    </select>
+    
+    <select id="selectMpStoolRoutineColById" parameterType="Long" resultMap="MpStoolRoutineColResult">
+        <include refid="selectMpStoolRoutineColVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMpStoolRoutineCol" parameterType="MpStoolRoutineCol" useGeneratedKeys="true" keyProperty="id">
+        insert into mp_stool_routine_col
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="careSiteId != null">care_site_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="visitOccurrenceId != null">visit_occurrence_id,</if>
+            <if test="visitType != null">visit_type,</if>
+            <if test="resultTime != null">result_time,</if>
+            <if test="insertDate != null">insert_date,</if>
+            <if test="tip != null">tip,</if>
+            <if test="unit != null">unit,</if>
+            <if test="minValue != null">min_value,</if>
+            <if test="maxValue != null">max_value,</if>
+            <if test="resultValue != null">result_value,</if>
+            <if test="measurementSourceValue != null">MEASUREMENT_SOURCE_VALUE,</if>
+            <if test="measurementType != null">MEASUREMENT_TYPE,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="careSiteId != null">#{careSiteId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="visitOccurrenceId != null">#{visitOccurrenceId},</if>
+            <if test="visitType != null">#{visitType},</if>
+            <if test="resultTime != null">#{resultTime},</if>
+            <if test="insertDate != null">#{insertDate},</if>
+            <if test="tip != null">#{tip},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="minValue != null">#{minValue},</if>
+            <if test="maxValue != null">#{maxValue},</if>
+            <if test="resultValue != null">#{resultValue},</if>
+            <if test="measurementSourceValue != null">#{measurementSourceValue},</if>
+            <if test="measurementType != null">#{measurementType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMpStoolRoutineCol" parameterType="MpStoolRoutineCol">
+        update mp_stool_routine_col
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="careSiteId != null">care_site_id = #{careSiteId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="visitOccurrenceId != null">visit_occurrence_id = #{visitOccurrenceId},</if>
+            <if test="visitType != null">visit_type = #{visitType},</if>
+            <if test="resultTime != null">result_time = #{resultTime},</if>
+            <if test="insertDate != null">insert_date = #{insertDate},</if>
+            <if test="tip != null">tip = #{tip},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="minValue != null">min_value = #{minValue},</if>
+            <if test="maxValue != null">max_value = #{maxValue},</if>
+            <if test="resultValue != null">result_value = #{resultValue},</if>
+            <if test="measurementSourceValue != null">MEASUREMENT_SOURCE_VALUE = #{measurementSourceValue},</if>
+            <if test="measurementType != null">MEASUREMENT_TYPE = #{measurementType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMpStoolRoutineColById" parameterType="Long">
+        delete from mp_stool_routine_col where id = #{id}
+    </delete>
+
+    <delete id="deleteMpStoolRoutineColByIds" parameterType="String">
+        delete from mp_stool_routine_col where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

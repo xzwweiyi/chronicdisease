@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientRecordOperLogMapper">
+    
+    <resultMap type="PatientRecordOperLog" id="PatientRecordOperLogResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="formType"    column="form_type"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordOperLogVo">
+        select id, user_id, record_id, form_type, create_time from patient_record_oper_log
+    </sql>
+
+    <select id="selectPatientRecordOperLogList" parameterType="PatientRecordOperLog" resultMap="PatientRecordOperLogResult">
+        <include refid="selectPatientRecordOperLogVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="formType != null  and formType != ''"> and form_type = #{formType}</if>
+            <if test="startTime != null"> and create_time &gt;= #{startTime}</if>
+            <if test="endTime != null"> and create_time &lt;= #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientRecordOperLogById" parameterType="Long" resultMap="PatientRecordOperLogResult">
+        <include refid="selectPatientRecordOperLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientRecordOperLog" parameterType="PatientRecordOperLog" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_record_oper_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="recordId != null">record_id,</if>
+            <if test="formType != null">form_type,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="recordId != null">#{recordId},</if>
+            <if test="formType != null">#{formType},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientRecordOperLog" parameterType="PatientRecordOperLog">
+        update patient_record_oper_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="formType != null">form_type = #{formType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientRecordOperLogById" parameterType="Long">
+        delete from patient_record_oper_log where id = #{id}
+    </delete>
+
+    <delete id="deletePatientRecordOperLogByIds" parameterType="String">
+        delete from patient_record_oper_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

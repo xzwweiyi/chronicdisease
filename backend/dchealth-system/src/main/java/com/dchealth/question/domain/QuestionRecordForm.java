@@ -1,0 +1,75 @@
+package com.dchealth.question.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.dchealth.common.annotation.Excel;
+import com.dchealth.common.core.domain.BaseEntity;
+
+/**
+ * 质疑档案单关系对象 question_record_form
+ * 
+ * @author lchbu
+ * @date 2022-09-28
+ */
+public class QuestionRecordForm extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** $column.columnComment */
+    private Long questionId;
+
+    /** $column.columnComment */
+    private Long medicalFormId;
+
+    /** 档案id */
+    @Excel(name = "档案id")
+    private Long recordId;
+
+    /** 回复内容 */
+    private String replyContent;
+
+    public void setQuestionId(Long questionId) 
+    {
+        this.questionId = questionId;
+    }
+
+    public Long getQuestionId() 
+    {
+        return questionId;
+    }
+    public void setMedicalFormId(Long medicalFormId) 
+    {
+        this.medicalFormId = medicalFormId;
+    }
+
+    public Long getMedicalFormId() 
+    {
+        return medicalFormId;
+    }
+    public void setRecordId(Long recordId) 
+    {
+        this.recordId = recordId;
+    }
+
+    public Long getRecordId() 
+    {
+        return recordId;
+    }
+
+    public String getReplyContent() {
+        return replyContent;
+    }
+
+    public void setReplyContent(String replyContent) {
+        this.replyContent = replyContent;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("questionId", getQuestionId())
+            .append("medicalFormId", getMedicalFormId())
+            .append("recordId", getRecordId())
+            .toString();
+    }
+}

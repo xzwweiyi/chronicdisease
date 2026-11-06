@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchModuleMapper">
+    
+    <resultMap type="ResearchModule" id="ResearchModuleResult">
+        <result property="id"    column="id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="moduleName"    column="module_name"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="sortNum"    column="sort_num"    />
+    </resultMap>
+
+    <sql id="selectResearchModuleVo">
+        select id, research_id, module_name, is_deleted, create_time, create_by, update_time, update_by, sort_num from research_module
+    </sql>
+
+    <select id="selectResearchModuleList" parameterType="ResearchModule" resultMap="ResearchModuleResult">
+        <include refid="selectResearchModuleVo"/>
+        <where>  
+            <if test="researchId != null "> and research_id = #{researchId}</if>
+            <if test="moduleName != null  and moduleName != ''"> and module_name like concat('%', #{moduleName}, '%')</if>
+            <if test="isDeleted != null  and isDeleted != ''"> and is_deleted = #{isDeleted}</if>
+            <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+            and is_deleted = '0'
+        </where>
+    </select>
+    
+    <select id="selectResearchModuleById" parameterType="Long" resultMap="ResearchModuleResult">
+        <include refid="selectResearchModuleVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertResearchModule" parameterType="ResearchModule" useGeneratedKeys="true" keyProperty="id">
+        insert into research_module
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">research_id,</if>
+            <if test="moduleName != null">module_name,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sortNum != null">sort_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="researchId != null">#{researchId},</if>
+            <if test="moduleName != null">#{moduleName},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchModule" parameterType="ResearchModule">
+        update research_module
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="moduleName != null">module_name = #{moduleName},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchModuleById" parameterType="Long">
+        delete from research_module where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchModuleByIds" parameterType="String">
+        delete from research_module where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

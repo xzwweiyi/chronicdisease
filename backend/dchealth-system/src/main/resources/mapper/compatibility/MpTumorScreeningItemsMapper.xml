@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpTumorScreeningItemsMapper">
+    
+    <resultMap type="MpTumorScreeningItems" id="MpTumorScreeningItemsResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="visitType"    column="visit_type"    />
+        <result property="resultTime"    column="result_time"    />
+        <result property="tumorAfp"    column="tumor_afp"    />
+        <result property="tumorCea"    column="tumor_cea"    />
+        <result property="tumorCa199"    column="tumor_ca199"    />
+        <result property="tumorCa125"    column="tumor_ca125"    />
+        <result property="tumorCa242"    column="tumor_ca242"    />
+        <result property="tumorCa153"    column="tumor_ca153"    />
+        <result property="tumorNse"    column="tumor_nse"    />
+        <result property="tumorCa724"    column="tumor_ca724"    />
+        <result property="tumorCyfra21"    column="tumor_cyfra21"    />
+        <result property="tumorCa50"    column="tumor_ca50"    />
+        <result property="tumorFpsa"    column="tumor_fpsa"    />
+        <result property="tumorTpsa"    column="tumor_tpsa"    />
+        <result property="tumorHe4"    column="tumor_he4"    />
+        <result property="tumorScc"    column="tumor_scc"    />
+    </resultMap>
+
+    <sql id="selectMpTumorScreeningItemsVo">
+        select id, care_site_id, person_id, visit_occurrence_id, visit_type, result_time, tumor_afp, tumor_cea, tumor_ca199, tumor_ca125, tumor_ca242, tumor_ca153, tumor_nse, tumor_ca724, tumor_cyfra21, tumor_ca50, tumor_fpsa, tumor_tpsa, tumor_he4, tumor_scc from mp_tumor_screening_items
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpTumorScreeningItemsResult">
+        <include refid="selectMpTumorScreeningItemsVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+    <select id="selectByPersonId" resultMap="MpTumorScreeningItemsResult">
+        <include refid="selectMpTumorScreeningItemsVo"/>
+        where person_id = #{personId} and visit_type = '门诊'
+        order by result_time desc
+    </select>
+
+</mapper>

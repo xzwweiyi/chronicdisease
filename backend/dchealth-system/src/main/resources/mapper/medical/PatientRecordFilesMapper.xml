@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientRecordFilesMapper">
+    
+    <resultMap type="PatientRecordFiles" id="PatientRecordFilesResult">
+        <result property="id"    column="id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="patientId"    column="patient_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="imageCode"    column="image_code"    />
+        <result property="imageParentCode"    column="image_parent_code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="examRecordId"    column="exam_record_id"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordFilesVo">
+        select id, image_url, patient_id, record_id, medical_form_id, image_code, image_parent_code, create_time,
+               create_by, property_id,exam_record_id from patient_record_files
+    </sql>
+
+    <select id="selectPatientRecordFilesList" parameterType="PatientRecordFiles" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        <where>  
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="patientId != null "> and patient_id = #{patientId}</if>
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="medicalFormId != null "> and medical_form_id = #{medicalFormId}</if>
+            <if test="imageCode != null  and imageCode != ''"> and image_code = #{imageCode}</if>
+            <if test="imageParentCode != null  and imageParentCode != ''"> and image_parent_code = #{imageParentCode}</if>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientRecordFilesById" parameterType="Long" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientRecordFiles" parameterType="PatientRecordFiles" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_record_files
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageUrl != null and imageUrl != ''">image_url,</if>
+            <if test="patientId != null">patient_id,</if>
+            <if test="recordId != null">record_id,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="imageCode != null">image_code,</if>
+            <if test="imageParentCode != null">image_parent_code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="propertyId != null">property_id,</if>
+            <if test="propertyCode != null">property_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageUrl != null and imageUrl != ''">#{imageUrl},</if>
+            <if test="patientId != null">#{patientId},</if>
+            <if test="recordId != null">#{recordId},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="imageCode != null">#{imageCode},</if>
+            <if test="imageParentCode != null">#{imageParentCode},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="propertyCode != null">#{propertyCode},</if>
+         </trim>
+    </insert>
+
+
+
+    <update id="updatePatientRecordFiles" parameterType="PatientRecordFiles">
+        update patient_record_files
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="imageCode != null">image_code = #{imageCode},</if>
+            <if test="imageParentCode != null">image_parent_code = #{imageParentCode},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientRecordFilesById" parameterType="Long">
+        delete from patient_record_files where id = #{id}
+    </delete>
+
+    <delete id="deletePatientRecordFilesByRecordId" parameterType="Long">
+        delete from patient_record_files where record_id = #{recordId}
+    </delete>
+
+    <delete id="deletePatientRecordFilesByIds" parameterType="String">
+        delete from patient_record_files where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectPatientRecordFilesByMedicalFormId" parameterType="Long" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where medical_form_id = #{medicalFormId}
+    </select>
+
+    <select id="selectPatientRecordFilesByRecordId" parameterType="Long" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <select id="selectPatientRecordFilesByProId" parameterType="Long" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where property_id = #{propertyId}
+    </select>
+
+
+    <select id="selectFilesByRecordIdAndMedicalFormId" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where medical_form_id = #{medicalFormId} and record_id = #{recordId}
+    </select>
+
+
+    <select id="selectPatientRecordFiles" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where property_id = #{propertyId} and exam_record_id = #{examRecordId}
+    </select>
+    <select id="selectPatientRecordFilesByHealthId"
+            parameterType="Long" resultMap="PatientRecordFilesResult">
+        <include refid="selectPatientRecordFilesVo"/>
+        where health_id = #{healthId}
+
+    </select>
+
+</mapper>

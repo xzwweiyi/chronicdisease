@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchRoleSourceMapper">
+
+    <resultMap type="ResearchRoleSource" id="ResearchRoleSourceResult">
+        <result property="roleId"     column="role_id"      />
+        <result property="sourceId"   column="source_id"    />
+    </resultMap>
+
+    <sql id="selectResearchRoleSourceVo">
+        select role_id, source_id from research_role_source
+    </sql>
+
+    <select id="findByRoles" parameterType="Long" resultMap="ResearchRoleSourceResult">
+        <include refid="selectResearchRoleSourceVo"/>
+        where role_id in
+        <foreach collection="array" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
+    <delete id="deleteRoleSource" parameterType="Long">
+		delete from research_role_source where role_id=#{roleId}
+	</delete>
+
+    <insert id="batchRoleSource">
+        insert into research_role_source(role_id, source_id) values
+        <foreach item="item" index="index" collection="researchRoleSources" separator=",">
+            (#{item.roleId},#{item.sourceId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRoleSourceByRoleIds" parameterType="Long">
+        delete from research_role_source where role_id in
+        <foreach collection="array" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <select id="isDistributionResearchSource" parameterType="Long" resultType="Integer">
+	    select count(1) from research_role_source where source_id = #{sourceId}
+	</select>
+
+
+    <select id="findByRoleId" parameterType="Long" resultMap="ResearchRoleSourceResult">
+        <include refid="selectResearchRoleSourceVo"/>
+        where role_id = #{roleId}
+    </select>
+
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientRecordEdcStatusMapper">
+    
+    <resultMap type="PatientRecordEdcStatus" id="PatientRecordEdcStatusResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="medicalFormId"    column="medical_form_id"    />
+        <result property="edcStatus"    column="edc_status"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectPatientRecordEdcStatusVo">
+        select id, record_id, medical_form_id, edc_status, create_time from patient_record_edc_status
+    </sql>
+
+    <select id="selectPatientRecordEdcStatusList" parameterType="PatientRecordEdcStatus" resultMap="PatientRecordEdcStatusResult">
+        <include refid="selectPatientRecordEdcStatusVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="medicalFormId != null "> and medical_form_id = #{medicalFormId}</if>
+            <if test="edcStatus != null  and edcStatus != ''"> and edc_status = #{edcStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientRecordEdcStatusById" parameterType="Long" resultMap="PatientRecordEdcStatusResult">
+        <include refid="selectPatientRecordEdcStatusVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientRecordEdcStatus" parameterType="PatientRecordEdcStatus" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_record_edc_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="medicalFormId != null">medical_form_id,</if>
+            <if test="edcStatus != null">edc_status,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="medicalFormId != null">#{medicalFormId},</if>
+            <if test="edcStatus != null">#{edcStatus},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientRecordEdcStatus" parameterType="PatientRecordEdcStatus">
+        update patient_record_edc_status
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="medicalFormId != null">medical_form_id = #{medicalFormId},</if>
+            <if test="edcStatus != null">edc_status = #{edcStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientRecordEdcStatusById" parameterType="Long">
+        delete from patient_record_edc_status where id = #{id}
+    </delete>
+
+    <delete id="deletePatientRecordEdcStatusByIds" parameterType="String">
+        delete from patient_record_edc_status where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByTwoId" resultMap="PatientRecordEdcStatusResult">
+        <include refid="selectPatientRecordEdcStatusVo"/>
+        where record_id = #{recordId} and medical_form_id = #{medicalFormId}
+    </select>
+
+    <select id="selectMinStatusByRecordId" resultType="Integer">
+        select min(edc_status) from patient_record_edc_status
+        where record_id = #{recordId}
+    </select>
+
+</mapper>

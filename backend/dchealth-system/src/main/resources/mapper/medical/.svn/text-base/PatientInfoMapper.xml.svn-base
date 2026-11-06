@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.medical.mapper.PatientInfoMapper">
+
+    <resultMap type="PatientInfo" id="PatientInfoResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="clinicNo"    column="clinic_no"    />
+        <result property="patientCode"    column="patient_code"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="patientMobile"    column="patient_mobile"    />
+        <result property="patientStatus"    column="patient_status"    />
+        <result property="enrollmentStatus"    column="enrollment_status"    />
+        <result property="lossCause"    column="loss_cause"    />
+        <result property="lossCauseOther"    column="loss_cause_other"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="adjustType"    column="adjust_type"    />
+        <result property="oldPatientId"    column="old_patient_id"    />
+        <result property="planResearchId"    column="plan_research_id"    />
+        <result property="enrollmentResult"    column="enrollment_result"    />
+        <result property="enrollmentResultContent"    column="enrollment_result_content"    />
+        <result property="enrollmentHandlerStatus"    column="enrollment_handler_status"    />
+        <result property="allocatedStatus"    column="allocated_status"    />
+        <result property="allocatedHandlerStatus"    column="allocated_handler_status"    />
+        <result property="patientActivityStatus"    column="patient_activity_status"    />
+        <result property="isEndCreateRecord"    column="is_end_create_record"    />
+        <result property="channelType"    column="channel_type"    />
+        <result property="isShowApp"    column="is_show_app"    />
+        <result property="planScanResearchId"    column="plan_scan_research_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="idCard"    column="id_card"    />
+    </resultMap>
+
+    <resultMap type="com.dchealth.medical.domain.vo.FollowWorkListVO" id="ResearchPatientVOResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="stageName"    column="stage_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="enrollmentResult"    column="enrollment_result"    />
+        <result property="enrollmentResultContent"    column="enrollment_result_content"    />
+        <result property="researchId"    column="plan_research_id"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="channelType"    column="channel_type"    />
+        <result property="followStatus"    column="follow_status"    />
+        <result property="recordId"    column="record_id"    />
+    </resultMap>
+
+
+    <resultMap type="com.dchealth.medical.domain.vo.FollowWorkListVO" id="FollowWorkListVOResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="stageName"    column="stage_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="scanProjectName"    column="scan_project_name"    />
+        <result property="enrollmentResult"    column="enrollment_result"    />
+        <result property="enrollmentResultContent"    column="enrollment_result_content"    />
+        <result property="researchId"    column="plan_research_id"    />
+        <result property="enrollmentTime"    column="enrollment_time"    />
+        <result property="channelType"    column="channel_type"    />
+        <result property="accountId"    column="account_id"    />
+
+        <result property="baseMobile"    column="base_mobile"    />
+        <result property="personId"    column="person_id"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="refuseCount"    column="refuse_count"    />
+        <result property="smsSendCount"    column="sms_send_count"    />
+        <result property="enrollmentHandlerStatus"    column="enrollment_handler_status"    />
+        <result property="enrollmentStatus"    column="enrollment_status"    />
+    </resultMap>
+
+    <resultMap type="com.dchealth.medical.domain.vo.PatientEnrollmentVo" id="PatientEnrollmentVOResult">
+        <result property="patientId"    column="patient_id"    />
+        <result property="tdPatientId"    column="td_patient_id"    />
+        <result property="patientName"    column="patient_name"    />
+        <result property="sex"    column="sex"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="mobile"    column="mobile"    />
+        <result property="planResearchId"    column="plan_research_id"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="registrySigns"    column="registry_signs"    />
+        <result property="accountId"    column="account_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="enrollmentHandlerStatus"    column="enrollment_handler_status"    />
+        <result property="baseMobile"    column="base_mobile"    />
+        <result property="personId"    column="person_id"    />
+        <result property="bindStatus"    column="bindStatus"  />
+
+    </resultMap>
+
+    <sql id="selectPatientInfoVo">
+        select patient_id, account_id, person_id, patient_name, clinic_no, patient_code, research_id, dept_id, doctor_id, patient_mobile, patient_status,
+        enrollment_status, loss_cause, loss_cause_other, update_by, create_by, create_time, update_time, enrollment_time, plan_research_id, enrollment_result,
+        enrollment_result_content, enrollment_handler_status, allocated_status, allocated_handler_status, patient_activity_status, adjust_type, old_patient_id ,is_end_create_record ,channel_type ,plan_scan_research_id
+        from patient_info
+    </sql>
+
+    <select id="selectPatientInfoList" parameterType="PatientInfo" resultMap="PatientInfoResult">
+        select g.patient_id, g.account_id, g.person_id, g.patient_name, g.clinic_no, g.patient_code, g.research_id, g.dept_id, g.doctor_id, g.patient_mobile, g.patient_status,
+        g.enrollment_status, g.loss_cause, g.loss_cause_other, g.update_by, g.create_by, g.create_time, g.update_time, g.enrollment_time, g.plan_research_id, g.enrollment_result,
+        g.enrollment_result_content, g.enrollment_handler_status, g.allocated_status, g.allocated_handler_status, g.patient_activity_status, g.adjust_type, g.old_patient_id ,
+        g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card
+        from patient_info g
+        INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
+        INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
+        inner join mp_person mp on g.person_id=mp.person_id
+        <where>
+            <if test="patientId != null "> and g.patient_id = #{patientId}</if>
+            <if test="accountId != null "> and g.account_id = #{accountId}</if>
+            <if test="personId != null and personId != ''"> and g.person_id = #{personId}</if>
+            <if test="patientName != null  and patientName != ''"> and g.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="clinicNo != null  and clinicNo != ''"> and g.clinic_no = #{clinicNo}</if>
+            <if test="patientCode != null  and patientCode != ''"> and g.patient_code = #{patientCode}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and g.dept_id = #{deptId}</if>
+            <if test="doctorId != null "> and g.doctor_id = #{doctorId}</if>
+            <if test="patientMobile != null  and patientMobile != ''"> and g.patient_mobile = #{patientMobile}</if>
+            <if test="patientStatus != null  and patientStatus != ''"> and g.patient_status = #{patientStatus}</if>
+            <if test="enrollmentStatus != null  and enrollmentStatus != ''"> and g.enrollment_status = #{enrollmentStatus}</if>
+            <if test="lossCause != null  and lossCause != ''"> and g.loss_cause = #{lossCause}</if>
+            <if test="lossCauseOther != null  and lossCauseOther != ''"> and g.loss_cause_other = #{lossCauseOther}</if>
+            <if test="enrollmentHandlerStatus != null "> and g.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+
+            <if test="searchType != null  and searchType != '' and searchType=='2'.toString()"> and g.patient_status &lt;= #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='3'.toString()"> and g.patient_status = #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='4'.toString()"> and g.patient_status = #{searchType} </if>
+        </where>
+    </select>
+
+    <select id="selectPatientInfoListByAuth" parameterType="PatientInfo" resultMap="PatientInfoResult">
+        select g.patient_id, g.account_id, g.person_id, g.patient_name, g.clinic_no, g.patient_code, g.research_id, g.dept_id, g.doctor_id, g.patient_mobile, g.patient_status,
+        g.enrollment_status, g.loss_cause, g.loss_cause_other, g.update_by, g.create_by, g.create_time, g.update_time, g.enrollment_time, g.plan_research_id, g.enrollment_result,
+        g.enrollment_result_content, g.enrollment_handler_status, g.allocated_status, g.allocated_handler_status, g.patient_activity_status, g.adjust_type, g.old_patient_id ,
+        g.is_end_create_record ,g.channel_type ,g.plan_scan_research_id,ri.project_name,sd.dept_name,mp.card_id id_card
+        from patient_info g
+        INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
+        INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
+        inner join mp_person mp on g.person_id=mp.person_id
+        <if test="userId != null  and userId != '' and userId!='1'.toString()">
+            INNER JOIN (
+            select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
+            ) ru on ri.id=ru.research_id
+        </if>
+        <where>
+            <if test="patientId != null "> and g.patient_id = #{patientId}</if>
+            <if test="accountId != null "> and g.account_id = #{accountId}</if>
+            <if test="personId != null and personId != ''"> and g.person_id = #{personId}</if>
+            <if test="patientName != null  and patientName != ''"> and g.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="clinicNo != null  and clinicNo != ''"> and g.clinic_no = #{clinicNo}</if>
+            <if test="patientCode != null  and patientCode != ''"> and g.patient_code = #{patientCode}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and g.dept_id = #{deptId}</if>
+            <if test="doctorId != null "> and g.doctor_id = #{doctorId}</if>
+            <if test="patientMobile != null  and patientMobile != ''"> and g.patient_mobile = #{patientMobile}</if>
+            <if test="patientStatus != null  and patientStatus != ''"> and g.patient_status = #{patientStatus}</if>
+            <if test="enrollmentStatus != null  and enrollmentStatus != ''"> and g.enrollment_status = #{enrollmentStatus}</if>
+            <if test="lossCause != null  and lossCause != ''"> and g.loss_cause = #{lossCause}</if>
+            <if test="lossCauseOther != null  and lossCauseOther != ''"> and g.loss_cause_other = #{lossCauseOther}</if>
+            <if test="enrollmentHandlerStatus != null "> and g.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+
+            <if test="searchType != null  and searchType != '' and searchType=='2'.toString()"> and g.patient_status &lt;= #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='3'.toString()"> and g.patient_status = #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='4'.toString()"> and g.patient_status = #{searchType} </if>
+        </where>
+    </select>
+
+    <select id="selectPatientInfoListLess" parameterType="PatientInfo" resultMap="PatientInfoResult">
+        select g.patient_id, g.enrollment_time,g.dept_id,g.research_id,g.patient_status,g.loss_cause
+        from patient_info g
+        INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
+        INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
+        inner join mp_person mp on g.person_id=mp.person_id
+        left join research_diseases rd on rd.disease_id = ri.disease_type_id
+        left join sys_area sa on g.province_id = sa.area_code
+        <where>
+            <if test="patientId != null "> and g.patient_id = #{patientId}</if>
+            <if test="accountId != null "> and g.account_id = #{accountId}</if>
+            <if test="personId != null and personId != ''"> and g.person_id = #{personId}</if>
+            <if test="patientName != null  and patientName != ''"> and g.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="clinicNo != null  and clinicNo != ''"> and g.clinic_no = #{clinicNo}</if>
+            <if test="patientCode != null  and patientCode != ''"> and g.patient_code = #{patientCode}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and g.dept_id = #{deptId}</if>
+            <if test="doctorId != null "> and g.doctor_id = #{doctorId}</if>
+            <if test="patientMobile != null  and patientMobile != ''"> and g.patient_mobile = #{patientMobile}</if>
+            <if test="patientStatus != null  and patientStatus != ''"> and g.patient_status = #{patientStatus}</if>
+            <if test="enrollmentStatus != null  and enrollmentStatus != ''"> and g.enrollment_status = #{enrollmentStatus}</if>
+            <if test="lossCause != null  and lossCause != ''"> and g.loss_cause = #{lossCause}</if>
+            <if test="lossCauseOther != null  and lossCauseOther != ''"> and g.loss_cause_other = #{lossCauseOther}</if>
+            <if test="enrollmentHandlerStatus != null "> and g.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+
+            <if test="searchType != null  and searchType != '' and searchType=='2'.toString()"> and g.patient_status &lt;= #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='3'.toString()"> and g.patient_status = #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='4'.toString()"> and g.patient_status = #{searchType} </if>
+
+            <if test="startTime != null  and endTime != null"> and
+                date_format(g.enrollment_time,'%Y-%m-%d') >= date_format(#{startTime},'%Y-%m-%d')
+                and date_format(#{endTime},'%Y-%m-%d') >= date_format(g.enrollment_time,'%Y-%m-%d')
+            </if>
+        </where>
+        order by g.enrollment_time asc
+    </select>
+
+
+    <select id="selectPatientInfoListLess2" parameterType="PatientInfo" resultMap="PatientInfoResult">
+        select g.patient_id, g.enrollment_time,g.dept_id,g.research_id,rd.disease_name,mp.card_id id_card,sa.area_name,g.diploma_type,mp.race_source_value,g.patient_status
+        from patient_info g
+        INNER JOIN research_info ri on g.research_id=ri.id and ri.del_flag=0
+        INNER JOIN sys_dept sd on g.dept_id=sd.dept_id
+        inner join mp_person mp on g.person_id=mp.person_id
+        left join research_diseases rd on rd.disease_id = ri.disease_type_id
+        left join sys_area sa on g.province_id = sa.area_code
+        <where>
+            <if test="patientId != null "> and g.patient_id = #{patientId}</if>
+            <if test="accountId != null "> and g.account_id = #{accountId}</if>
+            <if test="personId != null and personId != ''"> and g.person_id = #{personId}</if>
+            <if test="patientName != null  and patientName != ''"> and g.patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="clinicNo != null  and clinicNo != ''"> and g.clinic_no = #{clinicNo}</if>
+            <if test="patientCode != null  and patientCode != ''"> and g.patient_code = #{patientCode}</if>
+            <if test="researchId != null "> and g.research_id = #{researchId}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and g.dept_id = #{deptId}</if>
+            <if test="doctorId != null "> and g.doctor_id = #{doctorId}</if>
+            <if test="patientMobile != null  and patientMobile != ''"> and g.patient_mobile = #{patientMobile}</if>
+            <if test="patientStatus != null  and patientStatus != ''"> and g.patient_status = #{patientStatus}</if>
+            <if test="enrollmentStatus != null  and enrollmentStatus != ''"> and g.enrollment_status = #{enrollmentStatus}</if>
+            <if test="lossCause != null  and lossCause != ''"> and g.loss_cause = #{lossCause}</if>
+            <if test="lossCauseOther != null  and lossCauseOther != ''"> and g.loss_cause_other = #{lossCauseOther}</if>
+            <if test="enrollmentHandlerStatus != null "> and g.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+
+            <if test="searchType != null  and searchType != '' and searchType=='2'.toString()"> and g.patient_status &lt;= #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='3'.toString()"> and g.patient_status = #{searchType} </if>
+            <if test="searchType != null  and searchType != '' and searchType=='4'.toString()"> and g.patient_status = #{searchType} </if>
+
+            <if test="startTime != null  and endTime != null"> and
+                date_format(g.enrollment_time,'%Y-%m-%d') >= date_format(#{startTime},'%Y-%m-%d')
+                and date_format(#{endTime},'%Y-%m-%d') >= date_format(g.enrollment_time,'%Y-%m-%d')
+            </if>
+        </where>
+        order by g.enrollment_time asc
+    </select>
+
+    <select id="selectPatientInfoByPatientId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where patient_id = #{patientId}
+    </select>
+    <select id="selectPatientInfoByOldId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where old_patient_id = #{oldPatientId}
+    </select>
+
+    <select id="selectPatientInfoByRecordId" parameterType="Long" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where patient_id = (select patient_id from patient_record where record_id = #{recordId})
+    </select>
+
+    <select id="enrollmentList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, i.project_name, p.create_time, p.enrollment_result, p.enrollment_result_content, p.research_id plan_research_id, p.enrollment_time,p.channel_type
+        from patient_info p, research_info i,patient_record pr
+        where i.id=p.research_id and pr.patient_id=p.patient_id
+        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="researchId != null "> and p.research_id = #{researchId}</if>
+        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
+        <if test="patientId != null  and patientId != '' "> and p.patient_id like concat('%', #{patientId}, '%')</if>
+        <if test="allocatedStatus != null "> and p.allocated_status = #{allocatedStatus}</if>
+    </select>
+
+    <select id="enrollmentList2" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, i.project_name, p.create_time, p.enrollment_result, p.enrollment_result_content,
+        p.research_id plan_research_id, p.enrollment_time,p.channel_type,p.account_id,p.refuse_count,p.sms_send_count,
+        pa.mobile,p.person_id,p.enrollment_handler_status,p.enrollment_status,mp.phone_number base_mobile
+        from patient_info p
+        INNER JOIN research_info i on i.id=p.research_id
+        left JOIN patient_account pa on p.account_id=pa.account_id
+        INNER JOIN mp_person mp on p.person_id=mp.person_id
+        where  1=1
+        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="researchId != null "> and p.research_id = #{researchId}</if>
+        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
+        <if test="patientId != null  and patientId != '' "> and p.patient_id like concat('%', #{patientId}, '%')</if>
+        <if test="personId != null  and personId != '' "> and p.person_id like concat('%', #{personId}, '%')</if>
+        <if test="allocatedStatus != null "> and p.allocated_status = #{allocatedStatus}</if>
+        <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and p.account_id = 0 </if>
+        <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and p.account_id != 0 </if>
+    </select>
+
+    <select id="enrollmentListNew" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.research_id plan_research_id
+        from research_info i
+        INNER JOIN patient_info p on i.id=p.research_id
+        <!--        INNER JOIN mp_person mp on p.person_id=mp.person_id-->
+        where  1=1
+        <if test="enrollmentHandlerStatus != null "> and p.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="researchId != null "> and p.research_id = #{researchId}</if>
+        <if test="patientName != null  and patientName != '' "> and p.patient_name like concat('%', #{patientName}, '%')</if>
+        <if test="patientId != null  and patientId != '' "> and p.patient_id like concat('%', #{patientId}, '%')</if>
+        <if test="allocatedStatus != null "> and p.allocated_status = #{allocatedStatus}</if>
+        <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and p.account_id = 0 </if>
+        <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and p.account_id != 0 </if>
+    </select>
+
+    <select id="allocatedList" parameterType="com.dchealth.medical.domain.form.FollowWorkListForm" resultMap="FollowWorkListVOResult">
+        select p.patient_id, p.patient_name, i.project_name, p.create_time, p.enrollment_result, p.enrollment_result_content ,isc.project_name scan_project_name
+        from patient_info p
+        inner join research_info i on i.id=p.research_id
+        left join research_info isc on p.plan_scan_research_id=isc.id
+        where p.allocated_status='1' and p.allocated_handler_status = #{allocatedHandlerStatus}
+        <if test="researchId != null "> and p.plan_research_id = #{researchId}</if>
+        <if test="deptId != null and deptId!='100'.toString() "> and p.dept_id = #{deptId} and i.dept_id = #{deptId}</if>
+    </select>
+
+    <insert id="insertPatientInfo" parameterType="PatientInfo" useGeneratedKeys="true" keyProperty="patientId">
+        insert into patient_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">account_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="patientName != null">patient_name,</if>
+            <if test="clinicNo != null">clinic_no,</if>
+            <if test="patientCode != null">patient_code,</if>
+            <if test="researchId != null">research_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="doctorId != null">doctor_id,</if>
+            <if test="patientMobile != null">patient_mobile,</if>
+            <if test="patientStatus != null">patient_status,</if>
+            <if test="enrollmentStatus != null">enrollment_status,</if>
+            <if test="lossCause != null">loss_cause,</if>
+            <if test="lossCauseOther != null">loss_cause_other,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="enrollmentTime != null">enrollment_time,</if>
+            <if test="adjustType != null">adjust_type,</if>
+            <if test="oldPatientId != null">old_patient_id,</if>
+            <if test="planResearchId != null">plan_research_id,</if>
+            <if test="enrollmentResultContent != null">enrollment_result_content,</if>
+            <if test="isEndCreateRecord != null">is_end_create_record,</if>
+            <if test="enrollmentHandlerStatus != null">enrollment_handler_status,</if>
+            <if test="channelType != null">channel_type,</if>
+            <if test="isShowApp != null">is_show_app,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accountId != null">#{accountId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="patientName != null">#{patientName},</if>
+            <if test="clinicNo != null">#{clinicNo},</if>
+            <if test="patientCode != null">#{patientCode},</if>
+            <if test="researchId != null">#{researchId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="doctorId != null">#{doctorId},</if>
+            <if test="patientMobile != null">#{patientMobile},</if>
+            <if test="patientStatus != null">#{patientStatus},</if>
+            <if test="enrollmentStatus != null">#{enrollmentStatus},</if>
+            <if test="lossCause != null">#{lossCause},</if>
+            <if test="lossCauseOther != null">#{lossCauseOther},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="enrollmentTime != null">#{enrollmentTime},</if>
+            <if test="adjustType != null">#{adjustType},</if>
+            <if test="oldPatientId != null">#{oldPatientId},</if>
+            <if test="planResearchId != null">#{planResearchId},</if>
+            <if test="enrollmentResultContent != null">#{enrollmentResultContent},</if>
+            <if test="isEndCreateRecord != null">#{isEndCreateRecord},</if>
+            <if test="enrollmentHandlerStatus != null">#{enrollmentHandlerStatus},</if>
+            <if test="channelType != null">#{channelType},</if>
+            <if test="isShowApp != null">#{isShowApp},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePatientInfo" parameterType="PatientInfo">
+        update patient_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="clinicNo != null">clinic_no = #{clinicNo},</if>
+            <if test="patientCode != null">patient_code = #{patientCode},</if>
+            <if test="adjustType != null">adjust_type = #{adjustType},</if>
+            <if test="oldPatientId != null">old_patient_id = #{oldPatientId},</if>
+            <if test="planResearchId != null">plan_research_id = #{planResearchId},</if>
+            <if test="researchId != null">research_id = #{researchId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="doctorId != null">doctor_id = #{doctorId},</if>
+            <if test="patientMobile != null">patient_mobile = #{patientMobile},</if>
+            <if test="patientStatus != null">patient_status = #{patientStatus},</if>
+            <if test="enrollmentStatus != null and enrollmentStatus != ''">enrollment_status = #{enrollmentStatus},</if>
+            <if test="lossCause != null">loss_cause = #{lossCause},</if>
+            <if test="lossCauseOther != null">loss_cause_other = #{lossCauseOther},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="enrollmentTime != null">enrollment_time = #{enrollmentTime},</if>
+            <if test="enrollmentResult != null and enrollmentResult != ''">enrollment_result = #{enrollmentResult},</if>
+            <if test="enrollmentResultContent != null and enrollmentResultContent != ''">enrollment_result_content = #{enrollmentResultContent},</if>
+            <if test="enrollmentHandlerStatus != null and enrollmentHandlerStatus != ''">enrollment_handler_status = #{enrollmentHandlerStatus},</if>
+            <if test="allocatedStatus != null and allocatedStatus != ''">allocated_status = #{allocatedStatus},</if>
+            <if test="allocatedHandlerStatus != null and allocatedHandlerStatus != ''">allocated_handler_status = #{allocatedHandlerStatus},</if>
+            <if test="patientActivityStatus != null and patientActivityStatus != ''">patient_activity_status = #{patientActivityStatus},</if>
+            <if test="isEndCreateRecord != null and isEndCreateRecord != ''">is_end_create_record = #{isEndCreateRecord},</if>
+            <if test="channelType != null and channelType != ''">channel_type = #{channelType},</if>
+            <if test="isShowApp != null and isShowApp != ''">is_show_app = #{isShowApp},</if>
+            <if test="smsSendCount != null ">sms_send_count = #{smsSendCount},</if>
+        </trim>
+        where patient_id = #{patientId}
+    </update>
+
+    <delete id="deletePatientInfoByPatientId" parameterType="Long">
+        delete from patient_info where patient_id = #{patientId}
+    </delete>
+
+    <delete id="deletePatientInfoByPatientIds" parameterType="String">
+        delete from patient_info where patient_id in
+        <foreach item="patientId" collection="array" open="(" separator="," close=")">
+            #{patientId}
+        </foreach>
+    </delete>
+
+    <select id="selectPatientDetailInfoByPatientId" parameterType="Long" resultMap="PatientInfoResult">
+        select i.patient_id, i.account_id, i.person_id, i.patient_name, i.clinic_no, i.patient_code, i.research_id, i.dept_id, i.doctor_id,
+               i.patient_mobile, i.patient_status, i.enrollment_status, i.loss_cause, i.loss_cause_other, i.update_by, i.create_by, i.create_time,
+               i.update_time, i.enrollment_time, b.card_id id_card, i.enrollment_handler_status
+        from patient_info i
+        left join mp_person b on i.person_id = b.person_id
+        where i.patient_id = #{patientId}
+    </select>
+
+    <select id="selectPatientInfoByPatientName" parameterType="String" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where patient_name = #{patientName}
+    </select>
+
+    <select id="selectPatientInfoByPersonId" parameterType="String" resultMap="PatientInfoResult">
+        <include refid="selectPatientInfoVo"/>
+        where person_id = #{personId}
+    </select>
+
+    <select id="selectEnrollmentPatientInfoList" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
+        select f.patient_id, f.person_id, f.patient_name, p.card_id id_card, pc.mobile, f.create_time, f.plan_research_id, f.research_id, f.dept_id, f.account_id,
+                p.phone_number base_mobile,f.enrollment_handler_status,case WHEN f.account_id = 0 THEN 0 else 1 END as bindStatus
+        from patient_info f
+        INNER JOIN mp_person p on f.person_id=p.person_id
+        LEFT JOIN mp_patient_account mpa on mpa.person_id=p.person_id
+        LEFT JOIN patient_account pc on pc.account_id = mpa.account_id
+        where  1=1
+        <if test="patientIds!=null  and patientIds.size > 0">
+            and f.patient_id in
+            <foreach item="patientId" collection="patientIds" open="(" separator="," close=")">
+                #{patientId}
+            </foreach>
+        </if>
+        <if test="patientId != null "> and patient_id = #{patientId}</if>
+        <if test="patientName != null  and patientName != ''"> and p.person_name like concat('%', #{patientName}, '%')</if>
+        <if test="researchId != null  and researchId != ''"> and (f.research_id = #{researchId} or f.research_id is null)</if>
+        <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and f.account_id = 0 </if>
+        <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and f.account_id != 0 </if>
+        <if test="enrollmentHandlerStatus != null"> and f.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="deptIdNoZero != null  and deptIdNoZero != '' and deptIdNoZero=='1'.toString()"> and f.dept_id > 0 </if>
+    </select>
+
+    <select id="selectEnrollmentPatientInfoListLess" parameterType="PatientInfo" resultMap="PatientEnrollmentVOResult">
+        select f.patient_id
+        from patient_info f
+        INNER JOIN mp_person p on f.person_id=p.person_id
+        LEFT JOIN mp_patient_account mpa on mpa.person_id=p.person_id
+        LEFT JOIN patient_account pc on pc.account_id = mpa.account_id
+        where  1=1
+        <if test="patientIds!=null  and patientIds.size > 0">
+            and f.patient_id in
+            <foreach item="patientId" collection="patientIds" open="(" separator="," close=")">
+                #{patientId}
+            </foreach>
+        </if>
+        <if test="patientId != null "> and patient_id = #{patientId}</if>
+        <if test="patientName != null  and patientName != ''"> and p.person_name like concat('%', #{patientName}, '%')</if>
+        <if test="researchId != null  and researchId != ''"> and (f.research_id = #{researchId} or f.research_id is null)</if>
+        <if test="bindStatus != null and bindStatus != '' and bindStatus=='0'.toString()"> and f.account_id = 0 </if>
+        <if test="bindStatus != null  and bindStatus != '' and bindStatus=='1'.toString()"> and f.account_id != 0 </if>
+        <if test="enrollmentHandlerStatus != null"> and f.enrollment_handler_status = #{enrollmentHandlerStatus}</if>
+        <if test="enrollmentStatus != null"> and f.enrollment_status = #{enrollmentStatus}</if>
+        <if test="deptIdNoZero != null  and deptIdNoZero != '' and deptIdNoZero=='1'.toString()"> and f.dept_id > 0 </if>
+    </select>
+
+    <select id="queryPatientInfoBaseIds" resultType="java.lang.String">
+        select pi.person_id from patient_info pi
+        <where>
+            <if test="researchId != null "> and pi.research_id = #{researchId}</if>
+        </where>
+    </select>
+
+
+
+    <select id="queryPatientDistribute" parameterType="PatientDistribute" resultType="com.dchealth.statistics.domain.PatientDistributeVo">
+        SELECT
+        sar.area_name AS provinceName,
+        pi.province_id AS provinceId,
+        sa.area_name AS cityName,
+        sa.longitude as longitude,
+        sa.latitude as latitude,
+        pi.city_id AS cityId,
+        pi.visit_type AS visitType,
+        CASE
+        WHEN pi.visit_type = 1 THEN
+        'hospitalPatient'
+        WHEN pi.visit_type = 2 THEN
+        'outPatient'
+        WHEN pi.visit_type = 3 THEN
+        'emergencyPatient'
+        WHEN pi.visit_type = 4 THEN
+        'testPatient' ELSE 'otherPatient'
+        END AS visitName,
+        count( pi.patient_id ) AS patientCount
+        FROM
+        ( SELECT max( patient_id) AS patient_id FROM patient_info WHERE city_id IS NOT NULL AND visit_type IS NOT NULL
+        GROUP BY account_id ) s
+        INNER JOIN patient_info pi ON s.patient_id = pi.patient_id
+        INNER JOIN sys_area sa ON sa.area_code = pi.city_id
+        INNER JOIN sys_area sar ON sar.area_code = pi.province_id
+        <where>
+            <if test="date != null ">
+                and to_days(pi.create_time) = to_days(CURRENT_DATE)
+            </if>
+            <if test="provinceId != null ">
+                and pi.province_id = #{provinceId}
+            </if>
+        </where>
+        GROUP BY
+        pi.province_id,
+        pi.city_id,
+        pi.visit_type
+        ORDER BY count(pi.patient_id)
+
+
+    </select>
+
+    <select id="queryPatientDistributeNew" parameterType="PatientDistribute" resultType="com.dchealth.statistics.domain.PatientDistributeVo">
+        SELECT
+        sar.area_name AS provinceName,
+        pi.province_id AS provinceId,
+        sa.area_name AS cityName,
+        sa.longitude as longitude,
+        sa.latitude as latitude,
+        pi.city_id AS cityId,
+        pi.visit_type AS visitType,
+        CASE
+        WHEN pi.visit_type = 1 THEN
+        'hospitalPatient'
+        WHEN pi.visit_type = 2 THEN
+        'outPatient'
+        WHEN pi.visit_type = 3 THEN
+        'emergencyPatient'
+        WHEN pi.visit_type = 4 THEN
+        'testPatient' ELSE 'otherPatient'
+        END AS visitName,
+        count( pi.patient_id ) AS patientCount
+        FROM
+        ( SELECT max( patient_id) AS patient_id FROM patient_info WHERE city_id IS NOT NULL
+        GROUP BY account_id ) s
+        INNER JOIN patient_info pi ON s.patient_id = pi.patient_id
+        INNER JOIN sys_area sa ON sa.area_code = pi.city_id
+        INNER JOIN sys_area sar ON sar.area_code = pi.province_id
+        <where>
+            <if test="date != null ">
+                and to_days(pi.create_time) = to_days(CURRENT_DATE)
+            </if>
+            <if test="provinceId != null ">
+                and pi.province_id = #{provinceId}
+            </if>
+        </where>
+        GROUP BY
+        pi.province_id,
+        pi.city_id,
+        pi.visit_type
+        ORDER BY count(pi.patient_id)
+
+
+    </select>
+
+
+    <insert id="saveBatachPatientInfo" keyProperty="patientId" useGeneratedKeys="true">
+        insert into patient_info(
+        account_id,
+        person_id,
+        patient_name,
+        clinic_no,
+        patient_code,
+        research_id,
+        dept_id,
+        doctor_id,
+        patient_mobile,
+        patient_status,
+        enrollment_status,
+        loss_cause,
+        loss_cause_other,
+        update_by,
+        create_by,
+        create_time,
+        update_time,
+        enrollment_time,
+        adjust_type,
+        old_patient_id,
+        plan_research_id,
+        enrollment_result_content,
+        is_end_create_record,
+        channel_type,
+        enrollment_result,
+        enrollment_handler_status,
+        allocated_handler_status,
+        allocated_status
+        ) values
+        <foreach collection="list" item="entity" separator=",">
+            (#{entity.accountId}, #{entity.personId}, #{entity.patientName}, #{entity.clinicNo}, #{entity.patientCode},
+                #{entity.researchId}, #{entity.deptId}, #{entity.doctorId}, #{entity.patientMobile}, #{entity.patientStatus},
+                #{entity.enrollmentStatus},#{entity.lossCause},  #{entity.lossCauseOther}, #{entity.updateBy}, #{entity.createBy}, #{entity.createTime},
+                #{entity.updateTime}, #{entity.enrollmentTime}, #{entity.adjustType}, #{entity.oldPatientId}, #{entity.planResearchId},
+                #{entity.enrollmentResultContent}, #{entity.isEndCreateRecord}, #{entity.channelType},
+                #{entity.enrollmentResult}, #{entity.enrollmentHandlerStatus}, #{entity.allocatedHandlerStatus}, #{entity.allocatedStatus}
+            )
+        </foreach>
+
+    </insert>
+
+    <select id="selectResearchPatientInfoList" parameterType="PatientInfo" resultMap="ResearchPatientVOResult">
+        select f.patient_id, f.person_id, f.patient_name, mp.card_id id_card, pa.mobile, mp.create_time,
+        f.plan_research_id, f.research_id, f.dept_id, f.account_id,pr.name stage_name, pr.follow_status
+        ,f.research_id,pr.record_id
+        from patient_info f, mp_person mp,patient_record pr,patient_account pa
+        where  f.person_id = mp.person_id and pr.patient_id=f.patient_id and f.account_id=pa.account_id
+        <if test="patientId != null "> and f.patient_id = #{patientId}</if>
+        <if test="patientName != null  and patientName != ''"> and f.patient_name like concat('%', #{patientName}, '%')</if>
+        <if test="researchId != null  and researchId != ''"> and f.research_id = #{researchId}</if>
+    </select>
+</mapper>

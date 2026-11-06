@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchDiseasesMapper">
+    
+    <resultMap type="ResearchDiseases" id="ResearchDiseasesResult">
+        <result property="diseaseId"    column="disease_id"    />
+        <result property="diseaseName"    column="disease_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="diseasesGroupsId"    column="diseases_groups_id"    />
+
+    </resultMap>
+
+    <resultMap type="com.dchealth.research.domain.vo.ResearchDiseasesVO" id="ResearchDiseasesVOResult">
+        <result property="deptId"    column="dept_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="diseaseId"    column="disease_id"    />
+        <result property="diseaseName"    column="disease_name"    />
+        <result property="researchId"    column="research_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="stage"    column="stage"    />
+        <result property="researchStatus"    column="research_status"    />
+        <result property="num"    column="num"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="diseasesGroupsId"    column="diseases_groups_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="isFollowRate"    column="is_follow_rate"    />
+    </resultMap>
+
+    <sql id="selectResearchDiseasesVo">
+        select disease_id, disease_name, dept_id, is_deleted, create_time, create_by, update_time, update_by, sort_num,diseases_groups_id from research_diseases
+    </sql>
+
+    <select id="selectResearchDiseasesList" parameterType="ResearchDiseases" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        <where>
+            <if test="diseaseName != null  and diseaseName != ''">and disease_name like concat('%', #{diseaseName},'%')</if>
+            <if test="noDiseaseId != null">and disease_id != #{noDiseaseId}</if>
+            <if test="diseaseName != null  and diseaseName != ''">and disease_name = #{diseaseName}</if>
+            <if test="deptId != null ">and dept_id = #{deptId}</if>
+            <if test="isDeleted != null  and isDeleted != ''">and is_deleted = #{isDeleted}</if>
+            <if test="sortNum != null ">and sort_num = #{sortNum}</if>
+            and is_deleted = '0'
+        </where>
+    </select>
+
+    <select id="selectResearchDiseasesListTree" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchDiseasesVOResult">
+        select d.dept_id, d.parent_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name, ri.stage,ri.research_status
+        from sys_dept d
+        INNER JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
+        INNER join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
+        <if test="userId != null  and userId != '' and userId!='1'.toString()">
+            INNER JOIN (
+            select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
+            ) ru on ri.id=ru.research_id
+        </if>
+        <where>
+            <if test="researchStatus != null  and researchStatus != ''"> and ri.research_status = #{researchStatus}</if>
+            <if test="projectName != null  and projectName != ''"> and ri.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="id != null "> and ri.id = #{id}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and rd.dept_id = #{deptId} and ri.dept_id = #{deptId} and d.dept_id = #{deptId}</if>
+            <if test="notResearchStatus != null and notResearchStatus != ''">and ri.research_status != #{notResearchStatus}</if>
+            <if test="diseasesName != null and diseasesName != ''">and rd.disease_name like concat('%', #{diseasesName}, '%')</if>
+            and d.del_flag='0' and d.dept_type = '2'
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by d.parent_id, d.order_num
+    </select>
+
+    <select id="selectResearchDiseases" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchDiseasesVOResult">
+        select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name,
+               ri.stage,ri.research_status,ri.create_by,d.order_num,ri.is_follow_rate
+        from sys_dept d
+        LEFT JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
+        LEFT join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
+        <if test="userId != null  and userId != '' and userId!='1'.toString()">
+            INNER JOIN (
+            select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
+            ) ru on ri.id=ru.research_id
+        </if>
+        <where>
+            <if test="projectName != null  and projectName != ''"> and ri.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="id != null "> and ri.id = #{id}</if>
+            <if test="researchStatus != null  and researchStatus != ''"> and ri.research_status = #{researchStatus}</if>
+            <if test="deptId != null and deptId!='100'.toString() "> and rd.dept_id = #{deptId}  and d.dept_id = #{deptId}</if>
+            and d.del_flag='0' and d.dept_type = '2' and d.status=0 AND rd.disease_id is not null
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by d.parent_id, d.order_num
+    </select>
+
+    <select id="selectList" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchDiseasesVOResult">
+        select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name from sys_dept d
+        left join research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
+        <where>
+            and d.del_flag='0' and d.dept_type = '2' and d.parent_id >0 and d.`status`='0'
+            <if test="deptId != null and deptId!='100'.toString() "> and d.dept_id = #{deptId}</if>
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by d.parent_id, d.order_num
+    </select>
+
+    <select id="selectResearchDiseasesByAuth" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        where is_deleted='0'
+    </select>
+
+    <select id="selectResearchDiseasesByAuthLess" resultMap="ResearchDiseasesResult">
+        select disease_id, disease_name, dept_id from research_diseases
+        where is_deleted='0'
+    </select>
+
+    <select id="selectResearchDiseasesByAuth2" resultMap="ResearchDiseasesResult" parameterType="Long">
+       select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ g.disease_id, g.disease_name, g.dept_id,  g.sort_num
+        from research_diseases g
+        inner join research_info ri on g.disease_id=ri.disease_type_id
+        inner join sys_dept d on  ri.dept_id=d.dept_id
+        where  g.is_deleted='0' and d.del_flag=0 and ri.del_flag=0 and (ri.research_status = 1 or ri.research_status = 0)
+        <if test="deptId != null and deptId!='100'.toString() "> and d.dept_id = #{deptId} and ri.dept_id = #{deptId} </if>
+        <if test="diseaseName != null  and diseaseName != ''"> and g.disease_name like concat('%', #{diseaseName},'%') </if>
+        GROUP BY g.disease_id
+    </select>
+
+    <select id="selectResearchDiseasesByUserId" resultMap="ResearchDiseasesResult" parameterType="Long">
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ g.disease_id, g.disease_name, g.dept_id,   g.sort_num
+        from research_diseases g
+        inner join research_info ri on g.disease_id=ri.disease_type_id and (ri.research_status = 1 or ri.research_status = 0)
+        inner join sys_dept d on  ri.dept_id=d.dept_id
+        <if test="userId != null  and userId != '' and userId!='1'.toString()">
+            INNER JOIN (
+            select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
+            ) ru on ri.id=ru.research_id
+        </if>
+        where  g.is_deleted='0' and d.del_flag=0 and ri.del_flag=0
+        <if test="diseaseName != null  and diseaseName != ''"> and g.disease_name like concat('%', #{diseaseName},'%') </if>
+        GROUP BY g.disease_id
+    </select>
+    
+    <select id="selectResearchDiseasesByDiseaseId" parameterType="Long" resultMap="ResearchDiseasesResult">
+        <include refid="selectResearchDiseasesVo"/>
+        where disease_id = #{diseaseId}
+    </select>
+        
+    <insert id="insertResearchDiseases" parameterType="ResearchDiseases" useGeneratedKeys="true" keyProperty="diseaseId">
+        insert into research_diseases
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="diseaseName != null">disease_name,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="diseasesGroupsId != null"> diseases_groups_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="diseaseName != null">#{diseaseName},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="diseasesGroupsId != null"> #{diseasesGroupsId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchDiseases" parameterType="ResearchDiseases">
+        update research_diseases
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="diseaseName != null">disease_name = #{diseaseName},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+        </trim>
+        where  1 = 1
+            <if test="diseaseId != null ">
+                and disease_id = #{diseaseId}
+            </if>
+            <if test="diseasesGroupsId != null">
+                and diseases_groups_id = #{diseasesGroupsId}
+            </if>
+
+    </update>
+
+    <delete id="deleteResearchDiseasesByDiseaseId" parameterType="Long">
+        delete from research_diseases where disease_id = #{diseaseId}
+    </delete>
+
+    <delete id="deleteResearchDiseasesByDiseaseIds" parameterType="String">
+        delete from research_diseases where disease_id in 
+        <foreach item="diseaseId" collection="array" open="(" separator="," close=")">
+            #{diseaseId}
+        </foreach>
+    </delete>
+
+    <select id="selectResearchDiseasesListTreeByIds" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchDiseasesVOResult">
+        select d.dept_id,d.dept_name,rd.disease_id,rd.disease_name,ri.id as research_id,ri.project_name, ri.stage from sys_dept d
+        left join research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
+        left join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
+        <where>
+            and ri.id in
+            <foreach collection="researchIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and d.del_flag='0' and d.dept_type = '2'
+        </where>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+        order by d.parent_id, d.order_num
+    </select>
+
+    <select id="selectStatusNumOfDept" resultMap="ResearchDiseasesVOResult">
+       <!-- SELECT sd.dept_id,sd.dept_name,middle.research_status,middle.num
+        FROM sys_dept sd
+        inner JOIN (
+            SELECT dept_id, research_status, count( research_status ) AS num
+            FROM research_info
+            WHERE del_flag = 0 AND research_status IN ( 1, 2 )
+            GROUP BY dept_id, research_status ) AS middle
+        ON sd.dept_id = middle.dept_id; -->
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ d.dept_id,d.dept_name,ri.research_status,count(ri.id) as num
+        from sys_dept d
+        LEFT JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
+        inner join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
+        inner join sys_user su on su.user_name=ri.create_by
+        <if test="userId != null">
+            and (ri.id in (select research_id from research_user_role where user_id = #{userId}) or su.user_id = #{userId})
+        </if>
+        where d.del_flag = '0'
+        GROUP BY d.dept_id,d.dept_name,ri.research_status
+    </select>
+
+    <select id="selectStatusNumOfDiseaseName" resultMap="ResearchDiseasesVOResult">
+        select /*+ SET_VAR(optimizer_switch='derived_merge=off') */ rd.disease_id,rd.disease_name,ri.research_status,count(ri.id) as num
+        from sys_dept d
+                 LEFT JOIN  research_diseases rd on rd.dept_id=d.dept_id and rd.is_deleted='0'
+                 INNER join research_info ri on ri.disease_type_id=rd.disease_id and ri.del_flag='0'
+                 Left join sys_user su on su.user_name=ri.create_by
+        where d.dept_id = #{deptId}
+        <if test="userId != null">
+            and (ri.id in (select research_id from research_user_role where user_id = #{userId}) or su.user_id = #{userId})
+        </if>
+        GROUP BY rd.disease_id,rd.disease_name,ri.research_status
+    </select>
+</mapper>

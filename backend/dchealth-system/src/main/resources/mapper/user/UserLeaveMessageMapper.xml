@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.user.mapper.UserLeaveMessageMapper">
+
+    <resultMap type="LeaveMessage" id="LeaveMessageResult">
+        <result property="id" column="id"/>
+        <result property="recordId" column="record_id"/>
+        <result property="personId" column="person_id"/>
+        <result property="accountName" column="account_name"/>
+        <result property="accountId" column="account_id"/>
+        <result property="userType" column="user_type"/>
+        <result property="contentType" column="content_type"/>
+        <result property="content" column="content"/>
+        <result property="senderId" column="sender_id"/>
+        <result property="receiverId" column="receiver_id"/>
+        <result property="isRead" column="is_read"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="receiveTime" column="receive_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDeleteDc" column="is_delete_dc"/>
+        <result property="isDeletePt" column="is_delete_pt"/>
+    </resultMap>
+
+    <sql id="selectLeaveMessageVo">
+        select id,
+               record_id,
+               person_id,
+               account_name,
+               account_id,
+               user_type,
+               content_type,
+               content,
+               create_time,
+               is_delete_dc,
+               is_delete_pt,
+               sender_id,
+               receiver_id,
+               is_read,
+               update_time,
+               send_time,
+               receive_time,
+               create_time
+        from leave_message
+    </sql>
+
+    <select id="selectLeaveMessageList" parameterType="LeaveMessage" resultMap="LeaveMessageResult">
+        <include refid="selectLeaveMessageVo"/>
+        <where>
+            <if test="recordId != null ">and record_id = #{recordId}</if>
+            <if test="accountId != null ">and account_id = #{accountId}</if>
+            <if test="userType != null  and userType != ''">and user_type = #{userType}</if>
+            <if test="contentType != null  and contentType != ''">and content_type = #{contentType}</if>
+            <if test="content != null  and content != ''">and content = #{content}</if>
+            <if test="personId != null ">and person_id = #{personId}</if>
+            <if test="accountName != null  and accountName != ''">and account_name = #{accountName}</if>
+            and is_delete_dc = 0
+        </where>
+    </select>
+
+    <select id="selectLeaveMessageById" parameterType="Long" resultMap="LeaveMessageResult">
+        <include refid="selectLeaveMessageVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectUpdateReadStatus" resultType="com.dchealth.user.domain.LeaveMessage" resultMap="LeaveMessageResult">
+        <include refid="selectLeaveMessageVo"/>
+        <where>
+            <if test="personId != null">and person_id = #{personId}</if>
+            <if test="senderId != null">and sender_id = #{senderId}</if>
+            and is_read = 0 and is_delete_dc = 0
+        </where>
+
+    </select>
+
+
+    <insert id="insertLeaveMessage" parameterType="LeaveMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into leave_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="accountId != null">account_id,</if>
+            <if test="userType != null">user_type,</if>
+            <if test="contentType != null">content_type,</if>
+            <if test="senderId != null">sender_id,</if>
+            <if test="receiverId != null">receiver_id,</if>
+            <if test="isRead != null">is_read,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="sendTime != null">send_time,</if>
+            <if test="receiveTime != null">receive_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="content != null">content,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="accountName != null">account_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="accountId != null">#{accountId},</if>
+            <if test="userType != null">#{userType},</if>
+            <if test="contentType != null">#{contentType},</if>
+            <if test="senderId != null">#{senderId},</if>
+            <if test="receiverId != null">#{receiverId},</if>
+            <if test="isRead != null">#{isRead},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="receiveTime != null">#{receiveTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="content != null">#{content},</if>
+            <if test="personId != null ">#{personId},</if>
+            <if test="accountName != null  and accountName != ''">#{accountName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateLeaveMessage" parameterType="LeaveMessage">
+        update leave_message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null">record_id = #{recordId},</if>
+            <if test="accountId != null">account_id = #{accountId},</if>
+            <if test="userType != null">user_type = #{userType},</if>
+            <if test="contentType != null">content_type = #{contentType},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="personId != null ">person_id = #{personId},</if>
+            <if test="accountName != null  and accountName != ''">account_name = #{accountName},</if>
+            <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="receiveTime != null">receive_time = #{receiveTime},</if>
+            <if test="receiverId != null">receiver_id = #{receiverId},</if>
+            update_time=NOW()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLeaveMessageById" parameterType="Long">
+        update leave_message
+        set is_delete_dc = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteLeaveMessageByIds" parameterType="java.util.List">
+        UPDATE leave_message
+        SET is_delete_dc = 1
+        WHERE 1 = 0
+        <if test="ids != null and !ids.isEmpty()">
+            OR id IN
+            <foreach item="id" collection="ids" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </delete>
+</mapper>

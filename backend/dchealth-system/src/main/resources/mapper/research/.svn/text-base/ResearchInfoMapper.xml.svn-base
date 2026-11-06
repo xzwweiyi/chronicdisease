@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchInfoMapper">
+    
+    <resultMap type="ResearchInfo" id="ResearchInfoResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="researchSynopsis"    column="research_synopsis"    />
+        <result property="patientNum"    column="patient_num"    />
+        <result property="hospitalNum"    column="hospital_num"    />
+        <result property="researchStatus"    column="research_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="diseaseTypeId"    column="disease_type_id"    />
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="researchType"    column="research_type"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="stage"    column="stage"    />
+
+        <result property="evaluateBackPendingNum"    column="evaluate_back_pending_num"    />
+        <result property="evaluateBackCompletedNum"    column="evaluate_back_completed_num"    />
+        <result property="warnEvaluateBackPendingNum"    column="warn_evaluate_back_pending_num"    />
+        <result property="warnEvaluateBackCompletedNum"    column="warn_evaluate_back_completed_num"    />
+        <result property="overEvaluateBackPendingNum"    column="over_evaluate_back_pending_num"    />
+        <result property="overEvaluateBackCompletedNum"    column="over_evaluate_back_completed_num"    />
+        <result property="evaluatePendingNum"    column="evaluate_pending_num"    />
+        <result property="evaluateCompletedNum"    column="evaluate_completed_num"    />
+        
+        
+        <result property="followStatus"    column="follow_status"    />
+        <result property="evaluateStatusBack"    column="evaluate_status_back"    />
+        <result property="warnStatus"    column="warn_status"    />
+        <result property="warnEvaluateStatusBack"    column="warn_evaluate_status_back"    />
+        <result property="overTimeStatus"    column="over_time_status"    />
+        <result property="overEvaluateStatusBack"    column="over_evaluate_status_back"    />
+        <result property="evaluateStatus"    column="evaluate_status"    />
+        
+    </resultMap>
+
+    <resultMap type="ResearchInfoVo" id="ResearchInfoDetailResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="researchSynopsis"    column="research_synopsis"    />
+        <result property="patientNum"    column="patient_num"    />
+        <result property="hospitalNum"    column="hospital_num"    />
+        <result property="researchStatus"    column="research_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="diseaseTypeId"    column="disease_type_id"    />
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="researchType"    column="research_type"    />
+        <result property="researchIntro"    column="research_intro"    />
+        <result property="researchScheme"    column="research_scheme"    />
+        <result property="researchStandard"    column="research_standard"    />
+        <result property="stage"    column="stage"    />
+    </resultMap>
+
+    <sql id="selectResearchInfoVo">
+        select id, dept_id, image_url, project_name, research_synopsis, patient_num, hospital_num, research_status, create_time, update_time, create_by, update_by, disease_type_id, doctor_id, research_type, stage from research_info
+    </sql>
+
+    <sql id="selectResearchInfoDetailVo">
+        select info.id, info.dept_id, info.image_url, info.project_name, info.research_synopsis, info.patient_num, info.hospital_num, info.research_status, info.create_time, info.update_time, info.create_by, info.update_by, info.disease_type_id, info.doctor_id, info.research_type, info.stage,
+               detail.research_intro, detail.research_scheme, detail.research_standard
+        from research_info info left join research_detail detail on info.id = detail.research_id
+    </sql>
+
+    <select id="selectResearchInfoList" parameterType="ResearchInfo" resultMap="ResearchInfoResult">
+        <include refid="selectResearchInfoVo"/>
+        <where>
+            del_flag = 0
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="researchSynopsis != null  and researchSynopsis != ''"> and research_synopsis = #{researchSynopsis}</if>
+            <if test="patientNum != null "> and patient_num = #{patientNum}</if>
+            <if test="hospitalNum != null "> and hospital_num = #{hospitalNum}</if>
+            <if test="researchStatus != null  and researchStatus != ''"> and research_status = #{researchStatus}</if>
+            <if test="diseaseTypeId != null "> and disease_type_id = #{diseaseTypeId}</if>
+            <if test="doctorId != null  and doctorId != ''"> and doctor_id = #{doctorId}</if>
+            <if test="researchType != null  and researchType != ''"> and research_type = #{researchType}</if>
+            <if test="id != null "> and id = #{id}</if>
+        </where>
+    </select>
+
+    <select id="selectResearchInfoListLess" parameterType="ResearchInfo" resultMap="ResearchInfoResult">
+        select id, dept_id, disease_type_id from research_info
+        <where>
+            del_flag = 0
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="researchSynopsis != null  and researchSynopsis != ''"> and research_synopsis = #{researchSynopsis}</if>
+            <if test="patientNum != null "> and patient_num = #{patientNum}</if>
+            <if test="hospitalNum != null "> and hospital_num = #{hospitalNum}</if>
+            <if test="researchStatus != null  and researchStatus != ''"> and research_status = #{researchStatus}</if>
+            <if test="diseaseTypeId != null "> and disease_type_id = #{diseaseTypeId}</if>
+            <if test="doctorId != null  and doctorId != ''"> and doctor_id = #{doctorId}</if>
+            <if test="researchType != null  and researchType != ''"> and research_type = #{researchType}</if>
+            <if test="id != null "> and id = #{id}</if>
+        </where>
+    </select>
+    
+    <select id="selectResearchInfoById" parameterType="Long" resultMap="ResearchInfoResult">
+        <include refid="selectResearchInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectResearchInfoListByDiseaseId" parameterType="Long" resultMap="ResearchInfoResult">
+        <include refid="selectResearchInfoVo"/>
+        where id = #{diseaseId} and del_flag='0'
+    </select>
+    <select id="selectResearchListByDiseaseId" parameterType="Long" resultMap="ResearchInfoResult">
+        <include refid="selectResearchInfoVo"/>
+        where id = #{diseaseId} and  del_flag='0'
+    </select>
+
+    <select id="selectResearchInfoByStatus" parameterType="String" resultMap="ResearchInfoResult">
+        <include refid="selectResearchInfoVo"/>
+        where research_status = #{researchStatus} and del_flag='0'
+    </select>
+
+      <select id="selectResearchInfoByAuth" parameterType="com.dchealth.medical.domain.form.TreeForm" resultMap="ResearchInfoResult">
+        select r.disease_type_id,r.id,r.project_name
+        <if test="type != null and type == '2'.toString()">
+         ,pr.follow_status,pr.evaluate_status_back,pr.warn_status,pr.warn_evaluate_status_back,pr.over_time_status,pr.over_evaluate_status_back,pr.evaluate_status
+           </if>
+        from research_diseases d,research_info r,sys_dept s
+         <if test="type != null and type == '2'.toString()">  
+           ,patient_record pr,patient_info pi
+         </if>
+        where r.disease_type_id=d.disease_id and r.dept_id=s.dept_id and r.research_status='1' and d.is_deleted='0' and s.del_flag=0 and r.del_flag=0
+         <if test="type != null and type == '2'.toString()"> 
+          and pr.research_id=r.id and pi.patient_activity_status = '1' and pr.patient_id=pi.patient_id 
+         </if>
+        <if test="deptId != null and deptId!='100'.toString() "> and d.dept_id = #{deptId} and r.dept_id = #{deptId} </if>
+    </select>
+
+
+    <select id="selectResearchInfoByUserId" parameterType="com.dchealth.medical.domain.form.TreeForm" resultMap="ResearchInfoResult">
+        select r.disease_type_id,r.id,r.project_name
+         <if test="type != null and type == '2'.toString()">
+         ,pr.follow_status,pr.evaluate_status_back,pr.warn_status,pr.warn_evaluate_status_back,pr.over_time_status,pr.over_evaluate_status_back,pr.evaluate_status
+           </if>
+        from  research_diseases d,research_info r,sys_dept s
+          <if test="type != null and type == '2'.toString()">  
+           ,patient_record pr,patient_info pi
+         </if>
+           <if test="userId != null  and userId != '' and userId!='1'.toString()">
+            ,(select user_id,research_id from research_user_role where user_id=#{userId} GROUP BY user_id,research_id
+            ) as ru 
+        </if>
+          where r.disease_type_id=d.disease_id and r.dept_id=s.dept_id and r.research_status='1' and d.is_deleted='0' and s.del_flag=0 and r.del_flag=0
+        <if test="type != null and type == '2'.toString()"> 
+          and pr.research_id=r.id and pi.patient_activity_status = '1' and pr.patient_id=pi.patient_id 
+         </if>
+        <if test="userId != null  and userId != '' and userId!='1'.toString()">
+            and  r.id=ru.research_id
+        </if>
+    </select>
+
+    <select id="selectResearchInfoByIds" parameterType="Long" resultMap="ResearchInfoResult">
+        <include refid="selectResearchInfoVo"/>
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+        
+    <insert id="insertResearchInfo" parameterType="ResearchInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into research_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">dept_id,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="researchSynopsis != null">research_synopsis,</if>
+            <if test="patientNum != null">patient_num,</if>
+            <if test="hospitalNum != null">hospital_num,</if>
+            <if test="researchStatus != null">research_status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="diseaseTypeId != null">disease_type_id,</if>
+            <if test="doctorId != null">doctor_id,</if>
+            <if test="researchType != null">research_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null">#{deptId},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="researchSynopsis != null">#{researchSynopsis},</if>
+            <if test="patientNum != null">#{patientNum},</if>
+            <if test="hospitalNum != null">#{hospitalNum},</if>
+            <if test="researchStatus != null">#{researchStatus},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="diseaseTypeId != null">#{diseaseTypeId},</if>
+            <if test="doctorId != null">#{doctorId},</if>
+            <if test="researchType != null">#{researchType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchInfo" parameterType="ResearchInfo">
+        update research_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="researchSynopsis != null">research_synopsis = #{researchSynopsis},</if>
+            <if test="patientNum != null">patient_num = #{patientNum},</if>
+            <if test="hospitalNum != null">hospital_num = #{hospitalNum},</if>
+            <if test="researchStatus != null">research_status = #{researchStatus},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="diseaseTypeId != null">disease_type_id = #{diseaseTypeId},</if>
+            <if test="doctorId != null">doctor_id = #{doctorId},</if>
+            <if test="researchType != null">research_type = #{researchType},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="stage != null">stage = #{stage},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchInfoById" parameterType="Long">
+        delete from research_info where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchInfoByIds" parameterType="String">
+        delete from research_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectResearchInfoDetailList" parameterType="com.dchealth.research.domain.vo.ResearchInfoVo" resultMap="ResearchInfoDetailResult">
+        <include refid="selectResearchInfoDetailVo"/>
+        <where>
+            info.del_flag = 0
+            <if test="deptId != null "> and info.dept_id = #{deptId}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and info.image_url = #{imageUrl}</if>
+            <if test="projectName != null  and projectName != ''"> and info.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="researchSynopsis != null  and researchSynopsis != ''"> and info.research_synopsis = #{researchSynopsis}</if>
+            <if test="patientNum != null "> and info.patient_num = #{patientNum}</if>
+            <if test="hospitalNum != null "> and info.hospital_num = #{hospitalNum}</if>
+            <if test="researchStatus != null  and researchStatus != ''"> and info.research_status = #{researchStatus}</if>
+            <if test="diseaseTypeId != null "> and info.disease_type_id = #{diseaseTypeId}</if>
+            <if test="doctorId != null  and doctorId != ''"> and info.doctor_id = #{doctorId}</if>
+            <if test="researchType != null  and researchType != ''"> and info.research_type = #{researchType}</if>
+        </where>
+    </select>
+
+    <select id="selectResearchInfoDetailById" parameterType="Long" resultMap="ResearchInfoDetailResult">
+        <include refid="selectResearchInfoDetailVo"/>
+        where info.id = #{id}
+    </select>
+
+    <update id="updateInfoDelFlagById" parameterType="Long">
+        update research_info set del_flag = 1 where id = #{id}
+    </update>
+
+    <update id="updateResearchInfoStage">
+        update research_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stage != null">stage = #{stage},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateResearchInfoStatus">
+        update research_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">research_status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+</mapper>

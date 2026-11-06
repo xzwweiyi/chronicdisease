@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.base.mapper.HospitalMapper">
+
+    <resultMap type="Hospital" id="HospitalResult">
+        <result property="id"    column="id"    />
+        <result property="hospitalName"    column="hospital_name"    />
+        <result property="hospitalCode"    column="hospital_code"    />
+        <result property="provinceId"    column="province_id"    />
+        <result property="cityId"    column="city_id"    />
+        <result property="areaId"    column="area_id"    />
+        <result property="address"    column="address"    />
+        <result property="hospitalIntro"    column="hospital_intro"    />
+        <result property="hospitalImage"    column="hospital_image"    />
+        <result property="provinceName"    column="province_name"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="areaName"    column="area_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectHospitalVo">
+        select h.id, h.hospital_name, h.hospital_code, h.province_id, h.city_id, h.area_id,
+               h.address, h.hospital_intro, h.hospital_image, h.create_by, h.create_time,
+               h.update_by, h.update_time, h.remark,
+               p.area_name as province_name, c.area_name as city_name, a.area_name as area_name
+        from sys_hospital h
+        left join sys_area p on h.province_id = p.area_id
+        left join sys_area c on h.city_id = c.area_id
+        left join sys_area a on h.area_id = a.area_id
+    </sql>
+
+    <select id="selectHospitalList" parameterType="Hospital" resultMap="HospitalResult">
+        <include refid="selectHospitalVo"/>
+        <where>
+            h.del_flag = '0'
+            <if test="hospitalName != null  and hospitalName != ''"> and h.hospital_name like concat('%', #{hospitalName}, '%')</if>
+            <if test="hospitalCode != null  and hospitalCode != ''"> and h.hospital_code like concat('%', #{hospitalCode}, '%')</if>
+            <if test="provinceId != null"> and h.province_id = #{provinceId}</if>
+            <if test="cityId != null"> and h.city_id = #{cityId}</if>
+            <if test="areaId != null"> and h.area_id = #{areaId}</if>
+        </where>
+        order by h.id desc
+    </select>
+
+    <select id="selectHospitalById" parameterType="Long" resultMap="HospitalResult">
+        <include refid="selectHospitalVo"/>
+        where h.id = #{id}
+    </select>
+
+    <insert id="insertHospital" parameterType="Hospital" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_hospital
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hospitalName != null">hospital_name,</if>
+            <if test="hospitalCode != null">hospital_code,</if>
+            <if test="provinceId != null">province_id,</if>
+            <if test="cityId != null">city_id,</if>
+            <if test="areaId != null">area_id,</if>
+            <if test="address != null">address,</if>
+            <if test="hospitalIntro != null">hospital_intro,</if>
+            <if test="hospitalImage != null">hospital_image,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hospitalName != null">#{hospitalName},</if>
+            <if test="hospitalCode != null">#{hospitalCode},</if>
+            <if test="provinceId != null">#{provinceId},</if>
+            <if test="cityId != null">#{cityId},</if>
+            <if test="areaId != null">#{areaId},</if>
+            <if test="address != null">#{address},</if>
+            <if test="hospitalIntro != null">#{hospitalIntro},</if>
+            <if test="hospitalImage != null">#{hospitalImage},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHospital" parameterType="Hospital">
+        update sys_hospital
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hospitalName != null">hospital_name = #{hospitalName},</if>
+            <if test="hospitalCode != null">hospital_code = #{hospitalCode},</if>
+            <if test="provinceId != null">province_id = #{provinceId},</if>
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="areaId != null">area_id = #{areaId},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="hospitalIntro != null">hospital_intro = #{hospitalIntro},</if>
+            <if test="hospitalImage != null">hospital_image = #{hospitalImage},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHospitalById" parameterType="Long">
+        update sys_hospital set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteHospitalByIds" parameterType="String">
+        update sys_hospital set del_flag = '1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

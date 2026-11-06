@@ -1,0 +1,46 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-generator/src/main/resources
+svn://xiaoshiguang.top
+
+
+
+2022-08-18T02:39:41.700877Z
+8505
+majingming
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+generator.yml
+file
+
+
+
+
+2024-09-03T07:48:12.960000Z
+5bd238fbc8f833d9d13ca7f00e9e5461
+2022-08-18T02:39:41.700877Z
+8505
+majingming
+
+mapper
+dir
+
+vm
+dir
+

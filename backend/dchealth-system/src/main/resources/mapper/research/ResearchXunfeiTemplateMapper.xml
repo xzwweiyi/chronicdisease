@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.research.mapper.ResearchXunfeiTemplateMapper">
+    
+    <resultMap type="ResearchXunfeiTemplate" id="ResearchXunfeiTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="speechId"    column="speech_id"    />
+        <result property="name"    column="name"    />
+        <result property="intro"    column="intro"    />
+        <result property="sortNum"    column="sort_num"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="imageUrl"    column="image_url"    />
+    </resultMap>
+
+    <sql id="selectResearchXunfeiTemplateVo">
+        select id, speech_id, name, intro, sort_num, del_flag, update_by, create_by, create_time, update_time, image_url from research_xunfei_template
+    </sql>
+
+    <select id="selectResearchXunfeiTemplateList" parameterType="ResearchXunfeiTemplate" resultMap="ResearchXunfeiTemplateResult">
+        <include refid="selectResearchXunfeiTemplateVo"/>
+        <where>  
+            <if test="speechId != null "> and speech_id = #{speechId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="intro != null  and intro != ''"> and intro = #{intro}</if>
+            <if test="sortNum != null "> and sort_num = #{sortNum}</if>
+            <if test="delFlag != null  and delFlag != ''"> and del_flag = #{delFlag}</if>
+        </where>
+        ORDER BY sort_num asc
+    </select>
+    
+    <select id="selectResearchXunfeiTemplateById" parameterType="Long" resultMap="ResearchXunfeiTemplateResult">
+        <include refid="selectResearchXunfeiTemplateVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertResearchXunfeiTemplate" parameterType="ResearchXunfeiTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into research_xunfei_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="speechId != null">speech_id,</if>
+            <if test="name != null">name,</if>
+            <if test="intro != null">intro,</if>
+            <if test="sortNum != null">sort_num,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="imageUrl != null">image_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="speechId != null">#{speechId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="intro != null">#{intro},</if>
+            <if test="sortNum != null">#{sortNum},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResearchXunfeiTemplate" parameterType="ResearchXunfeiTemplate">
+        update research_xunfei_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="speechId != null">speech_id = #{speechId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="intro != null">intro = #{intro},</if>
+            <if test="sortNum != null">sort_num = #{sortNum},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResearchXunfeiTemplateById" parameterType="Long">
+        delete from research_xunfei_template where id = #{id}
+    </delete>
+
+    <delete id="deleteResearchXunfeiTemplateByIds" parameterType="String">
+        delete from research_xunfei_template where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBySpeedId" parameterType="String" resultMap="ResearchXunfeiTemplateResult">
+        <include refid="selectResearchXunfeiTemplateVo"/>
+        where speech_id = #{speechId} limit 0,1
+    </select>
+
+
+</mapper>

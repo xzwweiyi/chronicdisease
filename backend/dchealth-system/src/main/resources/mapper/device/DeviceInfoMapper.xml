@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.device.mapper.DeviceInfoMapper">
+
+    <resultMap type="com.dchealth.device.domain.DeviceInfo" id="DeviceInfoResult">
+        <id property="id" column="id"/>
+        <result property="deviceCode" column="device_code"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="deviceType" column="device_type"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="model" column="model"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="warrantyExpire" column="warranty_expire"/>
+        <result property="deviceStatus" column="device_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectDeviceInfoVo">
+        select id, device_code, device_name, device_type, manufacturer, model, purchase_date, warranty_expire, device_status, create_by, create_time, update_by, update_time, remark
+        from device_info
+    </sql>
+
+    <select id="selectDeviceInfoList" parameterType="DeviceInfo" resultMap="DeviceInfoResult">
+        <include refid="selectDeviceInfoVo"/>
+        <where>
+            <if test="deviceCode != null and deviceCode != ''">and device_code like concat('%', #{deviceCode}, '%')</if>
+            <if test="deviceName != null and deviceName != ''">and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="deviceType != null and deviceType != ''">and device_type like concat('%', #{deviceType}, '%')</if>
+            <if test="manufacturer != null and manufacturer != ''">and manufacturer like concat('%', #{manufacturer}, '%')</if>
+            <if test="model != null and model != ''">and model like concat('%', #{model}, '%')</if>
+            <if test="purchaseDate != null">and purchase_date = #{purchaseDate}</if>
+            <if test="warrantyExpire != null">and warranty_expire = #{warrantyExpire}</if>
+            <if test="deviceStatus != null and deviceStatus != ''">and device_status like concat('%', #{deviceStatus}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectDeviceInfoById" parameterType="Long" resultMap="DeviceInfoResult">
+        <include refid="selectDeviceInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDeviceInfo" parameterType="DeviceInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into device_info (device_code, device_name, device_type, manufacturer, model, purchase_date, warranty_expire, device_status, create_by, create_time, remark)
+        values (#{deviceCode}, #{deviceName}, #{deviceType}, #{manufacturer}, #{model}, #{purchaseDate}, #{warrantyExpire}, #{deviceStatus}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateDeviceInfo" parameterType="DeviceInfo">
+        update device_info
+        <set>
+            <if test="deviceCode != null">device_code = #{deviceCode},</if>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="purchaseDate != null">purchase_date = #{purchaseDate},</if>
+            <if test="warrantyExpire != null">warranty_expire = #{warrantyExpire},</if>
+            <if test="deviceStatus != null">device_status = #{deviceStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDeviceInfoById" parameterType="Long">
+        delete from device_info where id = #{id}
+    </delete>
+
+    <delete id="deleteDeviceInfoByIds" parameterType="String">
+        delete from device_info where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,52 @@
+8
+
+dir
+20128
+svn://xiaoshiguang.top/repository/dchealth/dchealth/trunk/dchealth/dchealth-es/src/main/java/com/dchealth/elasticsearch/domain
+svn://xiaoshiguang.top
+
+
+
+2022-12-05T02:26:30.033482Z
+9952
+majingming
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+92a8923e-c124-4654-873e-8e474df7c0b7
+
+ElasticsearchHitResult.java
+file
+
+
+
+
+2024-09-03T07:48:13.342000Z
+3707ee512d401e0c04c05b8831199236
+2022-12-05T02:26:30.033482Z
+9952
+majingming
+
+ElasticsearchResult.java
+file
+
+
+
+
+2024-09-03T07:48:13.342000Z
+d14c39c2603bc9b6ef155bfda1560429
+2022-12-05T02:26:30.033482Z
+9952
+majingming
+

@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.PatMasterIndexMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.PatMasterIndex" id="PatMasterIndexMap">
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="inpNo" column="inp_no" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="namePhonetic" column="name_phonetic" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="dateOfBirth" column="date_of_birth" jdbcType="VARCHAR"/>
+        <result property="birthPlace" column="birth_place" jdbcType="VARCHAR"/>
+        <result property="nation" column="nation" jdbcType="VARCHAR"/>
+        <result property="idNo" column="id_no" jdbcType="VARCHAR"/>
+        <result property="identity" column="identity" jdbcType="VARCHAR"/>
+        <result property="chargeType" column="charge_type" jdbcType="VARCHAR"/>
+        <result property="unitInContract" column="unit_in_contract" jdbcType="VARCHAR"/>
+        <result property="mailingAddress" column="mailing_address" jdbcType="VARCHAR"/>
+        <result property="zipCode" column="zip_code" jdbcType="VARCHAR"/>
+        <result property="phoneNumberHome" column="phone_number_home" jdbcType="VARCHAR"/>
+        <result property="phoneNumberBusiness" column="phone_number_business" jdbcType="VARCHAR"/>
+        <result property="nextOfKin" column="next_of_kin" jdbcType="VARCHAR"/>
+        <result property="relationship" column="relationship" jdbcType="VARCHAR"/>
+        <result property="nextOfKinAddr" column="next_of_kin_addr" jdbcType="VARCHAR"/>
+        <result property="nextOfKinZipCode" column="next_of_kin_zip_code" jdbcType="VARCHAR"/>
+        <result property="nextOfKinPhone" column="next_of_kin_phone" jdbcType="VARCHAR"/>
+        <result property="lastVisitDate" column="last_visit_date" jdbcType="TIMESTAMP"/>
+        <result property="vipIndicator" column="vip_indicator" jdbcType="INTEGER"/>
+        <result property="createDate" column="create_date" jdbcType="VARCHAR"/>
+        <result property="operator" column="operator" jdbcType="VARCHAR"/>
+        <result property="cardStatus" column="card_status" jdbcType="INTEGER"/>
+        <result property="rundcode" column="rundcode" jdbcType="VARCHAR"/>
+        <result property="bankflag" column="bankflag" jdbcType="INTEGER"/>
+        <result property="bankcardNo" column="bankcard_no" jdbcType="VARCHAR"/>
+        <result property="secretLevel" column="secret_level" jdbcType="INTEGER"/>
+        <result property="citizenship" column="citizenship" jdbcType="VARCHAR"/>
+        <result property="column1" column="Column1" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PatMasterIndexMap">
+        select
+          patient_id, inp_no, name, name_phonetic, sex, date_of_birth, birth_place, nation, id_no, identity, charge_type, unit_in_contract, mailing_address, zip_code, phone_number_home, phone_number_business, next_of_kin, relationship, next_of_kin_addr, next_of_kin_zip_code, next_of_kin_phone, last_visit_date, vip_indicator, create_date, operator, card_status, rundcode, bankflag, bankcard_no, secret_level, citizenship, Column1
+        from pat_master_index
+        where patient_id = #{patientId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PatMasterIndexMap">
+        select
+          patient_id, inp_no, name, name_phonetic, sex, date_of_birth, birth_place, nation, id_no, identity, charge_type, unit_in_contract, mailing_address, zip_code, phone_number_home, phone_number_business, next_of_kin, relationship, next_of_kin_addr, next_of_kin_zip_code, next_of_kin_phone, last_visit_date, vip_indicator, create_date, operator, card_status, rundcode, bankflag, bankcard_no, secret_level, citizenship, Column1
+        from pat_master_index
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="inpNo != null and inpNo != ''">
+                and inp_no = #{inpNo}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="namePhonetic != null and namePhonetic != ''">
+                and name_phonetic = #{namePhonetic}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="dateOfBirth != null and dateOfBirth != ''">
+                and date_of_birth = #{dateOfBirth}
+            </if>
+            <if test="birthPlace != null and birthPlace != ''">
+                and birth_place = #{birthPlace}
+            </if>
+            <if test="nation != null and nation != ''">
+                and nation = #{nation}
+            </if>
+            <if test="idNo != null and idNo != ''">
+                and id_no = #{idNo}
+            </if>
+            <if test="identity != null and identity != ''">
+                and identity = #{identity}
+            </if>
+            <if test="chargeType != null and chargeType != ''">
+                and charge_type = #{chargeType}
+            </if>
+            <if test="unitInContract != null and unitInContract != ''">
+                and unit_in_contract = #{unitInContract}
+            </if>
+            <if test="mailingAddress != null and mailingAddress != ''">
+                and mailing_address = #{mailingAddress}
+            </if>
+            <if test="zipCode != null and zipCode != ''">
+                and zip_code = #{zipCode}
+            </if>
+            <if test="phoneNumberHome != null and phoneNumberHome != ''">
+                and phone_number_home = #{phoneNumberHome}
+            </if>
+            <if test="phoneNumberBusiness != null and phoneNumberBusiness != ''">
+                and phone_number_business = #{phoneNumberBusiness}
+            </if>
+            <if test="nextOfKin != null and nextOfKin != ''">
+                and next_of_kin = #{nextOfKin}
+            </if>
+            <if test="relationship != null and relationship != ''">
+                and relationship = #{relationship}
+            </if>
+            <if test="nextOfKinAddr != null and nextOfKinAddr != ''">
+                and next_of_kin_addr = #{nextOfKinAddr}
+            </if>
+            <if test="nextOfKinZipCode != null and nextOfKinZipCode != ''">
+                and next_of_kin_zip_code = #{nextOfKinZipCode}
+            </if>
+            <if test="nextOfKinPhone != null and nextOfKinPhone != ''">
+                and next_of_kin_phone = #{nextOfKinPhone}
+            </if>
+            <if test="lastVisitDate != null and lastVisitDate != ''">
+                and last_visit_date = #{lastVisitDate}
+            </if>
+            <if test="vipIndicator != null">
+                and vip_indicator = #{vipIndicator}
+            </if>
+            <if test="createDate != null and createDate != ''">
+                and create_date = #{createDate}
+            </if>
+            <if test="operator != null and operator != ''">
+                and operator = #{operator}
+            </if>
+            <if test="cardStatus != null">
+                and card_status = #{cardStatus}
+            </if>
+            <if test="rundcode != null and rundcode != ''">
+                and rundcode = #{rundcode}
+            </if>
+            <if test="bankflag != null">
+                and bankflag = #{bankflag}
+            </if>
+            <if test="bankcardNo != null and bankcardNo != ''">
+                and bankcard_no = #{bankcardNo}
+            </if>
+            <if test="secretLevel != null">
+                and secret_level = #{secretLevel}
+            </if>
+            <if test="citizenship != null and citizenship != ''">
+                and citizenship = #{citizenship}
+            </if>
+            <if test="column1 != null">
+                and Column1 = #{column1}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from pat_master_index
+        <where>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="inpNo != null and inpNo != ''">
+                and inp_no = #{inpNo}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="namePhonetic != null and namePhonetic != ''">
+                and name_phonetic = #{namePhonetic}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="dateOfBirth != null and dateOfBirth != ''">
+                and date_of_birth = #{dateOfBirth}
+            </if>
+            <if test="birthPlace != null and birthPlace != ''">
+                and birth_place = #{birthPlace}
+            </if>
+            <if test="nation != null and nation != ''">
+                and nation = #{nation}
+            </if>
+            <if test="idNo != null and idNo != ''">
+                and id_no = #{idNo}
+            </if>
+            <if test="identity != null and identity != ''">
+                and identity = #{identity}
+            </if>
+            <if test="chargeType != null and chargeType != ''">
+                and charge_type = #{chargeType}
+            </if>
+            <if test="unitInContract != null and unitInContract != ''">
+                and unit_in_contract = #{unitInContract}
+            </if>
+            <if test="mailingAddress != null and mailingAddress != ''">
+                and mailing_address = #{mailingAddress}
+            </if>
+            <if test="zipCode != null and zipCode != ''">
+                and zip_code = #{zipCode}
+            </if>
+            <if test="phoneNumberHome != null and phoneNumberHome != ''">
+                and phone_number_home = #{phoneNumberHome}
+            </if>
+            <if test="phoneNumberBusiness != null and phoneNumberBusiness != ''">
+                and phone_number_business = #{phoneNumberBusiness}
+            </if>
+            <if test="nextOfKin != null and nextOfKin != ''">
+                and next_of_kin = #{nextOfKin}
+            </if>
+            <if test="relationship != null and relationship != ''">
+                and relationship = #{relationship}
+            </if>
+            <if test="nextOfKinAddr != null and nextOfKinAddr != ''">
+                and next_of_kin_addr = #{nextOfKinAddr}
+            </if>
+            <if test="nextOfKinZipCode != null and nextOfKinZipCode != ''">
+                and next_of_kin_zip_code = #{nextOfKinZipCode}
+            </if>
+            <if test="nextOfKinPhone != null and nextOfKinPhone != ''">
+                and next_of_kin_phone = #{nextOfKinPhone}
+            </if>
+            <if test="lastVisitDate != null and lastVisitDate != ''">
+                and last_visit_date = #{lastVisitDate}
+            </if>
+            <if test="vipIndicator != null">
+                and vip_indicator = #{vipIndicator}
+            </if>
+            <if test="createDate != null and createDate != ''">
+                and create_date = #{createDate}
+            </if>
+            <if test="operator != null and operator != ''">
+                and operator = #{operator}
+            </if>
+            <if test="cardStatus != null">
+                and card_status = #{cardStatus}
+            </if>
+            <if test="rundcode != null and rundcode != ''">
+                and rundcode = #{rundcode}
+            </if>
+            <if test="bankflag != null">
+                and bankflag = #{bankflag}
+            </if>
+            <if test="bankcardNo != null and bankcardNo != ''">
+                and bankcard_no = #{bankcardNo}
+            </if>
+            <if test="secretLevel != null">
+                and secret_level = #{secretLevel}
+            </if>
+            <if test="citizenship != null and citizenship != ''">
+                and citizenship = #{citizenship}
+            </if>
+            <if test="column1 != null">
+                and Column1 = #{column1}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="PatMasterIndexMap">
+        select
+        patient_id, inp_no, name, name_phonetic, sex, date_of_birth, birth_place, nation, id_no, identity, charge_type, unit_in_contract, mailing_address, zip_code, phone_number_home, phone_number_business, next_of_kin, relationship, next_of_kin_addr, next_of_kin_zip_code, next_of_kin_phone, last_visit_date, vip_indicator, create_date, operator, card_status, rundcode, bankflag, bankcard_no, secret_level, citizenship, Column1
+        from pat_master_index
+        <where>
+            <if test="patMasterIndex.patientId != null and patMasterIndex.patientId != ''">
+                and patient_id > #{patMasterIndex.patientId}
+            </if>
+
+        </where>
+        order by patient_id
+        limit #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into pat_master_index(patient_id, inp_no, name, name_phonetic, sex, date_of_birth, birth_place, nation, id_no, identity, charge_type, unit_in_contract, mailing_address, zip_code, phone_number_home, phone_number_business, next_of_kin, relationship, next_of_kin_addr, next_of_kin_zip_code, next_of_kin_phone, last_visit_date, vip_indicator, create_date, operator, card_status, rundcode, bankflag, bankcard_no, secret_level, citizenship, Column1)
+        values (#{patientId}, #{inpNo}, #{name}, #{namePhonetic}, #{sex}, #{dateOfBirth}, #{birthPlace}, #{nation}, #{idNo}, #{identity}, #{chargeType}, #{unitInContract}, #{mailingAddress}, #{zipCode}, #{phoneNumberHome}, #{phoneNumberBusiness}, #{nextOfKin}, #{relationship}, #{nextOfKinAddr}, #{nextOfKinZipCode}, #{nextOfKinPhone}, #{lastVisitDate}, #{vipIndicator}, #{createDate}, #{operator}, #{cardStatus}, #{rundcode}, #{bankflag}, #{bankcardNo}, #{secretLevel}, #{citizenship}, #{column1})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into pat_master_index(patient_id, inp_no, name, name_phonetic, sex, date_of_birth, birth_place, nation, id_no, identity, charge_type, unit_in_contract, mailing_address, zip_code, phone_number_home, phone_number_business, next_of_kin, relationship, next_of_kin_addr, next_of_kin_zip_code, next_of_kin_phone, last_visit_date, vip_indicator, create_date, operator, card_status, rundcode, bankflag, bankcard_no, secret_level, citizenship, Column1)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.patientId}, #{entity.inpNo}, #{entity.name}, #{entity.namePhonetic}, #{entity.sex}, #{entity.dateOfBirth}, #{entity.birthPlace}, #{entity.nation}, #{entity.idNo}, #{entity.identity}, #{entity.chargeType}, #{entity.unitInContract}, #{entity.mailingAddress}, #{entity.zipCode}, #{entity.phoneNumberHome}, #{entity.phoneNumberBusiness}, #{entity.nextOfKin}, #{entity.relationship}, #{entity.nextOfKinAddr}, #{entity.nextOfKinZipCode}, #{entity.nextOfKinPhone}, #{entity.lastVisitDate}, #{entity.vipIndicator}, #{entity.createDate}, #{entity.operator}, #{entity.cardStatus}, #{entity.rundcode}, #{entity.bankflag}, #{entity.bankcardNo}, #{entity.secretLevel}, #{entity.citizenship}, #{entity.column1})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into pat_master_index(patient_id, inp_no, name, name_phonetic, sex, date_of_birth, birth_place, nation, id_no, identity, charge_type, unit_in_contract, mailing_address, zip_code, phone_number_home, phone_number_business, next_of_kin, relationship, next_of_kin_addr, next_of_kin_zip_code, next_of_kin_phone, last_visit_date, vip_indicator, create_date, operator, card_status, rundcode, bankflag, bankcard_no, secret_level, citizenship, Column1)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.patientId}, #{entity.inpNo}, #{entity.name}, #{entity.namePhonetic}, #{entity.sex}, #{entity.dateOfBirth}, #{entity.birthPlace}, #{entity.nation}, #{entity.idNo}, #{entity.identity}, #{entity.chargeType}, #{entity.unitInContract}, #{entity.mailingAddress}, #{entity.zipCode}, #{entity.phoneNumberHome}, #{entity.phoneNumberBusiness}, #{entity.nextOfKin}, #{entity.relationship}, #{entity.nextOfKinAddr}, #{entity.nextOfKinZipCode}, #{entity.nextOfKinPhone}, #{entity.lastVisitDate}, #{entity.vipIndicator}, #{entity.createDate}, #{entity.operator}, #{entity.cardStatus}, #{entity.rundcode}, #{entity.bankflag}, #{entity.bankcardNo}, #{entity.secretLevel}, #{entity.citizenship}, #{entity.column1})
+        </foreach>
+        on duplicate key update
+        patient_id = values(patient_id),
+        inp_no = values(inp_no),
+        name = values(name),
+        name_phonetic = values(name_phonetic),
+        sex = values(sex),
+        date_of_birth = values(date_of_birth),
+        birth_place = values(birth_place),
+        nation = values(nation),
+        id_no = values(id_no),
+        identity = values(identity),
+        charge_type = values(charge_type),
+        unit_in_contract = values(unit_in_contract),
+        mailing_address = values(mailing_address),
+        zip_code = values(zip_code),
+        phone_number_home = values(phone_number_home),
+        phone_number_business = values(phone_number_business),
+        next_of_kin = values(next_of_kin),
+        relationship = values(relationship),
+        next_of_kin_addr = values(next_of_kin_addr),
+        next_of_kin_zip_code = values(next_of_kin_zip_code),
+        next_of_kin_phone = values(next_of_kin_phone),
+        last_visit_date = values(last_visit_date),
+        vip_indicator = values(vip_indicator),
+        create_date = values(create_date),
+        operator = values(operator),
+        card_status = values(card_status),
+        rundcode = values(rundcode),
+        bankflag = values(bankflag),
+        bankcard_no = values(bankcard_no),
+        secret_level = values(secret_level),
+        citizenship = values(citizenship),
+        Column1 = values(Column1)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update pat_master_index
+        <set>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="inpNo != null and inpNo != ''">
+                inp_no = #{inpNo},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="namePhonetic != null and namePhonetic != ''">
+                name_phonetic = #{namePhonetic},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="dateOfBirth != null and dateOfBirth != ''">
+                date_of_birth = #{dateOfBirth},
+            </if>
+            <if test="birthPlace != null and birthPlace != ''">
+                birth_place = #{birthPlace},
+            </if>
+            <if test="nation != null and nation != ''">
+                nation = #{nation},
+            </if>
+            <if test="idNo != null and idNo != ''">
+                id_no = #{idNo},
+            </if>
+            <if test="identity != null and identity != ''">
+                identity = #{identity},
+            </if>
+            <if test="chargeType != null and chargeType != ''">
+                charge_type = #{chargeType},
+            </if>
+            <if test="unitInContract != null and unitInContract != ''">
+                unit_in_contract = #{unitInContract},
+            </if>
+            <if test="mailingAddress != null and mailingAddress != ''">
+                mailing_address = #{mailingAddress},
+            </if>
+            <if test="zipCode != null and zipCode != ''">
+                zip_code = #{zipCode},
+            </if>
+            <if test="phoneNumberHome != null and phoneNumberHome != ''">
+                phone_number_home = #{phoneNumberHome},
+            </if>
+            <if test="phoneNumberBusiness != null and phoneNumberBusiness != ''">
+                phone_number_business = #{phoneNumberBusiness},
+            </if>
+            <if test="nextOfKin != null and nextOfKin != ''">
+                next_of_kin = #{nextOfKin},
+            </if>
+            <if test="relationship != null and relationship != ''">
+                relationship = #{relationship},
+            </if>
+            <if test="nextOfKinAddr != null and nextOfKinAddr != ''">
+                next_of_kin_addr = #{nextOfKinAddr},
+            </if>
+            <if test="nextOfKinZipCode != null and nextOfKinZipCode != ''">
+                next_of_kin_zip_code = #{nextOfKinZipCode},
+            </if>
+            <if test="nextOfKinPhone != null and nextOfKinPhone != ''">
+                next_of_kin_phone = #{nextOfKinPhone},
+            </if>
+            <if test="lastVisitDate != null and lastVisitDate != ''">
+                last_visit_date = #{lastVisitDate},
+            </if>
+            <if test="vipIndicator != null">
+                vip_indicator = #{vipIndicator},
+            </if>
+            <if test="createDate != null and createDate != ''">
+                create_date = #{createDate},
+            </if>
+            <if test="operator != null and operator != ''">
+                operator = #{operator},
+            </if>
+            <if test="cardStatus != null">
+                card_status = #{cardStatus},
+            </if>
+            <if test="rundcode != null and rundcode != ''">
+                rundcode = #{rundcode},
+            </if>
+            <if test="bankflag != null">
+                bankflag = #{bankflag},
+            </if>
+            <if test="bankcardNo != null and bankcardNo != ''">
+                bankcard_no = #{bankcardNo},
+            </if>
+            <if test="secretLevel != null">
+                secret_level = #{secretLevel},
+            </if>
+            <if test="citizenship != null and citizenship != ''">
+                citizenship = #{citizenship},
+            </if>
+            <if test="column1 != null">
+                Column1 = #{column1},
+            </if>
+        </set>
+        where patient_id = #{patientId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from pat_master_index where patient_id = #{patientId}
+    </delete>
+
+</mapper>
+

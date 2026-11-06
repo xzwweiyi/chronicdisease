@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.contract.mapper.ContractTeamMapper">
+
+    <resultMap type="com.dchealth.contract.domain.ContractTeam" id="ContractTeamResult">
+        <id property="id" column="id"/>
+        <result property="teamName" column="team_name"/>
+        <result property="leaderName" column="leader_name"/>
+        <result property="leaderPhone" column="leader_phone"/>
+        <result property="members" column="members"/>
+        <result property="serviceArea" column="service_area"/>
+        <result property="teamIntro" column="team_intro"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectContractTeamVo">
+        select id, team_name, leader_name, leader_phone, members, service_area, team_intro, status, create_by, create_time, update_by, update_time, remark
+        from contract_team
+    </sql>
+
+    <select id="selectContractTeamList" parameterType="ContractTeam" resultMap="ContractTeamResult">
+        <include refid="selectContractTeamVo"/>
+        <where>
+            <if test="teamName != null and teamName != ''">and team_name like concat('%', #{teamName}, '%')</if>
+            <if test="leaderName != null and leaderName != ''">and leader_name like concat('%', #{leaderName}, '%')</if>
+            <if test="leaderPhone != null and leaderPhone != ''">and leader_phone like concat('%', #{leaderPhone}, '%')</if>
+            <if test="members != null and members != ''">and members like concat('%', #{members}, '%')</if>
+            <if test="serviceArea != null and serviceArea != ''">and service_area like concat('%', #{serviceArea}, '%')</if>
+            <if test="teamIntro != null and teamIntro != ''">and team_intro like concat('%', #{teamIntro}, '%')</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectContractTeamById" parameterType="Long" resultMap="ContractTeamResult">
+        <include refid="selectContractTeamVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertContractTeam" parameterType="ContractTeam" useGeneratedKeys="true" keyProperty="id">
+        insert into contract_team (team_name, leader_name, leader_phone, members, service_area, team_intro, status, create_by, create_time, remark)
+        values (#{teamName}, #{leaderName}, #{leaderPhone}, #{members}, #{serviceArea}, #{teamIntro}, #{status}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateContractTeam" parameterType="ContractTeam">
+        update contract_team
+        <set>
+            <if test="teamName != null">team_name = #{teamName},</if>
+            <if test="leaderName != null">leader_name = #{leaderName},</if>
+            <if test="leaderPhone != null">leader_phone = #{leaderPhone},</if>
+            <if test="members != null">members = #{members},</if>
+            <if test="serviceArea != null">service_area = #{serviceArea},</if>
+            <if test="teamIntro != null">team_intro = #{teamIntro},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteContractTeamById" parameterType="Long">
+        delete from contract_team where id = #{id}
+    </delete>
+
+    <delete id="deleteContractTeamByIds" parameterType="String">
+        delete from contract_team where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

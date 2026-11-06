@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.aieval.mapper.AiEvaluationProjectMapper">
+
+    <resultMap type="com.dchealth.aieval.domain.AiEvaluationProject" id="AiEvaluationProjectResult">
+        <id property="id" column="id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="projectCode" column="project_code"/>
+        <result property="diseaseType" column="disease_type"/>
+        <result property="evaluationType" column="evaluation_type"/>
+        <result property="description" column="description"/>
+        <result property="modelConfig" column="model_config"/>
+        <result property="ruleConfig" column="rule_config"/>
+        <result property="inputFields" column="input_fields"/>
+        <result property="outputFields" column="output_fields"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="dataCount" column="dataCount"/>
+    </resultMap>
+
+    <sql id="selectAiEvaluationProjectVo">
+        select id, project_name, project_code, disease_type, evaluation_type, description, model_config, rule_config, input_fields, output_fields, create_by, create_time, update_by, update_time, remark
+        from ai_evaluation_project
+    </sql>
+
+    <select id="selectAiEvaluationProjectList" parameterType="AiEvaluationProject" resultMap="AiEvaluationProjectResult">
+        select p.id, p.project_name, p.project_code, p.disease_type, p.evaluation_type, p.description, p.model_config, p.rule_config, p.input_fields, p.output_fields, p.create_by, p.create_time, p.update_by, p.update_time, p.remark,
+               (select count(*) from ai_evaluation_data d where d.project_id = p.id) as dataCount
+        from ai_evaluation_project p
+        <where>
+            <if test="projectName != null and projectName != ''">and p.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null and projectCode != ''">and p.project_code like concat('%', #{projectCode}, '%')</if>
+            <if test="diseaseType != null and diseaseType != ''">and p.disease_type like concat('%', #{diseaseType}, '%')</if>
+            <if test="evaluationType != null and evaluationType != ''">and p.evaluation_type like concat('%', #{evaluationType}, '%')</if>
+            <if test="description != null and description != ''">and p.description like concat('%', #{description}, '%')</if>
+            <if test="modelConfig != null and modelConfig != ''">and p.model_config like concat('%', #{modelConfig}, '%')</if>
+            <if test="ruleConfig != null and ruleConfig != ''">and p.rule_config like concat('%', #{ruleConfig}, '%')</if>
+            <if test="inputFields != null and inputFields != ''">and p.input_fields like concat('%', #{inputFields}, '%')</if>
+            <if test="outputFields != null and outputFields != ''">and p.output_fields like concat('%', #{outputFields}, '%')</if>
+        </where>
+        order by p.id desc
+    </select>
+
+    <select id="selectAiEvaluationProjectById" parameterType="Long" resultMap="AiEvaluationProjectResult">
+        <include refid="selectAiEvaluationProjectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAiEvaluationProject" parameterType="AiEvaluationProject" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_evaluation_project (project_name, project_code, disease_type, evaluation_type, description, model_config, rule_config, input_fields, output_fields, create_by, create_time, remark)
+        values (#{projectName}, #{projectCode}, #{diseaseType}, #{evaluationType}, #{description}, #{modelConfig}, #{ruleConfig}, #{inputFields}, #{outputFields}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateAiEvaluationProject" parameterType="AiEvaluationProject">
+        update ai_evaluation_project
+        <set>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="projectCode != null">project_code = #{projectCode},</if>
+            <if test="diseaseType != null">disease_type = #{diseaseType},</if>
+            <if test="evaluationType != null">evaluation_type = #{evaluationType},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="modelConfig != null">model_config = #{modelConfig},</if>
+            <if test="ruleConfig != null">rule_config = #{ruleConfig},</if>
+            <if test="inputFields != null">input_fields = #{inputFields},</if>
+            <if test="outputFields != null">output_fields = #{outputFields},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAiEvaluationProjectById" parameterType="Long">
+        delete from ai_evaluation_project where id = #{id}
+    </delete>
+
+    <delete id="deleteAiEvaluationProjectByIds" parameterType="String">
+        delete from ai_evaluation_project where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

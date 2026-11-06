@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.compatibility.mapper.MpDrugExposureMapper">
+    
+    <resultMap type="MpDrugExposure" id="MpDrugExposureResult">
+        <result property="id"    column="id"    />
+        <result property="careSiteId"    column="care_site_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="visitOccurrenceId"    column="visit_occurrence_id"    />
+        <result property="drugExposureId"    column="drug_exposure_id"    />
+        <result property="drugType"    column="drug_type"    />
+        <result property="drugSctid"    column="drug_sctid"    />
+        <result property="drugValue"    column="drug_value"    />
+        <result property="dosageForm"    column="dosage_form"    />
+        <result property="drugExposureStartDate"    column="drug_exposure_start_date"    />
+        <result property="daysSupply"    column="days_supply"    />
+        <result property="departmentName"    column="department_name"    />
+    </resultMap>
+
+    <sql id="selectMpDrugExposureVo">
+        select id, care_site_id, person_id, visit_occurrence_id, drug_exposure_id, drug_type, drug_sctid, drug_value, dosage_form, drug_exposure_start_date, days_supply, department_name from mp_drug_exposure
+    </sql>
+
+    <select id="selectByPersonIdAndVisitId"  resultMap="MpDrugExposureResult">
+        <include refid="selectMpDrugExposureVo"/>
+        where visit_occurrence_id = #{visitOccurrenceId} and person_id = #{personId}
+    </select>
+
+
+
+    <select id="selectPatientDrugInfoList" parameterType="MpDrugExposure" resultType="com.dchealth.compatibility.domain.MpDrugExposure">
+        SELECT
+        p.id id,
+        p.person_id personId,
+        p.visit_occurrence_id visitOccurrenceId,
+        p.drug_exposure_id drugExposureId,
+        p.drug_type drugType,
+        p.drug_sctid drugSctid,
+        p.drug_value drugName,
+        p.dosage_form dosageForm,
+        p.drug_exposure_start_date drugExposureStartDate,
+        p.days_supply daysSupply,
+        p.department_name departmentName,
+        p.drug_code drugCode,
+        p.drug_spec drugSpec,
+        p.drug_unit drugUnit
+        FROM mp_drug_exposure p
+        <where>
+            <if test="careSiteId != null  and careSiteId != ''"> and p.care_site_id = #{careSiteId}</if>
+            <if test="personId != null  and personId != ''"> and p.person_id = #{personId}</if>
+            <if test="visitOccurrenceId != null  and visitOccurrenceId != ''"> and p.visit_occurrence_id = #{visitOccurrenceId}</if>
+            <if test="drugExposureId != null  and drugExposureId != ''"> and p.drug_exposure_id = #{drugExposureId}</if>
+            <if test="drugType != null  and drugType != ''"> and p.drug_type = #{drugType}</if>
+            <if test="drugSctid != null "> and p.drug_sctid = #{drugSctid}</if>
+            <if test="drugValue != null  and drugValue != ''"> and p.drug_value = #{drugValue}</if>
+            <if test="dosageForm != null  and dosageForm != ''"> and p.dosage_form = #{dosageForm}</if>
+            <if test="drugExposureStartDate != null "> and p.drug_exposure_start_date = #{drugExposureStartDate}</if>
+            <if test="daysSupply != null "> and p.days_supply = #{daysSupply}</if>
+            <if test="departmentName != null  and departmentName != ''"> and p.department_name like concat('%', #{departmentName}, '%')</if>
+        </where>
+    </select>
+
+
+    <insert id="batchInsertMpDrugExposure" parameterType="java.util.List">
+        INSERT INTO mp_drug_exposure
+        (
+        care_site_id,
+        person_id,
+        visit_occurrence_id,
+        drug_exposure_id,
+        drug_type,
+        drug_sctid,
+        drug_value,
+        dosage_form,
+        drug_exposure_start_date,
+        days_supply,
+        department_name
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.careSiteId},
+            #{item.personId},
+            #{item.visitOccurrenceId},
+            #{item.drugExposureId},
+            #{item.drugType},
+            #{item.drugSctid},
+            #{item.drugValue},
+            #{item.dosageForm},
+            #{item.drugExposureStartDate},
+            #{item.daysSupply},
+            #{item.departmentName}
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.aieval.mapper.AiEvaluationRuleMapper">
+
+    <resultMap type="com.dchealth.aieval.domain.AiEvaluationRule" id="AiEvaluationRuleResult">
+        <id property="id" column="id"/>
+        <result property="ruleName" column="rule_name"/>
+        <result property="ruleCode" column="rule_code"/>
+        <result property="projectId" column="project_id"/>
+        <result property="ruleExpression" column="rule_expression"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="scoreRange" column="score_range"/>
+        <result property="advice" column="advice"/>
+        <result property="priority" column="priority"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectAiEvaluationRuleVo">
+        select id, rule_name, rule_code, project_id, rule_expression, risk_level, score_range, advice, priority, create_by, create_time, update_by, update_time, remark
+        from ai_evaluation_rule
+    </sql>
+
+    <select id="selectAiEvaluationRuleList" parameterType="AiEvaluationRule" resultMap="AiEvaluationRuleResult">
+        <include refid="selectAiEvaluationRuleVo"/>
+        <where>
+            <if test="ruleName != null and ruleName != ''">and rule_name like concat('%', #{ruleName}, '%')</if>
+            <if test="ruleCode != null and ruleCode != ''">and rule_code like concat('%', #{ruleCode}, '%')</if>
+            <if test="projectId != null">and project_id = #{projectId}</if>
+            <if test="ruleExpression != null and ruleExpression != ''">and rule_expression like concat('%', #{ruleExpression}, '%')</if>
+            <if test="riskLevel != null and riskLevel != ''">and risk_level like concat('%', #{riskLevel}, '%')</if>
+            <if test="scoreRange != null and scoreRange != ''">and score_range like concat('%', #{scoreRange}, '%')</if>
+            <if test="advice != null and advice != ''">and advice like concat('%', #{advice}, '%')</if>
+            <if test="priority != null">and priority = #{priority}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectAiEvaluationRuleById" parameterType="Long" resultMap="AiEvaluationRuleResult">
+        <include refid="selectAiEvaluationRuleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAiEvaluationRule" parameterType="AiEvaluationRule" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_evaluation_rule (rule_name, rule_code, project_id, rule_expression, risk_level, score_range, advice, priority, create_by, create_time, remark)
+        values (#{ruleName}, #{ruleCode}, #{projectId}, #{ruleExpression}, #{riskLevel}, #{scoreRange}, #{advice}, #{priority}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateAiEvaluationRule" parameterType="AiEvaluationRule">
+        update ai_evaluation_rule
+        <set>
+            <if test="ruleName != null">rule_name = #{ruleName},</if>
+            <if test="ruleCode != null">rule_code = #{ruleCode},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="ruleExpression != null">rule_expression = #{ruleExpression},</if>
+            <if test="riskLevel != null">risk_level = #{riskLevel},</if>
+            <if test="scoreRange != null">score_range = #{scoreRange},</if>
+            <if test="advice != null">advice = #{advice},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAiEvaluationRuleById" parameterType="Long">
+        delete from ai_evaluation_rule where id = #{id}
+    </delete>
+
+    <delete id="deleteAiEvaluationRuleByIds" parameterType="String">
+        delete from ai_evaluation_rule where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.system.mapper.PatientCardInfoViewNullMapper">
+    
+    <resultMap type="PatientCardInfoViewNull" id="PatientCardInfoViewNullResult">
+        <result property="id"    column="id"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="personId"    column="person_id"    />
+        <result property="patientMasterNo"    column="patient_master_no"    />
+        <result property="updateStatus"    column="update_status"    />
+        <result property="personIdGenerateTime"    column="person_id_generate_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="dateOfBirth"    column="date_of_birth"    />
+        <result property="birthPlace"    column="birth_place"    />
+        <result property="phoneNumberHome"    column="phone_number_home"    />
+        <result property="nextOfKinPhone"    column="next_of_kin_phone"    />
+        <result property="lastVisitDate"    column="last_visit_date"    />
+        <result property="createDate"    column="create_date"    />
+    </resultMap>
+
+    <sql id="selectPatientCardInfoViewNullVo">
+        select id, id_card, person_id, patient_master_no, update_status, person_id_generate_time, create_time, update_time, create_by, update_by, name, sex, date_of_birth, birth_place, phone_number_home, next_of_kin_phone, last_visit_date, create_date from patient_card_info_view_null
+    </sql>
+
+    <select id="selectPatientCardInfoViewNullList" parameterType="PatientCardInfoViewNull" resultMap="PatientCardInfoViewNullResult">
+        <include refid="selectPatientCardInfoViewNullVo"/>
+        <where>  
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="personId != null  and personId != ''"> and person_id = #{personId}</if>
+            <if test="patientMasterNo != null "> and patient_master_no = #{patientMasterNo}</if>
+            <if test="updateStatus != null  and updateStatus != ''"> and update_status = #{updateStatus}</if>
+            <if test="personIdGenerateTime != null "> and person_id_generate_time = #{personIdGenerateTime}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="dateOfBirth != null "> and date_of_birth = #{dateOfBirth}</if>
+            <if test="birthPlace != null  and birthPlace != ''"> and birth_place = #{birthPlace}</if>
+            <if test="phoneNumberHome != null  and phoneNumberHome != ''"> and phone_number_home = #{phoneNumberHome}</if>
+            <if test="nextOfKinPhone != null  and nextOfKinPhone != ''"> and next_of_kin_phone = #{nextOfKinPhone}</if>
+            <if test="lastVisitDate != null "> and last_visit_date = #{lastVisitDate}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectPatientCardInfoViewNullById" parameterType="Long" resultMap="PatientCardInfoViewNullResult">
+        <include refid="selectPatientCardInfoViewNullVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPatientCardInfoViewNull" parameterType="PatientCardInfoViewNull" useGeneratedKeys="true" keyProperty="id">
+        insert into patient_card_info_view_null
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="idCard != null">id_card,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="patientMasterNo != null">patient_master_no,</if>
+            <if test="updateStatus != null">update_status,</if>
+            <if test="personIdGenerateTime != null">person_id_generate_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="name != null">name,</if>
+            <if test="sex != null">sex,</if>
+            <if test="dateOfBirth != null">date_of_birth,</if>
+            <if test="birthPlace != null">birth_place,</if>
+            <if test="phoneNumberHome != null">phone_number_home,</if>
+            <if test="nextOfKinPhone != null">next_of_kin_phone,</if>
+            <if test="lastVisitDate != null">last_visit_date,</if>
+            <if test="createDate != null">create_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="idCard != null">#{idCard},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="patientMasterNo != null">#{patientMasterNo},</if>
+            <if test="updateStatus != null">#{updateStatus},</if>
+            <if test="personIdGenerateTime != null">#{personIdGenerateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="name != null">#{name},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="dateOfBirth != null">#{dateOfBirth},</if>
+            <if test="birthPlace != null">#{birthPlace},</if>
+            <if test="phoneNumberHome != null">#{phoneNumberHome},</if>
+            <if test="nextOfKinPhone != null">#{nextOfKinPhone},</if>
+            <if test="lastVisitDate != null">#{lastVisitDate},</if>
+            <if test="createDate != null">#{createDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePatientCardInfoViewNull" parameterType="PatientCardInfoViewNull">
+        update patient_card_info_view_null
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="patientMasterNo != null">patient_master_no = #{patientMasterNo},</if>
+            <if test="updateStatus != null">update_status = #{updateStatus},</if>
+            <if test="personIdGenerateTime != null">person_id_generate_time = #{personIdGenerateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="dateOfBirth != null">date_of_birth = #{dateOfBirth},</if>
+            <if test="birthPlace != null">birth_place = #{birthPlace},</if>
+            <if test="phoneNumberHome != null">phone_number_home = #{phoneNumberHome},</if>
+            <if test="nextOfKinPhone != null">next_of_kin_phone = #{nextOfKinPhone},</if>
+            <if test="lastVisitDate != null">last_visit_date = #{lastVisitDate},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePatientCardInfoViewNullById" parameterType="Long">
+        delete from patient_card_info_view_null where id = #{id}
+    </delete>
+
+    <delete id="deletePatientCardInfoViewNullByIds" parameterType="String">
+        delete from patient_card_info_view_null where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.resident.mapper.ResidentArchiveMapper">
+
+    <resultMap type="com.dchealth.resident.domain.ResidentArchive" id="ResidentArchiveResult">
+        <id property="id" column="id"/>
+        <result property="archiveCode" column="archive_code"/>
+        <result property="residentName" column="resident_name"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="idCard" column="id_card"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="community" column="community"/>
+        <result property="archiveDate" column="archive_date"/>
+        <result property="archiveStatus" column="archive_status"/>
+        <result property="managingInstitution" column="managing_institution"/>
+        <result property="managingDoctor" column="managing_doctor"/>
+        <result property="diseaseTypes" column="disease_types"/>
+        <result property="archiveSource" column="archive_source"/>
+        <result property="transferInDate" column="transfer_in_date"/>
+        <result property="isSigned" column="is_signed"/>
+        <result property="familyHistory" column="family_history"/>
+        <result property="allergyHistory" column="allergy_history"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <!-- ArchivedPatientVO — 合并 mp_person + resident_archive -->
+    <resultMap type="com.dchealth.resident.domain.vo.ArchivedPatientVO" id="ArchivedPatientVOResult">
+        <!-- mp_person fields -->
+        <result property="personId" column="person_id"/>
+        <result property="personName" column="person_name"/>
+        <result property="genderSourceValue" column="gender_source_value"/>
+        <result property="cardId" column="card_id"/>
+        <result property="cardType" column="card_type"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="locationId" column="location_id"/>
+        <result property="address" column="mp_address"/>
+        <result property="contactsName" column="contacts_name"/>
+        <result property="contactsPhone" column="contacts_phone"/>
+        <result property="personCareer" column="person_career"/>
+        <result property="maritalStatus" column="marital_status"/>
+        <result property="degreeOfEducation" column="degree_of_education"/>
+        <result property="sex" column="sex"/>
+        <result property="careSiteId" column="care_site_id"/>
+        <result property="createTime" column="mp_create_time"/>
+        <result property="updateTime" column="mp_update_time"/>
+        <!-- resident_archive fields -->
+        <result property="id" column="ra_id"/>
+        <result property="archiveCode" column="archive_code"/>
+        <result property="age" column="age"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="diseaseTypes" column="disease_types"/>
+        <result property="archiveDate" column="archive_date"/>
+        <result property="archiveStatus" column="archive_status"/>
+        <result property="managingInstitution" column="managing_institution"/>
+        <result property="managingDoctor" column="managing_doctor"/>
+        <result property="archiveSource" column="archive_source"/>
+        <result property="transferInDate" column="transfer_in_date"/>
+        <result property="isSigned" column="is_signed"/>
+        <result property="familyHistory" column="family_history"/>
+        <result property="allergyHistory" column="allergy_history"/>
+        <result property="community" column="community"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <!-- === ResidentArchive 基础 CRUD === -->
+    <sql id="selectResidentArchiveVo">
+        select id, archive_code, resident_name, gender, age, birth_date, id_card, phone, address, community,
+               archive_date, archive_status, managing_institution, managing_doctor, disease_types,
+               archive_source, transfer_in_date, is_signed, family_history, allergy_history,
+               create_by, create_time, update_by, update_time, remark
+        from resident_archive
+    </sql>
+
+    <select id="selectResidentArchiveList" parameterType="ResidentArchive" resultMap="ResidentArchiveResult">
+        <include refid="selectResidentArchiveVo"/>
+        <where>
+            <if test="residentName != null and residentName != ''">and resident_name like concat('%', #{residentName}, '%')</if>
+            <if test="idCard != null and idCard != ''">and id_card like concat('%', #{idCard}, '%')</if>
+            <if test="phone != null and phone != ''">and phone like concat('%', #{phone}, '%')</if>
+            <if test="diseaseTypes != null and diseaseTypes != ''">and disease_types like concat('%', #{diseaseTypes}, '%')</if>
+            <if test="archiveStatus != null and archiveStatus != ''">and archive_status = #{archiveStatus}</if>
+            <if test="managingInstitution != null and managingInstitution != ''">and managing_institution like concat('%', #{managingInstitution}, '%')</if>
+            <if test="isSigned != null and isSigned != ''">and is_signed = #{isSigned}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectResidentArchiveById" parameterType="Long" resultMap="ResidentArchiveResult">
+        <include refid="selectResidentArchiveVo"/> where id = #{id}
+    </select>
+
+    <!-- === 统计查询：基于 mp_person + resident_archive === -->
+    <select id="countTotal" resultType="long">
+        select count(distinct mp.card_id)
+        from mp_person mp
+        inner join resident_archive ra on mp.card_id = ra.id_card
+        where ra.archive_status = '0'
+    </select>
+
+    <select id="countNewThisMonth" resultType="long">
+        select count(distinct mp.card_id)
+        from mp_person mp
+        inner join resident_archive ra on mp.card_id = ra.id_card
+        where DATE_FORMAT(ra.create_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+    </select>
+
+    <select id="countCrossInstitution" resultType="long">
+        select count(distinct mp.card_id)
+        from mp_person mp
+        inner join resident_archive ra on mp.card_id = ra.id_card
+        where ra.archive_source = '3'
+    </select>
+
+    <select id="countCompleteArchives" resultType="long">
+        select count(distinct mp.card_id)
+        from mp_person mp
+        inner join resident_archive ra on mp.card_id = ra.id_card
+        where ra.archive_status = '0'
+          and ra.managing_institution is not null and ra.managing_institution != ''
+          and ra.managing_doctor is not null and ra.managing_doctor != ''
+          and ra.disease_types is not null and ra.disease_types != ''
+    </select>
+
+    <select id="diseaseDistribution" resultType="map">
+        select ra.disease_types as name, count(distinct mp.card_id) as value
+        from mp_person mp
+        inner join resident_archive ra on mp.card_id = ra.id_card
+        where ra.disease_types is not null and ra.disease_types != ''
+        group by ra.disease_types order by value desc
+    </select>
+
+    <!-- === ARCHIVE QUERY: mp_person LEFT JOIN resident_archive === -->
+    <sql id="archivedPatientColumns">
+        select mp.person_id, mp.person_name, mp.gender_source_value, mp.card_id, mp.card_type,
+               mp.phone_number, mp.location_id, mp.address as mp_address,
+               mp.contacts_name, mp.contacts_phone, mp.person_career, mp.marital_status,
+               mp.degree_of_education, mp.sex, mp.create_time as mp_create_time,
+               mp.update_time as mp_update_time,
+               ra.id as ra_id, ra.archive_code, ra.age, ra.birth_date, ra.disease_types,
+               ra.archive_date, ra.archive_status, ra.managing_institution, ra.managing_doctor,
+               ra.archive_source, ra.transfer_in_date, ra.is_signed, ra.family_history,
+               ra.allergy_history, ra.community, ra.remark
+    </sql>
+
+    <!-- 一人多号去重：同 card_id 取 max(person_id) 一行，再联 mp_person 与 resident_archive -->
+    <sql id="archivedPatientJoin">
+        from (
+            select card_id, max(person_id) as person_id
+            from mp_person
+            group by card_id
+        ) m
+        join mp_person mp on mp.person_id = m.person_id
+        left join resident_archive ra on ra.id_card = m.card_id
+    </sql>
+
+    <select id="selectArchivedPatientList" parameterType="map" resultMap="ArchivedPatientVOResult">
+        <include refid="archivedPatientColumns"/>
+        <include refid="archivedPatientJoin"/>
+        <where>
+            <if test="personName != null and personName != ''">and mp.person_name like concat('%', #{personName}, '%')</if>
+            <if test="cardId != null and cardId != ''">and mp.card_id = #{cardId}</if>
+            <if test="phoneNumber != null and phoneNumber != ''">and mp.phone_number like concat('%', #{phoneNumber}, '%')</if>
+            <if test="diseaseTypes != null and diseaseTypes != ''">and ra.disease_types like concat('%', #{diseaseTypes}, '%')</if>
+            <if test="managingInstitution != null and managingInstitution != ''">and ra.managing_institution like concat('%', #{managingInstitution}, '%')</if>
+            <if test="archiveStatus != null and archiveStatus != ''">and ra.archive_status = #{archiveStatus}</if>
+            <if test="isSigned != null and isSigned != ''">and ra.is_signed = #{isSigned}</if>
+            <if test="beginCreateTime != null">and ra.create_time &gt;= #{beginCreateTime}</if>
+            <if test="endCreateTime != null">and ra.create_time &lt;= #{endCreateTime}</if>
+        </where>
+        order by mp.create_time desc
+    </select>
+
+    <select id="selectArchivedPatientByPersonId" resultMap="ArchivedPatientVOResult">
+        <include refid="archivedPatientColumns"/>
+        <include refid="archivedPatientJoin"/>
+        where mp.card_id = #{cardId}
+    </select>
+
+    <!-- 按 person_id 列表查询（来自 mp_diagnosis），须直连 mp_person 以保留诊断 person_id，不能按 card_id 去重 -->
+    <select id="selectArchivedPatientByPersonIds" resultMap="ArchivedPatientVOResult">
+        <include refid="archivedPatientColumns"/>
+        from mp_person mp
+        left join resident_archive ra on mp.card_id = ra.id_card
+        <where>
+            <if test="personIdList != null and personIdList.size() > 0">
+                and mp.person_id in
+                <foreach collection="personIdList" item="pid" open="(" separator="," close=")">#{pid}</foreach>
+            </if>
+            <if test="params.personName != null and params.personName != ''">and mp.person_name like concat('%', #{params.personName}, '%')</if>
+            <if test="params.cardId != null and params.cardId != ''">and mp.card_id = #{params.cardId}</if>
+        </where>
+        order by mp.create_time desc
+    </select>
+
+    <!-- === 合并症患者列表 === -->
+    <select id="selectComorbidityPatientList" parameterType="map" resultMap="ArchivedPatientVOResult">
+        <include refid="archivedPatientColumns"/>
+        <include refid="archivedPatientJoin"/>
+        <where>
+            (
+                CASE WHEN ra.disease_types LIKE '%高血压%' THEN 1 ELSE 0 END +
+                CASE WHEN ra.disease_types LIKE '%糖尿病%' THEN 1 ELSE 0 END +
+                CASE WHEN ra.disease_types LIKE '%脑卒中%' THEN 1 ELSE 0 END +
+                CASE WHEN ra.disease_types LIKE '%冠心病%' THEN 1 ELSE 0 END +
+                CASE WHEN ra.disease_types LIKE '%慢阻肺%' THEN 1 ELSE 0 END
+            ) >= 2
+            <if test="personName != null and personName != ''">and mp.person_name like concat('%', #{personName}, '%')</if>
+            <if test="cardId != null and cardId != ''">and mp.card_id = #{cardId}</if>
+        </where>
+        order by mp.create_time desc
+    </select>
+
+    <!-- === 各机构慢病分布 === -->
+    <select id="crossOrgDistribution" resultType="map">
+        select ra.managing_institution as institutionName,
+               count(distinct mp.card_id) as totalArchives,
+               sum(case when DATE_FORMAT(ra.create_time,'%Y-%m') = DATE_FORMAT(now(),'%Y-%m') then 1 else 0 end) as newThisMonth,
+               sum(case when ra.disease_types like '%高血压%' then 1 else 0 end) as hypertension,
+               sum(case when ra.disease_types like '%糖尿病%' then 1 else 0 end) as diabetes,
+               sum(case when ra.disease_types like '%脑卒中%' then 1 else 0 end) as stroke,
+               sum(case when ra.disease_types like '%冠心病%' then 1 else 0 end) as chd,
+               sum(case when ra.disease_types like '%慢阻肺%' then 1 else 0 end) as copd
+        from (
+            select card_id, max(person_id) as person_id
+            from mp_person
+            group by card_id
+        ) m
+        join mp_person mp on mp.person_id = m.person_id
+        inner join resident_archive ra on ra.id_card = m.card_id
+        where ra.managing_institution is not null and ra.managing_institution != ''
+        group by ra.managing_institution
+        order by totalArchives desc
+    </select>
+
+    <!-- === CRUD === -->
+    <insert id="insertResidentArchive" parameterType="ResidentArchive" useGeneratedKeys="true" keyProperty="id">
+        insert into resident_archive (archive_code, resident_name, gender, age, birth_date, id_card, phone, address,
+            community, archive_date, archive_status, managing_institution, managing_doctor, disease_types,
+            archive_source, transfer_in_date, is_signed, family_history, allergy_history,
+            create_by, create_time, remark)
+        values (#{archiveCode}, #{residentName}, #{gender}, #{age}, #{birthDate}, #{idCard}, #{phone}, #{address},
+            #{community}, #{archiveDate}, #{archiveStatus}, #{managingInstitution}, #{managingDoctor}, #{diseaseTypes},
+            #{archiveSource}, #{transferInDate}, #{isSigned}, #{familyHistory}, #{allergyHistory},
+            #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateResidentArchive" parameterType="ResidentArchive">
+        update resident_archive
+        <set>
+            <if test="archiveCode != null">archive_code = #{archiveCode},</if>
+            <if test="residentName != null">resident_name = #{residentName},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="birthDate != null">birth_date = #{birthDate},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="community != null">community = #{community},</if>
+            <if test="archiveDate != null">archive_date = #{archiveDate},</if>
+            <if test="archiveStatus != null">archive_status = #{archiveStatus},</if>
+            <if test="managingInstitution != null">managing_institution = #{managingInstitution},</if>
+            <if test="managingDoctor != null">managing_doctor = #{managingDoctor},</if>
+            <if test="diseaseTypes != null">disease_types = #{diseaseTypes},</if>
+            <if test="archiveSource != null">archive_source = #{archiveSource},</if>
+            <if test="transferInDate != null">transfer_in_date = #{transferInDate},</if>
+            <if test="isSigned != null">is_signed = #{isSigned},</if>
+            <if test="familyHistory != null">family_history = #{familyHistory},</if>
+            <if test="allergyHistory != null">allergy_history = #{allergyHistory},</if>
+            update_by = #{updateBy},
+            update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResidentArchiveById" parameterType="Long">
+        delete from resident_archive where id = #{id}
+    </delete>
+
+    <delete id="deleteResidentArchiveByIds" parameterType="String">
+        delete from resident_archive where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+</mapper>

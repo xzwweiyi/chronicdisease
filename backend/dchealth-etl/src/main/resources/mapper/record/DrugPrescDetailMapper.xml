@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.etl.dao.record.DrugPrescDetailMapper">
+
+    <resultMap type="com.dchealth.etl.domain.record.DrugPrescDetail" id="DrugPrescDetailMap">
+        <result property="prescDate" column="PRESC_DATE" jdbcType="TIMESTAMP"/>
+        <result property="prescNo" column="PRESC_NO" jdbcType="VARCHAR"/>
+        <result property="itemNo" column="ITEM_NO" jdbcType="INTEGER"/>
+        <result property="drugCode" column="DRUG_CODE" jdbcType="VARCHAR"/>
+        <result property="drugSpec" column="DRUG_SPEC" jdbcType="VARCHAR"/>
+        <result property="drugName" column="DRUG_NAME" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DrugPrescDetailMap">
+        select
+          PRESC_DATE, PRESC_NO, ITEM_NO, DRUG_CODE, DRUG_SPEC, DRUG_NAME
+        from drug_presc_detail
+        where PRESC_NO = #{prescNo}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DrugPrescDetailMap">
+        select
+          PRESC_DATE, PRESC_NO, ITEM_NO, DRUG_CODE, DRUG_SPEC, DRUG_NAME
+        from drug_presc_detail
+        <where>
+            <if test="prescDate != null">
+                and PRESC_DATE = #{prescDate}
+            </if>
+            <if test="prescNo != null and prescNo != ''">
+                and PRESC_NO = #{prescNo}
+            </if>
+            <if test="itemNo != null">
+                and ITEM_NO = #{itemNo}
+            </if>
+            <if test="drugCode != null and drugCode != ''">
+                and DRUG_CODE = #{drugCode}
+            </if>
+            <if test="drugSpec != null and drugSpec != ''">
+                and DRUG_SPEC = #{drugSpec}
+            </if>
+            <if test="drugName != null and drugName != ''">
+                and DRUG_NAME = #{drugName}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from drug_presc_detail
+        <where>
+            <if test="prescDate != null">
+                and PRESC_DATE = #{prescDate}
+            </if>
+            <if test="prescNo != null and prescNo != ''">
+                and PRESC_NO = #{prescNo}
+            </if>
+            <if test="itemNo != null">
+                and ITEM_NO = #{itemNo}
+            </if>
+            <if test="drugCode != null and drugCode != ''">
+                and DRUG_CODE = #{drugCode}
+            </if>
+            <if test="drugSpec != null and drugSpec != ''">
+                and DRUG_SPEC = #{drugSpec}
+            </if>
+            <if test="drugName != null and drugName != ''">
+                and DRUG_NAME = #{drugName}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoCount" resultType="java.lang.Integer">
+        select count(1)
+        from drug_presc_detail
+        <where>
+            <if test="params.recordingDate != null">
+                and date_format(PRESC_DATE,'%Y-%m-%d') = #{params.recordingDate}
+            </if>
+        </where>
+    </select>
+    <select id="querySyncInfoByPage" resultMap="DrugPrescDetailMap">
+        select
+        PRESC_DATE, PRESC_NO, ITEM_NO, DRUG_CODE, DRUG_SPEC, DRUG_NAME
+        from drug_presc_detail
+        <where>
+            <if test="drugPrescDetail.params.recordingDate != null">
+                and date_format(PRESC_DATE,'%Y-%m-%d') = #{drugPrescDetail.params.recordingDate}
+            </if>
+        </where>
+        order by PRESC_DATE asc,PRESC_NO asc
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into drug_presc_detail(PRESC_DATE, PRESC_NO, ITEM_NO, DRUG_CODE, DRUG_SPEC, DRUG_NAME)
+        values (#{prescDate}, #{prescNo}, #{itemNo}, #{drugCode}, #{drugSpec}, #{drugName})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="" useGeneratedKeys="true">
+        insert into drug_presc_detail(PRESC_DATE, PRESC_NO, ITEM_NO, DRUG_CODE, DRUG_SPEC, DRUG_NAME)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.prescDate}, #{entity.prescNo}, #{entity.itemNo}, #{entity.drugCode}, #{entity.drugSpec}, #{entity.drugName})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="" useGeneratedKeys="true">
+        insert into drug_presc_detail(PRESC_DATE, PRESC_NO, ITEM_NO, DRUG_CODE, DRUG_SPEC, DRUG_NAME)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.prescDate}, #{entity.prescNo}, #{entity.itemNo}, #{entity.drugCode}, #{entity.drugSpec}, #{entity.drugName})
+        </foreach>
+        on duplicate key update
+        PRESC_DATE = values(PRESC_DATE),
+        PRESC_NO = values(PRESC_NO),
+        ITEM_NO = values(ITEM_NO),
+        DRUG_CODE = values(DRUG_CODE),
+        DRUG_SPEC = values(DRUG_SPEC),
+        DRUG_NAME = values(DRUG_NAME)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update drug_presc_detail
+        <set>
+            <if test="prescDate != null">
+                PRESC_DATE = #{prescDate},
+            </if>
+            <if test="prescNo != null and prescNo != ''">
+                PRESC_NO = #{prescNo},
+            </if>
+            <if test="itemNo != null">
+                ITEM_NO = #{itemNo},
+            </if>
+            <if test="drugCode != null and drugCode != ''">
+                DRUG_CODE = #{drugCode},
+            </if>
+            <if test="drugSpec != null and drugSpec != ''">
+                DRUG_SPEC = #{drugSpec},
+            </if>
+            <if test="drugName != null and drugName != ''">
+                DRUG_NAME = #{drugName},
+            </if>
+        </set>
+        where PRESC_NO = #{prescNo}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from drug_presc_detail where  = PRESC_NO = #{prescNo}
+    </delete>
+
+</mapper>
+
