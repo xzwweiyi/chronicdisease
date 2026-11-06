@@ -3,6 +3,7 @@ package com.dchealth.aieval.mapper;
 import java.util.List;
 import com.dchealth.aieval.domain.AiEvaluationData;
 import com.dchealth.aieval.domain.vo.AiEvaluationQueueVo;
+import com.dchealth.medical.domain.PatientRecord;
 
 /**
  * AI评估数据Mapper接口
@@ -67,4 +68,12 @@ public interface AiEvaluationDataMapper {
      * @return 结果
      */
     int deleteAiEvaluationDataByIds(Long[] ids);
+
+    /**
+     * 查询队列下已填写完成患者的随访记录（含患者姓名），用于读取历次表单数据生成评估数据
+     *
+     * @param projectId 队列ID（research_info.id）
+     * @return 已填写完成的随访记录集合
+     */
+    List<PatientRecord> selectQueueFilledRecordList(Long projectId);
 }

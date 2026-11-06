@@ -5,6 +5,7 @@
     <resultMap type="com.dchealth.aieval.domain.AiEvaluationData" id="AiEvaluationDataResult">
         <id property="id" column="id"/>
         <result property="projectId" column="project_id"/>
+        <result property="patientId" column="patient_id"/>
         <result property="patientName" column="patient_name"/>
         <result property="evalDate" column="eval_date"/>
         <result property="evalResult" column="eval_result"/>
@@ -25,7 +26,7 @@
     </resultMap>
 
     <sql id="selectAiEvaluationDataVo">
-        select id, project_id, patient_name, eval_date, eval_result, score, evaluator, eval_detail, remark,
+        select id, project_id, patient_id, patient_name, eval_date, eval_result, score, evaluator, eval_detail, remark,
                ai_analysis, ai_measures, ai_model, ai_status, ai_time, status,
                create_by, create_time, update_by, update_time
         from ai_evaluation_data
@@ -55,6 +56,7 @@
         <include refid="selectAiEvaluationDataVo"/>
         <where>
             <if test="projectId != null">and project_id = #{projectId}</if>
+            <if test="patientId != null">and patient_id = #{patientId}</if>
             <if test="patientName != null and patientName != ''">and patient_name like concat('%', #{patientName}, '%')</if>
             <if test="evalResult != null and evalResult != ''">and eval_result = #{evalResult}</if>
             <if test="aiStatus != null and aiStatus != ''">and ai_status = #{aiStatus}</if>
@@ -69,13 +71,14 @@
     </select>
 
     <insert id="insertAiEvaluationData" parameterType="AiEvaluationData" useGeneratedKeys="true" keyProperty="id">
-        insert into ai_evaluation_data (project_id, patient_name, eval_date, eval_result, score, evaluator, eval_detail, remark, status, create_by, create_time)
-        values (#{projectId}, #{patientName}, #{evalDate}, #{evalResult}, #{score}, #{evaluator}, #{evalDetail}, #{remark}, '0', #{createBy}, sysdate())
+        insert into ai_evaluation_data (project_id, patient_id, patient_name, eval_date, eval_result, score, evaluator, eval_detail, remark, status, create_by, create_time)
+        values (#{projectId}, #{patientId}, #{patientName}, #{evalDate}, #{evalResult}, #{score}, #{evaluator}, #{evalDetail}, #{remark}, '0', #{createBy}, sysdate())
     </insert>
 
     <update id="updateAiEvaluationData" parameterType="AiEvaluationData">
         update ai_evaluation_data
         <set>
+            <if test="patientId != null">patient_id = #{patientId},</if>
             <if test="patientName != null">patient_name = #{patientName},</if>
             <if test="evalDate != null">eval_date = #{evalDate},</if>
             <if test="evalResult != null">eval_result = #{evalResult},</if>
@@ -92,11 +95,11 @@
     <update id="updateAiAnalysisResult" parameterType="AiEvaluationData">
         update ai_evaluation_data
         <set>
-            <if test="aiAnalysis != null">ai_analysis = #{aiAnalysis},</if>
-            <if test="aiMeasures != null">ai_measures = #{aiMeasures},</if>
-            <if test="aiModel != null">ai_model = #{aiModel},</if>
+            ai_analysis = #{aiAnalysis},
+            ai_measures = #{aiMeasures},
+            ai_model = #{aiModel},
             ai_status = #{aiStatus},
-            <if test="aiTime != null">ai_time = #{aiTime},</if>
+            ai_time = #{aiTime}
         </set>
         where id = #{id}
     </update>
@@ -107,5 +110,27 @@
             #{id}
         </foreach>
     </delete>
+
+    <!-- 查询队列下已填写完成患者的随访记录（含患者姓名） -->
+    <select id="selectQueueFilledRecordList" parameterType="Long" resultType="com.dchealth.medical.domain.PatientRecord">
+        select pr.record_id        as recordId,
+               pr.patient_id       as patientId,
+               pr.research_id      as researchId,
+               pr.follow_id        as followId,
+               pr.name             as name,
+               pr.stage_num        as stageNum,
+               pr.stage_add_num    as stageAddNum,
+               pr.fill_time        as fillTime,
+               pr.fill_status      as fillStatus,
+               pr.follow_status    as followStatus,
+               pr.question_status  as questionStatus,
+               pi.patient_name     as patientName
+        from patient_record pr
+                 inner join patient_info pi on pi.patient_id = pr.patient_id
+        where pr.research_id = #{projectId}
+          and pr.fill_status = '1'
+          and pr.follow_status != '-1'
+        order by pr.patient_id asc, pr.fill_time asc, pr.record_id asc
+    </select>
 
 </mapper>

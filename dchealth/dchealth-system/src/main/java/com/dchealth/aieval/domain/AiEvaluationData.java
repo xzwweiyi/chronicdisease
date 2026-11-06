@@ -19,6 +19,9 @@ public class AiEvaluationData extends BaseEntity {
     /** 所属评估项目ID */
     private Long projectId;
 
+    /** 患者ID */
+    private Long patientId;
+
     /** 患者姓名 */
     private String patientName;
 
@@ -69,6 +72,14 @@ public class AiEvaluationData extends BaseEntity {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public Long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
     }
 
     public String getPatientName() {

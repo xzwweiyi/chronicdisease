@@ -1,8 +1,10 @@
 package com.dchealth.aieval.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,14 @@ import com.dchealth.aieval.service.IAiEvaluationDataService;
 import com.dchealth.aieval.service.IAiEvaluationProjectService;
 import com.dchealth.aieval.service.IAiEvaluationRuleService;
 import com.dchealth.common.exception.ServiceException;
+import com.dchealth.common.utils.DateUtils;
+import com.dchealth.common.utils.SecurityUtils;
 import com.dchealth.common.utils.StringUtils;
+import com.dchealth.medical.domain.PatientRecord;
+import com.dchealth.medical.domain.form.PatientRecordDetailForm;
+import com.dchealth.medical.domain.vo.MedicalFormVO;
+import com.dchealth.medical.domain.vo.MedicalPropertyVO;
+import com.dchealth.medical.service.IPatientRecordService;
 import com.dchealth.system.service.ISysConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +77,209 @@ public class AiEvaluationDataServiceImpl implements IAiEvaluationDataService {
     @Autowired
     private com.dchealth.research.service.IResearchInfoService researchInfoService;
 
+    @Autowired
+    private IPatientRecordService patientRecordService;
+
     @Override
     public List<AiEvaluationQueueVo> selectPublishedQueueList(AiEvaluationQueueVo vo) {
         return aiEvaluationDataMapper.selectPublishedQueueList(vo);
+    }
+
+    /**
+     * 根据队列下患者已填写完成的历次随访表单数据，自动生成/更新评估数据
+     */
+    @Override
+    public int generateEvaluationData(Long projectId) {
+        if (projectId == null) {
+            throw new ServiceException("请指定队列ID");
+        }
+        // 1. 查询队列下已填写完成的随访记录（含患者姓名）
+        List<PatientRecord> records = aiEvaluationDataMapper.selectQueueFilledRecordList(projectId);
+        if (records == null || records.isEmpty()) {
+            return 0;
+        }
+        // 2. 读取每条随访记录已填写的历次表单数据（表单/属性/动态取值）
+        List<PatientRecordDetailForm> details = patientRecordService.patientRecordDetail(records);
+        // 3. 按患者聚合，组装可读文本评估明细
+        Map<Long, PatientEvalText> byPatient = new LinkedHashMap<>();
+        int n = Math.min(records.size(), details == null ? 0 : details.size());
+        for (int i = 0; i < n; i++) {
+            PatientRecord record = records.get(i);
+            PatientRecordDetailForm detail = details.get(i);
+            if (record.getPatientId() == null) {
+                continue;
+            }
+            PatientEvalText pet = byPatient.get(record.getPatientId());
+            if (pet == null) {
+                pet = new PatientEvalText(record.getPatientName());
+                byPatient.put(record.getPatientId(), pet);
+            }
+            pet.append(record, detail);
+        }
+        // 4. 查询该队列下已有的评估数据，用于幂等 upsert
+        AiEvaluationData query = new AiEvaluationData();
+        query.setProjectId(projectId);
+        List<AiEvaluationData> existingList = aiEvaluationDataMapper.selectAiEvaluationDataList(query);
+        Map<Long, Long> existingByPatient = new HashMap<>();
+        for (AiEvaluationData d : existingList) {
+            if (d.getPatientId() != null) {
+                existingByPatient.put(d.getPatientId(), d.getId());
+            }
+        }
+        String username = SecurityUtils.getUsername();
+        int count = 0;
+        for (Map.Entry<Long, PatientEvalText> entry : byPatient.entrySet()) {
+            Long patientId = entry.getKey();
+            PatientEvalText pet = entry.getValue();
+            String patientName = pet.patientName;
+            Date latestFillTime = pet.latestFillTime;
+            String evalDetail = pet.detail.toString();
+
+            Long existingId = existingByPatient.get(patientId);
+            if (existingId != null) {
+                // 更新已有数据，并重置 AI 分析状态，需重新分析
+                AiEvaluationData update = new AiEvaluationData();
+                update.setId(existingId);
+                update.setPatientId(patientId);
+                update.setPatientName(patientName);
+                update.setEvalDate(latestFillTime);
+                update.setEvalDetail(evalDetail);
+                update.setUpdateBy(username);
+                aiEvaluationDataMapper.updateAiEvaluationData(update);
+
+                AiEvaluationData reset = new AiEvaluationData();
+                reset.setId(existingId);
+                reset.setAiStatus(AI_STATUS_NONE);
+                aiEvaluationDataMapper.updateAiAnalysisResult(reset);
+            } else {
+                AiEvaluationData insert = new AiEvaluationData();
+                insert.setProjectId(projectId);
+                insert.setPatientId(patientId);
+                insert.setPatientName(patientName);
+                insert.setEvalDate(latestFillTime);
+                insert.setEvalDetail(evalDetail);
+                insert.setCreateBy(username);
+                insert.setStatus("0");
+                insert.setAiStatus(AI_STATUS_NONE);
+                aiEvaluationDataMapper.insertAiEvaluationData(insert);
+            }
+            count++;
+        }
+        return count;
+    }
+
+    /**
+     * 患者评估文本聚合容器：累积历次随访表单数据
+     */
+    private static class PatientEvalText {
+        private final String patientName;
+        private final StringBuilder detail = new StringBuilder();
+        private Date latestFillTime;
+
+        PatientEvalText(String patientName) {
+            this.patientName = patientName;
+        }
+
+        void append(PatientRecord record, PatientRecordDetailForm detailForm) {
+            String recordName = StringUtils.isNotEmpty(record.getName()) ? record.getName() : "随访";
+            StringBuilder sb = new StringBuilder();
+            sb.append("【").append(recordName).append("】");
+            if (record.getFillTime() != null) {
+                sb.append(" 填写时间：").append(DateUtils.dateTime(record.getFillTime()));
+            }
+            sb.append("\n");
+            if (detailForm != null && detailForm.getMedicalFormVOS() != null) {
+                for (MedicalFormVO form : detailForm.getMedicalFormVOS()) {
+                    appendForm(sb, form);
+                }
+            }
+            if (this.detail.length() > 0) {
+                this.detail.append("\n");
+            }
+            this.detail.append(sb);
+            if (record.getFillTime() != null && (latestFillTime == null || record.getFillTime().after(latestFillTime))) {
+                latestFillTime = record.getFillTime();
+            }
+        }
+
+        void appendForm(StringBuilder sb, MedicalFormVO form) {
+            if (form == null) {
+                return;
+            }
+            if (StringUtils.isNotEmpty(form.getMedicalName())) {
+                sb.append("【").append(form.getMedicalName()).append("】\n");
+            }
+            if (form.getPropertyVOS() != null) {
+                for (MedicalPropertyVO p : form.getPropertyVOS()) {
+                    String val = resolvePropertyValue(p);
+                    if (StringUtils.isEmpty(val)) {
+                        continue;
+                    }
+                    sb.append("- ").append(p.getPropertyName()).append(": ").append(val).append("\n");
+                }
+            }
+            if (form.getChildrens() != null) {
+                for (MedicalFormVO child : form.getChildrens()) {
+                    appendForm(sb, child);
+                }
+            }
+        }
+    }
+
+    /**
+     * 解析表单项值：对选项类（单选/多选/下拉）将选项编码还原为选项标签，其余直接返回原始值
+     */
+    private static String resolvePropertyValue(MedicalPropertyVO p) {
+        String value = p.getPropertyValue();
+        if (StringUtils.isEmpty(value)) {
+            return "";
+        }
+        String type = p.getPropertyType();
+        if ("Radio".equals(type) || "Checkbox".equals(type) || "Select".equals(type)) {
+            Map<String, String> options = parseOptions(p.getAttribute());
+            if (options != null && !options.isEmpty()) {
+                String[] tokens = value.split(",");
+                List<String> labels = new ArrayList<>();
+                for (String token : tokens) {
+                    String t = token.trim();
+                    labels.add(options.getOrDefault(t, t));
+                }
+                return String.join("、", labels);
+            }
+        }
+        return value;
+    }
+
+    /**
+     * 解析属性配置JSON中的选项列表，返回 选项值 -> 选项标签 映射
+     */
+    private static Map<String, String> parseOptions(String attribute) {
+        if (StringUtils.isEmpty(attribute)) {
+            return null;
+        }
+        try {
+            JSONObject obj = JSON.parseObject(attribute);
+            JSONArray options = obj.getJSONArray("options");
+            if (options == null || options.isEmpty()) {
+                return null;
+            }
+            Map<String, String> map = new HashMap<>();
+            for (int i = 0; i < options.size(); i++) {
+                JSONObject o = options.getJSONObject(i);
+                if (o == null) {
+                    continue;
+                }
+                String label = o.getString("label");
+                String value = o.getString("value");
+                if (StringUtils.isNotEmpty(value)) {
+                    map.put(value, label);
+                }
+            }
+            return map;
+        } catch (Exception e) {
+            log.warn("解析表单项选项配置失败", e);
+            return null;
+        }
     }
 
     @Override
@@ -206,17 +415,25 @@ public class AiEvaluationDataServiceImpl implements IAiEvaluationDataService {
                 sb.append("\n");
             }
         }
-        // 患者评估数据
-        sb.append("\n【患者评估数据】\n");
+        // 患者随访记录评估数据
+        sb.append("\n【患者随访记录评估数据】\n");
         sb.append("患者姓名：").append(data.getPatientName() == null ? "未记录" : data.getPatientName()).append("\n");
-        sb.append("评估日期：").append(data.getEvalDate() == null ? "未记录" : data.getEvalDate()).append("\n");
-        sb.append("评估结果：").append(data.getEvalResult() == null ? "未记录" : data.getEvalResult()).append("\n");
-        sb.append("评估评分：").append(data.getScore() == null ? "未记录" : data.getScore()).append("\n");
-        sb.append("评估人：").append(data.getEvaluator() == null ? "未记录" : data.getEvaluator()).append("\n");
-        sb.append("评估明细：").append(data.getEvalDetail() == null ? "未记录" : data.getEvalDetail()).append("\n");
-        sb.append("备注：").append(data.getRemark() == null ? "无" : data.getRemark()).append("\n");
-        sb.append("\n请以慢病管理医学专家身份，基于上述评估项目、评估规则与患者评估数据，进行专业分析评估，并输出 JSON（不要 markdown 代码块），格式严格为：");
-        sb.append("{\"analysis\":\"分析结果：包含评估结论、风险解读、关键指标分析\",\"measures\":\"下一步采取的措施：分条列举（1. 2. 3. ...），涵盖用药、饮食、运动、随访监测、转诊建议等方面\"}");
+        sb.append("最近随访日期：").append(data.getEvalDate() == null ? "未记录" : DateUtils.dateTime(data.getEvalDate())).append("\n");
+        if (StringUtils.isNotEmpty(data.getEvalResult())) {
+            sb.append("已有评估结果：").append(data.getEvalResult()).append("\n");
+        }
+        if (data.getScore() != null) {
+            sb.append("已有评估评分：").append(data.getScore()).append("\n");
+        }
+        if (StringUtils.isNotEmpty(data.getEvaluator())) {
+            sb.append("评估人：").append(data.getEvaluator()).append("\n");
+        }
+        sb.append("历次随访表单数据：\n").append(data.getEvalDetail() == null ? "未记录" : data.getEvalDetail()).append("\n");
+        if (StringUtils.isNotEmpty(data.getRemark())) {
+            sb.append("备注：").append(data.getRemark()).append("\n");
+        }
+        sb.append("\n请以慢病管理医学专家身份，基于上述评估项目、评估规则以及患者历次随访表单数据，对患者的随访记录进行专业评估分析（包括病情变化趋势、风险解读、关键指标分析、干预效果评估），并输出 JSON（不要 markdown 代码块），格式严格为：");
+        sb.append("{\"analysis\":\"分析结果：包含评估结论、风险解读、关键指标及病情变化趋势分析\",\"measures\":\"下一步采取的措施：分条列举（1. 2. 3. ...），涵盖用药、饮食、运动、随访监测、转诊建议等方面\"}");
         return sb.toString();
     }
 

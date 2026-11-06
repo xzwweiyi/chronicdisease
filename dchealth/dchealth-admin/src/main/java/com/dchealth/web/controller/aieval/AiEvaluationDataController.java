@@ -105,4 +105,14 @@ public class AiEvaluationDataController extends BaseController {
     public AjaxResult analyze(@PathVariable Long id) {
         return AjaxResult.success(aiEvaluationDataService.analyze(id));
     }
+
+    /**
+     * 生成评估数据：根据队列下患者已填写完成的历次随访表单数据，自动生成/更新评估数据
+     */
+    @PreAuthorize("@ss.hasPermi('ai:evaluation:project:add')")
+    @Log(title = "AI评估数据生成", businessType = BusinessType.OTHER)
+    @PostMapping("/generate")
+    public AjaxResult generate(@RequestBody AiEvaluationData entity) {
+        return AjaxResult.success(aiEvaluationDataService.generateEvaluationData(entity.getProjectId()));
+    }
 }

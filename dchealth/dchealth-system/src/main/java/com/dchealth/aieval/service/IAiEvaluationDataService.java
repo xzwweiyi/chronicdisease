@@ -18,6 +18,14 @@ public interface IAiEvaluationDataService {
     List<AiEvaluationQueueVo> selectPublishedQueueList(AiEvaluationQueueVo vo);
 
     /**
+     * 根据队列下患者已填写完成的历次随访表单数据，自动生成/更新评估数据
+     *
+     * @param projectId 队列ID
+     * @return 生成（新增+更新）的评估数据条数
+     */
+    int generateEvaluationData(Long projectId);
+
+    /**
      * 查询AI评估数据列表
      */
     List<AiEvaluationData> selectAiEvaluationDataList(AiEvaluationData entity);
