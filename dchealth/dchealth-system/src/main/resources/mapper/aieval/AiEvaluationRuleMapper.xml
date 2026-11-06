@@ -46,7 +46,7 @@
 
     <insert id="insertAiEvaluationRule" parameterType="AiEvaluationRule" useGeneratedKeys="true" keyProperty="id">
         insert into ai_evaluation_rule (rule_name, rule_code, project_id, rule_expression, risk_level, score_range, advice, priority, create_by, create_time, remark)
-        values (#{ruleName}, #{ruleCode}, #{projectId}, #{ruleExpression}, #{riskLevel}, #{scoreRange}, #{advice}, #{priority}, #{createBy}, sysdate(), #{remark})
+        values (#{ruleName}, #{ruleCode}, #{projectId}, #{ruleExpression}, #{riskLevel}, #{scoreRange}, #{advice}, #{priority}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateAiEvaluationRule" parameterType="AiEvaluationRule">
@@ -61,7 +61,7 @@
             <if test="advice != null">advice = #{advice},</if>
             <if test="priority != null">priority = #{priority},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

@@ -51,7 +51,7 @@
 
     <insert id="insertAiEvaluationProject" parameterType="AiEvaluationProject" useGeneratedKeys="true" keyProperty="id">
         insert into ai_evaluation_project (project_name, project_code, disease_type, evaluation_type, description, model_config, rule_config, input_fields, output_fields, create_by, create_time, remark)
-        values (#{projectName}, #{projectCode}, #{diseaseType}, #{evaluationType}, #{description}, #{modelConfig}, #{ruleConfig}, #{inputFields}, #{outputFields}, #{createBy}, sysdate(), #{remark})
+        values (#{projectName}, #{projectCode}, #{diseaseType}, #{evaluationType}, #{description}, #{modelConfig}, #{ruleConfig}, #{inputFields}, #{outputFields}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateAiEvaluationProject" parameterType="AiEvaluationProject">
@@ -67,7 +67,7 @@
             <if test="inputFields != null">input_fields = #{inputFields},</if>
             <if test="outputFields != null">output_fields = #{outputFields},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

@@ -48,7 +48,7 @@
 
     <insert id="insertScreeningClinic" parameterType="ScreeningClinic" useGeneratedKeys="true" keyProperty="id">
         insert into screening_clinic (resident_name, id_card, phone, visit_date, department, diagnosis, icd_code, disease_type, doctor_name, create_by, create_time, remark)
-        values (#{residentName}, #{idCard}, #{phone}, #{visitDate}, #{department}, #{diagnosis}, #{icdCode}, #{diseaseType}, #{doctorName}, #{createBy}, sysdate(), #{remark})
+        values (#{residentName}, #{idCard}, #{phone}, #{visitDate}, #{department}, #{diagnosis}, #{icdCode}, #{diseaseType}, #{doctorName}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateScreeningClinic" parameterType="ScreeningClinic">
@@ -64,7 +64,7 @@
             <if test="diseaseType != null">disease_type = #{diseaseType},</if>
             <if test="doctorName != null">doctor_name = #{doctorName},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

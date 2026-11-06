@@ -70,7 +70,7 @@
 
     <insert id="insertContractSign" parameterType="ContractSign" useGeneratedKeys="true" keyProperty="id">
         insert into contract_sign (resident_id, resident_name, team_id, package_id, sign_date, start_date, end_date, contract_status, sign_type, create_by, create_time, remark)
-        values (#{residentId}, #{residentName}, #{teamId}, #{packageId}, #{signDate}, #{startDate}, #{endDate}, #{contractStatus}, #{signType}, #{createBy}, sysdate(), #{remark})
+        values (#{residentId}, #{residentName}, #{teamId}, #{packageId}, #{signDate}, #{startDate}, #{endDate}, #{contractStatus}, #{signType}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateContractSign" parameterType="ContractSign">
@@ -86,7 +86,7 @@
             <if test="contractStatus != null">contract_status = #{contractStatus},</if>
             <if test="signType != null">sign_type = #{signType},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

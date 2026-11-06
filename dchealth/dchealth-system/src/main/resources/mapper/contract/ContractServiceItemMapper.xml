@@ -41,7 +41,7 @@
 
     <insert id="insertContractServiceItem" parameterType="ContractServiceItem" useGeneratedKeys="true" keyProperty="id">
         insert into contract_service_item (item_name, item_type, frequency, description, execution_standard, status, create_by, create_time, remark)
-        values (#{itemName}, #{itemType}, #{frequency}, #{description}, #{executionStandard}, #{status}, #{createBy}, sysdate(), #{remark})
+        values (#{itemName}, #{itemType}, #{frequency}, #{description}, #{executionStandard}, #{status}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateContractServiceItem" parameterType="ContractServiceItem">
@@ -54,7 +54,7 @@
             <if test="executionStandard != null">execution_standard = #{executionStandard},</if>
             <if test="status != null">status = #{status},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

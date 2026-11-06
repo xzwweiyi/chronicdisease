@@ -44,7 +44,7 @@
 
     <insert id="insertContractPackage" parameterType="ContractPackage" useGeneratedKeys="true" keyProperty="id">
         insert into contract_package (package_name, package_type, price, description, service_ids, applicable_diseases, status, create_by, create_time, remark)
-        values (#{packageName}, #{packageType}, #{price}, #{description}, #{serviceIds}, #{applicableDiseases}, #{status}, #{createBy}, sysdate(), #{remark})
+        values (#{packageName}, #{packageType}, #{price}, #{description}, #{serviceIds}, #{applicableDiseases}, #{status}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateContractPackage" parameterType="ContractPackage">
@@ -58,7 +58,7 @@
             <if test="applicableDiseases != null">applicable_diseases = #{applicableDiseases},</if>
             <if test="status != null">status = #{status},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

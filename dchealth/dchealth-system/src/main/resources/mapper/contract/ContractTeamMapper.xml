@@ -44,7 +44,7 @@
 
     <insert id="insertContractTeam" parameterType="ContractTeam" useGeneratedKeys="true" keyProperty="id">
         insert into contract_team (team_name, leader_name, leader_phone, members, service_area, team_intro, status, create_by, create_time, remark)
-        values (#{teamName}, #{leaderName}, #{leaderPhone}, #{members}, #{serviceArea}, #{teamIntro}, #{status}, #{createBy}, sysdate(), #{remark})
+        values (#{teamName}, #{leaderName}, #{leaderPhone}, #{members}, #{serviceArea}, #{teamIntro}, #{status}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateContractTeam" parameterType="ContractTeam">
@@ -58,7 +58,7 @@
             <if test="teamIntro != null">team_intro = #{teamIntro},</if>
             <if test="status != null">status = #{status},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

@@ -153,31 +153,31 @@ public class ContractTableRunner implements CommandLineRunner {
                 if (count == 0) {
                     log.info("=== Seeding contract data via JDBC ===");
                     stmt.executeUpdate("INSERT INTO contract_service_item (item_name,item_type,frequency,description,execution_standard,status,create_by,create_time) VALUES " +
-                        "('血压监测','免费项目','每月1次','定期血压测量与记录，建立血压监测档案','按国家基本公共卫生服务规范执行','1','admin',sysdate())");
+                        "('血压监测','免费项目','每月1次','定期血压测量与记录，建立血压监测档案','按国家基本公共卫生服务规范执行','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_service_item (item_name,item_type,frequency,description,execution_standard,status,create_by,create_time) VALUES " +
-                        "('空腹血糖检测','免费项目','每月2次','检测空腹血糖值，评估血糖控制情况','按中国2型糖尿病防治指南执行','1','admin',sysdate())");
+                        "('空腹血糖检测','免费项目','每月2次','检测空腹血糖值，评估血糖控制情况','按中国2型糖尿病防治指南执行','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_service_item (item_name,item_type,frequency,description,execution_standard,status,create_by,create_time) VALUES " +
-                        "('慢病随访','免费项目','每季度1次','面对面随访，评估病情变化和用药依从性','按慢病管理规范执行','1','admin',sysdate())");
+                        "('慢病随访','免费项目','每季度1次','面对面随访，评估病情变化和用药依从性','按慢病管理规范执行','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_service_item (item_name,item_type,frequency,description,execution_standard,status,create_by,create_time) VALUES " +
-                        "('心电图检查','付费项目','每半年1次','常规12导联心电图检查，评估心脏功能','按心电诊断规范执行','1','admin',sysdate())");
+                        "('心电图检查','付费项目','每半年1次','常规12导联心电图检查，评估心脏功能','按心电诊断规范执行','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_service_item (item_name,item_type,frequency,description,execution_standard,status,create_by,create_time) VALUES " +
-                        "('眼底筛查','付费项目','每年1次','眼底照相检查，筛查视网膜病变','按眼科检查规范执行','1','admin',sysdate())");
+                        "('眼底筛查','付费项目','每年1次','眼底照相检查，筛查视网膜病变','按眼科检查规范执行','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_service_item (item_name,item_type,frequency,description,execution_standard,status,create_by,create_time) VALUES " +
-                        "('用药指导','免费项目','每季度1次','评估药物疗效，指导合理用药，调整药物剂量','按处方管理规范执行','1','admin',sysdate())");
+                        "('用药指导','免费项目','每季度1次','评估药物疗效，指导合理用药，调整药物剂量','按处方管理规范执行','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_team (team_name,leader_name,leader_phone,members,service_area,team_intro,status,create_by,create_time) VALUES " +
-                        "('城关镇家庭医生团队','张伟','13800138001','张伟,李红,王芳,赵强','城关镇辖区（东关村、西关村、南关村）','负责城关镇辖区居民的家庭医生签约服务，提供慢性病管理和健康管理服务','1','admin',sysdate())");
+                        "('城关镇家庭医生团队','张伟','13800138001','张伟,李红,王芳,赵强','城关镇辖区（东关村、西关村、南关村）','负责城关镇辖区居民的家庭医生签约服务，提供慢性病管理和健康管理服务','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_team (team_name,leader_name,leader_phone,members,service_area,team_intro,status,create_by,create_time) VALUES " +
-                        "('柳林镇全科医疗团队','李明','13900139001','李明,张丽,王强,赵霞','柳林镇辖区（柳林村、大庄村）','以全科医疗为核心，为辖区居民提供综合性的健康管理服务','1','admin',sysdate())");
+                        "('柳林镇全科医疗团队','李明','13900139001','李明,张丽,王强,赵霞','柳林镇辖区（柳林村、大庄村）','以全科医疗为核心，为辖区居民提供综合性的健康管理服务','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_team (team_name,leader_name,leader_phone,members,service_area,team_intro,status,create_by,create_time) VALUES " +
-                        "('张家川慢病管理团队','王磊','13700137001','王磊,李娟,张明,王燕','张家川镇辖区（张家川村、李家村）','专注于慢性病患者的全程管理，提供个性化的慢病防控方案','1','admin',sysdate())");
+                        "('张家川慢病管理团队','王磊','13700137001','王磊,李娟,张明,王燕','张家川镇辖区（张家川村、李家村）','专注于慢性病患者的全程管理，提供个性化的慢病防控方案','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_package (package_name,package_type,price,description,service_ids,applicable_diseases,status,create_by,create_time) VALUES " +
-                        "('高血压管理基础包','基础包',120,'包含血压监测、用药指导、健康教育、饮食指导、运动处方等基础服务','1,6','高血压','1','admin',sysdate())");
+                        "('高血压管理基础包','基础包',120,'包含血压监测、用药指导、健康教育、饮食指导、运动处方等基础服务','1,6','高血压','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_package (package_name,package_type,price,description,service_ids,applicable_diseases,status,create_by,create_time) VALUES " +
-                        "('糖尿病管理升级包','升级包',280,'包含血糖监测、HbA1c检测、眼底筛查、足部检查、用药指导等升级服务','2,5,6','糖尿病','1','admin',sysdate())");
+                        "('糖尿病管理升级包','升级包',280,'包含血糖监测、HbA1c检测、眼底筛查、足部检查、用药指导等升级服务','2,5,6','糖尿病','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_package (package_name,package_type,price,description,service_ids,applicable_diseases,status,create_by,create_time) VALUES " +
-                        "('慢病综合管理包','综合包',450,'包含综合体检、多学科会诊、家庭随访等全方位慢病管理服务','1,2,3,4,5,6','高血压,糖尿病,冠心病,脑卒中,慢阻肺','1','admin',sysdate())");
+                        "('慢病综合管理包','综合包',450,'包含综合体检、多学科会诊、家庭随访等全方位慢病管理服务','1,2,3,4,5,6','高血压,糖尿病,冠心病,脑卒中,慢阻肺','1','admin',now())");
                     stmt.executeUpdate("INSERT INTO contract_package (package_name,package_type,price,description,service_ids,applicable_diseases,status,create_by,create_time) VALUES " +
-                        "('老年人健康管理包','基础包',80,'包含基础体检、中医体质辨识、健康讲座等老年人专项服务','1,3','高血压,糖尿病','0','admin',sysdate())");
+                        "('老年人健康管理包','基础包',80,'包含基础体检、中医体质辨识、健康讲座等老年人专项服务','1,3','高血压,糖尿病','0','admin',now())");
                     // Seed contract_sign: 从 mp_person + resident_archive 获取真实患者数据
                     // 患者姓名必须来源于 mp_person，不能虚构
                     java.sql.ResultSet archiveRs = stmt.executeQuery(
@@ -198,7 +198,7 @@ public class ContractTableRunner implements CommandLineRunner {
                     if (!seedResidents.isEmpty()) {
                         java.sql.PreparedStatement signPs = conn.prepareStatement(
                             "INSERT INTO contract_sign (resident_id,resident_name,team_id,package_id,sign_date,start_date,end_date,contract_status,sign_type,create_by,create_time) " +
-                            "VALUES (?,?,?,?,?,?,?,'1','首签','admin',sysdate())");
+                            "VALUES (?,?,?,?,?,?,?,'1','首签','admin',now())");
                         String[] startDates = {"2025-10-19", "2025-11-15", "2025-10-19"};
                         String[] endDates = {"2026-10-19", "2026-11-15", "2026-10-19"};
                         for (int i = 0; i < seedResidents.size(); i++) {

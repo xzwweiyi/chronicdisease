@@ -50,7 +50,7 @@
 
     <insert id="insertScreeningApply" parameterType="ScreeningApply" useGeneratedKeys="true" keyProperty="id">
         insert into screening_apply (resident_name, id_card, phone, apply_date, apply_type, disease_history, current_medication, apply_reason, audit_status, audit_opinion, create_by, create_time, remark)
-        values (#{residentName}, #{idCard}, #{phone}, #{applyDate}, #{applyType}, #{diseaseHistory}, #{currentMedication}, #{applyReason}, #{auditStatus}, #{auditOpinion}, #{createBy}, sysdate(), #{remark})
+        values (#{residentName}, #{idCard}, #{phone}, #{applyDate}, #{applyType}, #{diseaseHistory}, #{currentMedication}, #{applyReason}, #{auditStatus}, #{auditOpinion}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateScreeningApply" parameterType="ScreeningApply">
@@ -67,7 +67,7 @@
             <if test="auditStatus != null">audit_status = #{auditStatus},</if>
             <if test="auditOpinion != null">audit_opinion = #{auditOpinion},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

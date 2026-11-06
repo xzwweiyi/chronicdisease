@@ -248,7 +248,7 @@
         values (#{archiveCode}, #{residentName}, #{gender}, #{age}, #{birthDate}, #{idCard}, #{phone}, #{address},
             #{community}, #{archiveDate}, #{archiveStatus}, #{managingInstitution}, #{managingDoctor}, #{diseaseTypes},
             #{archiveSource}, #{transferInDate}, #{isSigned}, #{familyHistory}, #{allergyHistory},
-            #{createBy}, sysdate(), #{remark})
+            #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateResidentArchive" parameterType="ResidentArchive">
@@ -274,7 +274,7 @@
             <if test="familyHistory != null">family_history = #{familyHistory},</if>
             <if test="allergyHistory != null">allergy_history = #{allergyHistory},</if>
             update_by = #{updateBy},
-            update_time = sysdate()
+            update_time = now()
         </set>
         where id = #{id}
     </update>

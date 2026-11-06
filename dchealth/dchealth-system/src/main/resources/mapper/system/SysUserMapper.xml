@@ -243,7 +243,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="isAlldeptResearch != null and isAlldeptResearch != ''">#{isAlldeptResearch},</if>
 		<if test="birthday != null">#{birthday},</if>
 		<if test="idCardNo != null and idCardNo != ''">#{idCardNo},</if>
-		sysdate()
+		now()
 		)
 	</insert>
 
@@ -266,7 +266,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="isAlldeptResearch != null">is_all_dept_research = #{isAlldeptResearch},</if>
 			<if test="birthday != null">birthday = #{birthday},</if>
 			<if test="idCardNo != null and idCardNo != ''">id_card_no = #{idCardNo},</if>
-			update_time = sysdate()
+			update_time = now()
 		</set>
 		where user_id = #{userId}
 	</update>

@@ -56,7 +56,7 @@
 
     <insert id="insertTelemedicineConsultation" parameterType="TelemedicineConsultation" useGeneratedKeys="true" keyProperty="id">
         insert into telemedicine_consultation (consultation_no, patient_id, patient_name, applicant_name, consultation_type, scheduled_time, actual_time, participants, chief_complaint, summary, conclusion, recommendation, consultation_status, create_by, create_time, remark)
-        values (#{consultationNo}, #{patientId}, #{patientName}, #{applicantName}, #{consultationType}, #{scheduledTime}, #{actualTime}, #{participants}, #{chiefComplaint}, #{summary}, #{conclusion}, #{recommendation}, #{consultationStatus}, #{createBy}, sysdate(), #{remark})
+        values (#{consultationNo}, #{patientId}, #{patientName}, #{applicantName}, #{consultationType}, #{scheduledTime}, #{actualTime}, #{participants}, #{chiefComplaint}, #{summary}, #{conclusion}, #{recommendation}, #{consultationStatus}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateTelemedicineConsultation" parameterType="TelemedicineConsultation">
@@ -76,7 +76,7 @@
             <if test="recommendation != null">recommendation = #{recommendation},</if>
             <if test="consultationStatus != null">consultation_status = #{consultationStatus},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

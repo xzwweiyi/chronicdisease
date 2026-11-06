@@ -50,7 +50,7 @@
             assessor, next_assessment_date, remark, create_by, create_time)
         values (#{personId}, #{assessmentDate}, #{bpClassification}, #{managementLevel},
             #{riskStratification}, #{cardiovascularFactors}, #{targetOrganDamage}, #{comorbidConditions},
-            #{assessor}, #{nextAssessmentDate}, #{remark}, #{createBy}, sysdate())
+            #{assessor}, #{nextAssessmentDate}, #{remark}, #{createBy}, now())
     </insert>
 
     <update id="updateGradingRecord" parameterType="ResidentGradingRecord">
@@ -66,7 +66,7 @@
             <if test="nextAssessmentDate != null">next_assessment_date = #{nextAssessmentDate},</if>
             <if test="remark != null">remark = #{remark},</if>
             update_by = #{updateBy},
-            update_time = sysdate()
+            update_time = now()
         </set>
         where id = #{id}
     </update>

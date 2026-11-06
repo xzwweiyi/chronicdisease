@@ -46,7 +46,7 @@
 
     <insert id="insertDeviceInfo" parameterType="DeviceInfo" useGeneratedKeys="true" keyProperty="id">
         insert into device_info (device_code, device_name, device_type, manufacturer, model, purchase_date, warranty_expire, device_status, create_by, create_time, remark)
-        values (#{deviceCode}, #{deviceName}, #{deviceType}, #{manufacturer}, #{model}, #{purchaseDate}, #{warrantyExpire}, #{deviceStatus}, #{createBy}, sysdate(), #{remark})
+        values (#{deviceCode}, #{deviceName}, #{deviceType}, #{manufacturer}, #{model}, #{purchaseDate}, #{warrantyExpire}, #{deviceStatus}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateDeviceInfo" parameterType="DeviceInfo">
@@ -61,7 +61,7 @@
             <if test="warrantyExpire != null">warranty_expire = #{warrantyExpire},</if>
             <if test="deviceStatus != null">device_status = #{deviceStatus},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

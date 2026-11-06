@@ -52,7 +52,7 @@
 
     <insert id="insertScreeningPhysical" parameterType="ScreeningPhysical" useGeneratedKeys="true" keyProperty="id">
         insert into screening_physical (resident_name, id_card, phone, exam_date, exam_institution, bmi, blood_pressure, blood_sugar, blood_lipids, exam_result, disease_risk, create_by, create_time, remark)
-        values (#{residentName}, #{idCard}, #{phone}, #{examDate}, #{examInstitution}, #{bmi}, #{bloodPressure}, #{bloodSugar}, #{bloodLipids}, #{examResult}, #{diseaseRisk}, #{createBy}, sysdate(), #{remark})
+        values (#{residentName}, #{idCard}, #{phone}, #{examDate}, #{examInstitution}, #{bmi}, #{bloodPressure}, #{bloodSugar}, #{bloodLipids}, #{examResult}, #{diseaseRisk}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateScreeningPhysical" parameterType="ScreeningPhysical">
@@ -70,7 +70,7 @@
             <if test="examResult != null">exam_result = #{examResult},</if>
             <if test="diseaseRisk != null">disease_risk = #{diseaseRisk},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

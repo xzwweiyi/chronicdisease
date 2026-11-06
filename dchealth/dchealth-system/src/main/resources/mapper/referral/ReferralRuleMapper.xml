@@ -44,7 +44,7 @@
 
     <insert id="insertReferralRule" parameterType="ReferralRule" useGeneratedKeys="true" keyProperty="id">
         insert into referral_rule (rule_name, disease_type, upward_conditions, downward_conditions, emergency_conditions, priority, effective_date, create_by, create_time, remark)
-        values (#{ruleName}, #{diseaseType}, #{upwardConditions}, #{downwardConditions}, #{emergencyConditions}, #{priority}, #{effectiveDate}, #{createBy}, sysdate(), #{remark})
+        values (#{ruleName}, #{diseaseType}, #{upwardConditions}, #{downwardConditions}, #{emergencyConditions}, #{priority}, #{effectiveDate}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateReferralRule" parameterType="ReferralRule">
@@ -58,7 +58,7 @@
             <if test="priority != null">priority = #{priority},</if>
             <if test="effectiveDate != null">effective_date = #{effectiveDate},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

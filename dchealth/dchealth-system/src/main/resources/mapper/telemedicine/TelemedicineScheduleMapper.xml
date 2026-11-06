@@ -44,7 +44,7 @@
 
     <insert id="insertTelemedicineSchedule" parameterType="TelemedicineSchedule" useGeneratedKeys="true" keyProperty="id">
         insert into telemedicine_schedule (doctor_id, doctor_name, dept_name, schedule_date, time_slot, max_consultations, booked_count, create_by, create_time, remark)
-        values (#{doctorId}, #{doctorName}, #{deptName}, #{scheduleDate}, #{timeSlot}, #{maxConsultations}, #{bookedCount}, #{createBy}, sysdate(), #{remark})
+        values (#{doctorId}, #{doctorName}, #{deptName}, #{scheduleDate}, #{timeSlot}, #{maxConsultations}, #{bookedCount}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateTelemedicineSchedule" parameterType="TelemedicineSchedule">
@@ -58,7 +58,7 @@
             <if test="maxConsultations != null">max_consultations = #{maxConsultations},</if>
             <if test="bookedCount != null">booked_count = #{bookedCount},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

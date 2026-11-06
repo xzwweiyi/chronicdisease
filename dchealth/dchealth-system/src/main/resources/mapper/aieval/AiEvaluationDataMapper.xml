@@ -72,7 +72,7 @@
 
     <insert id="insertAiEvaluationData" parameterType="AiEvaluationData" useGeneratedKeys="true" keyProperty="id">
         insert into ai_evaluation_data (project_id, patient_id, patient_name, eval_date, eval_result, score, evaluator, eval_detail, remark, status, create_by, create_time)
-        values (#{projectId}, #{patientId}, #{patientName}, #{evalDate}, #{evalResult}, #{score}, #{evaluator}, #{evalDetail}, #{remark}, '0', #{createBy}, sysdate())
+        values (#{projectId}, #{patientId}, #{patientName}, #{evalDate}, #{evalResult}, #{score}, #{evaluator}, #{evalDetail}, #{remark}, '0', #{createBy}, now())
     </insert>
 
     <update id="updateAiEvaluationData" parameterType="AiEvaluationData">
@@ -87,7 +87,7 @@
             <if test="evalDetail != null">eval_detail = #{evalDetail},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="status != null">status = #{status},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

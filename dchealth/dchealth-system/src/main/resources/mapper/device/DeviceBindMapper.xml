@@ -42,7 +42,7 @@
 
     <insert id="insertDeviceBind" parameterType="DeviceBind" useGeneratedKeys="true" keyProperty="id">
         insert into device_bind (device_code, resident_id, resident_name, bind_date, unbind_date, bind_status, create_by, create_time, remark)
-        values (#{deviceCode}, #{residentId}, #{residentName}, #{bindDate}, #{unbindDate}, #{bindStatus}, #{createBy}, sysdate(), #{remark})
+        values (#{deviceCode}, #{residentId}, #{residentName}, #{bindDate}, #{unbindDate}, #{bindStatus}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateDeviceBind" parameterType="DeviceBind">
@@ -55,7 +55,7 @@
             <if test="unbindDate != null">unbind_date = #{unbindDate},</if>
             <if test="bindStatus != null">bind_status = #{bindStatus},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

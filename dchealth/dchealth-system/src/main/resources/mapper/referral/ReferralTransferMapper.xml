@@ -54,7 +54,7 @@
 
     <insert id="insertReferralTransfer" parameterType="ReferralTransfer" useGeneratedKeys="true" keyProperty="id">
         insert into referral_transfer (patient_id, patient_name, from_institution, to_institution, from_dept, to_dept, transfer_type, transfer_date, reason, diagnosis, accompanying_info, transfer_status, create_by, create_time, remark)
-        values (#{patientId}, #{patientName}, #{fromInstitution}, #{toInstitution}, #{fromDept}, #{toDept}, #{transferType}, #{transferDate}, #{reason}, #{diagnosis}, #{accompanyingInfo}, #{transferStatus}, #{createBy}, sysdate(), #{remark})
+        values (#{patientId}, #{patientName}, #{fromInstitution}, #{toInstitution}, #{fromDept}, #{toDept}, #{transferType}, #{transferDate}, #{reason}, #{diagnosis}, #{accompanyingInfo}, #{transferStatus}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateReferralTransfer" parameterType="ReferralTransfer">
@@ -73,7 +73,7 @@
             <if test="accompanyingInfo != null">accompanying_info = #{accompanyingInfo},</if>
             <if test="transferStatus != null">transfer_status = #{transferStatus},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>

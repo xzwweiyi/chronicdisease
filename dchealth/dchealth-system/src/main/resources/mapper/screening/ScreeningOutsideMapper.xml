@@ -46,7 +46,7 @@
 
     <insert id="insertScreeningOutside" parameterType="ScreeningOutside" useGeneratedKeys="true" keyProperty="id">
         insert into screening_outside (resident_name, id_card, phone, screening_date, screening_location, screening_result, disease_type, handler, create_by, create_time, remark)
-        values (#{residentName}, #{idCard}, #{phone}, #{screeningDate}, #{screeningLocation}, #{screeningResult}, #{diseaseType}, #{handler}, #{createBy}, sysdate(), #{remark})
+        values (#{residentName}, #{idCard}, #{phone}, #{screeningDate}, #{screeningLocation}, #{screeningResult}, #{diseaseType}, #{handler}, #{createBy}, now(), #{remark})
     </insert>
 
     <update id="updateScreeningOutside" parameterType="ScreeningOutside">
@@ -61,7 +61,7 @@
             <if test="diseaseType != null">disease_type = #{diseaseType},</if>
             <if test="handler != null">handler = #{handler},</if>
             <if test="remark != null">remark = #{remark},</if>
-            update_by = #{updateBy}, update_time = sysdate()
+            update_by = #{updateBy}, update_time = now()
         </set>
         where id = #{id}
     </update>
