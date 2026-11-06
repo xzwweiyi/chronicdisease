@@ -3,10 +3,18 @@ package com.dchealth.framework.config;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * xxl-job 执行器配置。
+ * 通过 xxl.job.enabled 控制是否启用：dev/prod 配置为 false 时不再创建执行器，
+ * 避免调度中心（localhost:8032）不存在时启动日志持续报 Connection refused。
+ * 未配置 enabled 的环境（如 test 指向真实调度中心）默认启用。
+ */
 @Configuration
+@ConditionalOnProperty(prefix = "xxl.job", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 public class XxlJobConfig {
     //调度中心地址
