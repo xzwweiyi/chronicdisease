@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.telemedicine.mapper.TelemedicineConsultationMapper">
+
+    <resultMap type="com.dchealth.telemedicine.domain.TelemedicineConsultation" id="TelemedicineConsultationResult">
+        <id property="id" column="id"/>
+        <result property="consultationNo" column="consultation_no"/>
+        <result property="patientId" column="patient_id"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="applicantName" column="applicant_name"/>
+        <result property="consultationType" column="consultation_type"/>
+        <result property="scheduledTime" column="scheduled_time"/>
+        <result property="actualTime" column="actual_time"/>
+        <result property="participants" column="participants"/>
+        <result property="chiefComplaint" column="chief_complaint"/>
+        <result property="summary" column="summary"/>
+        <result property="conclusion" column="conclusion"/>
+        <result property="recommendation" column="recommendation"/>
+        <result property="consultationStatus" column="consultation_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectTelemedicineConsultationVo">
+        select id, consultation_no, patient_id, patient_name, applicant_name, consultation_type, scheduled_time, actual_time, participants, chief_complaint, summary, conclusion, recommendation, consultation_status, create_by, create_time, update_by, update_time, remark
+        from telemedicine_consultation
+    </sql>
+
+    <select id="selectTelemedicineConsultationList" parameterType="TelemedicineConsultation" resultMap="TelemedicineConsultationResult">
+        <include refid="selectTelemedicineConsultationVo"/>
+        <where>
+            <if test="consultationNo != null and consultationNo != ''">and consultation_no like concat('%', #{consultationNo}, '%')</if>
+            <if test="patientId != null">and patient_id = #{patientId}</if>
+            <if test="patientName != null and patientName != ''">and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="applicantName != null and applicantName != ''">and applicant_name like concat('%', #{applicantName}, '%')</if>
+            <if test="consultationType != null and consultationType != ''">and consultation_type like concat('%', #{consultationType}, '%')</if>
+            <if test="scheduledTime != null">and scheduled_time = #{scheduledTime}</if>
+            <if test="actualTime != null">and actual_time = #{actualTime}</if>
+            <if test="participants != null and participants != ''">and participants like concat('%', #{participants}, '%')</if>
+            <if test="chiefComplaint != null and chiefComplaint != ''">and chief_complaint like concat('%', #{chiefComplaint}, '%')</if>
+            <if test="summary != null and summary != ''">and summary like concat('%', #{summary}, '%')</if>
+            <if test="conclusion != null and conclusion != ''">and conclusion like concat('%', #{conclusion}, '%')</if>
+            <if test="recommendation != null and recommendation != ''">and recommendation like concat('%', #{recommendation}, '%')</if>
+            <if test="consultationStatus != null and consultationStatus != ''">and consultation_status like concat('%', #{consultationStatus}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectTelemedicineConsultationById" parameterType="Long" resultMap="TelemedicineConsultationResult">
+        <include refid="selectTelemedicineConsultationVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTelemedicineConsultation" parameterType="TelemedicineConsultation" useGeneratedKeys="true" keyProperty="id">
+        insert into telemedicine_consultation (consultation_no, patient_id, patient_name, applicant_name, consultation_type, scheduled_time, actual_time, participants, chief_complaint, summary, conclusion, recommendation, consultation_status, create_by, create_time, remark)
+        values (#{consultationNo}, #{patientId}, #{patientName}, #{applicantName}, #{consultationType}, #{scheduledTime}, #{actualTime}, #{participants}, #{chiefComplaint}, #{summary}, #{conclusion}, #{recommendation}, #{consultationStatus}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateTelemedicineConsultation" parameterType="TelemedicineConsultation">
+        update telemedicine_consultation
+        <set>
+            <if test="consultationNo != null">consultation_no = #{consultationNo},</if>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="applicantName != null">applicant_name = #{applicantName},</if>
+            <if test="consultationType != null">consultation_type = #{consultationType},</if>
+            <if test="scheduledTime != null">scheduled_time = #{scheduledTime},</if>
+            <if test="actualTime != null">actual_time = #{actualTime},</if>
+            <if test="participants != null">participants = #{participants},</if>
+            <if test="chiefComplaint != null">chief_complaint = #{chiefComplaint},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="conclusion != null">conclusion = #{conclusion},</if>
+            <if test="recommendation != null">recommendation = #{recommendation},</if>
+            <if test="consultationStatus != null">consultation_status = #{consultationStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTelemedicineConsultationById" parameterType="Long">
+        delete from telemedicine_consultation where id = #{id}
+    </delete>
+
+    <delete id="deleteTelemedicineConsultationByIds" parameterType="String">
+        delete from telemedicine_consultation where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- ========== mp_person 关联查询 (via patient_info) ========== -->
+    <sql id="telemedicinePatientJoin">
+        left join patient_info pi on tc.patient_id = pi.patient_id
+        left join mp_person mp on pi.person_id = mp.person_id
+    </sql>
+
+    <select id="selectTelemedicineConsultationWithPatient" parameterType="map" resultMap="TelemedicineConsultationResult">
+        select tc.id, tc.consultation_no, tc.patient_id,
+               COALESCE(mp.person_name, tc.patient_name) as patient_name,
+               tc.applicant_name, tc.consultation_type, tc.scheduled_time, tc.actual_time,
+               tc.participants, tc.chief_complaint, tc.summary, tc.conclusion,
+               tc.recommendation, tc.consultation_status,
+               tc.create_by, tc.create_time, tc.update_by, tc.update_time, tc.remark
+        from telemedicine_consultation tc
+        <include refid="telemedicinePatientJoin"/>
+        <where>
+            <if test="patientName != null and patientName != ''">and (mp.person_name like concat('%', #{patientName}, '%') or tc.patient_name like concat('%', #{patientName}, '%'))</if>
+            <if test="consultationStatus != null and consultationStatus != ''">and tc.consultation_status = #{consultationStatus}</if>
+            <if test="consultationType != null and consultationType != ''">and tc.consultation_type like concat('%', #{consultationType}, '%')</if>
+            <if test="consultationNo != null and consultationNo != ''">and tc.consultation_no like concat('%', #{consultationNo}, '%')</if>
+        </where>
+        order by tc.id desc
+    </select>
+</mapper>

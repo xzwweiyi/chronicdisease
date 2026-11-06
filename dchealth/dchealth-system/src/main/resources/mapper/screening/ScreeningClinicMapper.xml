@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.screening.mapper.ScreeningClinicMapper">
+
+    <resultMap type="com.dchealth.screening.domain.ScreeningClinic" id="ScreeningClinicResult">
+        <id property="id" column="id"/>
+        <result property="residentName" column="resident_name"/>
+        <result property="idCard" column="id_card"/>
+        <result property="phone" column="phone"/>
+        <result property="visitDate" column="visit_date"/>
+        <result property="department" column="department"/>
+        <result property="diagnosis" column="diagnosis"/>
+        <result property="icdCode" column="icd_code"/>
+        <result property="diseaseType" column="disease_type"/>
+        <result property="doctorName" column="doctor_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectScreeningClinicVo">
+        select id, resident_name, id_card, phone, visit_date, department, diagnosis, icd_code, disease_type, doctor_name, create_by, create_time, update_by, update_time, remark
+        from screening_clinic
+    </sql>
+
+    <select id="selectScreeningClinicList" parameterType="ScreeningClinic" resultMap="ScreeningClinicResult">
+        <include refid="selectScreeningClinicVo"/>
+        <where>
+            <if test="residentName != null and residentName != ''">and resident_name like concat('%', #{residentName}, '%')</if>
+            <if test="idCard != null and idCard != ''">and id_card like concat('%', #{idCard}, '%')</if>
+            <if test="phone != null and phone != ''">and phone like concat('%', #{phone}, '%')</if>
+            <if test="visitDate != null">and visit_date = #{visitDate}</if>
+            <if test="department != null and department != ''">and department like concat('%', #{department}, '%')</if>
+            <if test="diagnosis != null and diagnosis != ''">and diagnosis like concat('%', #{diagnosis}, '%')</if>
+            <if test="icdCode != null and icdCode != ''">and icd_code like concat('%', #{icdCode}, '%')</if>
+            <if test="diseaseType != null and diseaseType != ''">and disease_type like concat('%', #{diseaseType}, '%')</if>
+            <if test="doctorName != null and doctorName != ''">and doctor_name like concat('%', #{doctorName}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectScreeningClinicById" parameterType="Long" resultMap="ScreeningClinicResult">
+        <include refid="selectScreeningClinicVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertScreeningClinic" parameterType="ScreeningClinic" useGeneratedKeys="true" keyProperty="id">
+        insert into screening_clinic (resident_name, id_card, phone, visit_date, department, diagnosis, icd_code, disease_type, doctor_name, create_by, create_time, remark)
+        values (#{residentName}, #{idCard}, #{phone}, #{visitDate}, #{department}, #{diagnosis}, #{icdCode}, #{diseaseType}, #{doctorName}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateScreeningClinic" parameterType="ScreeningClinic">
+        update screening_clinic
+        <set>
+            <if test="residentName != null">resident_name = #{residentName},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="visitDate != null">visit_date = #{visitDate},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="diagnosis != null">diagnosis = #{diagnosis},</if>
+            <if test="icdCode != null">icd_code = #{icdCode},</if>
+            <if test="diseaseType != null">disease_type = #{diseaseType},</if>
+            <if test="doctorName != null">doctor_name = #{doctorName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteScreeningClinicById" parameterType="Long">
+        delete from screening_clinic where id = #{id}
+    </delete>
+
+    <delete id="deleteScreeningClinicByIds" parameterType="String">
+        delete from screening_clinic where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- ========== mp_person 关联查询 ========== -->
+    <resultMap type="com.dchealth.screening.domain.vo.ScreeningPatientVO" id="ScreeningPatientVOResult">
+        <!-- screening_clinic id -->
+        <id property="id" column="id"/>
+        <!-- mp_person fields -->
+        <result property="personId" column="mp_person_id"/>
+        <result property="personName" column="mp_person_name"/>
+        <result property="cardId" column="mp_card_id"/>
+        <result property="genderSourceValue" column="mp_gender_source_value"/>
+        <result property="sex" column="mp_sex"/>
+        <result property="phoneNumber" column="mp_phone_number"/>
+        <result property="mpCreateTime" column="mp_create_time"/>
+        <result property="mpUpdateTime" column="mp_update_time"/>
+        <!-- screening_clinic fields -->
+        <result property="idCard" column="id_card"/>
+        <result property="phone" column="phone"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="visitDate" column="visit_date"/>
+        <result property="department" column="department"/>
+        <result property="diagnosis" column="diagnosis"/>
+        <result property="icdCode" column="icd_code"/>
+        <result property="diseaseType" column="disease_type"/>
+        <result property="doctorName" column="doctor_name"/>
+    </resultMap>
+
+    <sql id="screeningPatientJoin">
+        left join (
+            select card_id, max(person_id) as person_id
+            from mp_person
+            group by card_id
+        ) m on m.card_id = t.id_card
+        left join mp_person mp on mp.person_id = m.person_id
+    </sql>
+
+    <select id="selectScreeningPatientList" parameterType="map" resultMap="ScreeningPatientVOResult">
+        select mp.person_id as mp_person_id, mp.person_name as mp_person_name,
+               mp.card_id as mp_card_id, mp.gender_source_value as mp_gender_source_value,
+               mp.sex as mp_sex, mp.phone_number as mp_phone_number,
+               mp.create_time as mp_create_time, mp.update_time as mp_update_time,
+               t.id, t.id_card, t.phone, t.create_time, t.update_time, t.remark,
+               t.visit_date, t.department, t.diagnosis, t.icd_code,
+               t.disease_type, t.doctor_name
+        from screening_clinic t
+        <include refid="screeningPatientJoin"/>
+        <where>
+            <if test="personName != null and personName != ''">and mp.person_name like concat('%', #{personName}, '%')</if>
+            <if test="cardId != null and cardId != ''">and mp.card_id = #{cardId}</if>
+            <if test="diseaseType != null and diseaseType != ''">and t.disease_type like concat('%', #{diseaseType}, '%')</if>
+        </where>
+        order by t.id desc
+    </select>
+</mapper>

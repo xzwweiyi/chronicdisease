@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.telemedicine.mapper.TelemedicineScheduleMapper">
+
+    <resultMap type="com.dchealth.telemedicine.domain.TelemedicineSchedule" id="TelemedicineScheduleResult">
+        <id property="id" column="id"/>
+        <result property="doctorId" column="doctor_id"/>
+        <result property="doctorName" column="doctor_name"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="scheduleDate" column="schedule_date"/>
+        <result property="timeSlot" column="time_slot"/>
+        <result property="maxConsultations" column="max_consultations"/>
+        <result property="bookedCount" column="booked_count"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectTelemedicineScheduleVo">
+        select id, doctor_id, doctor_name, dept_name, schedule_date, time_slot, max_consultations, booked_count, create_by, create_time, update_by, update_time, remark
+        from telemedicine_schedule
+    </sql>
+
+    <select id="selectTelemedicineScheduleList" parameterType="TelemedicineSchedule" resultMap="TelemedicineScheduleResult">
+        <include refid="selectTelemedicineScheduleVo"/>
+        <where>
+            <if test="doctorId != null">and doctor_id = #{doctorId}</if>
+            <if test="doctorName != null and doctorName != ''">and doctor_name like concat('%', #{doctorName}, '%')</if>
+            <if test="deptName != null and deptName != ''">and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="scheduleDate != null">and schedule_date = #{scheduleDate}</if>
+            <if test="timeSlot != null and timeSlot != ''">and time_slot like concat('%', #{timeSlot}, '%')</if>
+            <if test="maxConsultations != null">and max_consultations = #{maxConsultations}</if>
+            <if test="bookedCount != null">and booked_count = #{bookedCount}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectTelemedicineScheduleById" parameterType="Long" resultMap="TelemedicineScheduleResult">
+        <include refid="selectTelemedicineScheduleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTelemedicineSchedule" parameterType="TelemedicineSchedule" useGeneratedKeys="true" keyProperty="id">
+        insert into telemedicine_schedule (doctor_id, doctor_name, dept_name, schedule_date, time_slot, max_consultations, booked_count, create_by, create_time, remark)
+        values (#{doctorId}, #{doctorName}, #{deptName}, #{scheduleDate}, #{timeSlot}, #{maxConsultations}, #{bookedCount}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateTelemedicineSchedule" parameterType="TelemedicineSchedule">
+        update telemedicine_schedule
+        <set>
+            <if test="doctorId != null">doctor_id = #{doctorId},</if>
+            <if test="doctorName != null">doctor_name = #{doctorName},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+            <if test="scheduleDate != null">schedule_date = #{scheduleDate},</if>
+            <if test="timeSlot != null">time_slot = #{timeSlot},</if>
+            <if test="maxConsultations != null">max_consultations = #{maxConsultations},</if>
+            <if test="bookedCount != null">booked_count = #{bookedCount},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTelemedicineScheduleById" parameterType="Long">
+        delete from telemedicine_schedule where id = #{id}
+    </delete>
+
+    <delete id="deleteTelemedicineScheduleByIds" parameterType="String">
+        delete from telemedicine_schedule where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

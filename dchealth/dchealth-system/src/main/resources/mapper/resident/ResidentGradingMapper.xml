@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.resident.mapper.ResidentGradingMapper">
+
+    <resultMap type="com.dchealth.resident.domain.ResidentGradingRecord" id="ResidentGradingRecordResult">
+        <id property="id" column="id"/>
+        <result property="personId" column="person_id"/>
+        <result property="assessmentDate" column="assessment_date"/>
+        <result property="bpClassification" column="bp_classification"/>
+        <result property="managementLevel" column="management_level"/>
+        <result property="riskStratification" column="risk_stratification"/>
+        <result property="cardiovascularFactors" column="cardiovascular_factors"/>
+        <result property="targetOrganDamage" column="target_organ_damage"/>
+        <result property="comorbidConditions" column="comorbid_conditions"/>
+        <result property="assessor" column="assessor"/>
+        <result property="nextAssessmentDate" column="next_assessment_date"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectGradingRecordVo">
+        select id, person_id, assessment_date, bp_classification, management_level, risk_stratification,
+               cardiovascular_factors, target_organ_damage, comorbid_conditions, assessor,
+               next_assessment_date, remark, create_by, create_time, update_by, update_time
+        from resident_grading_record
+    </sql>
+
+    <select id="selectGradingRecordList" parameterType="ResidentGradingRecord" resultMap="ResidentGradingRecordResult">
+        <include refid="selectGradingRecordVo"/>
+        <where>
+            <if test="personId != null and personId != ''">and person_id = #{personId}</if>
+        </where>
+        order by assessment_date desc
+    </select>
+
+    <select id="selectGradingRecordByPersonId" parameterType="String" resultMap="ResidentGradingRecordResult">
+        <include refid="selectGradingRecordVo"/> where person_id = #{personId} order by assessment_date desc
+    </select>
+
+    <select id="selectGradingRecordById" parameterType="Long" resultMap="ResidentGradingRecordResult">
+        <include refid="selectGradingRecordVo"/> where id = #{id}
+    </select>
+
+    <insert id="insertGradingRecord" parameterType="ResidentGradingRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into resident_grading_record (person_id, assessment_date, bp_classification, management_level,
+            risk_stratification, cardiovascular_factors, target_organ_damage, comorbid_conditions,
+            assessor, next_assessment_date, remark, create_by, create_time)
+        values (#{personId}, #{assessmentDate}, #{bpClassification}, #{managementLevel},
+            #{riskStratification}, #{cardiovascularFactors}, #{targetOrganDamage}, #{comorbidConditions},
+            #{assessor}, #{nextAssessmentDate}, #{remark}, #{createBy}, sysdate())
+    </insert>
+
+    <update id="updateGradingRecord" parameterType="ResidentGradingRecord">
+        update resident_grading_record
+        <set>
+            <if test="assessmentDate != null">assessment_date = #{assessmentDate},</if>
+            <if test="bpClassification != null">bp_classification = #{bpClassification},</if>
+            <if test="managementLevel != null">management_level = #{managementLevel},</if>
+            <if test="riskStratification != null">risk_stratification = #{riskStratification},</if>
+            <if test="cardiovascularFactors != null">cardiovascular_factors = #{cardiovascularFactors},</if>
+            <if test="targetOrganDamage != null">target_organ_damage = #{targetOrganDamage},</if>
+            <if test="comorbidConditions != null">comorbid_conditions = #{comorbidConditions},</if>
+            <if test="nextAssessmentDate != null">next_assessment_date = #{nextAssessmentDate},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy},
+            update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGradingRecordById" parameterType="Long">
+        delete from resident_grading_record where id = #{id}
+    </delete>
+
+    <delete id="deleteGradingRecordByIds" parameterType="String">
+        delete from resident_grading_record where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+</mapper>

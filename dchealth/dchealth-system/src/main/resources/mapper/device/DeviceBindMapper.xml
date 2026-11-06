@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.device.mapper.DeviceBindMapper">
+
+    <resultMap type="com.dchealth.device.domain.DeviceBind" id="DeviceBindResult">
+        <id property="id" column="id"/>
+        <result property="deviceCode" column="device_code"/>
+        <result property="residentId" column="resident_id"/>
+        <result property="residentName" column="resident_name"/>
+        <result property="bindDate" column="bind_date"/>
+        <result property="unbindDate" column="unbind_date"/>
+        <result property="bindStatus" column="bind_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectDeviceBindVo">
+        select id, device_code, resident_id, resident_name, bind_date, unbind_date, bind_status, create_by, create_time, update_by, update_time, remark
+        from device_bind
+    </sql>
+
+    <select id="selectDeviceBindList" parameterType="DeviceBind" resultMap="DeviceBindResult">
+        <include refid="selectDeviceBindVo"/>
+        <where>
+            <if test="deviceCode != null and deviceCode != ''">and device_code like concat('%', #{deviceCode}, '%')</if>
+            <if test="residentId != null">and resident_id = #{residentId}</if>
+            <if test="residentName != null and residentName != ''">and resident_name like concat('%', #{residentName}, '%')</if>
+            <if test="bindDate != null">and bind_date = #{bindDate}</if>
+            <if test="unbindDate != null">and unbind_date = #{unbindDate}</if>
+            <if test="bindStatus != null and bindStatus != ''">and bind_status like concat('%', #{bindStatus}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectDeviceBindById" parameterType="Long" resultMap="DeviceBindResult">
+        <include refid="selectDeviceBindVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDeviceBind" parameterType="DeviceBind" useGeneratedKeys="true" keyProperty="id">
+        insert into device_bind (device_code, resident_id, resident_name, bind_date, unbind_date, bind_status, create_by, create_time, remark)
+        values (#{deviceCode}, #{residentId}, #{residentName}, #{bindDate}, #{unbindDate}, #{bindStatus}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateDeviceBind" parameterType="DeviceBind">
+        update device_bind
+        <set>
+            <if test="deviceCode != null">device_code = #{deviceCode},</if>
+            <if test="residentId != null">resident_id = #{residentId},</if>
+            <if test="residentName != null">resident_name = #{residentName},</if>
+            <if test="bindDate != null">bind_date = #{bindDate},</if>
+            <if test="unbindDate != null">unbind_date = #{unbindDate},</if>
+            <if test="bindStatus != null">bind_status = #{bindStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDeviceBindById" parameterType="Long">
+        delete from device_bind where id = #{id}
+    </delete>
+
+    <delete id="deleteDeviceBindByIds" parameterType="String">
+        delete from device_bind where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

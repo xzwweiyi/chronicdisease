@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dchealth.referral.mapper.ReferralTransferMapper">
+
+    <resultMap type="com.dchealth.referral.domain.ReferralTransfer" id="ReferralTransferResult">
+        <id property="id" column="id"/>
+        <result property="patientId" column="patient_id"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="fromInstitution" column="from_institution"/>
+        <result property="toInstitution" column="to_institution"/>
+        <result property="fromDept" column="from_dept"/>
+        <result property="toDept" column="to_dept"/>
+        <result property="transferType" column="transfer_type"/>
+        <result property="transferDate" column="transfer_date"/>
+        <result property="reason" column="reason"/>
+        <result property="diagnosis" column="diagnosis"/>
+        <result property="accompanyingInfo" column="accompanying_info"/>
+        <result property="transferStatus" column="transfer_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectReferralTransferVo">
+        select id, patient_id, patient_name, from_institution, to_institution, from_dept, to_dept, transfer_type, transfer_date, reason, diagnosis, accompanying_info, transfer_status, create_by, create_time, update_by, update_time, remark
+        from referral_transfer
+    </sql>
+
+    <select id="selectReferralTransferList" parameterType="ReferralTransfer" resultMap="ReferralTransferResult">
+        <include refid="selectReferralTransferVo"/>
+        <where>
+            <if test="patientId != null">and patient_id = #{patientId}</if>
+            <if test="patientName != null and patientName != ''">and patient_name like concat('%', #{patientName}, '%')</if>
+            <if test="fromInstitution != null and fromInstitution != ''">and from_institution like concat('%', #{fromInstitution}, '%')</if>
+            <if test="toInstitution != null and toInstitution != ''">and to_institution like concat('%', #{toInstitution}, '%')</if>
+            <if test="fromDept != null and fromDept != ''">and from_dept like concat('%', #{fromDept}, '%')</if>
+            <if test="toDept != null and toDept != ''">and to_dept like concat('%', #{toDept}, '%')</if>
+            <if test="transferType != null and transferType != ''">and transfer_type like concat('%', #{transferType}, '%')</if>
+            <if test="transferDate != null">and transfer_date = #{transferDate}</if>
+            <if test="reason != null and reason != ''">and reason like concat('%', #{reason}, '%')</if>
+            <if test="diagnosis != null and diagnosis != ''">and diagnosis like concat('%', #{diagnosis}, '%')</if>
+            <if test="accompanyingInfo != null and accompanyingInfo != ''">and accompanying_info like concat('%', #{accompanyingInfo}, '%')</if>
+            <if test="transferStatus != null and transferStatus != ''">and transfer_status like concat('%', #{transferStatus}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectReferralTransferById" parameterType="Long" resultMap="ReferralTransferResult">
+        <include refid="selectReferralTransferVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertReferralTransfer" parameterType="ReferralTransfer" useGeneratedKeys="true" keyProperty="id">
+        insert into referral_transfer (patient_id, patient_name, from_institution, to_institution, from_dept, to_dept, transfer_type, transfer_date, reason, diagnosis, accompanying_info, transfer_status, create_by, create_time, remark)
+        values (#{patientId}, #{patientName}, #{fromInstitution}, #{toInstitution}, #{fromDept}, #{toDept}, #{transferType}, #{transferDate}, #{reason}, #{diagnosis}, #{accompanyingInfo}, #{transferStatus}, #{createBy}, sysdate(), #{remark})
+    </insert>
+
+    <update id="updateReferralTransfer" parameterType="ReferralTransfer">
+        update referral_transfer
+        <set>
+            <if test="patientId != null">patient_id = #{patientId},</if>
+            <if test="patientName != null">patient_name = #{patientName},</if>
+            <if test="fromInstitution != null">from_institution = #{fromInstitution},</if>
+            <if test="toInstitution != null">to_institution = #{toInstitution},</if>
+            <if test="fromDept != null">from_dept = #{fromDept},</if>
+            <if test="toDept != null">to_dept = #{toDept},</if>
+            <if test="transferType != null">transfer_type = #{transferType},</if>
+            <if test="transferDate != null">transfer_date = #{transferDate},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="diagnosis != null">diagnosis = #{diagnosis},</if>
+            <if test="accompanyingInfo != null">accompanying_info = #{accompanyingInfo},</if>
+            <if test="transferStatus != null">transfer_status = #{transferStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_by = #{updateBy}, update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteReferralTransferById" parameterType="Long">
+        delete from referral_transfer where id = #{id}
+    </delete>
+
+    <delete id="deleteReferralTransferByIds" parameterType="String">
+        delete from referral_transfer where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- ========== mp_person 关联查询 (via patient_info) ========== -->
+    <sql id="referralPatientJoin">
+        left join patient_info pi on rt.patient_id = pi.patient_id
+        left join mp_person mp on pi.person_id = mp.person_id
+    </sql>
+
+    <select id="selectReferralTransferWithPatient" parameterType="map" resultMap="ReferralTransferResult">
+        select rt.id, rt.patient_id, COALESCE(mp.person_name, rt.patient_name) as patient_name,
+               rt.from_institution, rt.to_institution, rt.from_dept, rt.to_dept,
+               rt.transfer_type, rt.transfer_date, rt.reason, rt.diagnosis,
+               rt.accompanying_info, rt.transfer_status,
+               rt.create_by, rt.create_time, rt.update_by, rt.update_time, rt.remark
+        from referral_transfer rt
+        <include refid="referralPatientJoin"/>
+        <where>
+            <if test="patientName != null and patientName != ''">and (mp.person_name like concat('%', #{patientName}, '%') or rt.patient_name like concat('%', #{patientName}, '%'))</if>
+            <if test="transferStatus != null and transferStatus != ''">and rt.transfer_status = #{transferStatus}</if>
+            <if test="transferType != null and transferType != ''">and rt.transfer_type like concat('%', #{transferType}, '%')</if>
+            <if test="fromInstitution != null and fromInstitution != ''">and rt.from_institution like concat('%', #{fromInstitution}, '%')</if>
+            <if test="toInstitution != null and toInstitution != ''">and rt.to_institution like concat('%', #{toInstitution}, '%')</if>
+        </where>
+        order by rt.id desc
+    </select>
+</mapper>
