@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Ensure every C-type menu has standard CRUD button permissions (查询/新增/修改/删除).
- * Runs on every startup, idempotent via INSERT IGNORE.
+ * Runs on every startup, idempotent via NOT EXISTS guard (KingbaseES compatible).
  */
 @Component
 @Order(4)
@@ -85,7 +85,7 @@ public class MenuButtonFixRunner implements CommandLineRunner {
     }
 
     private int addButtons(Connection conn, String selectSql) throws Exception {
-        String sql = "INSERT IGNORE INTO sys_menu (menu_name, parent_id, order_num, path, menu_type, visible, status, perms, is_frame, is_cache, create_by, create_time) " + selectSql;
+        String sql = "INSERT INTO sys_menu (menu_name, parent_id, order_num, path, menu_type, visible, status, perms, is_frame, is_cache, create_by, create_time) " + selectSql;
         try (Statement s = conn.createStatement()) {
             return s.executeUpdate(sql);
         }
@@ -94,7 +94,7 @@ public class MenuButtonFixRunner implements CommandLineRunner {
     private int grantAllButtons(Connection conn) throws Exception {
         try (Statement s = conn.createStatement()) {
             return s.executeUpdate(
-                "INSERT IGNORE INTO sys_role_menu (role_id, menu_id) " +
+                "INSERT INTO sys_role_menu (role_id, menu_id) " +
                 "SELECT r.role_id, m.menu_id FROM sys_role r CROSS JOIN sys_menu m " +
                 "WHERE r.status = '0' AND m.status = '0' AND m.menu_type = 'F' " +
                 "AND NOT EXISTS (SELECT 1 FROM sys_role_menu rm WHERE rm.role_id = r.role_id AND rm.menu_id = m.menu_id)");

@@ -205,17 +205,21 @@ public class DashboardMenuRunner implements CommandLineRunner {
     private void grantRoleAccess(Connection conn, Long homeMenuId, Long workbenchMenuId) throws Exception {
         if (homeMenuId != null) {
             try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT IGNORE INTO sys_role_menu (role_id, menu_id) " +
-                    "SELECT role_id, ? FROM sys_role WHERE status = '0' AND del_flag = '0'")) {
+                    "INSERT INTO sys_role_menu (role_id, menu_id) " +
+                    "SELECT role_id, ? FROM sys_role r WHERE r.status = '0' AND r.del_flag = '0' " +
+                    "AND NOT EXISTS (SELECT 1 FROM sys_role_menu rm WHERE rm.role_id = r.role_id AND rm.menu_id = ?)")) {
                 ps.setLong(1, homeMenuId);
+                ps.setLong(2, homeMenuId);
                 ps.executeUpdate();
             }
         }
         if (workbenchMenuId != null) {
             try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT IGNORE INTO sys_role_menu (role_id, menu_id) " +
-                    "SELECT role_id, ? FROM sys_role WHERE status = '0' AND del_flag = '0'")) {
+                    "INSERT INTO sys_role_menu (role_id, menu_id) " +
+                    "SELECT role_id, ? FROM sys_role r WHERE r.status = '0' AND r.del_flag = '0' " +
+                    "AND NOT EXISTS (SELECT 1 FROM sys_role_menu rm WHERE rm.role_id = r.role_id AND rm.menu_id = ?)")) {
                 ps.setLong(1, workbenchMenuId);
+                ps.setLong(2, workbenchMenuId);
                 ps.executeUpdate();
             }
         }

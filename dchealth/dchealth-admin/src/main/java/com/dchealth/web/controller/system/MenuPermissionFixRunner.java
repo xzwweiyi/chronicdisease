@@ -72,12 +72,13 @@ public class MenuPermissionFixRunner implements CommandLineRunner {
     private int grantAllMenusToAllRoles(Connection conn) throws Exception {
         // Insert missing role_menu associations for all active roles and active menus
         String sql =
-            "INSERT IGNORE INTO sys_role_menu (role_id, menu_id) " +
+            "INSERT INTO sys_role_menu (role_id, menu_id) " +
             "SELECT r.role_id, m.menu_id " +
             "FROM sys_role r " +
             "CROSS JOIN sys_menu m " +
             "WHERE r.status = '0' AND r.del_flag = '0' " +
-            "  AND m.status = '0' AND m.menu_type IN ('M', 'C')";
+            "  AND m.status = '0' AND m.menu_type IN ('M', 'C') " +
+            "  AND NOT EXISTS (SELECT 1 FROM sys_role_menu rm WHERE rm.role_id = r.role_id AND rm.menu_id = m.menu_id)";
 
         try (Statement s = conn.createStatement()) {
             int count = s.executeUpdate(sql);
