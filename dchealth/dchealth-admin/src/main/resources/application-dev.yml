@@ -123,7 +123,10 @@ spring:
                 # 慢SQL记录
                 log-slow-sql: true
                 slow-sql-millis: 1000
-                merge-sql: true
+                # 关闭 SQL 合并：Druid 的 kingbase 方言解析器不支持 INTERVAL、SET TO 等
+                # PG 常见语法，开启会每条 SQL 刷一次 merge sql error（不影响执行，纯日志噪音）。
+                # 关闭后 stat 监控仍正常记录，只是不再按参数模板聚合展示
+                merge-sql: false
             wall:
                 config:
                     multi-statement-allow: true

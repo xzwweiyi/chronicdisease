@@ -54,9 +54,12 @@ public class DruidConfig
         }
         else
         {
+            // 用 SELECT set_config() 而非 SET 语句：Druid 统计过滤器对
+            // "SET x TO y" 语法解析报错（merge sql error 刷屏），SELECT 形式两者都能解析，
+            // 且 set_config(...,false) 对当前会话持续生效，语义与 SET 完全等价
             dataSource.setConnectionInitSqls(java.util.Arrays.asList(
-                    "SET search_path TO public, sys_catalog",
-                    "SET TIME ZONE 'Asia/Shanghai'"));
+                    "SELECT set_config('search_path', 'public,sys_catalog', false)",
+                    "SELECT set_config('timezone', 'Asia/Shanghai', false)"));
             log.info("=== KingbaseES driver detected, init search_path=public,sys_catalog & timezone=Asia/Shanghai ===");
         }
     }
