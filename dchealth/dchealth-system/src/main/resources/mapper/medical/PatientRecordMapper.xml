@@ -932,7 +932,8 @@
                             FROM patient_record
                             WHERE patient_id = #{patientId}
                               AND research_id = #{researchId}
-                              AND edc_status = '4' and follow_status !=-1) b ON re.patient_id = b.patient_id
+                              AND edc_status = '4' and follow_status !=-1
+                            GROUP BY patient_id) b ON re.patient_id = b.patient_id
         WHERE re.patient_id = #{patientId}
           AND re.research_id = #{researchId}
           AND re.record_id = (SELECT MAX(record_id)
