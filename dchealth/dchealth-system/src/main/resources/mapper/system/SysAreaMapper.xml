@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysAreaVo">
-        select area_id, ancestors, area_code, area_name, level, city_code, longitude, latitude, parent_id, order_num, del_flag, status, create_by, create_time, update_by, update_time from sys_area
+        select area_id, ancestors, area_code, area_name, "level", city_code, longitude, latitude, parent_id, order_num, del_flag, status, create_by, create_time, update_by, update_time from sys_area
     </sql>
 
     <select id="selectSysAreaList" parameterType="SysArea" resultMap="SysAreaResult">
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
             <if test="areaCode != null  and areaCode != ''"> and area_code = #{areaCode}</if>
             <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
-            <if test="level != null "> and level = #{level}</if>
+            <if test="level != null "> and "level" = #{level}</if>
             <if test="cityCode != null  and cityCode != ''"> and city_code = #{cityCode}</if>
             <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
             <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>

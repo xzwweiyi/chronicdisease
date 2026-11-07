@@ -1190,7 +1190,7 @@
     </select>
 
     <select id="selectFollowListBySuccess" resultType="com.dchealth.statistics.domain.StatisticsFollowRateVo">
-        SELECT /*+ SET_VAR(optimizer_switch='derived_merge=off') */ a.record_id recordId,
+        SELECT DISTINCT ON (a.patient_id) a.record_id recordId,
         a.patient_id patientId,
         a.name followName,
         a.research_id researchId,
@@ -1235,8 +1235,8 @@
         <if test="userId != null ">and (c.id in (select research_id from research_user_role where user_id = #{userId})
             or su.user_id = #{userId} )
         </if>
-        GROUP BY a.patient_id
     </select>
+
     <select id="selectNoFollowupOnePatientRecordByResearchId" resultMap="PatientRecordResult">
         select * from patient_record  where  follow_status =-1 and research_id = #{researchId} and  patient_id=#{patientId}
     </select>

@@ -379,7 +379,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </foreach>
         </if>
 		${params.dataScope}
-		group by u.user_id
+		group by u.user_id, u.nick_name, u.phonenumber, d.dept_name, r.role_name
 	</select>
 
 </mapper> 
